@@ -24,38 +24,38 @@
 
 ##性能测试数据
 测试url.txt 文件中的三个URL
-    http://127.0.0.1:8080/
-    http://127.0.0.1:8080/x.js
+    http://127.0.0.1:8080/  
+    http://127.0.0.1:8080/x.js  
     http://127.0.0.1:8080/style.css  
 
 
 `$_CFG->web->min_worker_num = 1;$_CFG->web->max_worker_num = 20;`
 
->   siege -c 500 -r 10 -f url.txt
->    Transactions:               4844 hits
->   Availability:              96.88 %
->   Elapsed time:              38.50 secs
->   Data transferred:           1.06 MB
->   Response time:              0.75 secs
->   Transaction rate:         125.82 trans/sec
->    Throughput:             0.03 MB/sec
->    Concurrency:               94.33
->   Successful transactions:        1710
->   Failed transactions:             156
->    Longest transaction:           18.59
->   Shortest transaction:           0.00
-
-
-`   $_CFG->web->min_worker_num = 15;$_CFG->web->max_worker_num = 20;`
->   Transactions:               4787 hits
->   Availability:              95.74 %
->   Elapsed time:              39.11 secs
->   Data transferred:           1.08 MB
->   Response time:              0.56 secs
->   Transaction rate:         122.40 trans/sec
->   Throughput:             0.03 MB/sec
->   Concurrency:               68.07
->   Successful transactions:        1733
->   Failed transactions:             213
->   Longest transaction:           21.59
->   Shortest transaction:           0.00
+>   siege -c 500 -r 10 -f url.txt  
+>    Transactions:               4844 hits  
+>   Availability:              96.88 %  
+>   Elapsed time:              38.50 secs  
+>   Data transferred:           1.06 MB  
+>   Response time:              0.75 secs  
+>   Transaction rate:         125.82 trans/sec  
+>    Throughput:             0.03 MB/sec  
+>    Concurrency:               94.33  
+>   Successful transactions:        1710  
+>   Failed transactions:             156  
+>    Longest transaction:           18.59  
+>   Shortest transaction:           0.00  
+  
+  
+`   $_CFG->web->min_worker_num = 15;$_CFG->web->max_worker_num = 20;` 
+>   Transactions:               4787 hits  
+>   Availability:              95.74 %  
+>   Elapsed time:              39.11 secs  
+>   Data transferred:           1.08 MB  
+>   Response time:              0.56 secs   
+>   Transaction rate:         122.40 trans/sec   
+>   Throughput:             0.03 MB/sec   
+>   Concurrency:               68.07  
+>   Successful transactions:        1733  
+>   Failed transactions:             213   
+>   Longest transaction:           21.59   
+>   Shortest transaction:           0.00  
