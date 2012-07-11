@@ -1,4 +1,4 @@
-使用本库前需建议调用的方法    
+#使用本库前需建议调用的方法    
 X.ready() 此方法将初始化键盘事件,Body对象点击事件,如果浏览器不支持JSON对象,将加载JSON对象    
 #A.实用方法    
   * 1.创建对象 X.createNode('tagName') 返回一个对象  
@@ -85,4 +85,3 @@ cls为样式根据不同情况引申出cls+'CarouselMainBox'主体部分样式,c
 cls+'CarouselPreDiv'上一个,cls+'CarouselNextDiv'下一个,cls+'CarouselCurrentSelect'  
 eff效果1为渐变切换,2滑动切换,waitTime等待时间,data为数据,JSON格式,每项包括label:图片说明,link链接,img图片地址  
   
-
