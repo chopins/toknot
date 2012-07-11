@@ -1,4 +1,28 @@
 <?php
+/**
+ * XPHPFramework
+ *
+ * XTxtDB class
+ *
+ * PHP version 5.3
+ * @category phpframework
+ * @package XPHPFramework
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release 2.2
+ *
+ */
+exists_frame();
+/**
+ * key/value database classes with text, The data stroage type is accordance with the linear
+ * and get key or set key is seek text file form file start to file end
+ * 
+ * @package XPHPFramework
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ */
+
 class XTxtDB {
     private $db = null;
     private $line_size = 1024;
