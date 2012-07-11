@@ -1,5 +1,7 @@
 #使用本库前需建议调用的方法    
-X.ready() 此方法将初始化键盘事件,Body对象点击事件,如果浏览器不支持JSON对象,将加载JSON对象    
+X.ready() 此方法将初始化键盘事件,Body对象点击事件,如果浏览器不支持JSON对象,将加载JSON对象   
+
+
 #A.实用方法    
   * 1.创建对象 X.createNode('tagName') 返回一个对象  
   * 2.取消当前事件的原始处理方法 X.delDefaultEvent(e);  
@@ -63,9 +65,10 @@ start为文本首字符开始处,如果没有设置默认为当前光标位置,�
 
 
 #D.Ajax请求,兼容性考虑,执行Ajax操作前需要执行X.ready();  
-1.get请求 X.Ajax.get(url, call_func) url为请求url, call_func为回调函数  
-2.post请求 X.Ajax.post(url,data,func) url为请求url, data为post数据,格式为JSON数据, func为回调函数  
-3.上传文件 X.Ajax.file(form,func) form为提交表单,func为回调函数  
+  * 1.get请求 X.Ajax.get(url, call_func) url为请求url, call_func为回调函数  
+  * 2.post请求 X.Ajax.post(url,data,func) url为请求url, data为post数据,格式为JSON数据, func为回调函数  
+  * 3.上传文件 X.Ajax.file(form,func) form为提交表单,func为回调函数  
+ 
 ---------------------------------------------------------------------------------------------------------------------  
 
 #E.控件  
