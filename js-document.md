@@ -58,12 +58,16 @@ X.ready() 此方法将初始化键盘事件,Body对象点击事件,如果浏览�
 start为文本首字符计算的开始处,如果没有默认为当前光标处,如果光标不在当前对象,将从首字符开始,成功返回true,否则false  
   * 32.选择指定长度文本 Obj.cursorSelectText(len,start) Obj为指定对象,len为选择的字符长度,  
 start为文本首字符开始处,如果没有设置默认为当前光标位置,但是当光标不在指定对象将从当前节点的首个文本字符开始返回选择文本  
+
 ----------------------------------------------------------------------------------------------------  
+
+
 #D.Ajax请求,兼容性考虑,执行Ajax操作前需要执行X.ready();  
 1.get请求 X.Ajax.get(url, call_func) url为请求url, call_func为回调函数  
 2.post请求 X.Ajax.post(url,data,func) url为请求url, data为post数据,格式为JSON数据, func为回调函数  
 3.上传文件 X.Ajax.file(form,func) form为提交表单,func为回调函数  
 ---------------------------------------------------------------------------------------------------------------------  
+
 #E.控件  
   * 1.普通消息提示 X.msgBox(msg, cls, zIndex, waitTime) msg提示信息文字, cls控件样式, zIndex控件z-index属性值, waitTome显示时间,返回该控件DOM对象  
   * 2.确定提示消息组件 X.alertBox(tit, msg,func,cls,cover,zIndex) tit提示控件标题栏文字,msg提示信息文字,返回该控件DOM对象  
