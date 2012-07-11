@@ -1,0 +1,11 @@
+body {margin:0;padding:0;width:100%;height:100%;}
+.m-block {background-color:#D3EBF8;margin:0 auto;height:100%;}
+.b-center {background-color:#CCC;margin:0 auto;padding:0;clear:both;width:100%;}
+.b-footer {clear:both;}
+.b-input-box{border:1px solid #000;padding:0px;background-color:#FFF;width:400px;}
+.b-input-boxCloseDiv {border:1px solid #FFF;float:right;width:8px;height:8px;}
+.b-input-boxTitleDiv {background-color:#156692;color:#FFF;}
+.b-text-inputItemLabel {width:60px;float:left;}
+.left-block{float:left;width:100px;height:100%;border:1px solid #000;background-color:#EEE;}
+.left-nav-div{cursor:pointer;}
+.left-nav-div-active, .left-nav-div:hover {background-color:#CCC;}
