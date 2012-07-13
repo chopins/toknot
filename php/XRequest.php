@@ -299,7 +299,9 @@ class XRequest {
             $this->C->{$sname}->set();
             break;
             case 'A':
+            $this->check_ajax_status();
             $this->getAjaxData();
+            return $this->A;
             break;
             case '_R':
             throw new XException('XRequest class $_R propertie is private');
@@ -315,10 +317,10 @@ class XRequest {
         $this->S = new XSessionObject();
     }
     public function getAjaxData() {
-        if($this->check_ajax_status()) {
-            $ajax_data_array = json_decode($this->ajax_data_key);
+        if($this->AS) {
+            $ajax_data = json_decode($_REQUEST[$this->ajax_data_key]);
             if(json_last_error() == JSON_ERROR_NONE) {
-                return $this->A = $ajax_data_array;
+                return $this->A = $ajax_data;
             }
             switch(json_last_error()) {
                 case JSON_ERROR_DEPTH:
@@ -331,7 +333,7 @@ class XRequest {
                     $error = 'Control character error, possibly incorrectly encoded';
                 break;
                 case JSON_ERROR_SYNTAX:
-                    $error = '  Syntax error';
+                    $error = 'JSON Syntax error';
                 break;
                 case JSON_ERROR_UTF8:
                     $error ='Malformed UTF-8 characters, possibly incorrectly encoded';

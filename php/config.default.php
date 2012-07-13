@@ -1,13 +1,13 @@
 <?php
 /**
- * XPHPFramework
+ * Web.php
  *
  * _CFG class
  *
  * PHP version 5.3
  * 
- * @category phpframework
- * @package XPHPFramework
+ * @category web.php
+ * @package web.php
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -30,21 +30,25 @@
 $_CFG = new stdClass; //配置数据类
 
 /***框架定义的应用程序基本目录解构****/
-$_CFG->php_dir_name = 'php'; //存放PHP程序路径名,位于应用目录下
+$_CFG->php_dir_name = 'php';         //存放PHP程序路径名,位于应用目录下
 $_CFG->php_model_dir_name = 'model'; //存放公共模块组件目录，建议数据库操作，通用模块存放
-$_CFG->ui_dir_name = 'ui'; //存放UI文件夹,位于__X_APP_ROOT__定义目录下_
-//$_CFG->data_dir_name = 'var';//存放数据文件夹,位于__X_APP_ROOT__定义目录下_
+$_CFG->ui_dir_name = 'ui';           //存放UI文件夹,位于__X_APP_ROOT__定义目录下_
+$_CFG->data_dir_name = 'var';        //存放数据文件夹,位于__X_APP_ROOT__定义目录下_
 
 /***数据文件夹相关目录配置***/
-$_CFG->check_data_dir = true; //每次都检查data目录
-$_CFG->data_cache = 'cache';//临时数据文件夹
-$_CFG->error_log_dir = 'error_log';//错误日志保存位置，
-$_CFG->db_data = 'db';//数据库相关缓存,文本数据库保存位置
-$_CFG->run_dir = ''; //相关服务运行目录，默认位于$_CFG->data_dir_name目录下
+$_CFG->check_data_dir = true;        //每次都检查data目录
+$_CFG->data_cache = 'cache';         //临时数据文件夹
+$_CFG->error_log_dir = 'error_log';  //错误日志保存位置，
+$_CFG->db_data = 'db';               //数据库相关缓存,文本数据库保存位置
+$_CFG->run_dir = '';                 //相关服务运行目录，默认位于$_CFG->data_dir_name目录下
 
-$_CFG->timezone = 'Asia/Chongqing'; //时区配置
-$_CFG->ajax_key = 'data'; //提交JSON数据时URL中保存数据的键名
-$_CFG->ajax_flag = 'is_ajax'; //AJAX提交JSON数据时给出的标识
+$_CFG->timezone = 'Asia/Chongqing';  //时区配置
+$_CFG->ajax_key = 'data';            //提交JSON数据时URL中保存数据的键名
+$_CFG->ajax_flag = 'is_ajax';        //AJAX提交JSON数据时给出的标识
+$_CFG->encoding = 'utf8';            //输出内容实际编码,$_CFG->tpl->common_tpldata->charset仅仅是显示名字
+                                     //框架对数据是按UTF-8来保存
+                                     //如果这里是非UTF-8编码，提交的数据会被从当前设置编码转换成UTF-8
+                                     //PHP程序运行时以UTF-8来运行
 $_CFG->exception_seg_line = '===========================================================================';
 
 /***以下URL涉及到URL地址相关***/
@@ -64,6 +68,7 @@ $_CFG->uri_mode = 0;
         // 1 为QUERY_STRING模式 URL为http://localhost/index.php?a=directory/.../CLASS_NAME/METHOD_NAME&p=XX 无需服务器支持
         // 2 PATH_INFO模式 URL为http://localhost/index.php/director/CLASS_NAME/METHOD_NAME 需要服务器开启PATH_INFO
         // 3 路径模式，URL为http://localhost/directory/CLASS_NAME/METHOD_NAME,需要服务器rewite支持解析到0模式
+        // 4 自定义请求URI列表
         // 只影响模板输出时链接格式
 
 $_CFG->upfile_size = 512000;//文件上传最大尺寸
@@ -146,5 +151,6 @@ $_CFG->tpl->compression = false;
 
 /***模板中需要显示的通用数据***/
 $_CFG->tpl->common_tpldata = new stdClass;
-$_CFG->tpl->common_tpldata->site_name = 'XPHPFramework';//站点名字
-$_CFG->tpl->common_tpldata->copyright = 'copyright @ 2012 XPHPFramework Author All rights reserved.';//版权信息
+$_CFG->tpl->common_tpldata->site_name = 'web.php';//站点名字
+$_CFG->tpl->common_tpldata->charset = 'utf-8';
+$_CFG->tpl->common_tpldata->copyright = 'copyright @ 2012 web.php Author All rights reserved.';//版权信息
