@@ -1,4 +1,3 @@
-#labels Phase-Implementation,Phase-Support
 =使用需求=
 本说明主要针对命令行模式
 ==1.在命令行模式运行==

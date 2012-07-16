@@ -17,7 +17,6 @@
 /**
  * TODO:
  * 目前程序使用共享内存进行进程管理，进程休眠使用usleep提供，但是CPU时间增加过快
- * 下一个版本打算换成select()来实现
  */
 exists_frame();
 /**
@@ -27,18 +26,103 @@ exists_frame();
  * @author chopins xiao <chopins.xiao@gmail.com>
  */
 final class XWebServer {
+    /**
+     * port 
+     * 
+     * @var int
+     * @access private
+     */
     private $port = 8080;
+    /**
+     * protocol 
+     * 
+     * @var string
+     * @access private
+     */
     private $protocol = 'tcp';
+    /**
+     * ip 
+     * 
+     * @var string
+     * @access private
+     */
     private $ip = '0.0.0.0';
+    /**
+     * server 
+     * 
+     * @var resources
+     * @access private
+     */
     private $server = null;
+    /**
+     * master_worker_sock 
+     * 
+     * @var resource
+     * @access private
+     */
+    private $master_worker_sock = null;
+    /**
+     * errno 
+     * 
+     * @var int
+     * @access private
+     */
     private $errno = 0;
+    /**
+     * errstr 
+     * 
+     * @var string
+     * @access private
+     */
     private $errstr = null;
+    /**
+     * scheduler 
+     * 
+     * @var Object
+     * @access private
+     */
     private $scheduler = null;
+    /**
+     * header_buff 
+     * 
+     * @var string
+     * @access private
+     */
     private $header_buff = '';
+    /**
+     * request_body 
+     * 
+     * @var string
+     * @access private
+     */
     private $request_body = '';
+    /**
+     * response_status 
+     * 
+     * @var string
+     * @access private
+     */
     private $response_status = '';
+    /**
+     * response_status_code 
+     * 
+     * @var float
+     * @access private
+     */
     private $response_status_code = 200;
+    /**
+     * timeout 
+     * 
+     * @var float
+     * @access private
+     */
     private $timeout = 30;
+    /**
+     * connect_pool 
+     * 
+     * @var array
+     * @access private
+     */
     private $connect_pool = array();
     private $connect_idx = 0;
     private $cache_control_time = 30;
@@ -82,6 +166,13 @@ final class XWebServer {
     const WP_LISTEN = 4;
     const WP_WORKER = 5;
     const WP_EXIT = 6;
+    /**
+     * __construct 
+     * 
+     * @param mixed $scheduler 
+     * @access public
+     * @return void
+     */
     public function __construct($scheduler) {
         $this->scheduler = $scheduler;
         $this->check_system();
@@ -341,17 +432,18 @@ final class XWebServer {
     }
     private function fork_worker_process($restart_worker = false) {
         for($i=1;$i<=$this->min_worker_num;$i++) {
+            $mws = stream_socket_pair(STREAM_PF_UNIX,STREAM_SOCK_STREAM,STREAM_IPPROTO_IP);
             $pid = pcntl_fork();
             if($pid == -1) throw new XException('fork accept worker process error');
             if($pid >0) {
-                $shmop_id = shmop_open($this->base_shmop_key+$i,'c',0600,1);
-                shmop_write($shmop_id,self::WP_WAIT,0);
-                $this->worker_pool[$i]['shmid'] = $shmop_id;
-                $this->worker_pool[$i]['pid'] = $pid;
+                $this->worker_pool[$pid] = $mws[1];
+                fclose($mws[0]);
                 continue;
             }
+            fclose($mws[1]);
             $this->setproctitle('XServer:worker pool');
-            $this->web_worker_loop($i);
+            $this->master_worker_sock = $mws[0];
+            $this->web_worker_loop($i, $mws[0]);
             return;
         }
         if($restart_worker == false) {
@@ -389,6 +481,16 @@ final class XWebServer {
         $this->setproctitle('XServer:worker pool');
         $this->web_worker_loop($idx);
     }
+
+    /**
+     * master_watch_event 
+     * 
+     * @param mixed $sock 
+     * @param mixed $flag 
+     * @param mixed $arg 
+     * @access private
+     * @return void
+     */
     private function master_watch_event($sock, $flag, $arg) {
         if(!empty($arg[0])) event_base_loopexit($arg[0]);
         if(!empty($arg[1])) event_del($arg[1]);
@@ -421,10 +523,11 @@ final class XWebServer {
         $sig_evt_list[] = $this->add_sig_event($base_evt, SIGINT,'master_event_loopbreak');
         $sig_evt_list[] = $this->add_sig_event($base_evt, SIGHUP,'master_event_loopbreak');
         $sig_evt_list[] = $this->add_sig_event($base_evt, SIGPIPE,'connect_abort');
-
+        pcntl_signal_dispatch();
+        event_base_loop($base_evt, EVLOOP_ONCE);
+        pcntl_waitpid(-1,$status);
+        return;
         while(true) {
-            pcntl_signal_dispatch();
-            event_base_loop($base_evt, EVLOOP_ONCE);
             if($this->master_loopbreak) break;
             $listen = $wait = $first_sleep = 0;
             foreach($this->worker_pool as $idx => $worker) {
@@ -486,7 +589,7 @@ final class XWebServer {
     public function get_worker_id() {
         return $this->worker_id;
     }
-    private function web_worker_loop($wid) {
+    private function web_worker_loop($wid, $mws) {
         $this->worker_id = $wid;
         $this->master_process = false;
         pcntl_signal(SIGTERM,SIG_DFL);
@@ -494,29 +597,15 @@ final class XWebServer {
         pcntl_signal(SIGHUP, SIG_DFL);
         pcntl_signal(SIGPIPE, array($this,'connect_abort'));
         //pcntl_sigprocmask(SIG_UNBLOCK,array(SIGTERM,SIGINT,SIGHUP),$old);
-        $shmkey = $this->base_shmop_key+$wid;
-        do{
-            usleep(1000);
-            $shmop_id = shmop_open($shmkey,'w',0,0);
-        } while($shmop_id === false); 
+        fwrite($mws,self::WP_WAIT);
         $base_evt = $this->run_web_worker($shmop_id);
-        shmop_write($shmop_id,self::WP_SLEEP,0);
-        while(true) {
-            usleep(10000);
-            $worker_stat = shmop_read($shmop_id,0,1);
-            $connect_num = count($this->connect_pool);
-            if($worker_stat == self::WP_EXIT) {
-                $this->__destruct();
-                exit;
-            }
-            if($worker_stat == self::WP_LISTEN) {
-                event_base_loop($base_evt, EVLOOP_ONCE);
-            } else if($worker_stat == self::WP_BUSY && $connect_num < $this->worker_max_connect) {
-                shmop_write($shmop_id,self::WP_WORKER,0);
-            } elseif($connect_num == 0) {
-                shmop_write($shmop_id,self::WP_SLEEP,0);
-            }
-        }
+        $master_worker_base_evt = event_base_new();
+        $master_worker_evt = event_new();
+        event_set($master_worker_evt, $mws, EV_READ | EV_WRITE|EV_TIMEOUT | EV_PERSIST, 
+                array($this,'web_accept'), $master_worker_base_evt);
+        event_base_set($master_worker_evt,$master_worker_base_evt);
+        event_add($master_worker_evt);
+        event_base_loop($base_evt);
     }
     private function web_accept($sock, $flag, $arg) {
         $this->clear_evn();
@@ -525,12 +614,6 @@ final class XWebServer {
             $this->connect_abort_status = false;
             return;
         }
-        if(count($this->connect_pool) >= $this->worker_max_connect) {
-            shmop_write($arg[2],self::WP_BUSY,0);
-        } else {
-            shmop_write($arg[2],self::WP_WORKER,0);
-        }
-        event_base_loopbreak($arg[1]);
         $connect = stream_socket_accept($this->server, $this->timeout, $client_info);
         if($connect == false) return;
         $this->connect_pool[$this->connect_idx] = $connect;
@@ -543,9 +626,6 @@ final class XWebServer {
         }
         $this->web_read($connect);
         unset($this->connect_pool[$this->connect_idx]);
-        if(empty($this->connect_pool)) {
-            shmop_write($arg[2],self::WP_SLEEP,0);
-        }
         $this->connect_idx++;
     }
     private function clear_evn() {

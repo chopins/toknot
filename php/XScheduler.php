@@ -28,15 +28,19 @@ final class XScheduler extends XObject {
     private $cfg;
     private $exception_string = '';
     private $server = null;
+    private $utf8 = 'utf8';
     public function __construct() {
         if(version_compare(PHP_VERSION,'5.3.0') < 0) {
             throw new XException('XPHPFramework need run in php varsion lagre 5.3.0, your php version is'.PHP_VERSION);
         }
         define('PHP_CLI',PHP_SAPI =='cli');
-        $_ENV['__X_OUT_BROWSER__'] = false;
+        if(PHP_CLI == false) define('__X_WEB_ROOT__',dirname($_SERVER['SCRIPT_FILENAME']));
+        defined('__X_APP_ROOT__') || define('__X_APP_ROOT__',__X_WEB_ROOT__);
+        $_ENV['__X_OUT_BROWSER__']     = false;
         $_ENV['__X_EXCEPTION_THROW__'] = false;
         $_ENV['__X_FATAL_EXCEPTION__'] = false;
         $this->load_cfg();
+        $_ENV['__X_CALL_PAGE_DIR__']   = __X_APP_ROOT__."/{$this->cfg->php_dir_name}";
         $this->check_superglobals();
         $this->set_time_zone();
         if(PHP_CLI) {
@@ -48,9 +52,16 @@ final class XScheduler extends XObject {
             echo $this->get_html();
         }
     }
+
+    /**
+     * Load user application view class
+     * 
+     * @access public
+     * @return void
+     */
     public function load_app() {
         $this->exception_string = null;
-        $this->define_env_constanst();
+        $this->init_env_var();
         try {
             $this->load_application_class_file();
         } catch(XException $e) {
@@ -59,37 +70,68 @@ final class XScheduler extends XObject {
             return;
         }
     }
+    /**
+     * check php superglobals whether be set or 
+     * not will set $_SERVER,$_GET,$_COOKIE,$_POST,$_FILES
+     * 
+     * @access private
+     * @return void
+     */
     private function check_superglobals() {
         $variables_order = strtoupper(ini_get('variables_order'));
         if(PHP_CLI == false && strpos($variables_order,'P') === false) {
             $this->import_post();
+        } else if(strpos($variables_order,'P') === true && $this->utf8 != $this->cfg->encoding) {
+            $_POST = unserialize(mb_convert_encoding(serialize($_POST), $this->utf8, $this->cfg->encoding));
         }
         if(strpos($variables_order,'S') === false) {
             $_SERVER['_'] = getenv('_');
             if(PHP_CLI == false) {
-                $_SERVER['REQUEST_URI'] = getenv('REQUEST_URI');
+                $_SERVER['REQUEST_URI']     = getenv('REQUEST_URI');
                 $_SERVER['SCRIPT_FILENAME'] = getenv('SCRIPT_FILENAME');
-                $_SERVER['DOCUMENT_URI'] = getenv('DOCUMENT_URI');
-                $_SERVER['REQUEST_METHOD'] = getenv('REQUEST_METHOD');
-                $_SERVER['PATH_INFO'] = getenv('PATH_INFO');
-                $_SERVER['SERVER_ADDR'] = getenv('SERVER_ADDR');
-                $_SERVER['HTTP_HOST'] = getenv('HTTP_HOST');
-                $_SERVER['SERVER_NAME'] = getenv('SERVER_NAME');
-                $_SERVER['QUERY_STRING'] = getenv('QUERY_STRING');
+                $_SERVER['DOCUMENT_URI']    = getenv('DOCUMENT_URI');
+                $_SERVER['REQUEST_METHOD']  = getenv('REQUEST_METHOD');
+                $_SERVER['PATH_INFO']       = getenv('PATH_INFO');
+                $_SERVER['SERVER_ADDR']     = getenv('SERVER_ADDR');
+                $_SERVER['HTTP_HOST']       = getenv('HTTP_HOST');
+                $_SERVER['SERVER_NAME']     = getenv('SERVER_NAME');
+                $_SERVER['QUERY_STRING']    = getenv('QUERY_STRING');
             }
         }
         if(PHP_CLI == false && strpos($variables_order,'G') === false) {
+            if($this->cfg->encoding != $this->utf8) {
+                $_SERVER['QUERY_STRING'] = mb_convert_encoding($_SERVER['QUERY_STRING'], $this->utf8,$this->cfg->encoding);
+            }
             parse_str($_SERVER['QUERY_STRING'],$_GET);
+        } else if(strpos($variables_order,'G') === true && $this->utf8 != $this->cfg->encoding) {
+            $_GET = unserialize(mb_convert_encoding(serialize($_GET), $this->utf8, $this->cfg->encoding));
         }
+
         if(PHP_CLI == false && strpos($variables_order,'C') === false) {
+            if($this->cfg->encoding != $this->utf8) {
+                $_SERVER['HTTP_COOKIE'] = empty($_SERVER['HTTP_COOKIE']) ? getenv('HTTP_COOKIE') : $_SERVER['HTTP_COOKIE'];
+                $_SERVER['HTTP_COOKIE'] = mb_convert_encoding($_SERVER['HTTP_COOKIE'], $this->utf8, $this->cfg->encoding);
+            }
             get_cookie();
+        } else if(strpos($variables_order,'C') === true && $this->utf8 != $this->cfg->encoding) {
+            $_COOKIE = unserialize(mb_convert_encoding(serialize($_COOKIE), $this->utf8, $this->cfg->encoding));
         }
+
+
     }
+    /**
+     * set $_POST adn $_FILES superglobals
+     * 
+     * @access private
+     * @return void
+     */
     private function import_post() {
         $http_body = file_get_contents('php://input','r');
         if(!empty($http_body)) {
             $content_type = getenv('HTTP_CONTENT_TYPE');
             if($content_type == 'application/x-www-form-urlencoded') {
+                if($this->cfg->encoding != $this->utf8) 
+                    $http_body = mb_convert_encoding($http_body, $this->utf8,$this->cfg->encoding);
                 parse_str($http_body,$_POST);
             } else {
                 $content_len = getenv('HTTP_CONTENT_LENGTH');
@@ -191,6 +233,10 @@ final class XScheduler extends XObject {
                             $_FILES[$name]['error'] = $errno;
                         }
                     } elseif(isset($name)) {
+                        if($this->cfg->encoding != $this->utf8) {
+                            $name = mb_convert_encoding($name, $this->utf8,$this->cfg->encoding);
+                            $content_data = mb_convert_encoding($content_data, $this->utf8,$this->cfg->encoding);
+                        }
                         if(substr($name,-1,2) == '[]') {
                             $_POST[$name][] = $content_data;
                         } else {
@@ -201,18 +247,24 @@ final class XScheduler extends XObject {
             }
         }
     }
-    private function define_env_constanst() {
+    /**
+     * initialize environment variables of frameworker 
+     * 
+     * @access private
+     * @return void
+     */
+    private function init_env_var() {
         $uri = strtolower($_SERVER['REQUEST_URI']);
         if(($pos = strpos($uri,'?')) !== false) {
-            $uri_path = substr($uri,0,$pos);
+            $uri_path     = substr($uri,0,$pos);
             $query_string = substr($uri,$pos+1);
         } else {
-            $uri_path = $uri;
+            $uri_path     = $uri;
         }
         $call_page_func = $call_page_name = $prefix_path = '';
         if($this->cfg->uri_mode == 1 && isset($query_string)) {
-            $_GET['a'] = empty($_GET['a']) ? '':$_GET['a'];
-            $uri_path = dirname($_GET['a']);
+            $_GET['a']      = empty($_GET['a']) ? '':$_GET['a'];
+            $uri_path       = dirname($_GET['a']);
             $call_page_func = basename($_GET['a']);
         } else if($this->cfg->uri_mode == 2) { //PATH_INFO mode
             if(empty($_SERVER['PATH_INFO'])) {
@@ -221,6 +273,7 @@ final class XScheduler extends XObject {
             $uri_path = dirname($_SERVER['PATH_INFO']);
             $call_page_func = basename($_SERVER['PATH_INFO']);
             if(empty($_SERVER['PATH_INFO'])) $call_page_func = basename($_SERVER['DOCUMENT_URI'],".{$this->cfg->url_file_suffix}");
+        } else if($this->cfg->uri_mode == 4) {
         } else {
             if($uri_path == '/') {
                 $_SERVER['DOCUMENT_URI'] = strtok($this->cfg->web->index,' ');
@@ -232,14 +285,10 @@ final class XScheduler extends XObject {
             } else {
                 $call_page_func = basename($uri_path, ".{$this->cfg->url_file_suffix}");
                 $call_page_name = basename(dirname($uri_path));
-                $prefix_path = dirname(dirname($uri_path));
+                $prefix_path    = dirname(dirname($uri_path));
                 if($prefix_path == '/') $prefix_path = '';
             }
         }
-        if(PHP_CLI == false) define('__X_WEB_ROOT__',dirname($_SERVER['SCRIPT_FILENAME']));
-        defined('__X_APP_ROOT__') || define('__X_APP_ROOT__',__X_WEB_ROOT__);
-        $_ENV['__X_CALL_PAGE_DIR__'] = __X_APP_ROOT__."/{$this->cfg->php_dir_name}";
-        $request_method = empty($_SERVER['REQUEST_METHOD']) ? 'g' : substr(strtolower($_SERVER['REQUEST_METHOD']),0,1);
         $add_sub_domain_path = '';
         if($this->cfg->subsite_mode > 0) {
             if($this->cfg->subsite_mode < $this->cfg->subsite_start_level) {
@@ -250,8 +299,8 @@ final class XScheduler extends XObject {
                     $_SERVER['HTTP_HOST'] = $_SERVER['SERVER_NAME'];
                 }
                 if(!isip($_SERVER['HTTP_HOST'])) {
-                   $sub_domain_list  = explode('.',$_SERVER['HTTP_HOST']);
-                    $sub_domain_list = array_reverse($sub_domain_list);
+                   $sub_domain_list        = explode('.',$_SERVER['HTTP_HOST']);
+                    $sub_domain_list       = array_reverse($sub_domain_list);
                     $sub_domain_list_count = count($sub_domain_list) -1;
                     if($sub_domain_list_count >= $this->cfg->subsite_start_level) {
                         for($i=$this->cfg->subsite_start_level;$i<=$this->cfg->subsite_mode;$i++) {
@@ -261,12 +310,43 @@ final class XScheduler extends XObject {
                 }
             }
         }
-        $_ENV['__X_CALL_PAGE_NAME__'] = $call_page_name;
-        $_ENV['__X_CALL_PAGE_FILE__'] = "{$_ENV['__X_CALL_PAGE_DIR__']}{$add_sub_domain_path}{$prefix_path}/{$call_page_name}.php";
-        $_ENV['__X_CALL_PAGE_FUNC__'] = $request_method.$call_page_func;
-        $_ENV['__X_APP_UI_DIR__'] = __X_APP_ROOT__."/{$this->cfg->ui_dir_name}";
+        switch($_SERVER['REQUEST_METHOD']) {
+            case 'GET':
+                $request_method = 'G';
+            break;
+            case 'POST':
+                $request_method = 'P';
+            break;
+            case 'PUT':
+                $request_method = 'U';
+            break;
+            case 'HEAD':
+                $request_method = 'H';
+            break;
+            case 'TRACE':
+                $request_method = 'T';
+            break;
+            case 'DELETE':
+                $request_method = 'D';
+            break;
+            default :
+                $request_method = 'O';
+            break;
+        }
+
+        $_ENV['__X_CALL_PAGE_NAME__']    = $call_page_name;
+        $_ENV['__X_CALL_PAGE_FILE__']    = "{$_ENV['__X_CALL_PAGE_DIR__']}{$add_sub_domain_path}{$prefix_path}/{$call_page_name}.php";
+        $_ENV['__X_CALL_PAGE_FUNC__']    = $request_method.$call_page_func;
+        $_ENV['__X_APP_UI_DIR__']        = __X_APP_ROOT__."/{$this->cfg->ui_dir_name}";
         $_ENV['__X_APP_PHP_ERROR_LOG__'] = __X_APP_DATA_DIR__."/{$this->cfg->error_log_dir}/".date('Ymd');
     }
+
+    /**
+     * load view class of user's application
+     * 
+     * @access public
+     * @return void
+     */
     public function load_application_class_file() {
         if(!file_exists($_ENV['__X_CALL_PAGE_FILE__'])) {
             throw new XException("File {$_ENV['__X_CALL_PAGE_FILE__']} not be found");
@@ -281,6 +361,12 @@ final class XScheduler extends XObject {
         $classname = $_ENV['__X_CALL_PAGE_NAME__'];
         $method = $_ENV['__X_CALL_PAGE_FUNC__'];
         $ref = new ReflectionClass($_ENV['__X_CALL_PAGE_NAME__']);
+        $request_method = substr($_ENV['__X_CALL_PAGE_FUNC__'],0,1);
+        if($request_method == 'O') {
+            $this->app_instance = $ref->newInstance();
+            $this->app_instance->run('getOptions',substr($_ENV['__X_CALL_PAGE_FUNC__'],1));
+            return;
+        }
         $call_method = $ref->hasMethod($_ENV['__X_CALL_PAGE_FUNC__']);
         if($call_method === false) {
             throw new XException("Class {$_ENV['__X_CALL_PAGE_NAME__']} method {$_ENV['__X_CALL_PAGE_FUNC__']} not be found");
@@ -306,6 +392,13 @@ final class XScheduler extends XObject {
         }
         $this->app_instance->run($_ENV['__X_CALL_PAGE_FUNC__']);
     }
+
+    /**
+     * get html string of view class of user's application
+     * 
+     * @access public
+     * @return void
+     */
     public function get_html() {
         if($_ENV['__X_EXCEPTION_THROW__'] && $_ENV['__X_FATAL_EXCEPTION__']) {
             $html = $this->exception_string;
@@ -314,8 +407,17 @@ final class XScheduler extends XObject {
             $this->app_instance = null;
             if(PHP_CLI) gc_collect_cycles();
         }
+        if($this->cfg->encoding != $this->utf8) {
+            $html = mb_convert_encoding($html, $this->cfg->encoding, $this->utf8);
+        }
         return $html;
     }
+    /**
+     * load configuration
+     * 
+     * @access public
+     * @return void
+     */
     public function load_cfg() {
         global $_CFG;
         include(__X_FRAMEWORK_ROOT__ . '/config.default.php');
@@ -340,6 +442,13 @@ final class XScheduler extends XObject {
             }
         }
     }
+
+    /**
+     * set application timezone of the application
+     * 
+     * @access public
+     * @return void
+     */
     public function set_time_zone() {
         if(empty($this->cfg->timezone)) {
             throw new XException('Application timezone unset in config file ');
