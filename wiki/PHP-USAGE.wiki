@@ -11,9 +11,9 @@
   php run.php -d
   
 或者在应用程序配置文件中增加配置项目
-
+<syntaxhighlight lang="php">
   $_CFG->web->daemon = true;
-  
+<syntaxhighlight>
 ==2.PHP运行版本不能小于5.3==
 框架中大量使用了PHP Spl类库，PHP版本不能小于 5.3.0
 ==3.运行需要扩展==
