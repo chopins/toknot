@@ -3,51 +3,51 @@
 ==1.在命令行模式运行==
 应用程序的运行使用PHP命令行模式，所以在编译PHP的时候需要激活CLI模式，
 以Demo为例，首先进入Demo根目录，执行以下命令来运行程序
-{{{
-php run.php
-}}}
+
+  php run.php
+
 上面的命令将会让程序占用当前终端，所以需要按下面的方式让其以守护进程方式运行：
-{{{
-php run.php -d
-}}}
+  
+  php run.php -d
+  
 或者在应用程序配置文件中增加配置项目
-{{{
-$_CFG->web->daemon = true;
-}}}
+
+  $_CFG->web->daemon = true;
+  
 ==2.PHP运行版本不能小于5.3==
 框架中大量使用了PHP Spl类库，PHP版本不能小于 5.3.0
 ==3.运行需要扩展==
-  * libevent
-  * pcntl
-  * posix
-  * proctitle
-  * shmop
+  # libevent
+  # pcntl
+  # posix
+  # proctitle
+  # shmop
 如果你不确定是否安装，可以尝试运行程序，程序会检查是否存在相关扩展，并且会以异常形式返回相关信息
 =配置=
 ==1.配置文件==
 框架默认配置文件为config.default.php, 应用自己的配置文件位于应用的数据存储目录下面的conf目录下面的config.php文件。
 例如Demo的配置文件位于
-{{{
-demo/var/conf/config.php
-}}}
+
+  demo/var/conf/config.php
+  
 用户配置文件修改的值会覆盖掉默认配置文件中的值。
 例如,设置WEB服务器Document目录，可以直接使用下面的代码，不要声明$_CFG->web这个对象
-{{{
-$_CFG->web->document_root = ‘/’；
-}}}
+  
+  $_CFG->web->document_root = ‘/’；
+  
 所有配置项见默认配置文件说明
 ==2.框架需要定义的常量==
 应用程序可以定义以下常量:
-  * __X_IN_FRAME__     该值只能为true,
-  * __X_APP_ROOT__     设置用户应用程序所在目录,默认为当前执行目录
-  * __X_SHOW_ERROR__   是否显示错误异常和trace信息
-     # true 将在页面中输出，但是不将错误信息记录到日志中
-     # false 将不在页面中显示，但是会将错日志写入日志文件中
-     # null  将屏蔽所有错误信息的显示，并且不记录到日志文件中
-  * __X_EXCEPTION_LEVEL__ 设置异常等级, 
-     # 0 为所有信息，
-     # 1 将不抛出notice信息，
-     # 2 将不抛出Warning和notice信息
+  # __X_IN_FRAME__     该值只能为true,
+  # __X_APP_ROOT__     设置用户应用程序所在目录,默认为当前执行目录
+  # __X_SHOW_ERROR__   是否显示错误异常和trace信息
+     ## true 将在页面中输出，但是不将错误信息记录到日志中
+     ## false 将不在页面中显示，但是会将错日志写入日志文件中
+     ## null  将屏蔽所有错误信息的显示，并且不记录到日志文件中
+  # __X_EXCEPTION_LEVEL__ 设置异常等级, 
+     ## 0 为所有信息，
+     ## 1 将不抛出notice信息，
+     ## 2 将不抛出Warning和notice信息
   * __X_APP_DATA_DIR_NAME__ 数据目录名__X_APP_ROOT__目录下面
 以Demo为例，建议将这些常量定义在run.php中
 ==3.调用框架==
