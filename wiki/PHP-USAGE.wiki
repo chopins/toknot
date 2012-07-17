@@ -96,10 +96,23 @@ WEB服务器配置项为
 这个限制主要体现在应用必须继承 *X* 类
   
   abstract class X {
-      public-readonly XRequest $R; //外部数据对象
-      public-readonly XTemplate $T; //模板类实例
-      public function __xget__($name) {} //必须通过覆盖次方法实现PHP魔术方法__get()
-      public function __xset__($name,$value) {}//必须通过覆盖次方法实现PHP魔术方法__set()
+      public-readonly XRequest $R;       //外部数据对象
+      public-readonly XTemplate $T;      //模板类实例,设置模板名时才会有
+      public-readonly $visit_time;       //访问时间
+      public-readonly $visit_ip          //访问IP
+      public function __xget__($name) {} //必须通过覆盖本方法实现PHP魔术方法__get()
+      public function __xset__($name,$value) {}//必须通过覆盖本方法实现PHP魔术方法__set()
+      final public function call_init() {}  //初始化
+      final public function getOptions() {}  //自动返回指定URI支持的HTTP请求方法
+      final public function xheader(string $header) //设置HTTP header
+      final public function LM(string $model_name,sting $method_name)   //加载位于Model中的类或方法
+      final public function CV(string $view, $method_name)  //加载其他显示逻辑方法
+      final public exit_json($status,$message,$data) // 返回JSON格式文本
+      final public exit_xml($status,$message,$data) //返回XML格式数据
+      final public exit_js_array($var_name,$array)  //返回一个javascript 标准变量，其值为$array
+      final public set_js_var($var_name,$value)  //设置一个javascript变量
+      final public get_js()   //获取设置的所有javascript变量，返回一个直接能在HTML中使用的<script>标签下的javascript的文本串
+      final public xexit($str = null)  //程序结束，如果设置str,将输出$str
   }
     
 ==6.模板处理==

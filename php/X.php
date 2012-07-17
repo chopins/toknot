@@ -267,7 +267,7 @@ abstract class X {
     /**
      * auto set site common tpl data
      */
-    final public function construct_standard_template_data() {
+    final private function construct_standard_template_data() {
         $this->D->R = $this->R;
         foreach($this->_CFG->tpl->common_tpldata as $key => $value) {
             $this->D->$key = $value;
@@ -277,14 +277,14 @@ abstract class X {
     /**
      * instantiated database operation class
      */
-    final public function initdb() {
+    final private function initdb() {
         $this->db_instance = new dba();
     }
 
     /**
      * instantiated libtemplate class and parse tpl file and output html
      */
-    final public function init_tpl() {
+    final private function init_tpl() {
         if($this->T->isChange() == false) {
             return;
         }
@@ -350,7 +350,7 @@ abstract class X {
      * @param string $message   this response result description
      * @param array $data   this response return result data
      */
-    public function exit_json($status, $message, $data = null) {
+    final public function exit_json($status, $message, $data = null) {
         $return_data= array();
         $return_data['status'] = $status;
         $return_data['message'] = $message;
@@ -368,7 +368,7 @@ abstract class X {
      * @access public
      * @return void
      */
-    public function exit_xml($status, $message, $data = null) {
+    final public function exit_xml($status, $message, $data = null) {
         $xml  = '<?xml version="1.0" encoding="'.$this->_CFG->encoding.'"?>';
         $xml .= '<root>';
         $xml .= "<status>{$status}</status>";
@@ -389,7 +389,7 @@ abstract class X {
      * @access public
      * @return void
      */
-    public function array2xml(array $array) {
+    final public function array2xml(array $array) {
         $xml = '';
         foreach($data as $key=>$value) {
             if(is_array($value)) {
@@ -406,7 +406,7 @@ abstract class X {
      * @param string $var_name  the variables name
      * @param array $array   the variables value that is  array
      */
-    public function exit_js_array($var_name,$array) {
+    final public function exit_js_array($var_name,$array) {
         $json = json_encode($array);
         $js = "var $var_name=$json;";
         $this->xexit($js);
@@ -418,7 +418,7 @@ abstract class X {
      * @param string $var_name  the javascript variables name
      * @param mixed $value   the javascript variables value
      */
-    public function set_js_var($var_name,$value) {
+    final public function set_js_var($var_name,$value) {
         if(is_resource($value)) throw new XException('can not set resource to javascript of variables');
         if(is_object($value) || is_array($value)) {
             $value = json_encode($value);
@@ -429,7 +429,7 @@ abstract class X {
     /**
      * user application exec exit operation instend exit() of php
      */
-     public function xexit($str = null) {
+     final public function xexit($str = null) {
          if(PHP_CLI) {
             echo $str;
             return $this->__destruct();
@@ -443,13 +443,13 @@ abstract class X {
      *
      * @return string   HTML text format of javascript text
      */
-    public function get_js() {
+    final public function get_js() {
         $re = "<script type=\"text/javascript\">{$this->_x_js}</script>";
         $this->_x_js = '';
         return $re;
     }
 
-    public function init_var_dirname() {
+    final private function init_var_dirname() {
         if($this->_CFG->check_data_dir === false) return;
         $cache_dir = __X_APP_DATA_DIR__."/{$this->_CFG->data_cache}"; 
         $conf_dir = __X_APP_DATA_DIR__.'/conf';
