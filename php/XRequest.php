@@ -57,9 +57,12 @@ final class XSessionObject extends XArrayObject {
             mkdir($this->save_path);
         }
         if($this->use_php_session) {
-            session_name($this->sess_name);
-            session_save_path($this->save_path);
-            session_start();
+            $this->sid = session_id();
+            if(empty($this->sid)) {
+                session_name($this->sess_name);
+                session_save_path($this->save_path);
+                session_start();
+            }
             $this->sid = session_id();
         } else {
             if(isset($_COOKIE[$this->sess_name])) {
