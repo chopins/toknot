@@ -133,6 +133,34 @@ abstract class X {
         $this->init_var_dirname();
         $this->initStat = true;
     }
+
+    /**
+     * if request method is OPTIONS, the method will be call , and respones URI support HTTP method list 
+     * 
+     * @param string $method_name 
+     * @final
+     * @access public
+     * @return void
+     */
+    final public function getOptions($method_name) {
+        $request_method_list = array('G'=>'GET','P'=>'POST','U'=>'PUT','D'=>'DELETE','T'=>'TRACE','H'=>'HEAD');
+        $support_list = array();
+        foreach($request_method_list as $prefix => $method) {
+            if($this->__isset($prefix.$method_name)) {
+                $support_list[] = $method;
+            }
+        }
+        return $this->exit_json(1,$_SERVER['REQUEST_URI'],$support_list);
+    }
+
+    /**
+     * set HTTP header of item
+     * 
+     * @param mixed $header 
+     * @final
+     * @access protected
+     * @return void
+     */
     final protected function xheader($header) {
         if(PHP_SAPI == 'cli') {
             $header = trim($header);
@@ -144,12 +172,12 @@ abstract class X {
     }
 
     /**
-     * call model call
+     * do call model class method
      *
      * @param string $model_name  call model class name, could use directory
      * @return Object  the model class instance
      */
-    final protected function LM($model_name) {
+    final protected function LM($model_name, $method_name) {
         if(isset($this->dbm[$model_name])) return $this->dbm[$model_name];
         $model_file = __X_APP_ROOT__."/{$this->_CFG->php_model_dir_name}/$model_name.php";
         $model_class = basename($model_name);
@@ -162,10 +190,18 @@ abstract class X {
         $this->dbm[$model_name] = $model_ref->newInstance();
         return $this->dbm[$model_name];
     }
+
     /**
-     * call other view class
+     * call other view class or it is method
+     * 
+     * @param string $view  the view class name , 
+     *                      it has 'G','P' .. etc that is  prefix character of request method
+     * @param string $func 
+     * @final
+     * @access protected
+     * @return void
      */
-    final protected function CV($view, $func = null) {
+    final protected function CV($view, $method_name = null) {
         $view_class = basename($view);
         if(!class_exists($view_class, false)) {
             $file = __X_APP_ROOT__. "/{$this->_CFG->php_dir_name}/{$view}.php";
@@ -175,8 +211,9 @@ abstract class X {
         }
         $view_ref = new ReflectionClass($view_class);
         $ins = $view_ref->newInstance();
-        if($func == null) return $ins;
-        return call_user_func(array($ins,$func));
+        $ins->call_init();
+        if($method_name == null) return $ins;
+        return call_user_func(array($ins,$method_name));
     }
     /**
      * user array save your site config by key/value storage to file
@@ -307,7 +344,7 @@ abstract class X {
     }
     
     /**
-     * exit script and print XPHPFramework of format ajax text
+     * exit script and print ajax format text
      *
      * @param int $status   this response result status code
      * @param string $message   this response result description
@@ -319,14 +356,50 @@ abstract class X {
         $return_data['message'] = $message;
         $return_data['data'] = $data;
         $json_encode = json_encode($return_data);
-        if(PHP_CLI) {
-            echo $json_encode;
-            $this->__destruct();
+        $this->xexit($json_encode);
+    }
+    
+    /**
+     * exit script and print XML document text
+     * 
+     * @param mixed $status 
+     * @param mixed $message 
+     * @param mixed $data 
+     * @access public
+     * @return void
+     */
+    public function exit_xml($status, $message, $data = null) {
+        $xml  = '<?xml version="1.0" encoding="'.$this->_CFG->encoding.'"?>';
+        $xml .= '<root>';
+        $xml .= "<status>{$status}</status>";
+        $xml .= "<message>{$message}</message>";
+        if(!is_array($data)) {
+            $xml .= "<data>{$data}</data>";
         } else {
-            die($json_encode);
+            $xml .= '<data>' . $this->array2xml($data).'</data>';
         }
+        $xml .= '</root>';
+        $this->xexit($xml);
     }
 
+    /**
+     * convert array to XML document 
+     * 
+     * @param array $array 
+     * @access public
+     * @return void
+     */
+    public function array2xml(array $array) {
+        $xml = '';
+        foreach($data as $key=>$value) {
+            if(is_array($value)) {
+                $xml .= $this->array2xml($value);
+            } else {
+                $xml .= "<{$key}>$value</{$key}>";
+            }
+        }
+        return $xml;
+    }
     /**
      * exit script and print javascript of one variables defined by array
      *
@@ -336,12 +409,7 @@ abstract class X {
     public function exit_js_array($var_name,$array) {
         $json = json_encode($array);
         $js = "var $var_name=$json;";
-        if(PHP_CLI) {
-            echo $js;
-            $this->__destruct();
-        } else {
-            die($js);
-        }
+        $this->xexit($js);
     }
 
     /**
@@ -362,8 +430,12 @@ abstract class X {
      * user application exec exit operation instend exit() of php
      */
      public function xexit($str = null) {
-         echo $str;
-         $this->__destruct();
+         if(PHP_CLI) {
+            echo $str;
+            return $this->__destruct();
+         } else {
+             die($str);
+         }
      }
 
     /**
@@ -371,7 +443,7 @@ abstract class X {
      *
      * @return string   HTML text format of javascript text
      */
-    public function set_js() {
+    public function get_js() {
         $re = "<script type=\"text/javascript\">{$this->_x_js}</script>";
         $this->_x_js = '';
         return $re;
