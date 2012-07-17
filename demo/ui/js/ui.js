@@ -6,38 +6,46 @@ var dop = {
     mainBlockId : 'b-center',
     leftNavGetUri : null,
     leftNavBox : null,
+    rightBar : null,
     mainBlock : null,
     pageRight : null,
     userName : null,
+    //初始化后台
     init : function() {
         dop.initUI();
         dop.getUri();
         dop.checkUserLogin();
     },
+    //初始化页面
     initUI : function() {
         dop.mainBlock = X.$(dop.mainBlockId);
         dop.leftNavBox = X.createNode('div');
-        dop.leftNavBox.setClass('left-block');
+        dop.leftNavBox.addClass('left-block');
         dop.mainBlock.appendChild(dop.leftNavBox);
         dop.pageRight = X.createNode('div');
-        dop.pageRight.setClass('right-block');
+        dop.pageRight.addClass('right-block');
         dop.mainBlock.appendChild(dop.pageRight);
         dop.bodyResize();
-        X.$().body.addListener('resize',dop.bodyResize);
+        X.$(document.body).addListener('resize',dop.bodyResize);
     },
+    //页面尺寸控制
     bodyResize : function() {
         var size = X.pageShowSize();
         X.doc.body.style.height = size.h+'px';
         X.doc.body.style.width = size.w+'px';
-        dop.mainBlock.style.height = (size.h - 50)+'px';
+        dop.pageRight.style.width = (size.w - 260) + 'px';
+        dop.mainBlock.style.height = (size.h - 100)+'px';
     },
+    //获取当前URL中的hash值
     getUri : function() {
         dop.accessUri = window.location.hash.substr(1);
     },
+    //设置URL的ACT
     setUri : function(uri) {
         window.location.hash = uri;
         dop.uri = uri;
     },
+    //检查用户是否登录
     checkUserLogin : function() {
         X.Ajax.get(dop.loginUri,function(re) {
             if(re.status == 1) {
@@ -48,10 +56,11 @@ var dop = {
             }
         });
     },
+    // 创建左侧导航栏
     createLeftNav : function() {
         if(!dop.leftNavGetUri) return;
                 var tli= X.createNode('div');
-        tli.setClass('left-nav-div');
+        tli.addClass('left-nav-div');
         X.Ajax.get(dop.leftNavGetUri,function(re) {
             if(re.status == 0) return;
             var list = re.data;
@@ -63,23 +72,38 @@ var dop = {
                 nav.action = tmp[1];
                 nav.addListener('click',dop.showRightBlock);
                 if(dop.accessUri == tmp[1]) {
-                    nav.setClass('left-nav-div-active');
+                    nav.addClass('left-nav-div-active');
                     dop.activeNav = nav;
+                }
+                if(typeof(tmp[2]) != 'undefined') {
+                    nav.addClass('left-nav-head');
                 }
                 dop.leftNavBox.appendChild(nav);
             }
         });
     },
+    //显示页面 
     showView : function() {
         dop.createLeftNav();
         dop.showRightBlock();
     },
+    //页面的从定向动作操作
+    pageAutoAct : function(act,part) {
+        if(part == 'page') {
+            switch(act) {
+                case 'refresh':
+                    window.location.href = '/';
+                return;
+            }
+        }
+    },
+    //显示右侧页面
     showRightBlock : function(e) {
         if(dop.activeNav) dop.activeNav.removeClass('left-nav-div-active');
         if(e) {
             var nav = X.getEventNode(e);
             dop.accessUri = nav.action;
-            nav.setClass('left-nav-div-active');
+            nav.addClass('left-nav-div-active');
             dop.activeNav = nav;
             dop.setUri(nav.action);
         }
@@ -89,29 +113,70 @@ var dop = {
             } else if(re.status == -1) {
                 return X.alertBox(re.data.title,re.message,null,'',1);
             } else {
+                if(re.data) {
+                    if(typeof(re.data.act) != 'undefined' && typeof(re.data.part) != 'undefined') {
+                        dop.pageAutoAct(re.data.act,re.data.part);
+                    } else if(re.status == 1) {
+                        dop.createRightBlock(re);
+                    }
+                }
             }
         });
     },
+    createRightTabNav : function(opreate_nav) {
+        var tabNavBlock = X.createNode('div');
+        tabNavBlock.setClass('b-right-tab-block');
+        var tabNavNode = X.createNode('div');
+        tabNavNode.setClass('b-right-tab-nav');
+        for(var i in opreate_nav) {
+            if(isNaN(i)) continue;
+            var menu = opreate_nav[i].split('|');
+            var item = tabNavNode.copyNode(true);
+            item.innerHTML = menu[0];
+            item.act = menu[1];
+            if(menu[1] == dop.accessUri) {
+                item.addClass('b-right-tab-nav-active');
+            }
+            tabNavBlock.appendChild(item);
+        }
+        dop.pageRight.appendChild(tabNavBlock);
+    },
+    createRightBlock : function(re) {
+        if(dop.rightBar == null) {
+            dop.rightBar = X.createNode('div');
+            dop.rightBar.setClass('b-right-block-bar');
+            dop.pageRight.appendChild(dop.rightBar);
+        }
+        dop.rightBar.innerHTML = re.message;
+        if(re.data.opreate_nav) {
+            dop.createRightTabNav(re.data.opreate_nav);
+        }
+        if(re.data.table_title) {
+        }
+    },
+    //显示登录框
     userLoginView : function(re) {
         X.inputBox(re.data.title,'',re.data.input,re.data.button,re.data.cls,true,100);
     },
+    //用户登录操作
     userLoginAct : function(e) {
         var inputBox = this.box;
         inputBox.submitInput(this.url,function(re) {
-            inputBox.msg(re.message);
             if(re.status == 1) {
-                box.hide();
+                inputBox.iHide();
                 dop.leftNavGetUri = re.data;
                 dop.showView();
+                return;
             }
+            inputBox.msg(re.message, '',true);
             return;
         }, function(data, obj) {
             if(!data.username) {
-                obj.msg('用户名不能为空');
+                obj.msg('用户名不能为空', '',true);
                 return false;
             }
             if(!data.password) {
-                obj.msg('密码不能为空');
+                obj.msg('密码不能为空','',true);
                 return false;
             }
             return true;

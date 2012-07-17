@@ -46,6 +46,7 @@ if(typeof console == 'undefined' && debug) {
 navigator.IE =typeof ActiveXObject == 'undefined' ? false : true;
 var X = {
 doc : window.document,
+xPNode : window.document.body, //X.$(ele)方法返回对象的父对象
 isReady : false,
 ugent : navigator.userAgent.toLowerCase(),
 intervarlHandle : [],
@@ -119,8 +120,11 @@ unloadExec : function() {
     for(var i=0;i<X.unloadExecList.length;i++) X.unloadExecList[i]();
     if(X.unloadExecMessage) return X.unloadExecMessage;
 },
+error : function(msg,url , line) {
+},
 init  : function() {
     window.onload = function() {
+    window.onerror = X.error;
     X.loadJSON();
     if(X.doc) {
         X.doc.onkeydown = X.kEF;
@@ -258,11 +262,29 @@ clearInterval : function(id) {
     var i = X.timeoutHandle.indexOf(id)
     if(i>-1) delete X.timeoutHandle[i];
 },
+/**
+ * HTML DOM 元素访问函数
+ *
+ * @ele : mixed   元素标识,目前支持以下标识:
+ *              #className   #跟随元素样式名，返回拥有该样式的所有对象的数组
+ *              @tagName     @跟随元素标签名，返回所有拥有该标签的对象的数组
+ *              %name        %跟随元素的name属性值，返回所有拥有该name值的对象的数组
+ *              id           传入没有上面前缀字符的字符串时作为元素ID范围，返回该ID指向对象
+ *              ELEMENT_NODE 传入一个元素对象时，将返回X.$(ELEMENT_NODE)对象
+ *
+ * @return X.$(ele) 返回一个封装否的元素对象
+ *
+ * 方法列表
+ * X.$(ele).getIframeBody() 获取iframe元素引用页面的body对象
+ * X.$(ele).getPos() 获取对象坐标数据 返回 {h : 高，w:宽，x:X坐标, y:Y坐标}
+ * X.$(ele).copyNode()  复制元素, 返回X.$(ele)对象
+ * ...........................见方法注释
+ */
 $ : function(ele) {
+    if(!this.xPNode) this.xPNode = X.xPNode;
     if(!ele) {
-        var doc = window.document;
-        doc.body = X.$(window.document.body);
-        return doc;
+        console.warn('error');
+        return false;
     }
     var eleType = typeof(ele);
     switch(eleType) {
@@ -273,26 +295,26 @@ $ : function(ele) {
                 case '#': //样式名
                     return (function(clsName) {
                         var list = Array();
-                        var childList = X.$(X.doc.body).getChilds();
+                        var childList = X.$(this.xPNode).getChilds();
                         for(var t in childList) !isNaN(t) && X.$(childList[t]).hasClass(clsName) && (list[list.length] = X.$(childList[t]));
                         return list;
                         })(param);
                 case '@'://标签名
                     return (function (tagName) {
                         var list = Array();
-                        var childList = X.$(X.doc.body).getChilds();
+                        var childList = X.$(this.xPNode).getChilds();
                         for(var t in childList) !isNaN(t) && X.$(childList[t]).tag == tagName.toLowerCase() && (list[list.length] = X.$(childList[t]));
                         return list;
                     })(param);
                 case '%'://NAME名
                     return (function(name) {
                         var list = Array();
-                        var childList = X.$(X.doc.body).getChilds();
+                        var childList = X.$(this.xPNode).getChilds();
                         for(var t in childList) !isNaN(t) && childList[t].getAttribute('name') == name && (list[list.length] = X.$(childList[t]));
                         return list;
                     })(param);
                 default:
-                    var __element = X.doc.getElementById(ele);
+                    var __element = document.getElementById(ele);
                     break;
                 }
             break;
@@ -310,6 +332,8 @@ $ : function(ele) {
             if(!__element.nodeType) return false;
             if(__element.nodeType != Node.ELEMENT_NODE) return false;
             __element.tag = __element.tagName ? __element.tagName.toLowerCase() : false;
+            __element.$ = X.$;
+            __element.$.xPNode = __element;
             __element.inputType = (function() {
                     if(__element.tag == 'select') return X.inputType.INPUT_SELECT;
                     if(__element.tag == 'textarea') return X.inputType.INPUT_TEXTAREA;
@@ -346,6 +370,7 @@ $ : function(ele) {
                 copyNode : function(deep) {
                     return X.$(this.cloneNode(deep));
                 },
+                //根据样式名找子元素
                 getNodeByCls : function(clsName) {
                     var childList = this.getChilds();
                     var list = Array();
@@ -353,12 +378,14 @@ $ : function(ele) {
                         if(!isNaN(t) && childList[t].hasClass(clsName)) list[list.length] = childList[t];
                     return list;
                 },
+                //根据指定属性及属性值找子元素
                 getChildNodeByAttr : function(attr,value) {
                     var childList = this.getChilds();
                     var list = Array();
                     for(var t in childList) if(!isNaN(t) && childList[t].getAttribute(attr) == value) list[list.length] = childList[t];
                     return list;
                 },
+                //根据指定属性及属性值找上级元素,直到到达body为止
                 getParentNodeByAttr : function(attr,value) {
                     if(this.parentNode && this.parentNode.nodeType == Node.ELEMENT_NODE) {
                         if(this.parentNode.getAttribute(attr) == value) return X.$(this.parentNode);
@@ -366,6 +393,7 @@ $ : function(ele) {
                     }
                     return false;
                 },
+                //获取第一ELEMENT_NODE子元素
                 getFirstNode : function() {
                     var fNode = this.firstChild;
                     while(fNode) {
@@ -374,6 +402,7 @@ $ : function(ele) {
                     }
                     return false;
                 },
+                //获取最后一个ELEMENT_NODE子元素
                 getLastNode : function() {
                     var lNode = this.lastChild;
                     while(lNode) {
@@ -383,18 +412,21 @@ $ : function(ele) {
                     return false;
                 },
 
+                //检测当前元素是否是参数指定元素的子元素
                 isNodeChild : function(parentNode) {
                     if(this.compareDocumentPosition) {
                         return this.compareDocumentPosition(parentNode) == 10;
                     }
                     return parentNode.contains(this);
                 },
+                //在第一个子元素前插入一个新节点
                 unshiftChild : function(new_node) {
                     if(this.firstChild) {
                         return this.insertBefore(new_node,this.firstChild);
                     }
                     return this.appendChild(new_node);
                 },
+                //根据标签名查找上级元素,直到到达body
                 getParentNodeByTag : function(tagName) {
                     if(this.parentNode) {
                         if(this.parentNode.tagName.toUpperCase() == 'HTML') return false;
@@ -403,6 +435,7 @@ $ : function(ele) {
                     }
                     return false;
                 },
+                //根据标签名查找子元素
                 getSubNodeByTag : function(tagName) {
                     var childList = this.getChilds();
                     var list = Array();
@@ -412,17 +445,20 @@ $ : function(ele) {
                     }
                     return list;
                 },
+                //检查是否有指定样式名
                 hasClass : function(cls) {
                     var re = new RegExp('(\\s|^)'+cls+'(\\s|$)');
                     return re.test(this.className);
                 },
+                //移除指定样式名
                 removeClass : function(cls) {
                     if (this.hasClass(cls)) {
                         var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
                         this.className=this.className.replace(reg,'');
                     }
                 },
-                setClass : function(cls) {
+                //添加一个样式名
+                addClass : function(cls) {
                     if(!this.hasClass(cls)) {
                         if(this.className !='') {
                             this.className = this.className+=' '+cls;
@@ -431,10 +467,16 @@ $ : function(ele) {
                         }
                     }
                 },
+                //设置样式名，会替换原有样式
+                setClass : function(cls) {
+                    this.className = cls;
+                },
+                //设置style属性值，会替换原有属性值
                 setCss : function(value) {
                     if(navigator.IE) return this.style.cssText = value;
                     this.setAttribute('style',value);
                 },
+                //获取元素style属性中指定名字的值
                 getStyle : function(ns) {
                     ns = this.convStyleName(ns);
                     if(this.style[ns]) return this.style[ns];
@@ -453,19 +495,23 @@ $ : function(ele) {
                     }
                     return ns;
                 },
+                //设置一个style属性值
                 setStyle : function(ns,value) {
                     ns = this.convStyleName(ns);
                     this.style[ns] = value;
                 },
+                //绝对定位时，让元素位于顶部
                 setOnTop : function() {
                     var index = X.maxZIndex + 1;    
                     X.maxZIndex = index;
                     this.setStyle('z-index',index);
                 },
+                //设置元素z-index值
                 setZIndex : function(idx) {
                     if(idx > X.maxZIndex) X.maxZIndex = idx;
                     this.setStyle('z-index',idx);
                 },
+                //元素下一个ELEMENT_NODE元素
                 nextNode : function() {
                     var nNode = this.nextSibling;
                     while(nNode) {
@@ -474,6 +520,7 @@ $ : function(ele) {
                     }
                     return false;
                 },
+                //元素上一个ELEMENT_NODE元素
                 previousNode : function() {
                     var pNode = this.previousSibling;
                     while(pNode) {
@@ -561,6 +608,7 @@ $ : function(ele) {
                  //   X.setCache(obj,list,'getChildsList');
                     return list;
                 },
+                //提交表单
                 submitForm : function(func, enter) {
                     var eventObj = this;
                     var _submitForm = function(e) {
@@ -610,6 +658,7 @@ $ : function(ele) {
                     } 
                     return false;
                 },
+                //让元素对象剧中,spec为true标识是否在页面滚动时剧中
                 toCenter : function(eff,spec) {
                     if(!spec) this.addListener('scroll',this.scrollMove);
                     this.toCenterProto(eff,spec);
@@ -620,11 +669,13 @@ $ : function(ele) {
                 },
                 mousePopNearX : 5,
                 mousePopNearY : 5,
+                //元素跟随鼠标
                 mousePop : function(e) {
                     var mousePos = X.mousePos(e);
                     var scroll = X.scrollOffset();
                     this.toPos(mousePos.x+this.mousePopNearX +scroll.x,mousePos.y+this.mousePopNearY+scroll.y);
                 },
+                //元素跟随指定对象
                 byNodePop : function(byObj,direct) {
                     if(!byObj.getPos) byObj = X.$(byObj);
                     var pop = this;
@@ -671,6 +722,7 @@ $ : function(ele) {
                     X.mouseover(pmof, byObj);
                     setPos(direct);
                 },
+                //放大图片
                 maxImg : function(cls,bsrc) {
                     if(this.tag != 'img') return;
                     this.setAttribute('title','点击图片查看大图');
@@ -678,7 +730,7 @@ $ : function(ele) {
                         var pPos = X.pageShowSize();
                         var src = bsrc ? bsrc : X.getEventNode(e).src;
                         var bg = X.createNode('div');
-                        bg.setClass(cls);
+                        bg.addClass(cls);
                         var img = X.createNode('img');
                         img.setAttribute('src',src);
                         img.setAttribute('title','点击关闭查看大图');
@@ -696,12 +748,14 @@ $ : function(ele) {
                         img.setOnTop();
                     });
                 },
+                //将元素移动到指定坐标
                 toPos : function(x,y) {
                     this.style.position = 'absolute';
                     this.setStyle('top',y+'px');
                     this.setStyle('left',x+'px');
                     this.setOnTop();
                 },
+                //元素可移动，down为鼠标按下该元素时可移动,spec为只能在该元素范围内移动
                 move : function(down,spec) {
                     var NodeMoveObj = {};
                     NodeMoveObj.pointerNode = down ? down : this;
@@ -753,7 +807,8 @@ $ : function(ele) {
                     down.addListener('mouseout',endMove);
                     down.addListener('mouseup',endMove);
                 },
-                maxsize : function(spec,part) {
+                //双击时放大对象，spec为只能放大到该元素范围，part为点击对象,type为true时为单击，否则为双击
+                maxsize : function(spec,part, type) {
                     var maxSizeNode = spec ? spec : X.$(X.doc.body);
                     var clickNode = part ? X.$(part) : this;
                     var maxSize = maxSizeNode.getPos ? maxSizeNode.getPos() : X.$(maxSizeNode).getPos;
@@ -774,8 +829,13 @@ $ : function(ele) {
                             changeNode.style.height = initSize.h+'px';
                         }
                     };
-                    clickNode.addListener('dblclick',nodeToMaxSize);
+                    if(type) {
+                        clickNode.addListener('click',nodeToMaxSize);
+                    } else {
+                        clickNode.addListener('dblclick',nodeToMaxSize);
+                    }
                 },
+                //使元素可修改尺寸,spec为只能在该元素范围内，sens为鼠标灵敏度
                 resize : function(sens,spec) {
                     var resizeNodeObj = {};
                     resizeNodeObj.node = this;
@@ -869,20 +929,32 @@ $ : function(ele) {
                         spec.addListener('mouseout',endResizeNode);
                     }
                 },
+                //隐藏元素，spec为点击该元素隐藏
                 close : function(spec) {
                     var clickNode = spec ? (spec.getPos ? spec : X.$(spec)) : this;
                     clickNode.addListener('click',function(e) { clickNode.style.display = 'none'});
                 },
-                hide : function() {
-                    this.style.display = 'none';
+                //隐藏元素，visibility为隐藏后是否保留位置
+                hide : function(visibility) {
+                    if(visibility) {
+                        this.style.visibility = 'hidden';
+                    } else {
+                        this.style.display = 'none';
+                    }
                 },
-                show : function() {
-                    this.style.display = 'block';
+                show : function(visibility) {
+                    if(visibility) {
+                        this.style.visibility  = 'visible';
+                    } else {
+                        this.style.display = 'block';
+                    }
                 },
+                //销毁元素
                 destroy : function() {
                     this.parentNode.removeChild(this);
                     delete this;
                 },
+                //获取当前输入区，光标偏移量
                 getCursorOffset : function() {
                     if(this.selectionStart) return this.selectionStart;
                     if(X.doc.selection) {
@@ -892,6 +964,7 @@ $ : function(ele) {
                     }
                     return 0;
                 },
+                //设置光标偏移量
                 setCursorOffset : function(offset,start) {
                     var start = 0;
                     if(X.doc.hasFocus() && this == X.getFocusNode()) start = this.getCursorOffset();
@@ -911,6 +984,30 @@ $ : function(ele) {
             for(var fn in __extend) __element[fn] = __extend[fn];
             return __element;
         },
+        /**
+         *  AJAX对象
+         *
+         *  X.Ajax.get(url, callFunc) GET方法请求, 
+         *             url      : string    请求URL
+         *             callFunc : function  请求返回回调函数
+         *                            callFunc(returnData)回调函数
+         *  X.Ajax.post(url, data, callFunc) POST方法请求
+         *             url      : string  请求URL
+         *             data     : JSON  请求数据
+         *             callFunc : function 请求返回回调函数
+         *  X.Ajax.head(url,callFunc) HEAD方法请求
+         *             url      : string  请求URL
+         *             callFunc : function 请求返回回调函数
+         *                           callFunc(responseHead, lastModified, resourceAvailable)
+         *  X.Ajax.put(url, data, callFunc) PUT 方法请求
+         *  X.Ajax.options(url ,callFunc)  OPTIONS 方法请求
+         *  X.Ajax.del(url,callFunc)  DELETE方法请求
+         *  X.Ajax.trace(url,callFunc) TRACE方法请求
+         *  X.Ajax.file(formObj, callFunc)  上传文件
+         *              formObj  : ELEMENT_NODE  上传文件表单
+         *              callFunc : function  请求返回回调函数
+         *  X.Ajax.waitTime : 等待超时时间
+         */
         Ajax : {
             XMLHttp :  null,
             dataType : 'json',
@@ -948,10 +1045,36 @@ $ : function(ele) {
                 X.Ajax.url = url.strpos('?') != false ? url+'&is_ajax=1' : url+'?is_ajax=1';
                 X.Ajax.url+= '&t='+(new Date().getTime());
             },
-            get : function(url, callFunc) {
+            
+            del : function(url, callFunc) {
+                X.Ajax.__get(url,callFunc,'DELETE');
+            },
+            head : function(url, callFunc) {
+                X.Ajax.__get(url,callFunc,'HEAD');
+            },
+            get : function(url , callFunc) {
+                X.Ajax.__get(url,callFunc,'GET');
+            },
+            options : function(url, callFunc) {
+                X.Ajax.__get(url,callFunc,'OPTIONS');
+            },
+            trace : function(url, callFunc) {
+                X.Ajax.__get(url,callFunc,'TRACE');
+            },
+            __get : function(url, callFunc, method) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
-                X.Ajax.method = 'GET';
+                X.Ajax.method = method;
+                var openId = X.Ajax.openInstanceId;
+                if(callFunc) X.Ajax.callFunc[openId] = callFunc;
+                X.Ajax.openInstanceId++;
+                X.Ajax.callServer(openId);
+            },
+            put : function(url ,data, callFunc) {
+                X.Ajax.init();
+                X.Ajax.setUrl(url);
+                X.Ajax.setData(data);
+                X.Ajax.method  = 'PUT';
                 var openId = X.Ajax.openInstanceId;
                 if(callFunc) X.Ajax.callFunc[openId] = callFunc;
                 X.Ajax.openInstanceId++;
@@ -1047,12 +1170,15 @@ $ : function(ele) {
                 //console.warn('Ajax instance method is '+ X.Ajax.method);
                 //console.warn('Ajax instance call url is '+ X.Ajax.url);
                 X.Ajax.openInstance[openId].open(X.Ajax.method, X.Ajax.url,X.Ajax.waitTime);
-                if (X.Ajax.method == "POST") X.Ajax.openInstance[openId].setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                if (X.Ajax.method == "POST") 
+                    X.Ajax.openInstance[openId].setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 X.Ajax.openInstance[openId].send(X.Ajax.data);
                 X.Ajax.outObj[openId] = X.setTimeout(function(){
-                    X.Ajax.openInstance[openId].abort();
-                    delete X.Ajax.openInstance[openId];
-                    X.Ajax.complete();}, X.Ajax.waitTime);
+                                                            X.Ajax.openInstance[openId].abort();
+                                                            delete X.Ajax.openInstance[openId];
+                                                            X.Ajax.complete();
+                                                    }, X.Ajax.waitTime);
+                X.Ajax.openInstance[openId].method = X.Ajax.method ;
                 X.Ajax.showStatus();
                 X.Ajax.openInstance[openId].onreadystatechange = function() {
                     if (X.Ajax.openInstance[openId].readyState == 4) {
@@ -1061,6 +1187,16 @@ $ : function(ele) {
                         X.Ajax.complete();
                         if(X.Ajax.openInstance[openId].status == 200) {
                             if (X.Ajax.callFunc) {
+                                if(X.Ajax.openInstance[openId].method = X.Ajax.method == 'HEAD') {
+                                    X.Ajax.callFunc[openId](X.Ajax.openInstance[openId].getAllResponseHeaders(),
+                                                            X.Ajax.openInstance[openId].getLastModified(),
+                                                            X.Ajax.openInstance[openId].getIsResourceAvailable());
+                                    return;
+                                }
+                                if(X.Ajax.openInstance[openId].method == X.Ajax.method == 'TRACE') {
+                                    X.Ajax.callFunc[openId](X.Ajax.openInstance[openId].responseText);
+                                    return;
+                                }
                                 if(X.Ajax.dataType.toLowerCase() == 'json') {
                                     try{
                                         if(X.Ajax.openInstance[openId].responseText == '') {
@@ -1077,7 +1213,7 @@ $ : function(ele) {
                                             }
                                         }
                                     } catch(e) {
-                                        console.warn('Ajax response data is not JSON'+e);
+                                        console.warn('Ajax response data is not JSON Object Error: '+e + ' in File '+e.fileName + ' Line '+e.lineNumber);
                                     }
                                 } else {
                                     X.Ajax.callFunc(X.Ajax.openInstance[openId].responseXML); 
@@ -1086,7 +1222,6 @@ $ : function(ele) {
                         } else {
                             if(X.Ajax.openInstance[openId].status == 0) {
                                 console.warn('Ajax requset timeout');
-                                //alert('网络超时，请稍后在试');
                             }
                         }
                         delete X.Ajax.openInstance[openId];
@@ -1117,6 +1252,26 @@ $ : function(ele) {
                 }
             }
         },
+        /**
+         * 创建一个元素滚动控件 
+         *
+         * @data    : JSON    轮换元素数据 {'label' : string  该轮换项标签
+         *                                  'link'  : string  链接URL
+         *                                  'img'   : string  轮换项图片地址
+         *                                  }
+         * @obj     : ELEMENT_NODE 本控件摆放位置元素
+         * @type    : int     1为数字列表点击切换,2前进后退切换,3,文字切换,4缩略图列表点击切换
+         * @eff     : int     轮换效果, 1为渐变轮换,2滑动切换
+         * @cls     : string  控件内元素样式名前缀, 实际元素会加上以下名字:
+         *                                  CarouselMainBox : 控件样式
+         *                                  CarouselListDiv : 展示元素清单样式
+         *                                  CarouselPreDiv  : 上一个按钮样式
+         *                                  CarouselNextDiv : 下一个按钮样式
+         *                                  CarouselCurrentSelect : 当前选中元素指示样式
+         * @waitTime: int     滚动间隔时间
+         *
+         * @return ELEMENT_NODE 返回控件元素对象
+         */
         carousel : function(data,obj,type,eff,cls,waitTime) {
             var preInter = null;
             var nextInter = null;
@@ -1218,7 +1373,7 @@ $ : function(ele) {
             waitTime = waitTime || 3000;
             var boxDiv = X.createNode('div');
             var mainDiv = boxDiv.copyNode(true);
-            mainDiv.setClass(cls+'CarouselMainBox');
+            mainDiv.addClass(cls+'CarouselMainBox');
             var a = X.createNode('a');
             var j = 0;
             for(var i in data) {
@@ -1240,19 +1395,19 @@ $ : function(ele) {
             var itemCount = j;
             if(type == 2) {
                 var preDiv = boxDiv.copyNode(true);
-                preDiv.setClass(cls+'CarouselPreDiv');
+                preDiv.addClass(cls+'CarouselPreDiv');
                 preDiv.addListener('click',preItem);
                 boxDiv.appendChild(preDiv);
                 boxDiv.appendChild(mainDiv);
                 var nextDiv = boxDiv.copyNode(true);
-                nextDiv.setClass(cls+'CarouselNextDiv');
+                nextDiv.addClass(cls+'CarouselNextDiv');
                 nextDiv.addListener('click',nextItem);
                 boxDiv.appendChild(nextDiv);
             } else {
                 boxDiv.appendChild(mainDiv);
                 var listDiv = X.createNode('div');
                 var span = X.createNode('span');
-                listDiv.setClass(cls+'CarouselListDiv');
+                listDiv.addClass(cls+'CarouselListDiv');
                 listDiv.addListener('mouseover',changeItem);
                 for(var k in data) {
                     if(isNaN(k)) continue;
@@ -1265,20 +1420,31 @@ $ : function(ele) {
                     }
                     listDiv.appendChild(itemSpan);
                 }
-                listDiv.getFirstNode().setClass(cls+'CarouselCurrentSelect');
+                listDiv.getFirstNode().addClass(cls+'CarouselCurrentSelect');
                 listDiv.addListener('mouseout',startCarousel);
                 boxDiv.appendChild(listDiv);
             }
-            boxDiv.setClass(cls);
+            boxDiv.addClass(cls);
             obj.appendChild(boxDiv);
             var initPos = mainDiv.getPos();
             startCarousel();
             return boxDiv;
         },
+
+        /**
+         *  创建一个简单的具有时效性的信息控件
+         *
+         *  @msg : string       信息内容
+         *  @cls : string       信息提示控件样式
+         *  @zIndex : int       信息提示控件 z-index 值
+         *  @waitTime : int     默认3000ms,信息提示控件自动超时隐藏毫秒时间
+         *
+         *  @return box : ELEMENT_NODE   返回控件所在DIV对象
+         */
         msgBox : function(msg,cls,zIndex,waitTime) {
             var box = X.createNode('div');
             box.innerHTML = msg;
-            if(cls) box.setClass(cls);
+            if(cls) box.addClass(cls);
             if(zIndex) box.setZIndex(zIndex);
             box.setStyle('position','absolute');
             X.doc.body.appendChild(box);
@@ -1288,12 +1454,54 @@ $ : function(ele) {
             box.setOnTop();
             return box;
         },
+        /**
+         * 创建一个拥有确定按钮的信息提示控件
+         *
+         * @tit : string        控件标题信息
+         * @msg : string        控件提示信息
+         * @func  : function    确定按钮后执行的操作 
+         *                          回调函数原型样式:
+         *                              callbackFunciton(event, button);
+         *                                  event  : EventObject   点击事件
+         *                                  button : boolean       等于true
+         * @cls : string        控件内元素样式名前缀,内部实际会跟随以下名字:
+         *                          TitleDiv  : 标题栏样式
+         *                          MainDiv   : 控件中间主题部分样式
+         *                          ButtonDiv : 按钮所在元素样式
+         * @cover : boolean     是否显示cover层,默认不显示，true为显示
+         * @zIndex : int        控件 z-index 值,如果没有设置将为当前页面最上面
+         *
+         * @return box : ELEMENT_NODE   返回控件所在DIV对象
+         */
         alertBox : function(tit,msg,func, cls,cover,zIndex) {
             return X.confirmBoxProto(1,tit,msg,func,cls,cover,zIndex);
         },
+        /**
+         * 创建一个拥有确定与取消按钮的信息提示控件 
+         *
+         * @tit  : string       控件标题
+         * @msg  : string       控件提示信息
+         * @func : function     控件点击确定与取消后调用函数, 
+         *                          回调函数原型样式:
+         *                              callbackFunciton(event, button);
+         *                                  event  : EventObject   点击事件
+         *                                  button : boolean  点击确认按钮为true
+         *                                                    否则为 false
+         * @cls  : string       控件内元素样式名前缀,内部实际会跟随以下名字:
+         *                          TitleDiv  : 标题栏样式
+         *                          MainDiv   : 控件中间主题部分样式
+         *                          ButtonDiv : 按钮所在元素样式
+         * @cover  : bloolean   是否显示cover层,默认不显示,true为显示
+         * @zIndex : int        控件 z-index 值,如果没有设置将为当前页面最上面
+         *
+         *  @return box : ELEMENT_NODE   返回控件所在DIV对象
+         */
         confirmBox : function(tit,msg, func,cls,cover,zIndex) {
             return X.confirmBoxProto(2,tit,msg,func,cls,cover,zIndex);
         },
+        /**
+         * 本函数为上面两个控件原型 
+         */
         confirmBoxProto : function(type,tit,msg,func,cls,cover,zIndex) {
             var box = X.createNode('div');
             var title = box.copyNode(true);
@@ -1304,10 +1512,10 @@ $ : function(ele) {
                 var cancelButton = okButton.copyNode(true);
             }
             if(cls) {
-                box.setClass(cls);
-                title.setClass(cls+'TitleDiv');
-                msgDiv.setClass(cls+'MainDiv');
-                button.setClass(cls+'ButtonDiv');
+                box.addClass(cls);
+                title.addClass(cls+'TitleDiv');
+                msgDiv.addClass(cls+'MainDiv');
+                button.addClass(cls+'ButtonDiv');
             }
             if(zIndex) box.setZIndex(zIndex);
             title.innerHTML = tit;
@@ -1335,6 +1543,68 @@ $ : function(ele) {
         time : function() {
             return new Date().getTime();
         },
+        /**
+         * 创建一个具有表单功能的控件  
+         *
+         * @tit : string        控件标题信息
+         * @msg : string        默认提示信息
+         * @inputList : JSON    表单内input元素清单,select元素将会使用selectDiv控件替代
+         *                          单个input元素数据为: 
+         *                              {'label' : string   input元素标签
+         *                               'type'  : string   input元素类型
+         *                               'name'  : string   input元素name值
+         *                               'value' : string   input元素默认值
+         *                               'cls'   : string   input元素直接使用样式,
+         *                                          内部实际会跟随以下名字：
+         *                                              ItemDiv   : input元素的上一级Div样式
+         *                                              ItemLabel : input元素的label元素样式
+         *                              }
+         *                          上面的单个元素组成JSON数组
+         *
+         * @buttonList : JSON   按钮清单，这里的按钮不是button类型input标签
+         *                          单个按钮元素数据为:
+         *                              {'label' : string   按钮显示名字,innerHTML值
+         *                               'value' : string   按钮值,attributes属性
+         *                               'cls'   : string   按钮样式
+         *                               'call'  : string/function   按钮点击回调函数名
+         *                               'url'   : string   表单提交URL
+         *                              }
+         *                          由上面的数据组成JSON数组
+         * 
+         * @cls  : string       控件内元素样式名前缀,内部实际会跟随以下名字:
+         *                          TitleDiv  : 标题栏样式
+         *                          MainDiv   : 控件中间主题部分样式
+         *                          ButtonDiv : 按钮所在元素样式
+         *                          MsgDiv    : 提示信息样式名
+         *                          CloseDiv  : 关闭按钮样式名
+         * @cover : boolean     是否显示cover层，true为显示，默认不显示
+         * @zIndex  : int       控件z-index 值，默认在页面最上面
+         *
+         *
+         * @return box : ELEMENT_NODE   返回控件所在DIV对象
+         *
+         * 外部可调用方法:
+         * @box.iHide()       销毁控件
+         * @box.msg(msg, cls, visibility)     显示提示信息
+         *              msg        : string   提示信息内容
+         *              cls        : string   提示信息样式名 
+         *              visibility : boolean  隐藏后是否保留提示信息位置 
+         *
+         * @box.submitInput(url, func, validFunc) 提交表单
+         *          url       : string    提交表单URL
+         *          func      : function  表单提交返回回调函数
+         *                        回调函数原型样式：
+         *                          callbackFunciton(returnData)
+         *                                  returnData : JSON  Ajax返回数据
+         *
+         *          validFunc : function  表单数据检测回调函数
+         *                         回调函数原型样式：
+         *                          callbackFunciton(formData, box)
+         *                              returnData : JSON 表单数据 
+         *                                                KEY值为input name值
+         *                              box        : ELEMENT_NODE 控件对象
+         *                              @return boolean 返回false将阻止表单提交,true提交表单
+         */
         inputBox : function(tit,msg,inputList,buttonList,cls,cover,zIndex) {
             var box = X.createNode('div');
             var titleDiv = box.copyNode(true);
@@ -1345,19 +1615,20 @@ $ : function(ele) {
             titleDiv.innerHTML = tit;
             msgDiv.innerHTML = msg;
             if(cls) {
-                box.setClass(cls);
-                titleDiv.setClass(cls+'TitleDiv');
-                msgDiv.setClass(cls+'MsgDiv');
-                mainDiv.setClass(cls+'MainDiv');
-                buttonDiv.setClass(cls+'ButtonDiv');
-                closeDiv.setClass(cls+'CloseDiv');
+                box.addClass(cls);
+                titleDiv.addClass(cls+'TitleDiv');
+                msgDiv.addClass(cls+'MsgDiv');
+                mainDiv.addClass(cls+'MainDiv');
+                buttonDiv.addClass(cls+'ButtonDiv');
+                closeDiv.addClass(cls+'CloseDiv');
             } else {
                 closeDiv.innerHTML = 'X';
                 closeDiv.setStyle('float','right');
             }
             if(zIndex) box.setZIndex(zIndex);
-            box.hide = function(e) {box.destroy();
+            box.iHide = function() {
                 if(cover) X.hiddenPageCover();
+                box.destroy();
             };
             closeDiv.addListener('click',box.hide);
             titleDiv.appendChild(closeDiv);
@@ -1371,6 +1642,9 @@ $ : function(ele) {
                     var inputItem = X.createNode('textarea');
                     inputItem.setAttribute('name',inputList[i].name);
                     inputItem.innerHTML = inputList[i].value;
+                } else if(inputList[i].type == 'select') {
+                    inputItem = X.selectDiv(inputList[i].value, inputList[i].name,
+                                            '','',inputList[i].cls);
                 } else {
                     var inputItem = input.copyNode(true);
                     inputItem.setAttribute('type',inputList[i].type);
@@ -1387,14 +1661,14 @@ $ : function(ele) {
                     inputDiv.appendChild(inputLabel);
                     inputDiv.appendChild(inputItem);
                     if(inputList[i].cls) {
-                        inputDiv.setClass(inputList[i].cls+'ItemDiv');
-                        inputLabel.setClass(inputList[i].cls+'ItemLabel');
+                        inputDiv.addClass(inputList[i].cls+'ItemDiv');
+                        inputLabel.addClass(inputList[i].cls+'ItemLabel');
                     }
                 } else {
                     inputDiv = inputItem;
                 }
-                if(inputList[i].cls) {
-                    inputItem.setClass(inputList[i].cls);
+                if(inputList[i].type != 'select' && inputList[i].cls) {
+                    inputItem.addClass(inputList[i].cls);
                 }
                 mainDiv.appendChild(inputDiv);
             }
@@ -1407,18 +1681,18 @@ $ : function(ele) {
                 }
                 X.Ajax.post(url,data,func);
             };
-            box.msg =function(message, cls) {
-                msgDiv.show();
+            box.msg =function(message, cls, visibility) {
+                msgDiv.show(visibility);
                 msgDiv.innerHTML = message;
-                if(cls) msgDiv.setClass(cls);
+                if(cls) msgDiv.addClass(cls);
                 setTimeout(function() {
-                    msgDiv.hide();
+                    msgDiv.hide(visibility);
                 },2000);
             }
             for(var j in buttonList) {
                 if(isNaN(j)) continue;
                 var bi = button.copyNode(true);
-                bi.setClass(buttonList[j].cls);
+                bi.addClass(buttonList[j].cls);
                 bi.innerHTML = buttonList[j].label;
                 bi.setAttribute('value',buttonList[j].value);
                 if(typeof buttonList[j].call == 'string') eval('var call_func = '+buttonList[j].call)
@@ -1438,18 +1712,47 @@ $ : function(ele) {
             }
             return box;
         },
-        selectDiv : function(optionList,func,def,cls) {
+        /**
+         * 创建一个下来列表控件 
+         *
+         * @optionList  : JSON      列表数据
+         *                      单个选项所需要的数据:
+         *                          {'label'    : string  选项显示名
+         *                           'value'    : mixed   选项值
+         *                           'disabled' : boolean true时该项不可选，默认可选
+         *                           }
+         * @name        : 控件在表单内的name值 
+         * @func        : function  更换选择项后回调函数,可选
+         *                              回调函数原型样式：callbackFunciton(value)
+         *                                  @value  : mixed  选择的值
+         * @def         : JSON      默认项数据, 数据样式与optionList单项一样,可选
+         * @cls         : string    控件内元素样式名前缀,内部实际会跟随以下名字:
+         *                              DefDiv    : 当前显示项外层样式 
+         *                              DefOption : 当前显示项样式
+         *                              SelectOptionDiv : 下拉列表层样式
+         *                              Selected  : 下拉列表中选中项样式
+         *                              OptionDisable : 不可选项样式 
+         *                              OptionMouseOver : 鼠标移动到选项上时样式
+         * 
+         * @return box ELEMENT_NODE 返回控件元素对象 
+         */
+        selectDiv : function(optionList,name,func,def,cls) {
             var box = X.createNode('div');
             var defDiv = box.copyNode(true);
             var defOption = box.copyNode(true);
             var listDiv = box.copyNode(true);
             var arrow = box.copyNode('div');
-            box.setClass(cls);
+            var boxInput = X.createNode('input');
+            boxInput.type = 'hidden';
+            boxInput.name = name;
+            boxInput.value = def.value;
+            box.appendChild(boxInput);
+            box.addClass(cls);
             box.selected = null;
             box.defDiv = defDiv;
-            defDiv.setClass(cls+'DefDiv');
-            defOption.setClass(cls+'DefOption');
-            listDiv.setClass(cls+'SelectOptionDiv');
+            defDiv.addClass(cls+'DefDiv');
+            defOption.addClass(cls+'DefOption');
+            listDiv.addClass(cls+'SelectOptionDiv');
             listDiv.setCss('position:absolute;z-index:10;max-height:200px;overflow:auto;');
             arrow.setCss('border-color:#000 transparent transparent;border-style:solid dashed dashed;border-width:6px 5px 0;height:0;width:0;cursor:pointer;float:left;');
             defDiv.addListener('click',function(e) {
@@ -1474,11 +1777,11 @@ $ : function(ele) {
                     op.setAttribute('rol','option');
                     op.innerHTML = optionList[i].label;
                     if(def && optionList[i].value == def.value && optionList[i].label == def.label) {
-                        op.setClass(cls+'Selected');
+                        op.addClass(cls+'Selected');
                         box.selected = op;
                     }
                     if(optionList[i].disabled) {
-                        op.setClass(cls+'OptionDisable');
+                        op.addClass(cls+'OptionDisable');
                         op.setAttribute('disabled',true);
                     } else {
                         op.setStyle('cursor','pointer');
@@ -1492,18 +1795,19 @@ $ : function(ele) {
                 var value = op.getAttribute('value');
                 if(op.getAttribute('disabled')) return;
                 var label = op.innerHTML;
-                op.setClass(cls+'Selected');
+                op.addClass(cls+'Selected');
                 if(box.selected) box.selected.removeClass(cls+'Selected');
                 box.selected = op;
                 defOption.setAttribute('value',value);
+                boxInput.value = value;
                 defOption.innerHTML = label;
                 listDiv.style.display = 'none';
-                func(value);
+                if(func) func(value);
             });
             listDiv.addListener('mouseover',function(e) {
                 var op = X.getEventNode(e);
                 if(op.getAttribute('disabled')) return;
-                if(op.getAttribute('rol') == 'option') op.setClass(cls+'OptionMouseOver');
+                if(op.getAttribute('rol') == 'option') op.addClass(cls+'OptionMouseOver');
             });
             listDiv.addListener('mouseout',function(e) {
                 var op = X.getEventNode(e);
@@ -1512,8 +1816,10 @@ $ : function(ele) {
             });
             listDiv.hide();
             box.appendChild(listDiv);
-            defOption.setAttribute('value',def.value);
-            defOption.innerHTML = def.label;
+            if(def) {
+                defOption.setAttribute('value',def.value);
+                defOption.innerHTML = def.label;
+            }
             var borderColor = defDiv.getStyle('color');
             arrow.setStyle('border-color',borderColor+' transparent transparent');
             var borderW = defDiv.getStyle('font-size');
@@ -1524,6 +1830,12 @@ $ : function(ele) {
             box.addListener('leftmouse',function(e) {listDiv.hide();});
             return box;
         },
+        
+        /**
+         * 获取当前触发事件所在元素对象
+         *
+         * @e  : EventObject  当前触发事件对象
+         */
         getEventNode : function(e) {
             var obj = navigator.IE ? event.srcElement : arguments[0].target;
             return X.$(obj);
@@ -1548,6 +1860,13 @@ $ : function(ele) {
                 X.cache[key][len].obj = obj;
             }
         },
+        /**
+         * 获取当前浏览器可视区域尺寸 
+         *
+         * @return JSON  {h : int 高度
+         *                w : int 宽度
+         *               }
+         */
         pageShowSize : function() {
             var h = navigator.IE ? window.screen.availHeight : document.documentElement.clientHeight;
             var w = navigator.IE ? window.screen.availWidth : document.documentElement.clientWidth;
@@ -1565,15 +1884,38 @@ $ : function(ele) {
             if(e.preventDefault) return e.preventDefault();
             else e.returnValue = false;
         },
+
+        /**
+         * 获取当前鼠标事件时，鼠标所在坐标
+         *
+         * @e  : EventObject  当前触发事件对象
+         *
+         * @return JSON  鼠标坐标 { x : int   X坐标值
+         *                          y : int   Y坐标值
+         *                        }
+         */
         mousePos : function(e) {
             e = typeof event == 'undefined' ? e : event;
-            return {"x":e.clientX,"y":e.clientY};
+            return {x:e.clientX,y:e.clientY};
         },
+        /**
+         * 获取兼容性透明度设置样式 
+         *
+         * @num 
+         *
+         * @return  string  返回样式字符串
+         */
         getOpacityStr : function(num) {
             num = navigator.IE ? num : num/100;
             return navigator.IE ? "filter:alpha(opacity="+num+");" : 'opacity:'+num;
         },
+        /**
+         * 页面cover对象 
+         */
         pageCover : null,
+        /**
+         * 显示cover 元素  
+         */
         showPageCover : function() {
             var viewSize = X.pageShowSize();
             var height = X.doc.body.offsetHeight > viewSize.h ? X.doc.body.offsetHeight+15 : viewSize.h;
@@ -1584,15 +1926,28 @@ $ : function(ele) {
                 X.pageCover.style.width = width +'px';
                 return;
             }
-            var alpha = X.getOpacityStr(50);
+            var alpha = X.getOpacityStr(20);
             X.pageCover = X.createNode('div');
-            X.pageCover.setCss('position:absolute;top:0;left:0;padding:0;margin:0;background-color:#909090;'+alpha);
+            X.pageCover.setCss('position:absolute;top:0;left:0;padding:0;margin:0;background-color:#000;'+alpha);
             X.pageCover.setOnTop();
             X.doc.body.appendChild(X.pageCover);
             X.pageCover.style.display = 'block';
             X.pageCover.style.height = height+'px';
             X.pageCover.style.width = width +'px';
         },
+        hiddenPageCover : function() {
+            X.pageCover.style.display = 'none';
+        },
+
+        /**
+         * 获取指定元素对象所包含的所有input或相关表单数据 
+         *  
+         * @frm  :  ELEMENT_NODE   指定需要获取的表单对象
+         * @disable_no_name : boolean  是否屏蔽没有name值的表单,默认屏蔽 
+         *
+         * @return JSON   返回一个JSON对象，格式为{ data : formData}
+         *                                         formData为一个JSON格式字符串
+         */
         getFormInputData : function(frm, disable_no_name) {
             if(!frm.getSubNodeByTag) frm = X.$(frm);
             if(!disable_no_name) disable_no_name = true;
@@ -1635,6 +1990,19 @@ $ : function(ele) {
             formData = JSON.stringify(formData);
             return {data:formData};
         },
+        /**
+         * 自动提交表单,本方法只能提交form标签表单 
+         *
+         * @ele      : ELEMENT_NODE  form标签下的子元素
+         * @callFunc : function      AJAX提交后返回回调函数
+         *                            原型:callbackFunciton(returnData);
+         *                                  @returnData : AJAX返回数据
+         * @validFunc: function      表单数据检测回调函数
+         *                            原型:callbackFunciton(objData,formObj)
+         *                                  @objData : JSON 表单数据,name为键值 
+         *                                  @formObj : ELEMENT_NODE 表单对象
+         *
+         */
         submitForm : function(ele,callFunc, validFunc) {
             if(!ele.getParentNodeByTag) ele = X.$(ele);
             if(ele.tag == 'form') {
@@ -1660,9 +2028,6 @@ $ : function(ele) {
                 X.Ajax.get(formAction,callFunc);
             }
         },
-        hiddenPageCover : function() {
-            X.pageCover.style.display = 'none';
-        },
         AjaxDebugMessageDiv : null,
         debugInnerHTML : function(html) {
             if(!X.AjaxDebugMessageDiv)  X.AjaxDebugMessageDiv = X.createNode('div');
@@ -1678,6 +2043,10 @@ $ : function(ele) {
             ctx.fillRect(x,y,w,h);
             return canvas;
         },
+
+        /**
+         * 创建基于canvas 元素的趋势图表 
+         */
         drawLineTrends : function(style,initData, padding) {
             var canvas = X.createNode('canvas');
             canvas.setAttribute('width',style.w+'px');
@@ -1809,7 +2178,7 @@ $ : function(ele) {
                     canvas.popDiv.style.display = 'block';
                 } else {
                     canvas.popDiv = X.createNode('div');
-                    if(style.popClass) canvas.popDiv.setClass(style.popClass);
+                    if(style.popClass) canvas.popDiv.addClass(style.popClass);
                     X.doc.body.appendChild(canvas.popDiv);
                     canvas.popDiv.style.display = 'block';
                 }
@@ -1872,6 +2241,14 @@ $ : function(ele) {
             initCoord();
             return canvas;
         },
+
+        /**
+         * 设置cookie值 
+         *
+         * @cn  : string  一个cookie name值
+         * @v   : string  一个cookie value值
+         * @ex  : int     cookie有效期
+         */
         setCookie : function(cn, v, ex) {
             var e= new Date(),n = e.getTime();
             ex = n + ex *1000;
@@ -1879,6 +2256,13 @@ $ : function(ele) {
             var cv=escape(v) + "; exs="+e.toUTCString();
             X.doc.cookie=cn + "=" + cv;
         },
+        /**
+         * 获取一个cookie 值 
+         * 
+         * @cn : string  cookie name值
+         * 
+         * @return : string  返回cookie value 值,没有将返回null
+         */
         getCookie : function(cn) {
             var i,x,y,a=X.doc.cookie.split(";");
             for (i=0;i<a.length;i++) {
