@@ -52,64 +52,63 @@
 以Demo为例，建议将这些常量定义在run.php中
 ==3.调用框架==
 以Demo为例,只要run.php中包含框架的__init__.php文件，然后在命令行模式运行run.php即可
-{{{
-include_once(dirname(dirname(__FILE__)) . '/current/__init__.php');
-}}}
+  
+  include_once(dirname(dirname(__FILE__)) . '/current/__init__.php');
+  
 =主要部件=
 ==1.调度器==
 调度器的实现是使用 *XScheduler* 类实现
-{{{
-final class XScheduler extends XObject {}   //对于应用不可见
-}}}
+   
+  final class XScheduler extends XObject {}   //对于应用不可见
+  
 ==2.WEB服务器==
 WEB服务器使用多进程模式，由 *XWebServer* 类实现，对应用不可见
-{{{
-final class XWebServer {
-public function __construct( XScheduler $scheduler) {} //需要传入一个调度器实例（Object XScheduler）
-public function exit_alert(XException $e) {} //程序异常退出时会执行，需要传入一个异常实例（Object XException）
-}}}
+  
+  final class XWebServer {
+  public function __construct( XScheduler $scheduler) {} //需要传入一个调度器实例（Object XScheduler）
+  public function exit_alert(XException $e) {} //程序异常退出时会执行，需要传入一个异常实例（Object XException）
+  
 WEB服务器配置项为
-{{{
-$_CFG->web 对象
-}}}
+  
+  $_CFG->web 对象
+  
 ==3.数据请求接口==
 本接口目前没有实现，但是目前可以调用一个MySQL的对象化的类，以及一个K/V文本数据库
 ==4.异常处理==
 本框架的异常处理类，由 *XException* 类实现，异常类会转化PHP错误信息，并且抛出回溯信息
-{{{
-class XException  extends ErrorException {}
-}}}
+  
+   class XException  extends ErrorException {}
+  
 抛出的异常类似以下格式
-{{{
-XException Error : can not load pcntl extension , you can use "php -d enable_dl" in command line that enable dl load function
-Throw Exception in file /home/chopin/bin/dcolors/current/XFunction.php line 509
-#0 dl_extension( 'pcntl','pcntl_fork') in /home/chopin/bin/dcolors/current/XWebServer.php line 293;
-#1 XWebServer->check_extension( ) in /home/chopin/bin/dcolors/current/XWebServer.php line 88;
-#2 XWebServer->__construct( Object XScheduler) in /home/chopin/bin/dcolors/current/XScheduler.php line 45;
-#3 XScheduler->__construct( ) in /home/chopin/bin/dcolors/current/__init__.php line 53;
-#4 include_once( '/home/chopin/bin/dcolors/current') in /home/chopin/bin/dcolors/demo/run.php line 16;
-}}}
+   
+  XException Error : can not load pcntl extension , you can use "php -d enable_dl" in command line that enable dl load function
+  Throw Exception in file /home/chopin/bin/dcolors/current/XFunction.php line 509
+  #0 dl_extension( 'pcntl','pcntl_fork') in /home/chopin/bin/dcolors/current/XWebServer.php line 293;
+  #1 XWebServer->check_extension( ) in /home/chopin/bin/dcolors/current/XWebServer.php line 88;
+  #2 XWebServer->__construct( Object XScheduler) in /home/chopin/bin/dcolors/current/XScheduler.php line 45;
+  #3 XScheduler->__construct( ) in /home/chopin/bin/dcolors/current/__init__.php line 53;
+  #4 include_once( '/home/chopin/bin/dcolors/current') in /home/chopin/bin/dcolors/demo/run.php line 16;
+---
   # 第一行是错误信息
   # 第二行式抛出错误的地方
   # 第三开始式回溯信息，错误发生点往前追溯，也就是与程序执行顺序刚好相反
 ==5.业务逻辑限制==
 这个限制主要体现在应用必须继承 *X* 类
-{{{
-abstract class X {
-public-readonly XRequest $R; //外部数据对象
-public-readonly XTemplate $T; //模板类实例
-public function __xget__($name) {} //必须通过覆盖次方法实现PHP魔术方法__get()
-public function __xset__($name,$value) {}//必须通过覆盖次方法实现PHP魔术方法__set()
-}
-}}}
+  
+  abstract class X {
+      public-readonly XRequest $R; //外部数据对象
+      public-readonly XTemplate $T; //模板类实例
+      public function __xget__($name) {} //必须通过覆盖次方法实现PHP魔术方法__get()
+      public function __xset__($name,$value) {}//必须通过覆盖次方法实现PHP魔术方法__set()
+  }
+    
 ==6.模板处理==
 模板类为 *XTemplate* 类，对应用不能直接可见
-{{{
-final class XTemplate {}
-}}}
+  
+  final class XTemplate {}
+  
 在应用中使用从 *X* 类集成的只读属性 *$T* 来访问，主要通过设置其相关属性来实现页面输出控制，例如
-{{{
-string $this->T->name = ''; //设置页面 _模板/UI/皮肤_ 文件, 如果没有设置此值，将会有 `$this->T=null`
-stdClass $this->D ; //需要设置的模板中使用的变量对象
-$this->D->title_name = 'framework'; //设置一个模板变量$title_name, 在模板文件中使用 {$title_name} 来访问
-}}}
+  string $this->T->name = ''; //设置页面 _模板/UI/皮肤_ 文件, 如果没有设置此值，将会有 `$this->T=null`
+  stdClass $this->D ; //需要设置的模板中使用的变量对象
+  $this->D->title_name = 'framework'; //设置一个模板变量$title_name, 在模板文件中使用 {$title_name} 来访问
+
