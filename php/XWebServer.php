@@ -400,7 +400,7 @@ final class XWebServer {
         stream_set_blocking($this->server,0);
         $this->fork_worker_process();
     }
-    private function run_web_worker($shmop_id) {
+    private function run_web_worker() {
         $base_evt = event_base_new();
         $evt = event_new();
         event_set($evt, $this->server, EV_READ | EV_WRITE|EV_TIMEOUT | EV_PERSIST, 
@@ -443,7 +443,7 @@ final class XWebServer {
             fclose($mws[1]);
             $this->setproctitle('XServer:worker pool');
             $this->master_worker_sock = $mws[0];
-            $this->web_worker_loop($i, $mws[0]);
+            $this->web_worker_loop($mws[0]);
             return;
         }
         if($restart_worker == false) {
@@ -457,29 +457,19 @@ final class XWebServer {
             $this->master_loop();
         }
     }
-    private function run_new_worker_process($idx, $base_evt= null, $sig_evt = null) {
+    private function run_new_worker_process($base_evt= null, $sig_evt = null) {
+        $mws = stream_socket_pair(STREAM_PF_UNIX,STREAM_SOCK_STREAM,STREAM_IPPROTO_IP);
         $pid = pcntl_fork();
         if($pid == -1) return -1;
         if($pid >0) {
-            $shmop_id = shmop_open($this->base_shmop_key+$idx,'c',0600,1);
-            shmop_write($shmop_id,self::WP_WAIT,0);
-            $this->worker_pool[$idx]['shmid'] = $shmop_id;
-            $this->worker_pool[$idx]['pid'] = $pid;
+            $this->worker_pool[$pid] = $mws[1];
+            fclose($mws[0]);
             return;
-        }
-        if($base_evt){
-            event_base_loopexit($base_evt);
-            unset($base_evt);
-        }
-        if($sig_evt) {
-            foreach($sig_evt as $evt) {
-                event_del($evt);
-                unset($evt);
-            }
         }
         gc_collect_cycles();
         $this->setproctitle('XServer:worker pool');
-        $this->web_worker_loop($idx);
+        fclose($mws[1]);
+        $this->web_worker_loop($mws[0]);
     }
 
     /**
@@ -518,11 +508,6 @@ final class XWebServer {
         event_base_set($evt,$base_evt);
         event_add($evt);
         
-        $sig_evt_list = array();
-        $sig_evt_list[] = $this->add_sig_event($base_evt, SIGTERM,'master_event_loopbreak');
-        $sig_evt_list[] = $this->add_sig_event($base_evt, SIGINT,'master_event_loopbreak');
-        $sig_evt_list[] = $this->add_sig_event($base_evt, SIGHUP,'master_event_loopbreak');
-        $sig_evt_list[] = $this->add_sig_event($base_evt, SIGPIPE,'connect_abort');
         pcntl_signal_dispatch();
         event_base_loop($base_evt, EVLOOP_ONCE);
         pcntl_waitpid(-1,$status);
@@ -589,8 +574,7 @@ final class XWebServer {
     public function get_worker_id() {
         return $this->worker_id;
     }
-    private function web_worker_loop($wid, $mws) {
-        $this->worker_id = $wid;
+    private function web_worker_loop($mws) {
         $this->master_process = false;
         pcntl_signal(SIGTERM,SIG_DFL);
         pcntl_signal(SIGINT, SIG_DFL);
@@ -598,7 +582,7 @@ final class XWebServer {
         pcntl_signal(SIGPIPE, array($this,'connect_abort'));
         //pcntl_sigprocmask(SIG_UNBLOCK,array(SIGTERM,SIGINT,SIGHUP),$old);
         fwrite($mws,self::WP_WAIT);
-        $base_evt = $this->run_web_worker($shmop_id);
+        $base_evt = $this->run_web_worker();
         $master_worker_base_evt = event_base_new();
         $master_worker_evt = event_new();
         event_set($master_worker_evt, $mws, EV_READ | EV_WRITE|EV_TIMEOUT | EV_PERSIST, 
