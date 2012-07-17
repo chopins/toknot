@@ -17,6 +17,10 @@ class index extends X {
             $this->D->footer_nav = array();
         }
     }
+    public function glogout($te= 1) {
+        session_destroy();
+        return $this->exit_json(1,'成功退出',array('act'=>'refresh','part'=>'page'));
+    }
     public function plogin() {
         if(empty($this->R->A->username)) {
             return $this->exit_json(0,'用户名不能为空');
@@ -38,14 +42,16 @@ class index extends X {
     }
     public function gmynav() {
         if($this->loginStat == false) return $this->exit_json(0,'', $this->login_ui());
-        $nav_list = array('后台首页|/index',
+        $nav_list = array("{$this->R->S->username}|/user/info|true",
+                          '后台首页|/index',
                           '个人信息|/user/info',
                           '项目|/project/list',
                           '服务器|/server/list',
                           'Push|/push/list',
                           '短信|/message/list',
                           '用户列表|/user/list',
-                          'Dopush|/dopush/info');
+                          'Dopush|/dopush/info',
+                          '退出|/index/logout');
         return $this->exit_json(1,'', $nav_list);
     }
     public function login_ui() {
@@ -59,6 +65,7 @@ class index extends X {
                             'button'=>$login_form_button,
                             'cls'=>'b-input-box',
                             'title'=>'登录');
+        return $login_form;
     }
     public function gchecklogin() {
         if($this->loginStat == false) {
