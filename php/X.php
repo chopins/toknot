@@ -249,7 +249,7 @@ abstract class X {
      */
     final protected function save_runtime_config($key, $value) {
         $runtime_config = $this->load_runtime_config();
-        $runtime_config[$key] = $value;
+        $runtime_config->$key = $value;
         file_put_contents(__X_APP_DATA_DIR__."/{$this->_CFG->runtime_config}", serialize($runtime_config));
     }
 

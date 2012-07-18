@@ -123,9 +123,12 @@ var dop = {
             }
         });
     },
+    //创建页面右侧横向导航
     createRightTabNav : function(opreate_nav) {
         var tabNavBlock = X.createNode('div');
         tabNavBlock.setClass('b-right-tab-block');
+        var tabNavNodeContainer = X.createNode('div');
+        tabNavNodeContainer.setClass('b-right-tab-container');
         var tabNavNode = X.createNode('div');
         tabNavNode.setClass('b-right-tab-nav');
         for(var i in opreate_nav) {
@@ -137,8 +140,9 @@ var dop = {
             if(menu[1] == dop.accessUri) {
                 item.addClass('b-right-tab-nav-active');
             }
-            tabNavBlock.appendChild(item);
+            tabNavNodeContainer.appendChild(item);
         }
+        tabNavBlock.appendChild(tabNavNodeContainer);
         dop.pageRight.appendChild(tabNavBlock);
     },
     createRightBlock : function(re) {
