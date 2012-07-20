@@ -178,7 +178,7 @@ final class XWebServer {
         $this->check_system();
         $this->check_extension();
         $this->load_cfg();
-        $this->run_type();
+        $this->run_mode();
         $this->base_shmop_key = $this->get_shmop_key();
         $this->master_pid = posix_getpid();
   //      $this->run_cron_process();
@@ -279,13 +279,13 @@ final class XWebServer {
             ($this->request_body_length = conv_human_byte($_CFG->web->request_body_length));
         isset($_CFG->web->daemon) and $this->run_daemon = $_CFG->web->daemon;
     }
-    private function run_type() {
+    private function run_mode() {
         $argv = '';
         if($_SERVER['argc'] >= 2) {
-            $argv = $_SERVER['argv'][1];
+            $argv = $_SERVER['argv'];
             if($this->support_argv($argv,$this->main_pid_file)) return;
         }
-        if($argv == '-d' || $this->run_daemon) {
+        if(array_search('-d',$argv) !== false || $this->run_daemon) {
             daemon();
         }
         $this->setproctitle('XServer:master '.__FILE__);
@@ -297,29 +297,31 @@ final class XWebServer {
         if(file_exists($pidfile)) {
             $pid = file_get_contents($pidfile);
         }
-        switch($argv) {
-            case 'quit':
-            case '-q':
-                if($pid ==0) exit('pid file not found');
-                posix_kill($pid, SIGTERM);
-            return true;
-            case '-r':
-            case 'restart':
-                if($pid ==0) exit('pid file not found');
-                posix_kill($pid , SIGUSR1);
-            return true;
-            case 'reload':
-                if($pid == 0) exit('pid file not found');
-                posix_kill($pid , SIGUSR2);        
-            case '-h':
-            case 'help':
-                echo "Option: -q | quit     stop the web server\n";
-                echo "        -r | restart  restart the web server\n";
-                echo "        -h | help     display the message\n";
-                echo "        -d            run webserver daemon\n";
-            return true;
-            default:
-            return false;
+        foreach($argv as $av) {
+            switch($av) {
+                case 'quit':
+                case '-q':
+                    if($pid ==0) exit('pid file not found');
+                    posix_kill($pid, SIGTERM);
+                return true;
+                case '-r':
+                case 'restart':
+                    if($pid ==0) exit('pid file not found');
+                    posix_kill($pid , SIGUSR1);
+                return true;
+                case 'reload':
+                    if($pid == 0) exit('pid file not found');
+                    posix_kill($pid , SIGUSR2);        
+                case '-h':
+                case 'help':
+                    echo "Option: -q | quit     stop the web server\n";
+                    echo "        -r | restart  restart the web server\n";
+                    echo "        -h | help     display the message\n";
+                    echo "        -d            run webserver daemon\n";
+                return true;
+                default:
+                return false;
+            }
         }
     }
     public function process_signal($signo) {

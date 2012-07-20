@@ -15,6 +15,14 @@
 
     __X_APP_DATA_DIR__ 数据存储路径,本值如果设置，__X_APP_DATA_DIR_NAME__将无效
 
+    __X_APP_USER_CONF_FILE_NAME__  用户应用所使用的配置文件名,位于__X_APP_DATA_DIR__目录下面的conf目录下面
+
+    __X_NO_WEB_SERVER__   是否在永远禁用内置webserver 即使在CLI状态下
+                          CLI模式下，如果设定为true, 那么当在执行命令时给出 -d 参数，脚本仍然会已守护进程模式运行
+                          并会自动调用用户的Loop类, Loop 程序文件名字需要使用 __X_DAEMON_LOOP_FILE__ 来定义
+
+    __X_DAEMON_LOOP_FILE__  守护进程模式下运行的PHP文件名，位于 __X_APP_ROOT__目录下$_CFG->php_dir_name目录下
+                          
    然后在WEB目录中的index.php文件中包含本文件,该文件应当是唯一的脚本执行文件
    在nginx 可以如下配置，指定所有PHP都将SCRIPT_FILENAME指定为该文件
         fastcgi_param  SCRIPT_FILENAME    WEB目录下的/demo/index.php;
@@ -32,7 +40,9 @@ defined('__X_IN_FRAME__') ||  define('__X_IN_FRAME__', true);
 defined('__X_SHOW_ERROR__') || define('__X_SHOW_ERROR__',true); 
 defined('__X_EXCEPTION_LEVEL__') || define('__X_EXCEPTION_LEVEL__',2);
 defined('__X_APP_DATA_DIR_NAME__') || define('__X_APP_DATA_DIR_NAME__','var');
+defined('__X_APP_USER_CONF_FILE_NAME__') || define('__X_APP_USER_CONF_FILE_NAME__','config.php');
 defined('__X_APP_DATA_DIR__') || define('__X_APP_DATA_DIR__',__X_APP_ROOT__.'/'.__X_APP_DATA_DIR_NAME__);
+defined('__X_NO_WEB_SERVER__') || define('__X_NO_WEB_SERVER__', false);
 
 /******用户定义常量结束********************/
 

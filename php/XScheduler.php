@@ -43,9 +43,11 @@ final class XScheduler extends XObject {
         $_ENV['__X_CALL_PAGE_DIR__']   = __X_APP_ROOT__."/{$this->cfg->php_dir_name}";
         $this->check_superglobals();
         $this->set_time_zone();
-        if(PHP_CLI) {
+        if(PHP_CLI && __X_NO_WEB_SERVER__ === false) {
             //fclose(STDERR);
             return new XWebServer($this);
+        } else if(PHP_CLI && array_search('-d',$_SERVER['argv']) !== false) {
+            return $this->call_loop();
         } else {
             ini_get('register_globals') and new XException('Need close php register_globals in php.ini');
             $this->load_app();
@@ -53,6 +55,15 @@ final class XScheduler extends XObject {
         }
     }
 
+    public function call_loop() {
+        $_ENV['__X_CALL_PAGE_FILE__'] = __X_APP_ROOT__."/{$this->cfg->php_dir_name}/".__X_DAEMON_LOOP_FILE__;
+        if(!file_exists($_ENV['__X_CALL_PAGE_FILE__'])) {
+            throw new XException("File {$_ENV['__X_CALL_PAGE_FILE__']} not be found");
+        }
+        daemon();
+        include_once($_ENV['__X_CALL_PAGE_FILE__']);
+        exit(0);
+    }
     /**
      * Load user application view class
      * 
@@ -425,7 +436,7 @@ final class XScheduler extends XObject {
         $cfg_db = $this->cfg->db;
         $cfg_tpl = $this->cfg->tpl;
         $cfg_server = $this->cfg->web;
-        $app_config = __X_APP_DATA_DIR__ ."/conf/config.php";
+        $app_config = __X_APP_DATA_DIR__ .'/conf/'.__X_APP_USER_CONF_FILE_NAME__;
         if(file_exists($app_config)) {
             include($app_config);
             if($this->cfg !== $_CFG) {

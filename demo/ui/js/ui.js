@@ -2,6 +2,8 @@ var dop = {
     userLoginStatus : false,
     loginUri  : '/index/checklogin',
     accessUri : '/index/home',
+    requestUri : '/call',
+    epoll : '/epoll',
     activeNav : null,
     mainBlockId : 'b-center',
     leftNavGetUri : null,
@@ -10,6 +12,9 @@ var dop = {
     mainBlock : null,
     pageRight : null,
     userName : null,
+    loginStatus : false,
+    notifyPool : null,
+    lastModified : 0,
     //初始化后台
     init : function() {
         dop.initUI();
@@ -27,6 +32,45 @@ var dop = {
         dop.mainBlock.appendChild(dop.pageRight);
         dop.bodyResize();
         X.$(document.body).addListener('resize',dop.bodyResize);
+    },
+    epoll : function() {
+        X.Ajax.head(dop.epoll, '', function(header,lastModified,avai) {
+            if(avai === false) {
+                setTimeout(dop.epoll,1000);
+                return;
+            }
+            if(header['Authorization'] == 'nologin') {
+                dop.loginStatus = false;
+                dop.stopEpoll();
+                return dop.userLoginView(re);
+            } else {
+                if(lastModified > dop.lastModified) {
+                    dop.request('/notify/update');
+                }
+                dop.lastModified = lastModified;
+                setTimeout(dop.epoll, 300);
+                return;
+            }
+        });
+    },
+    request : function(accessData) {
+       if(!accessData) accessData = {act:dop.accessUri};
+       X.Ajax.post(dop.requestUri,accessData, function(re) {
+            if(re.status == 0 && re.data == 'nologin') {
+                dop.loginStatus = false;
+                return dop.userLoginView(re);
+            } else if(re.status == -1) {
+                return X.alertBox(re.data.title,re.message,null,'',1);
+            } else {
+                if(re.data) {
+                    if(typeof(re.data.act) != 'undefined' && typeof(re.data.part) != 'undefined') {
+                        dop.pageAutoAct(re.data.act,re.data.part);
+                    } else if(re.status == 1) {
+                        dop.createRightBlock(re);
+                    }
+                }
+            }
+        });
     },
     //页面尺寸控制
     bodyResize : function() {
@@ -50,6 +94,7 @@ var dop = {
         X.Ajax.get(dop.loginUri,function(re) {
             if(re.status == 1) {
                 dop.leftNavGetUri = re.data;
+                dop.loginStatus = true;
                 dop.showView();
             } else {
                 dop.userLoginView(re);
@@ -107,21 +152,7 @@ var dop = {
             dop.activeNav = nav;
             dop.setUri(nav.action);
         }
-        X.Ajax.get(dop.accessUri, function(re) {
-            if(re.status == 0) {
-                return dop.userLoginView(re);
-            } else if(re.status == -1) {
-                return X.alertBox(re.data.title,re.message,null,'',1);
-            } else {
-                if(re.data) {
-                    if(typeof(re.data.act) != 'undefined' && typeof(re.data.part) != 'undefined') {
-                        dop.pageAutoAct(re.data.act,re.data.part);
-                    } else if(re.status == 1) {
-                        dop.createRightBlock(re);
-                    }
-                }
-            }
-        });
+        dop.request();
     },
     //创建页面右侧横向导航
     createRightTabNav : function(opreate_nav) {

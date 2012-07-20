@@ -1065,30 +1065,21 @@ $ : function(ele) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
                 X.Ajax.method = method;
-                var openId = X.Ajax.openInstanceId;
-                if(callFunc) X.Ajax.callFunc[openId] = callFunc;
-                X.Ajax.openInstanceId++;
-                X.Ajax.callServer(openId);
+                X.Ajax.callServer(callFunc);
             },
             put : function(url ,data, callFunc) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
                 X.Ajax.setData(data);
                 X.Ajax.method  = 'PUT';
-                var openId = X.Ajax.openInstanceId;
-                if(callFunc) X.Ajax.callFunc[openId] = callFunc;
-                X.Ajax.openInstanceId++;
-                X.Ajax.callServer(openId);
+                X.Ajax.callServer(callFunc);
             },
             post : function(url, data, callFunc) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
                 X.Ajax.setData(data);
                 X.Ajax.method  = 'POST';
-                var openId = X.Ajax.openInstanceId;
-                if(callFunc) X.Ajax.callFunc[openId] = callFunc;
-                X.Ajax.openInstanceId++;
-                X.Ajax.callServer(openId);
+                X.Ajax.callServer(callFunc);
             },
             file : function(form, callFunc) {
                 var enc = form.getAttribute('enctype');
@@ -1160,51 +1151,63 @@ $ : function(ele) {
             showStatus : function() {
                 X.Ajax.statusObj = X.setTimeout(function() {X.Ajax.message = X.Ajax.messageList.still;X.Ajax.showMessageNode();},3000);
             },
-            callServer : function(openId) {
+            callServer : function(callFunc) {
                 if(!X.Ajax.XMLHttp) return;
                 X.Ajax.message = X.Ajax.messageList.current;
                 X.Ajax.showMessageNode();
-                //console.warn('Ajax instance id is '+openId);
-                X.Ajax.openInstance[openId] = X.Ajax.XMLHttp;
-                //console.warn(X.Ajax.openInstance[openId]);
-                //console.warn('Ajax instance method is '+ X.Ajax.method);
-                //console.warn('Ajax instance call url is '+ X.Ajax.url);
-                X.Ajax.openInstance[openId].open(X.Ajax.method, X.Ajax.url,X.Ajax.waitTime);
+                var openId = X.Ajax.openInstanceId;
+                X.Ajax.openInstance[openId] = {};
+                if(callFunc) X.Ajax.openInstance[openId].callFunc = callFunc;
+                X.Ajax.openInstanceId++;
+
+                X.Ajax.openInstance[openId].XMLHttp = X.Ajax.XMLHttp;
+                X.Ajax.openInstance[openId].XMLHttp.open(X.Ajax.method, X.Ajax.url,X.Ajax.waitTime);
                 if (X.Ajax.method == "POST") 
-                    X.Ajax.openInstance[openId].setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                X.Ajax.openInstance[openId].send(X.Ajax.data);
-                X.Ajax.outObj[openId] = X.setTimeout(function(){
-                                                            X.Ajax.openInstance[openId].abort();
+                    X.Ajax.openInstance[openId].XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                X.Ajax.openInstance[openId].XMLHttp.send(X.Ajax.data);
+                X.Ajax.openInstance[openId].outObj = X.setTimeout(function(){
+                                                            X.Ajax.openInstance[openId].XMLHttp.abort();
                                                             delete X.Ajax.openInstance[openId];
                                                             X.Ajax.complete();
                                                     }, X.Ajax.waitTime);
                 X.Ajax.openInstance[openId].method = X.Ajax.method ;
                 X.Ajax.showStatus();
-                X.Ajax.openInstance[openId].onreadystatechange = function() {
-                    if (X.Ajax.openInstance[openId].readyState == 4) {
-                        X.clearTimeout(X.Ajax.outObj[openId]);
+                X.Ajax.openInstance[openId].XMLHttp.onreadystatechange = function() {
+                    if (X.Ajax.openInstance[openId].XMLHttp.readyState == 4) {
+                        X.clearTimeout(X.Ajax.openInstance[openId].outObj);
                         X.clearTimeout(X.Ajax.statusObj);
                         X.Ajax.complete();
-                        if(X.Ajax.openInstance[openId].status == 200) {
+                        if(X.Ajax.openInstance[openId].XMLHttp.status == 200) {
                             if (X.Ajax.callFunc) {
-                                if(X.Ajax.openInstance[openId].method = X.Ajax.method == 'HEAD') {
-                                    X.Ajax.callFunc[openId](X.Ajax.openInstance[openId].getAllResponseHeaders(),
-                                                            X.Ajax.openInstance[openId].getLastModified(),
-                                                            X.Ajax.openInstance[openId].getIsResourceAvailable());
+                                if(X.Ajax.openInstance[openId].method == 'HEAD') {
+                                    var headerStr = X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders();
+                                    var headerArr = headerStr.split("\r\n");
+                                    var header = [];
+                                    for(var h in headerArr) {
+                                        if(typeof(headerArr[h]) == 'string') {
+                                            var fvs = headerArr[h].trim();
+                                            if(fvs == '') continue;
+                                            var fv = fs.split(':');
+                                            header[fv[0].trim()] = fv[1].trim();
+                                        }
+                                    }
+                                    X.Ajax.openInstance[openId].callFunc(header,
+                                                            X.Ajax.openInstance[openId].XMLHttp.getLastModified(),
+                                                            X.Ajax.openInstance[openId].XMLHttp.getIsResourceAvailable());
                                     return;
                                 }
                                 if(X.Ajax.openInstance[openId].method == X.Ajax.method == 'TRACE') {
-                                    X.Ajax.callFunc[openId](X.Ajax.openInstance[openId].responseText);
+                                    X.Ajax.openInstance[openId].callFunc(X.Ajax.openInstance[openId].XMLHttp.responseText);
                                     return;
                                 }
                                 if(X.Ajax.dataType.toLowerCase() == 'json') {
                                     try{
-                                        if(X.Ajax.openInstance[openId].responseText == '') {
-                                            X.Ajax.callFunc[openId](X.Ajax.openInstance[openId].responseText);
+                                        if(X.Ajax.openInstance[openId].XMLHttp.responseText == '') {
+                                            X.Ajax.openInstance[openId].callFunc(X.Ajax.openInstance[openId].XMLHttp.responseText);
                                         } else {
-                                            var reJSON = JSON.parse(X.Ajax.openInstance[openId].responseText);
+                                            var reJSON = JSON.parse(X.Ajax.openInstance[openId].XMLHttp.responseText);
                                             try {
-                                                X.Ajax.callFunc[openId](reJSON);
+                                                X.Ajax.openInstance[openId].callFunc(reJSON);
                                             } catch(e) {
                                                 console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
                                             }
@@ -1216,11 +1219,11 @@ $ : function(ele) {
                                         console.warn('Ajax response data is not JSON Object Error: '+e + ' in File '+e.fileName + ' Line '+e.lineNumber);
                                     }
                                 } else {
-                                    X.Ajax.callFunc(X.Ajax.openInstance[openId].responseXML); 
+                                    X.Ajax.openInstance[openId].callFunc(X.Ajax.openInstance[openId].XMLHttp.responseXML); 
                                 }
                             }
                         } else {
-                            if(X.Ajax.openInstance[openId].status == 0) {
+                            if(X.Ajax.openInstance[openId].XMLHttp.status == 0) {
                                 console.warn('Ajax requset timeout');
                             }
                         }
