@@ -1,13 +1,12 @@
 <?php
 /**
- * XPHPFramework
+ * Toknot
  *
  * X class
  *
  * PHP version 5.3
  * 
- * @category phpframework
- * @package XPHPFramework
+ * @package Base
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -15,12 +14,16 @@
  * @since      File available since Release 2.2
  */
 exists_frame();
+
 /**
+ * X 
  * Base class for user classes, Provides web request and runtime data storage structure
  * and database administration class instance, template class instance
- * 
- * @package XPHPFramework
- * @author chopins xiao <chopins.xiao@gmail.com>
+ *
+ * @abstract
+ * @package Base
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
 abstract class X {
     /**

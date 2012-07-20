@@ -1,7 +1,39 @@
 <?php
+/**
+ * Toknot
+ *
+ * XObject class, XArrayObject class, XArrayElementObject class, XStdClass class,
+ *
+ * PHP version 5.3
+ * 
+ * @package XDataStruct
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release $id$
+ */
+
 exists_frame();
+/**
+ * XDba 
+ * 
+ * @uses XMySQLDba
+ * @final
+ * @package DataBase
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 final class XDba extends XMySQLDba {
 }
+
+/**
+ * XMySQLDba 
+ * 
+ * @package DataBase
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XMySQLDba {
     private $read_con = null;
     private $con = null;
@@ -115,6 +147,13 @@ class XMySQLDba {
     }
 
 }
+/**
+ * XMySQLTable 
+ * 
+ * @package DataBase
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XMySQLTable {
     public $table = null;
     public $dba = null;

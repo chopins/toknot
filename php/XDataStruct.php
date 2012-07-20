@@ -1,27 +1,27 @@
 <?php
 /**
- * XPHPFramework
+ * Toknot
  *
  * XObject class, XArrayObject class, XArrayElementObject class, XStdClass class,
  *
  * PHP version 5.3
  * 
- * @category XDataStruct
- * @package XPHPFramework
+ * @package XDataStruct
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       http://blog.toknot.com
- * @since      File available since Release 2.2
+ * @since      File available since Release $id$
  */
 exists_frame();
 
 /**
+ * XObject 
  * base single depth object class of XPHPFramework
- *
- * @category XDataStruct
- * @package XPHPFramework
- * @author chopins xiao <chopins.xiao@gmail.com>
+ * 
+ * @package XDataStruct
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
 class XObject {
     /**
@@ -58,12 +58,15 @@ class XObject {
         return $this->value;
     }
 }
+
 /**
+ * XArrayElementObject 
  * XArrayObject element object class
- *
- * @category XArrayObject
- * @package XPHPFramework
- * @author chopins xiao <chopins.xiao@gmail.com>
+ * 
+ * @uses XObject
+ * @package XDataStruct
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
 class XArrayElementObject  extends XObject{
     /**

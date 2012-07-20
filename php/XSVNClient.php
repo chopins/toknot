@@ -1,4 +1,27 @@
 <?php
+
+/**
+ * Toknot
+ *
+ * XSVNClient
+ *
+ * PHP version 5.3
+ * 
+ * @package XDataStruct
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release $id$
+ */
+exists_frame();
+/**
+ * XSVNClient 
+ * 
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XSVNClient {
     private $socket = '';
     private $errno;

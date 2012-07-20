@@ -1,5 +1,26 @@
 <?php
+/**
+ * Toknot
+ * XTemplate
+ *
+ * PHP version 5.3
+ * 
+ * @package XDataStruct
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release $id$
+ */
+
 exists_frame();
+/**
+ * XTemplate 
+ * 
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XTemplate {
     public $_var = null;
     public $cfg = array();

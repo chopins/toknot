@@ -1,6 +1,6 @@
 <?php
 /**
- * XPHPFramework
+ * Toknot
  *
  * XTxtDB class
  *

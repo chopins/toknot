@@ -1,27 +1,33 @@
 <?php
 /**
- * XPHPFramework
+ * Toknot
  *
  * XScheduler class
  *
  * PHP version 5.3
  * 
- * @category phpframework
- * @package XPHPFramework
+ * @category php
+ * @package Base
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       http://blog.toknot.com
- * @since      File available since Release 2.3
+ * @since      File available since Release 0.6
  */
 exists_frame();
+
 /**
- * XPHPFramework scheduler
+ * XScheduler 
  * 
- * @package XPHPFramework
- * @author chopins xiao <chopins.xiao@gmail.com>
+ * @uses XObject
+ * @final
+ * @package Base
+ * @version $id$
+ * @copyright 2012 The Author
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ * @license http://opensource.org/licenses/bsd-license.php New BSD License
  */
-//调度器
+
 final class XScheduler extends XObject {
     public $app_instance;
     private $app_method;

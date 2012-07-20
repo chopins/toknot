@@ -1,5 +1,21 @@
 <?php
+
+/**
+ * Toknot
+ * initialization and load frameworker
+ *
+ * PHP version 5.3
+ * 
+ * @package XDataStruct
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release $id$
+ */
+
 /*
+   Usage:
    应用程序可以定义以下常量:
     __X_IN_FRAME__     该值只能为true,
     __X_SHOW_ERROR__   是否显示错误异常和trace信息

@@ -3,7 +3,8 @@ var dop = {
     loginUri  : '/index/checklogin',
     accessUri : '/index/home',
     requestUri : '/call',
-    epoll : '/epoll',
+    epollUri : '/epoll',
+    epollFreTime : 300,
     activeNav : null,
     mainBlockId : 'b-center',
     leftNavGetUri : null,
@@ -15,6 +16,7 @@ var dop = {
     loginStatus : false,
     notifyPool : null,
     lastModified : 0,
+    sock : null,
     //初始化后台
     init : function() {
         dop.initUI();
@@ -33,25 +35,34 @@ var dop = {
         dop.bodyResize();
         X.$(document.body).addListener('resize',dop.bodyResize);
     },
-    epoll : function() {
-        X.Ajax.head(dop.epoll, '', function(header,lastModified,avai) {
-            if(avai === false) {
-                setTimeout(dop.epoll,1000);
+    notifyUpdate : function (header) {
+        dop.request('/notify/update');
+    },
+    ajaxHeadEpoll : function() {
+       X.Ajax.head(dop.epollUri, function(header) {
+            if(header == 0) {
+                dop.epollFreTime += 3000;
+                setTimeout(dop.ajaxHeadEpoll,dop.epollFreTime);
                 return;
             }
             if(header['Authorization'] == 'nologin') {
                 dop.loginStatus = false;
-                dop.stopEpoll();
                 return dop.userLoginView(re);
             } else {
-                if(lastModified > dop.lastModified) {
-                    dop.request('/notify/update');
+                if(header['lastModified'] > dop.lastModified) {
+                    dop.notifyUpdate(header);
                 }
-                dop.lastModified = lastModified;
-                setTimeout(dop.epoll, 300);
-                return;
+                setTimeout(dop.ajaxHeadEpoll, dop.epollFreTime);
             }
         });
+    },
+    sendToken : function() {
+    },
+    epoll : function() {
+        dop.sock = X.Ajax.socket(dop.epollUri, dop.sendToken, dop.notifyUpdate);
+        if(!dop.sock) {
+            dop.ajaxHeadEpoll();
+        }
     },
     request : function(accessData) {
        if(!accessData) accessData = {act:dop.accessUri};
@@ -96,6 +107,7 @@ var dop = {
                 dop.leftNavGetUri = re.data;
                 dop.loginStatus = true;
                 dop.showView();
+                dop.epoll();
             } else {
                 dop.userLoginView(re);
             }

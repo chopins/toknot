@@ -2,7 +2,7 @@
 /**
  * XPHPFramework
  *
- * XRequest class, XArrayObject class, XArrayElementObject class, XCookieObject class,
+ * XRequest class,XCookieObject class,
  * XCookieElementObject class,XSessionObject class
  *
  * PHP version 5.3

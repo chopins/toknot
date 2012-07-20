@@ -71,7 +71,11 @@ createNode : function(t) {return X.$(X.doc.createElement(t));},
 FIREFOX : /.*{firefox}\/([\w.]+).*/.test(this.ugent),
 WEBKIT : /(Webkit)/i.test(this.ugent),
 jsPath  : function(){
-        return X.doc.scripts[0].src.substring(0,X.doc.scripts[0].src.lastIndexOf("/")+1);
+    var scripts = X.doc.scripts;
+    var cidx = scripts.length - 1;
+    var shash = scripts[cidx].src.lastIndexOf("/");
+    if(shash < 0) return '';
+    return scripts[cidx].src.substring(0,shash+1);
 },
 inputType : {INPUT_TEXT:1,INPUT_PASSWORD:2,INPUT_CHECKBOX:3,
             INPUT_RADIO:4,INPUT_TEXTAREA:5,INPUT_BUTTON:6,INPUT_SUBMIT:7,
@@ -79,11 +83,16 @@ inputType : {INPUT_TEXT:1,INPUT_PASSWORD:2,INPUT_CHECKBOX:3,
 loadJSON : function() {
     typeof(JSON) === 'undefined' && X.loadJSFile(X.jsPath()+'json.js');
 },
-loadJSFile : function(fs) {
+loadJSFile : function(fs, bodyEnd) {
     var f = X.createNode('script');
     f.setAttribute('type','text/javascript');
     f.setAttribute('src', fs);
+    if(bodyEnd) {
+        X.doc.body.appendChild(f);
+        return f;
+    }
     X.doc.getElementsByTagName('head')[0].appendChild(f);
+    return f;
 },
 unloadExecList : [],
 eventList : [],
@@ -551,12 +560,13 @@ $ : function(ele) {
                 addListener : function(e,call_action) {
                     //console.warn('addEventListener Element '+ this + ' Function is ' + call_action);
                     call_action.handObj = this;
-                    if(e == 'scroll') {
+                    var iserr = false;
+                    switch(e) {
+                        case 'scroll':
                         this.scrollOffset = X.scrollOffset();
                         X.wSFL.push(call_action);   
                         return;
-                    }
-                    if(e == 'resize') {
+                        case 'resize':
                         var l = {func:call_action,obj:this};
                         if(window.top == window.self) {
                             X.wRSFL.push(l);
@@ -564,6 +574,20 @@ $ : function(ele) {
                             window.top.X.wRSFL.push(l);
                         }
                         return;
+                        case 'error':
+                        var iserr = true;
+                        case 'load':
+                        if(navigator.IE && this.tag == 'script') {
+                            this.onreadystatechange = function(e) {
+                                if(script.readyState == 'loaded') {
+                                    if(iserr) call_action(e);
+                                } else if(script.readyState == 'complete') {
+                                    if(!iserr) call_action(e);
+                                }
+                            }
+                            return;
+                        }
+                        break;
                     }
                     if(typeof X.eventList[e] == 'undefined') X.eventList[e] = [];
                     var l = X.eventList[e].push(call_action) - 1;
@@ -998,14 +1022,16 @@ $ : function(ele) {
          *  X.Ajax.head(url,callFunc) HEAD方法请求
          *             url      : string  请求URL
          *             callFunc : function 请求返回回调函数
-         *                           callFunc(responseHead, lastModified, resourceAvailable)
+         *                           callFunc(responseHead)
          *  X.Ajax.put(url, data, callFunc) PUT 方法请求
          *  X.Ajax.options(url ,callFunc)  OPTIONS 方法请求
          *  X.Ajax.del(url,callFunc)  DELETE方法请求
-         *  X.Ajax.trace(url,callFunc) TRACE方法请求
+         *  X.Ajax.trace(url,callFunc) TRACE方法请求 
+         *                           callFunc(responseHead, responseText)
          *  X.Ajax.file(formObj, callFunc)  上传文件
          *              formObj  : ELEMENT_NODE  上传文件表单
          *              callFunc : function  请求返回回调函数
+         *  X.Ajax.jsonp(url,callFunc)  JSONP请求
          *  X.Ajax.waitTime : 等待超时时间
          */
         Ajax : {
@@ -1017,7 +1043,7 @@ $ : function(ele) {
             method : null,
             data : null,
             callFunc : [],
-            defaultDomain : 'http://'+window.location.host,
+            defaultDomain : window.location.host,
             rewriteTag : '/?',
             waitTime : 10000,
             outObj : [],
@@ -1038,9 +1064,10 @@ $ : function(ele) {
                 X.Ajax.MimeType = mime + ';charset='+X.Ajax.charset;
             },
             setUrl : function(url) {
-                var h = url.substr(url, 4);
-                if(h.toLowerCase() != 'http') {
-                    url = X.Ajax.defaultDomain + url;
+                if(url.substr(0,4).toLowerCase() != 'http://' &&
+                        url.substr(0,5).toLowerCase() != 'https://') {
+                    var protocol = window.location.protocol=="https:" ? 'https':'http';
+                    url = protocol+'://'+X.Ajax.defaultDomain + url;
                 };
                 X.Ajax.url = url.strpos('?') != false ? url+'&is_ajax=1' : url+'?is_ajax=1';
                 X.Ajax.url+= '&t='+(new Date().getTime());
@@ -1081,6 +1108,46 @@ $ : function(ele) {
                 X.Ajax.method  = 'POST';
                 X.Ajax.callServer(callFunc);
             },
+            jsonp : function(url, callFunc) {
+                X.Ajax.setUrl(url);
+                X.Ajax.url += '&jsonp=X.Ajax.callback';
+                X.Ajax.openInstance[openId] = {};
+                X.Ajax.openInstance[openId].url = X.Ajax.url;
+                if(callFunc) X.Ajax.openInstance[openId].callFunc = callFunc;
+                X.Ajax.openInstanceId++;
+                X.Ajax.openInstance[openId].js = X.loadJSFile(X.Ajax.url, true);
+                X.Ajax.openInstanceId[openId].js.addListener('error',X.Ajax.jsonperror);
+            },
+            jsonperror : function(e) {
+                var js = X.getEventNode(e);
+                js.destroy();
+                console.warn('JSONP Load Error');
+            },
+            callback : function(reData) {
+                var csrc = X.doc.scripts;
+                csrc = csrc[csrc.length -1];
+                for(var i in X.Ajax.openInstanceId) {
+                    var sIns = X.Ajax.openInstanceId[i];
+                    if(sIns.url && sIns.callFunc && sIns.url == csrc) {
+                        sIns.callFunc(reData);
+                    }
+                }
+            },
+            socket : function(url, openFunc, receiveFunc) {
+                if(navigator.FIREFOX && typeof(WebSocket) == 'undefined') {
+                    var socket =  new MozWebSocket(url);
+                } else if(typeof(WebSocket) == 'undefined') {
+                    return false;
+                }
+                if(url.substr(0,4).toLowerCase() != 'ws://' && url.substr(0,5).toLowerCase() != 'wss://') {
+                    var protocol = window.location.protocol=="https:" ? 'wss':'ws';
+                    url = protocol+'://'+ X.Ajax.defaultDomain + url;
+                }
+                var socket = new WebSocket(url);
+                socket.onopen = openFunc;
+                socket.onmessage = receiveFunc;
+                return socket;
+            },
             file : function(form, callFunc) {
                 var enc = form.getAttribute('enctype');
                 if(enc != 'multipart/form-data') {
@@ -1095,7 +1162,12 @@ $ : function(ele) {
                 upload_target.setCss('border:none;height:0;width:0;');
                 upload_target.setAttribute('frameboder','none');
                 X.doc.body.appendChild(upload_target);
-                upload_target.addListener('load',function() {
+                upload_target.addListener('readystatechange',function() {
+                    if(document.readyState == 'loaded') {
+                        console.warn('Ajax Uplad File Error');
+                        return false;
+                    }
+                    if(document.readyState == 'complete') {
                     var restr = upload_target.getIframeBody().innerHTML;
                     setTimeout(function(){upload_target.destroy();},1000);
                     if(restr == '') {
@@ -1106,11 +1178,11 @@ $ : function(ele) {
                         var res = JSON.parse(restr);
                         } catch(e) {
                             if(/413/i.test(restr)) {
-                                console.warn('X.Ajax upload file is Too large');
+                                console.warn('Ajax upload file is Too large');
                                 return 413;
                             }
                             if(/512/i.test(restr)) {
-                                console.warn('X.Ajax upload file timeout');
+                                console.warn('Ajax upload file timeout');
                                 return 512;
                             }
                             console.warn('Ajax Upload File response data is not JSON'+e);
@@ -1123,7 +1195,7 @@ $ : function(ele) {
                             console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
                         }
                     }
-                });
+                }});
                 form.submit();
             },
             setData : function(data) {
@@ -1177,55 +1249,58 @@ $ : function(ele) {
                         X.clearTimeout(X.Ajax.openInstance[openId].outObj);
                         X.clearTimeout(X.Ajax.statusObj);
                         X.Ajax.complete();
+                        if(X.Ajax.openInstance[openId].method == 'HEAD') {
+                            if(X.Ajax.openInstance[openId].XMLHttp.status == 0) {
+                                return X.Ajax.openInstance[openId].callFunc(0);
+                            }
+                            var headerStr = X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders();
+                            var headerArr = headerStr.split("\r\n");
+                            var header = [];
+                            for(var h in headerArr) {
+                                if(typeof(headerArr[h]) == 'string') {
+                                    var fvs = headerArr[h].trim();
+                                    if(fvs == '') continue;
+                                    var fv = fvs.split(':');
+                                    header[fv[0].trim()] = fv[1].trim();
+                                }
+                            }
+                            X.Ajax.openInstance[openId].callFunc(header);
+                            return;
+                        }
+                        if(X.Ajax.openInstance[openId].method == 'TRACE') {
+                            X.Ajax.openInstance[openId].callFunc(
+                                    X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders(),
+                                    X.Ajax.openInstance[openId].XMLHttp.responseText);
+                            return;
+                        }
                         if(X.Ajax.openInstance[openId].XMLHttp.status == 200) {
-                            if (X.Ajax.callFunc) {
-                                if(X.Ajax.openInstance[openId].method == 'HEAD') {
-                                    var headerStr = X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders();
-                                    var headerArr = headerStr.split("\r\n");
-                                    var header = [];
-                                    for(var h in headerArr) {
-                                        if(typeof(headerArr[h]) == 'string') {
-                                            var fvs = headerArr[h].trim();
-                                            if(fvs == '') continue;
-                                            var fv = fs.split(':');
-                                            header[fv[0].trim()] = fv[1].trim();
+                            switch(X.Ajax.dataType.toLowerCase()) {
+                                case 'xml':
+                                    var reData = X.Ajax.openInstance[openId].XMLHttp.responseXML;
+                                break;
+                                case 'json':
+                                    var reData = X.Ajax.openInstance[openId].XMLHttp.responseText;
+                                    if(reData != '') {
+                                        try{ var reData = JSON.parse(reData); }
+                                        catch(e) {
+                                            console.warn('Ajax JSON Parse Error: '+e + ' in File '+e.fileName + ' Line '+e.lineNumber);
+                                            return;
                                         }
                                     }
-                                    X.Ajax.openInstance[openId].callFunc(header,
-                                                            X.Ajax.openInstance[openId].XMLHttp.getLastModified(),
-                                                            X.Ajax.openInstance[openId].XMLHttp.getIsResourceAvailable());
-                                    return;
-                                }
-                                if(X.Ajax.openInstance[openId].method == X.Ajax.method == 'TRACE') {
-                                    X.Ajax.openInstance[openId].callFunc(X.Ajax.openInstance[openId].XMLHttp.responseText);
-                                    return;
-                                }
-                                if(X.Ajax.dataType.toLowerCase() == 'json') {
-                                    try{
-                                        if(X.Ajax.openInstance[openId].XMLHttp.responseText == '') {
-                                            X.Ajax.openInstance[openId].callFunc(X.Ajax.openInstance[openId].XMLHttp.responseText);
-                                        } else {
-                                            var reJSON = JSON.parse(X.Ajax.openInstance[openId].XMLHttp.responseText);
-                                            try {
-                                                X.Ajax.openInstance[openId].callFunc(reJSON);
-                                            } catch(e) {
-                                                console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
-                                            }
-                                            if(reJSON.debug) {
-                                                X.debugInnerHTML(reJSON.debug);
-                                            }
-                                        }
-                                    } catch(e) {
-                                        console.warn('Ajax response data is not JSON Object Error: '+e + ' in File '+e.fileName + ' Line '+e.lineNumber);
-                                    }
-                                } else {
-                                    X.Ajax.openInstance[openId].callFunc(X.Ajax.openInstance[openId].XMLHttp.responseXML); 
-                                }
+                                break;
+                                default:
+                                    var reData = X.Ajax.openInstance[openId].XMLHttp.responseText;
+                                break;
+                            }
+                            if(X.Ajax.openInstance[openId].callFunc) {
+                                X.Ajax.openInstance[openId].callFunc(reData); 
+                                /*try { X.Ajax.openInstance[openId].callFunc(reData); 
+                                } catch(e) {
+                                console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
+                                }*/
                             }
                         } else {
-                            if(X.Ajax.openInstance[openId].XMLHttp.status == 0) {
-                                console.warn('Ajax requset timeout');
-                            }
+                            console.warn('Ajax requset timeout');
                         }
                         delete X.Ajax.openInstance[openId];
                     }

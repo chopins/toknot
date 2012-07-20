@@ -1,4 +1,27 @@
 <?php
+
+/**
+ * Toknot
+ *
+ * XInotifySync
+ *
+ * PHP version 5.3
+ * 
+ * @package XDataStruct
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release $id$
+ */
+exists_frame();
+/**
+ * XInotifySync 
+ * 
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XInotifySync {
     public $inotify_instance = null;
     public $watch_descriptor = array();
