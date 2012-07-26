@@ -56,7 +56,7 @@ defined('__X_IN_FRAME__') ||  define('__X_IN_FRAME__', true);
 defined('__X_SHOW_ERROR__') || define('__X_SHOW_ERROR__',true); 
 defined('__X_EXCEPTION_LEVEL__') || define('__X_EXCEPTION_LEVEL__',2);
 defined('__X_APP_DATA_DIR_NAME__') || define('__X_APP_DATA_DIR_NAME__','var');
-defined('__X_APP_USER_CONF_FILE_NAME__') || define('__X_APP_USER_CONF_FILE_NAME__','config.php');
+defined('__X_APP_USER_CONF_FILE_NAME__') || define('__X_APP_USER_CONF_FILE_NAME__','config.ini');
 defined('__X_APP_DATA_DIR__') || define('__X_APP_DATA_DIR__',__X_APP_ROOT__.'/'.__X_APP_DATA_DIR_NAME__);
 defined('__X_NO_WEB_SERVER__') || define('__X_NO_WEB_SERVER__', false);
 

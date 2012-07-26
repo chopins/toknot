@@ -33,9 +33,9 @@ class XTxtDB {
     const KEY_SIZE = 0x10;
     const FLAG_SIZE = 1;
     const DB_TYPE = 'XFrameworkTxtDB';
-    public function __construct($cfg = null) {
-        if($cfg == null) $cfg = $GLOBALS['_CFG'];
-        $this->db_dir = __X_APP_DATA_DIR__."/{$cfg->db_data}/{$cfg->txtdb_dir}";
+    public function __construct($cfg_idx = 'txtdb') {
+        $cfg = $GLOBALS['_CFG']->db[$cfg_idx];
+        $this->db_dir = __X_APP_DATA_DIR__."/{$GLOBALS['_CFG']->db_data}/{$cfg->txtdb_dir}";
         $this->space_flag = pack('C',32);
         $this->lf = pack('C',10);
     }

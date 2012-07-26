@@ -59,16 +59,16 @@ class XTemplate {
         if(empty($this->T->type)) $this->T->type = 'html';
         switch($this->T->type) {
             case 'json':
-                $tpl_name = "{$this->T->name}{$this->cfg->tpl->json_suffix}";
+                $tpl_name = "{$this->T->name}{$this->cfg->tpl_json_suffix}";
             break;
             case 'xml':
-                $tpl_name ="{$this->T->name}{$this->cfg->tpl->xml_suffix}";
+                $tpl_name ="{$this->T->name}{$this->cfg->tpl_xml_suffix}";
             break;
             default:
-                $tpl_name = "{$this->T->name}{$this->cfg->tpl->html_suffix}";
+                $tpl_name = "{$this->T->name}{$this->cfg->tpl_html_suffix}";
             break;
         }
-        $cache_name = $this->cfg->tpl->compile_tpl_dir_name;
+        $cache_name = $this->cfg->tpl_compile_tpl_dir_name;
         $cache_file = __X_APP_DATA_DIR__."/{$cache_name}/{$tpl_name}.php";
         $tpl_file = "{$_ENV['__X_APP_UI_DIR__']}/{$this->T->type}/{$tpl_name}";
         return array($cache_file,$tpl_file);
@@ -133,7 +133,7 @@ class XTemplate {
         $this->parse_foreach($file_str);
         $this->parse_set($file_str);
         $this->parse_uri($file_str);
-        if($this->cfg->tpl->compression) {
+        if($this->cfg->tpl_compression) {
             $this->del_html_comment($file_str);
             //$file_str = preg_replace('/[\n\t\r]+/i','',$file_str);
         }
@@ -168,12 +168,12 @@ class XTemplate {
         $str = preg_replace('/\$([A-Za-z_]\w*)/i','\$this->_var->$1',$str);
     }
     private function inc_js($file) {
-        $file_path = "{$_ENV['__X_APP_UI_DIR__']}/{$this->cfg->tpl->js_file_dir}/{$file}.js";
+        $file_path = "{$_ENV['__X_APP_UI_DIR__']}/{$this->cfg->tpl_js_file_dir}/{$file}.js";
         if(!file_exists($file_path)) throw new XException("{$file_path} not exists");
         $o_change_time = filemtime($file_path);
-        $output_path  = "{$this->cfg->tpl->static_dir_name}/{$file}.js";
+        $output_path  = "{$this->cfg->tpl_static_dir_name}/{$file}.js";
         $w_change_time = file_exists($output_path) ? filemtime($output_path) : '0';
-        if($this->cfg->tpl->compression && $w_change_time <= $o_change_time) {
+        if($this->cfg->tpl_compression && $w_change_time <= $o_change_time) {
             $js_packer = new XJSPacker($file_path);
             $js_file_str = $js_packer->get_str();
             file_put_contents($output_path,$js_file_str);
@@ -181,19 +181,19 @@ class XTemplate {
             $js_file_str = file_get_contents($file_path);
             file_put_contents($output_path,$js_file_str);
         }
-        $domain  = empty($this->cfg->tpl->http_access_static_domain) ? '': "http://{$this->cfg->tpl->http_access_static_domain}";
-        $this->out_html .= "<script type=\"text/javascript\" src=\"{$domain}{$this->cfg->tpl->http_access_static_path}/{$file}.js\"></script>";
+        $domain  = empty($this->cfg->tpl_http_access_static_domain) ? '': "http://{$this->cfg->tpl_http_access_static_domain}";
+        $this->out_html .= "<script type=\"text/javascript\" src=\"{$domain}{$this->cfg->tpl_http_access_static_path}/{$file}.js\"></script>";
     }
     private function parse_js(&$str) {
         $str = preg_replace('/\{js\s+([a-zA-Z0-9_]+)\}/i',$this->tnd.'$this->inc_js("$1");'.$this->tst,$str);
     }
     private function inc_css($file) {
-        $file_path = "{$_ENV['__X_APP_UI_DIR__']}/{$this->cfg->tpl->css_file_dir}/{$file}.css";
+        $file_path = "{$_ENV['__X_APP_UI_DIR__']}/{$this->cfg->tpl_css_file_dir}/{$file}.css";
         if(!file_exists($file_path)) throw new XException("{$file_path} not exists");
         $o_change_time = filemtime($file_path);
-        $output_path  = "{$this->cfg->tpl->static_dir_name}/{$file}.css";
+        $output_path  = "{$this->cfg->tpl_static_dir_name}/{$file}.css";
         $w_change_time = file_exists($output_path) ? filemtime($output_path) : '0';
-        if($this->cfg->tpl->compression && $w_change_time <= $o_change_time) {
+        if($this->cfg->tpl_compression && $w_change_time <= $o_change_time) {
             $css_packer = new XCSSPacker($file_path);
             $css_file_str = $css_packer->get_str();
             file_put_contents($output_path,$css_file_str);
@@ -201,8 +201,8 @@ class XTemplate {
             $css_file_str = file_get_contents($file_path);
             file_put_contents($output_path,$css_file_str);
         }
-        $domain  = empty($this->cfg->tpl->http_access_static_domain) ? '': "http://{$this->cfg->tpl->http_access_static_domain}";
-        $this->out_html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"{$domain}{$this->cfg->tpl->http_access_static_path}/{$file}.css\">";
+        $domain  = empty($this->cfg->tpl_http_access_static_domain) ? '': "http://{$this->cfg->tpl_http_access_static_domain}";
+        $this->out_html .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"{$domain}{$this->cfg->tpl_http_access_static_path}/{$file}.css\">";
     }
     private function parse_css(&$str) {
         $str = preg_replace('/\{css\s+([a-zA-Z0-9_]+)\}/i',$this->tnd.'$this->inc_css("$1");'.$this->tst,$str);

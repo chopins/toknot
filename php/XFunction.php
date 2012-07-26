@@ -360,7 +360,8 @@ function byte_format($number) {
     if($number >= 1073741824*1048576) return round($number/1073741824/1048576,2).'P';
 }
 function support_url_mode($path_uri, $params='') {
-    global $_CFG;
+    $xconfig = XConfig::singleton();
+    $_CFG = $xconfig->get_cfg();
     $domain = empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
     switch($_CFG->uri_mode) {
         case 1:
@@ -468,7 +469,7 @@ function file_str_line($filename, $line_str) {
 function array2object(array $array) {
     foreach($array as $key =>$value) {
         if(is_array($value)) {
-            $array[$key] = $this->array2object($value);
+            $array[$key] = array2object($value);
         }
     }
     return (object)$array;

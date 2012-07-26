@@ -16,6 +16,7 @@
 exists_frame();
 /**
  * XDbm 
+ * This is data model class base class
  * 
  * @abstract
  * @package DataBase
@@ -24,17 +25,18 @@ exists_frame();
  */
 abstract class XDbm {
     public $db = null;
-    public $main_table = null;
-    public $limit = 20;
-    public $start = 0;
-    public $current_page = 1;
-    public $page_num = 1;
-    public $record_num = 0;
     protected $cfg;
 	public $cache_file = '/data/cache/lib_exec_cache.dat';
+    static $db_instance = array();
+    public $idx = 0;
+    public $dbtype;
     public function __construct() {
-        $this->cfg = $GLOBALS['_CFG'];
-        $this->db = new XDba();
+    }
+    public function init_database() {
+        $xconfig = XConfig::singleton();
+        $this->cfg = $xconfig->get_cfg();
+        $dba = new XDba($this->dbtype,$this->cfg, $idx = 0);
+        $this->db = $dba->get_instance();
     }
     public function page_count() {
         $this->page_num = ceil($this->record_num/$this->limit);

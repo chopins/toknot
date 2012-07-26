@@ -126,11 +126,12 @@ abstract class X {
      * @access protected
      */
     final public function call_init() {
-        $this->_CFG = $GLOBALS['_CFG'];
+        $xconfig = XConfig::singleton();
+        $this->_CFG = $xconfig->get_cfg();
         $this->display_html = '';
         $this->visit_time = empty($_SERVER['REQUEST_TIME']) ? time() : $_SERVER['REQUEST_TIME'];
         $this->visit_ip = get_uip();
-        $this->R = new XRequest($this->_CFG->ajax_key, $this->_CFG->ajax_flag);
+        $this->R = new XRequest($this->_CFG);
         $this->D = new XStdClass();
         $this->T = new XObject();
         $this->init_var_dirname();
@@ -272,16 +273,9 @@ abstract class X {
      */
     final private function construct_standard_template_data() {
         $this->D->R = $this->R;
-        foreach($this->_CFG->tpl->common_tpldata as $key => $value) {
+        foreach($this->_CFG->tpl_common_tpldata as $key => $value) {
             $this->D->$key = $value;
         }
-    }
-
-    /**
-     * instantiated database operation class
-     */
-    final private function initdb() {
-        $this->db_instance = new dba();
     }
 
     /**

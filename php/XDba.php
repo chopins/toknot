@@ -24,7 +24,33 @@ exists_frame();
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
-final class XDba extends XMySQLDba {
+final class XDba {
+    private $db_instance = null;
+    public function __construct($dbtype,$cfg, $idx) {
+        $dbtype = strtolower($dbtype);
+        switch($dbtype) {
+            case 'mysql':
+                $host = "db_msyql_{$idx}_host";
+                $username = "db_msyql_{$idx}_user";
+                $pass = "db_msyql_{$idx}_password";
+                $api = "db_mysql_{$idx}_select_api";
+                $dbname = "db_mysql_{$idx}_dbname";
+                $this->db_instance = new XMySQLDba(
+                        $cfg->$host,$cfg->$username,
+                        $cfg->$pass,$cfg->$dbname, $cfg->$api);
+            break;
+            case 'firebird':
+                $local = 'db_firebird_dirname';
+                $this->db_instance = new XFirebirdLocal($local);
+            break;
+            case 'txtdb':
+                $this->db_instance = new XTxtDB();
+            break;
+        }
+    }
+    public function get_instance() {
+        return $this->db_instance;
+    }
 }
 
 /**
@@ -42,26 +68,38 @@ class XMySQLDba {
     private $dba_table;
     private $select_api = false;
     private $api_fetch = false;
+    private $host = 'localhost';
+    private $user = null;
+    private $pass = null;
     public $sql = null;
+    public static $table_list = array(); 
     private $cfg;
-    public function __construct() {
-        global $_CFG;
-        $this->cfg = $_CFG->db;
+    public function __construct($host,$username,$pass,$dbname,$api = false) {
+        $this->host = $host;
+        $this->user = $username;
+        $this->pass = $pass;
+        $this->select_api = $api;
+        $this->dbname = $name;
         $this->connect();
         $this->dba_table = new XMySQLTable($this);
     }
+    public function get_tables() {
+        $this->table_list = $this->get_all_row('SHOW TABLES');
+    }
     private function connect() {
-        if($this->cfg->select_api) $this->select_api = $this->cfg->select_api;
-        $con =@mysql_connect($this->cfg->host, $this->cfg->user, $this->cfg->password);
+        $con =@mysql_connect($this->host, $this->user, $this->password);
         if($con === false) throw new XException('MySQL connect Error:#'.mysql_errno().'-'.mysql_error());
-        $sr = @mysql_select_db($this->cfg->name, $con);
+        $sr = @mysql_select_db($this->dbname, $con);
         if($sr === false) throw new XException('MySQL select DB error:#'.mysql_errno().'-'.mysql_error($con));
         mysql_query('SET NAMES "utf8"', $con);
         $this->con = $con;
     }
     public function __get($table) {
-        $this->dba_table->table = $table;
-        return $this->dba_table;
+        if(in_array($table,$this->table_list)) {
+            $this->dba_table->table = $table;
+            return $this->dba_table;
+        }
+        return null;
     }
     public function free() {
         if($this->api_res) $this->res->free();

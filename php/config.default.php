@@ -125,12 +125,23 @@ $_CFG->session->session_name = 'XSID';//session 在cookie中的名字
 $_CFG->session->save_path = 'session';
 
 /*****数据库相关配置*******/
-$_CFG->db  = new stdClass;
-$_CFG->db->host = 'localhost';
-$_CFG->db->name = 'jac_ipad_data';
-$_CFG->db->user = 'root';
-$_CFG->db->password = '';
-$_CFG->db->select_api = false;
+$_CFG->db  = array();
+$_cfg_db_index = 'mysql';
+$_CFG->db[$_cfg_db_index]['type'] = 'mysql';
+$_CFG->db[$_cfg_db_index]['host'] = 'localhost';
+$_CFG->db[$_cfg_db_index]['name'] = 'jac_ipad_data';
+$_CFG->db[$_cfg_db_index]['user'] = 'root';
+$_CFG->db[$_cfg_db_index]['password'] = '';
+$_CFG->db[$_cfg_db_index]['select_api'] = false;
+
+$_cfg_db_index = 'firebird';
+$_CFG->db[$_cfg_db_index]['type'] = 'firebird';
+$_CFG->db[$_cfg_db_index]['dbhost'] = 'firebird'; // 位于$_CFG->db_data目录下
+
+$_cfg_db_index = 'txtdb';
+$_CFG->db[$_cfg_db_index]['kvdb_dir'] = 'kvdb';
+$_CFG->db[$_cfg_db_index]['txtdb_dir'] = 'txtdb';
+
 
 /***模板相关配置***/
 $_CFG->tpl = new stdClass; 

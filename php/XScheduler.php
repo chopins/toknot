@@ -28,13 +28,14 @@ exists_frame();
  * @license http://opensource.org/licenses/bsd-license.php New BSD License
  */
 
-final class XScheduler extends XObject {
+final class XScheduler {
     public $app_instance;
     private $app_method;
-    private $cfg;
     private $exception_string = '';
     private $server = null;
     private $utf8 = 'utf8';
+    private $encodeing = '';
+    private $_CFG;
     public function __construct() {
         if(version_compare(PHP_VERSION,'5.3.0') < 0) {
             throw new XException('XPHPFramework need run in php varsion lagre 5.3.0, your php version is'.PHP_VERSION);
@@ -45,8 +46,10 @@ final class XScheduler extends XObject {
         $_ENV['__X_OUT_BROWSER__']     = false;
         $_ENV['__X_EXCEPTION_THROW__'] = false;
         $_ENV['__X_FATAL_EXCEPTION__'] = false;
-        $this->load_cfg();
-        $_ENV['__X_CALL_PAGE_DIR__']   = __X_APP_ROOT__."/{$this->cfg->php_dir_name}";
+        $xconfig = XConfig::singleton();
+        $this->_CFG = $xconfig->get_cfg_arr();
+        $this->encoding = $this->_CFG['encoding'];
+        $_ENV['__X_CALL_PAGE_DIR__']   = __X_APP_ROOT__.'/'.$this->_CFG['php_dir_name'];
         $this->check_superglobals();
         $this->set_time_zone();
         if(PHP_CLI && __X_NO_WEB_SERVER__ === false) {
@@ -62,7 +65,7 @@ final class XScheduler extends XObject {
     }
 
     public function call_loop() {
-        $_ENV['__X_CALL_PAGE_FILE__'] = __X_APP_ROOT__."/{$this->cfg->php_dir_name}/".__X_DAEMON_LOOP_FILE__;
+        $_ENV['__X_CALL_PAGE_FILE__'] = __X_APP_ROOT__.'/'. $this->_CFG['php_dir_name'].__X_DAEMON_LOOP_FILE__;
         if(!file_exists($_ENV['__X_CALL_PAGE_FILE__'])) {
             throw new XException("File {$_ENV['__X_CALL_PAGE_FILE__']} not be found");
         }
@@ -98,8 +101,8 @@ final class XScheduler extends XObject {
         $variables_order = strtoupper(ini_get('variables_order'));
         if(PHP_CLI == false && strpos($variables_order,'P') === false) {
             $this->import_post();
-        } else if(strpos($variables_order,'P') === true && $this->utf8 != $this->cfg->encoding) {
-            $_POST = unserialize(mb_convert_encoding(serialize($_POST), $this->utf8, $this->cfg->encoding));
+        } else if(strpos($variables_order,'P') === true && $this->utf8 != $this->encoding) {
+            $_POST = unserialize(mb_convert_encoding(serialize($_POST), $this->utf8, $this->encoding));
         }
         if(strpos($variables_order,'S') === false) {
             $_SERVER['_'] = getenv('_');
@@ -116,22 +119,22 @@ final class XScheduler extends XObject {
             }
         }
         if(PHP_CLI == false && strpos($variables_order,'G') === false) {
-            if($this->cfg->encoding != $this->utf8) {
-                $_SERVER['QUERY_STRING'] = mb_convert_encoding($_SERVER['QUERY_STRING'], $this->utf8,$this->cfg->encoding);
+            if($this->encoding != $this->utf8) {
+                $_SERVER['QUERY_STRING'] = mb_convert_encoding($_SERVER['QUERY_STRING'], $this->utf8,$this->encoding);
             }
             parse_str($_SERVER['QUERY_STRING'],$_GET);
-        } else if(strpos($variables_order,'G') === true && $this->utf8 != $this->cfg->encoding) {
-            $_GET = unserialize(mb_convert_encoding(serialize($_GET), $this->utf8, $this->cfg->encoding));
+        } else if(strpos($variables_order,'G') === true && $this->utf8 != $this->encoding) {
+            $_GET = unserialize(mb_convert_encoding(serialize($_GET), $this->utf8, $this->encoding));
         }
 
         if(PHP_CLI == false && strpos($variables_order,'C') === false) {
-            if($this->cfg->encoding != $this->utf8) {
+            if($this->encoding != $this->utf8) {
                 $_SERVER['HTTP_COOKIE'] = empty($_SERVER['HTTP_COOKIE']) ? getenv('HTTP_COOKIE') : $_SERVER['HTTP_COOKIE'];
-                $_SERVER['HTTP_COOKIE'] = mb_convert_encoding($_SERVER['HTTP_COOKIE'], $this->utf8, $this->cfg->encoding);
+                $_SERVER['HTTP_COOKIE'] = mb_convert_encoding($_SERVER['HTTP_COOKIE'], $this->utf8, $this->encoding);
             }
             get_cookie();
-        } else if(strpos($variables_order,'C') === true && $this->utf8 != $this->cfg->encoding) {
-            $_COOKIE = unserialize(mb_convert_encoding(serialize($_COOKIE), $this->utf8, $this->cfg->encoding));
+        } else if(strpos($variables_order,'C') === true && $this->utf8 != $this->encoding) {
+            $_COOKIE = unserialize(mb_convert_encoding(serialize($_COOKIE), $this->utf8, $this->encoding));
         }
 
 
@@ -147,8 +150,8 @@ final class XScheduler extends XObject {
         if(!empty($http_body)) {
             $content_type = getenv('HTTP_CONTENT_TYPE');
             if($content_type == 'application/x-www-form-urlencoded') {
-                if($this->cfg->encoding != $this->utf8) 
-                    $http_body = mb_convert_encoding($http_body, $this->utf8,$this->cfg->encoding);
+                if($this->encoding != $this->utf8) 
+                    $http_body = mb_convert_encoding($http_body, $this->utf8,$this->encoding);
                 parse_str($http_body,$_POST);
             } else {
                 $content_len = getenv('HTTP_CONTENT_LENGTH');
@@ -250,9 +253,9 @@ final class XScheduler extends XObject {
                             $_FILES[$name]['error'] = $errno;
                         }
                     } elseif(isset($name)) {
-                        if($this->cfg->encoding != $this->utf8) {
-                            $name = mb_convert_encoding($name, $this->utf8,$this->cfg->encoding);
-                            $content_data = mb_convert_encoding($content_data, $this->utf8,$this->cfg->encoding);
+                        if($this->encoding != $this->utf8) {
+                            $name = mb_convert_encoding($name, $this->utf8,$this->encoding);
+                            $content_data = mb_convert_encoding($content_data, $this->utf8,$this->encoding);
                         }
                         if(substr($name,-1,2) == '[]') {
                             $_POST[$name][] = $content_data;
@@ -279,36 +282,37 @@ final class XScheduler extends XObject {
             $uri_path     = $uri;
         }
         $call_page_func = $call_page_name = $prefix_path = '';
-        if($this->cfg->uri_mode == 1 && isset($query_string)) {
+        $url_file_suffix = '.'.$this->_CFG['url_file_suffix'];
+        if($this->_CFG['uri_mode'] == 1 && isset($query_string)) {
             $_GET['a']      = empty($_GET['a']) ? '':$_GET['a'];
             $uri_path       = dirname($_GET['a']);
             $call_page_func = basename($_GET['a']);
-        } else if($this->cfg->uri_mode == 2) { //PATH_INFO mode
+        } else if($this->_CFG['uri_mode'] == 2) { //PATH_INFO mode
             if(empty($_SERVER['PATH_INFO'])) {
                 $_SERVER['PATH_INFO'] = str_replace('/'.basename($_SERVER['SCRIPT_FILENAME']),'',$_SERVER['PHP_SELF']);
             }
             $uri_path = dirname($_SERVER['PATH_INFO']);
             $call_page_func = basename($_SERVER['PATH_INFO']);
-            if(empty($_SERVER['PATH_INFO'])) $call_page_func = basename($_SERVER['DOCUMENT_URI'],".{$this->cfg->url_file_suffix}");
-        } else if($this->cfg->uri_mode == 4) {
+            if(empty($_SERVER['PATH_INFO'])) $call_page_func = basename($_SERVER['DOCUMENT_URI'], $uri_file_suffix);
+        } else if($this->_CFG['uri_mode'] == 4) {
         } else {
             if($uri_path == '/') {
-                $_SERVER['DOCUMENT_URI'] = strtok($this->cfg->web->index,' ');
-                $call_page_func = basename($_SERVER['DOCUMENT_URI'],".{$this->cfg->url_file_suffix}");
+                $_SERVER['DOCUMENT_URI'] = strtok($this->_CFG['web_index'],':');
+                $call_page_func = basename($_SERVER['DOCUMENT_URI'],$url_file_suffix);
                 $call_page_name = $call_page_func;
             } else if(dirname($uri_path) == '/') {
                 $call_page_name = basename($uri_path);
-                $call_page_func = basename(strtok($this->cfg->web->index,' '),".{$this->cfg->url_file_suffix}");
+                $call_page_func = basename(strtok($htis->_CFG['web.index'],' '), $url_file_suffix);
             } else {
-                $call_page_func = basename($uri_path, ".{$this->cfg->url_file_suffix}");
+                $call_page_func = basename($uri_path, $url_file_suffix);
                 $call_page_name = basename(dirname($uri_path));
                 $prefix_path    = dirname(dirname($uri_path));
                 if($prefix_path == '/') $prefix_path = '';
             }
         }
         $add_sub_domain_path = '';
-        if($this->cfg->subsite_mode > 0) {
-            if($this->cfg->subsite_mode < $this->cfg->subsite_start_level) {
+        if($this->_CFG['subsite_mode'] > 0) {
+            if($this->_CFG['subsite_mode'] < $this->_CFG['subsite_start_level']) {
                 throw new XException('subsite_start_level not be greater than subsite_mode in your confingure file');
             }
             if($_SERVER['SERVER_ADDR'] != $_SERVER['HTTP_HOST']) {
@@ -319,8 +323,8 @@ final class XScheduler extends XObject {
                    $sub_domain_list        = explode('.',$_SERVER['HTTP_HOST']);
                     $sub_domain_list       = array_reverse($sub_domain_list);
                     $sub_domain_list_count = count($sub_domain_list) -1;
-                    if($sub_domain_list_count >= $this->cfg->subsite_start_level) {
-                        for($i=$this->cfg->subsite_start_level;$i<=$this->cfg->subsite_mode;$i++) {
+                    if($sub_domain_list_count >= $this->_CFG['subsite_start_level']) {
+                        for($i=$this->_CFG['subsite_start_level'];$i<=$this->_CFG['subsite_mode'];$i++) {
                             $add_sub_domain_path = "{$sub_domain_list[$i]}/{$add_sub_domain_path}";
                         }
                     }
@@ -354,17 +358,17 @@ final class XScheduler extends XObject {
         $_ENV['__X_CALL_PAGE_NAME__']    = $call_page_name;
         $_ENV['__X_CALL_PAGE_FILE__']    = "{$_ENV['__X_CALL_PAGE_DIR__']}{$add_sub_domain_path}{$prefix_path}/{$call_page_name}.php";
         $_ENV['__X_CALL_PAGE_FUNC__']    = $request_method.$call_page_func;
-        $_ENV['__X_APP_UI_DIR__']        = __X_APP_ROOT__."/{$this->cfg->ui_dir_name}";
-        $_ENV['__X_APP_PHP_ERROR_LOG__'] = __X_APP_DATA_DIR__."/{$this->cfg->error_log_dir}/".date('Ymd');
+        $_ENV['__X_APP_UI_DIR__']        = __X_APP_ROOT__.'/'.$this->_CFG['ui_dir_name'];
+        $_ENV['__X_APP_PHP_ERROR_LOG__'] = __X_APP_DATA_DIR__.'/'.$this->_CFG['error_log_dir'].'/'.date('Ymd');
     }
 
     /**
      * load view class of user's application
      * 
-     * @access public
+     * @access private
      * @return void
      */
-    public function load_application_class_file() {
+    private function load_application_class_file() {
         if(!file_exists($_ENV['__X_CALL_PAGE_FILE__'])) {
             throw new XException("File {$_ENV['__X_CALL_PAGE_FILE__']} not be found");
         }
@@ -424,42 +428,11 @@ final class XScheduler extends XObject {
             $this->app_instance = null;
             if(PHP_CLI) gc_collect_cycles();
         }
-        if($this->cfg->encoding != $this->utf8) {
-            $html = mb_convert_encoding($html, $this->cfg->encoding, $this->utf8);
+        if($this->encoding != $this->utf8) {
+            $html = mb_convert_encoding($html, $this->encoding, $this->utf8);
         }
         return $html;
     }
-    /**
-     * load configuration
-     * 
-     * @access public
-     * @return void
-     */
-    public function load_cfg() {
-        global $_CFG;
-        include(__X_FRAMEWORK_ROOT__ . '/config.default.php');
-        $this->cfg = $_CFG;
-        $cfg_db = $this->cfg->db;
-        $cfg_tpl = $this->cfg->tpl;
-        $cfg_server = $this->cfg->web;
-        $app_config = __X_APP_DATA_DIR__ .'/conf/'.__X_APP_USER_CONF_FILE_NAME__;
-        if(file_exists($app_config)) {
-            include($app_config);
-            if($this->cfg !== $_CFG) {
-                throw new XException("Can not initialize \$_CFG in {$app_config}");
-            }
-            if($cfg_db !== $_CFG->db) {
-                throw new XException("Can not initialize \$_CFG->db in {$app_config}");
-            }
-            if($cfg_tpl !== $_CFG->tpl) {
-                throw new XException("Can not initialize \$_CFG->tpl in {$app_config}");
-            }
-            if($cfg_server !== $_CFG->web) {
-                throw new XException("Can not initialize \$_CFG->server in {$app_config}");
-            }
-        }
-    }
-
     /**
      * set application timezone of the application
      * 
@@ -467,9 +440,9 @@ final class XScheduler extends XObject {
      * @return void
      */
     public function set_time_zone() {
-        if(empty($this->cfg->timezone)) {
+        if(empty($this->_CFG['timezone'])) {
             throw new XException('Application timezone unset in config file ');
         }
-        date_default_timezone_set($this->cfg->timezone);
+        date_default_timezone_set($this->_CFG['timezone']);
     }
 }
