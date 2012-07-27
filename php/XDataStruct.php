@@ -32,6 +32,32 @@ class XObject {
      */
     private $propertieChange = false;
 
+    private static $instance = null;
+    /**
+     * singleton 
+     * 
+     * @param callable $funcname 
+     * @param mixed $params 
+     * @static
+     * @access public
+     * @return object
+     */
+    final protected static function __singleton($funcname = null, $params = null) {
+        $class_name = get_called_class();
+        if(self::$instance && self::$instance instanceof $class_name) {
+            return self::$instance;
+        }
+        self::$instance = new $class_name;
+        if($funcname) {
+            if(!is_array($params)) {
+                call_user_func($funcname,$params);
+            } else {
+                call_user_func_array($funcname,$params);
+            }
+        }
+        return self::$instance;
+    }
+
     /**
      * final __set function that changed propertie status
      */

@@ -23,20 +23,47 @@ exists_frame();
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
-abstract class XDbm {
-    public $db = null;
-    protected $cfg;
+abstract class XDataModel extends XObject {
 	public $cache_file = '/data/cache/lib_exec_cache.dat';
-    static $db_instance = array();
-    public $idx = 0;
-    public $dbtype;
-    public function __construct() {
+    protected $dbtype = null;
+    protected $dbname = null;
+    protected $dbins = null;
+    protected $db_data_path = null;
+    public $_CFG = null;
+    final public static function singleton() {
+        return parent::__singleton();
     }
-    public function init_database() {
-        $xconfig = XConfig::singleton();
-        $this->cfg = $xconfig->get_cfg();
-        $dba = new XDba($this->dbtype,$this->cfg, $idx = 0);
-        $this->db = $dba->get_instance();
+    final protected function __construct() {
+        $this->_CFG = XConfig::CFG();
+        $this->db_data_path = __X_APP_DATA_DIR__.'/'.$this->_CFG->db_data;
+    }
+    final public function connect_database($init_function) {
+        $this->$init_function();
+        $dbc = XDbConnect :: singleton();
+        $dbc->create_instance($this->dbtype);
+        $this->dbins = $dbc->get_instance();
+        $this->select_db();
+        return $this->dbins;
+    }
+    final public function select_db($dbname = null) {
+        if($dbname == null) $dbname = $this->dbname;
+        switch(strtolower($this->dbtype)) {
+            case 'mysql':
+                $this->dbins->connect($host,$user,$pass);
+                $this->dbins->select_db($dbname);
+            case 'firebird':
+                $path = $this->set_db_path($this->_CFG->db_firebird_dirname);
+                $this->dbins->set_db_path($path);
+                $this->dbins->connect($dbname);
+            case 'txtdb':
+                $path = $this->set_db_path($this->_CFG->db_txtdb_txtdb_dir);
+                $this->dbins->set_db_dir($path);
+                $this->dbins->open($dbname);
+            break;
+        }
+    }
+    final public function set_db_path($dbtype_path) {
+        return $this->db_data_path.'/'.$dbtype_path;
     }
     public function page_count() {
         $this->page_num = ceil($this->record_num/$this->limit);

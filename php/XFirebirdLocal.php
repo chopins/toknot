@@ -3,16 +3,23 @@ class XFirebirdLocal {
     public $dbpath = '';
     public $con = null;
     public $cfg = null;
-    public function __construct($cfg_idx = 'firebird') {
+    public function __construct() {
         if(!file_exists('ibase_connect')) {
             throw new XException('Firebird extension is not load, Please install Firebird/interbase extension');
         }
-        $this->cfg = $GLOBALS['_CFG']->db[$cfg_idx];
     }
+    /**
+     * set_db_path 
+     * set the firebird database file save path 
+     *
+     * @param mixed $path 
+     * @access public
+     * @return void
+     */
     public function set_db_path($path) {
         $this->dbpath = $path;
     }
-    public function connect($dbname,$username,$pass, $charset) {
+    public function connect($dbname,$username = null,$pass =null, $charset='utf8') {
         $dbname = $this->dbpath.'/'.$dbname;
         $this->con = ibase_connect($dbname, $username, $pass,$charset);
     }

@@ -114,39 +114,7 @@ function xtobin($str) {
     }
     return pack('H*',$hex_str);
 }
-/* Auto create directory by path */
-function amkdir($path) {
-    define('__X_AMKIDR_SUCC__',1);
-    define('__X_AMKIDR_DIR_EXITS__',2);
-    define('__X_AMKIDR_FILE_EXITS__',3);
-    if(is_dir($path)) return __X_AMKIDR_DIR_EXITS__;
-    if(file_exists($path)) return __X_AMKIDR_FILE_EXITS__;
-    $sub_name = basename($path);
-    $parent_path = dirname($path);
-    $path_list = array();
-    do {
-        if(is_file($parent_path)) return 2;
-        $path_list[] = $sub_name;
-        $sub_name = basename($parent_path);
-        $parent_path = dirname($parent_path);
-    } while($parent_path != '/' && $parent_path!='.');
-    $dir_spec = DIRECTORY_SEPARATOR;
-    $path_list = array_reverse($path_list);
-    foreach($path_list as $sub_path) {
-        $cpath = $parent_path.$dir_spec.$sub_path;
-        if(is_dir($cpath)) {
-            if(!is_writable($cpath)) {
-                if(__X_SHOW_ERROR__) throw new XException("$cpath write failure, not permission");
-                return false;
-            }
-            continue;
-        } else {
-            mkdir($cpath);
-        }
-        $parent_path = $cpath;
-    }
-    return true;
-}
+
 /*convert word to upper or lower by rand*/
 function rand_strtoupper($str) {
     $len = strlen($str);
@@ -205,6 +173,7 @@ function is_word($word, $min=4,$max=10) {
 function is_moblie($tel) {
     return preg_match('/^1[358]{1}[0-9]{9}$/i',$tel);
 }
+
 /*check string is YYYY-mm-dd or YYY/mm/dd of farmat date*/
 function is_day_str($day) {
     return preg_match('/^([12]{1}[0-9]{3})(\-|\/)(0[1-9]{1}|1[12]{1})(\-|\/)([12]{1}[0-9]|3[01]{1})/',$day);
@@ -268,8 +237,17 @@ function arr_conv(&$arr) {
     }
     return $arr;
 }
-/*check needle in arr*/
-function arr_in_arr($needle, $arr) {
+
+/**
+ * arr_in_arr 
+ * check needle in arr
+ * 
+ * @param array $needle 
+ * @param array $arr 
+ * @access public
+ * @return void
+ */
+function arr_in_arr(array $needle, array $arr) {
     $inter = array_intersect($needle,$arr);
     if(count($inter) != count($needle)) {
         return false;
@@ -277,6 +255,7 @@ function arr_in_arr($needle, $arr) {
     $diff = array_diff($needle,$inter);
     return empty($diff);
 }
+
 /*check two array have same value*/
 function arr_same($arr1,$arr2) {
     if(count($arr1) != count($arr2)) {
@@ -360,8 +339,7 @@ function byte_format($number) {
     if($number >= 1073741824*1048576) return round($number/1073741824/1048576,2).'P';
 }
 function support_url_mode($path_uri, $params='') {
-    $xconfig = XConfig::singleton();
-    $_CFG = $xconfig->get_cfg();
+    $_CFG = XConfig::CFG();
     $domain = empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
     switch($_CFG->uri_mode) {
         case 1:

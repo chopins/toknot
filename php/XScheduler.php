@@ -28,7 +28,7 @@ exists_frame();
  * @license http://opensource.org/licenses/bsd-license.php New BSD License
  */
 
-final class XScheduler {
+final class XScheduler extends XObject {
     public $app_instance;
     private $app_method;
     private $exception_string = '';
@@ -36,7 +36,10 @@ final class XScheduler {
     private $utf8 = 'utf8';
     private $encodeing = '';
     private $_CFG;
-    public function __construct() {
+    public static function singleton() {
+        return parent::__singleton();
+    }
+    protected function __construct() {
         if(version_compare(PHP_VERSION,'5.3.0') < 0) {
             throw new XException('XPHPFramework need run in php varsion lagre 5.3.0, your php version is'.PHP_VERSION);
         }
@@ -302,7 +305,7 @@ final class XScheduler {
                 $call_page_name = $call_page_func;
             } else if(dirname($uri_path) == '/') {
                 $call_page_name = basename($uri_path);
-                $call_page_func = basename(strtok($htis->_CFG['web.index'],' '), $url_file_suffix);
+                $call_page_func = basename(strtok($this->_CFG['web_index'],':'), $url_file_suffix);
             } else {
                 $call_page_func = basename($uri_path, $url_file_suffix);
                 $call_page_name = basename(dirname($uri_path));
@@ -384,8 +387,8 @@ final class XScheduler {
         $ref = new ReflectionClass($_ENV['__X_CALL_PAGE_NAME__']);
         $request_method = substr($_ENV['__X_CALL_PAGE_FUNC__'],0,1);
         if($request_method == 'O') {
-            $this->app_instance = $ref->newInstance();
-            $this->app_instance->run('getOptions',substr($_ENV['__X_CALL_PAGE_FUNC__'],1));
+            $this->app_instance = $_ENV['__X_CALL_PAGE_NAME__']::singleton();
+            $this->app_instance->run('get_options',substr($_ENV['__X_CALL_PAGE_FUNC__'],1));
             return;
         }
         $call_method = $ref->hasMethod($_ENV['__X_CALL_PAGE_FUNC__']);
@@ -403,7 +406,7 @@ final class XScheduler {
         if($refX === false || $refX->getName() != 'X') {
             throw new XException("Class $classname need extends XPHPFramework of class X");
         }
-        $this->app_instance = $ref->newInstance();
+        $this->app_instance = $_ENV['__X_CALL_PAGE_NAME__']::singleton();
         if($call_method->isConstructor() && $this->app_instance->initStat === false) {
             throw new XException("because class {$_ENV['__X_CALL_PAGE_FUNC__']} defined constructor , so need call to \$this->call_init() within method {$_ENV['__X_CALL_PAGE_FUNC__']} is required in file {$_ENV['__X_CALL_PAGE_FILE__']}");
         }

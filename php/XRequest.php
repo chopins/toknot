@@ -286,6 +286,7 @@ class XRequest {
     }
     private function check_ajax_status() {
         $this->AS = isset($_REQUEST[$this->ajax_flag]);
+        $_ENV['__X_AJAX_REQUEST__'] = $this->AS;
     }
     public function set_ajax_data_key($key) {
         $this->ajax_data_key = $key;

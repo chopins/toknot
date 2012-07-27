@@ -1,66 +1,12 @@
 <?php
 /**
- * Toknot
- *
- * XObject class, XArrayObject class, XArrayElementObject class, XStdClass class,
- *
- * PHP version 5.3
- * 
- * @package XDataStruct
- * @author chopins xiao <chopins.xiao@gmail.com>
- * @copyright  2012 The Authors
- * @license    http://opensource.org/licenses/bsd-license.php New BSD License
- * @link       http://blog.toknot.com
- * @since      File available since Release $id$
- */
-
-exists_frame();
-/**
- * XDba 
- * 
- * @uses XMySQLDba
- * @final
- * @package DataBase
- * @version $id$
- * @author Chopins xiao <chopins.xiao@gmail.com> 
- */
-final class XDba {
-    private $db_instance = null;
-    public function __construct($dbtype,$cfg, $idx) {
-        $dbtype = strtolower($dbtype);
-        switch($dbtype) {
-            case 'mysql':
-                $host = "db_msyql_{$idx}_host";
-                $username = "db_msyql_{$idx}_user";
-                $pass = "db_msyql_{$idx}_password";
-                $api = "db_mysql_{$idx}_select_api";
-                $dbname = "db_mysql_{$idx}_dbname";
-                $this->db_instance = new XMySQLDba(
-                        $cfg->$host,$cfg->$username,
-                        $cfg->$pass,$cfg->$dbname, $cfg->$api);
-            break;
-            case 'firebird':
-                $local = 'db_firebird_dirname';
-                $this->db_instance = new XFirebirdLocal($local);
-            break;
-            case 'txtdb':
-                $this->db_instance = new XTxtDB();
-            break;
-        }
-    }
-    public function get_instance() {
-        return $this->db_instance;
-    }
-}
-
-/**
  * XMySQLDba 
  * 
  * @package DataBase
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
-class XMySQLDba {
+class XMySQLConnect extends XObject {
     private $read_con = null;
     private $con = null;
     private $res;
@@ -71,31 +17,34 @@ class XMySQLDba {
     private $host = 'localhost';
     private $user = null;
     private $pass = null;
+    private $pconnect = false;
     public $sql = null;
     public static $table_list = array(); 
     private $cfg;
-    public function __construct($host,$username,$pass,$dbname,$api = false) {
-        $this->host = $host;
-        $this->user = $username;
-        $this->pass = $pass;
-        $this->select_api = $api;
-        $this->dbname = $name;
-        $this->connect();
+    protected function __construct() {
         $this->dba_table = new XMySQLTable($this);
     }
-    public function get_tables() {
-        $this->table_list = $this->get_all_row('SHOW TABLES');
+    public static function singleton() {
+        return parent::__singleton();
     }
-    private function connect() {
-        $con =@mysql_connect($this->host, $this->user, $this->password);
+    public function get_tables() {
+        self::$table_list = $this->get_all_row('SHOW TABLES');
+    }
+    public function select_db($dbname) {
+        $sr = @mysql_select_db($dbname, $this->con);
+        if($sr === false) throw new XException('MySQL select DB error:#'.mysql_errno().'-'.mysql_error($this->con));
+    }
+    public function set_pconnect($p = true) {
+        $this->pconnect = $p;
+    }
+    public function connect($host,$user,$password) {
+        $con = $this->pconnect ? @mysql_pconnect($host,$user,$password) : @mysql_connect($host, $user, $password);
         if($con === false) throw new XException('MySQL connect Error:#'.mysql_errno().'-'.mysql_error());
-        $sr = @mysql_select_db($this->dbname, $con);
-        if($sr === false) throw new XException('MySQL select DB error:#'.mysql_errno().'-'.mysql_error($con));
         mysql_query('SET NAMES "utf8"', $con);
         $this->con = $con;
     }
     public function __get($table) {
-        if(in_array($table,$this->table_list)) {
+        if(in_array($table,self::table_list)) {
             $this->dba_table->table = $table;
             return $this->dba_table;
         }
@@ -110,11 +59,6 @@ class XMySQLDba {
     }
     public function query($sql) {
         $this->sql = $sql;
-        if($this->select_api && $this->put_api($sql)) {
-            $this->api_res = true;
-            $this->res =  new dba_interface();
-            return;
-        }
         $this->free();
         $this->res = mysql_query($sql, $this->con);
         if($this->res === false) {
@@ -122,7 +66,7 @@ class XMySQLDba {
         }
         return $this->res;
     }
-    public function put_api($sql) {
+    public function is_select($sql) {
         $sql_parts = explode(' ',trim($sql));
         if(strtoupper($sql_parts[0]) == 'SELECT') {
             return true;
@@ -134,19 +78,14 @@ class XMySQLDba {
         return mysql_fetch_assoc($this->res);
     }
     private function row() {
-        if($this->api_res) return $this->res->fetch_row();
         return mysql_fetch_row($this->res);
     }
     private function count_rows() {
-        if($this->api_res) return $this->res->num_rows();
         return mysql_num_rows($this->res);
     }
     public function fetch($sql) {
         $return = array();
         $this->query($sql);
-        if($this->api_fetch) {
-            $this->api_fetch = false;
-        }
         while($row = $this->assoc()) {
             $return[] = $row;
         }
@@ -195,7 +134,7 @@ class XMySQLDba {
 class XMySQLTable {
     public $table = null;
     public $dba = null;
-    public $field_list = null;
+    public static $field_list = null;
     public $primary_name = null;
     //public $res = null;
     public function __construct($db) {
@@ -203,14 +142,14 @@ class XMySQLTable {
         //$this->columnus();
     }
     public function columnus() {
-        if($this->field_list == null) {
+        if(self::$field_list == null) {
             $arr = $this->dba->fetch("SHOW COLUMNS FROM `{$this->table}`");
             foreach($arr as $key => $value) {
                 $return[] = $value['Field'];
             }
-            $this->field_list = $return;
+            self::$field_list = $return;
         }
-        return $this->field_list;
+        return self:$field_list;
     }
     public function columnus_list_sql() {
         $this->columnus();

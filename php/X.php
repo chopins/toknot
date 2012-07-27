@@ -25,14 +25,14 @@ exists_frame();
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
-abstract class X {
+abstract class X extends XObject{
     /**
      * Model Object instance handler storage
      *
      * @var array
      * @access public-readonly
      */
-    private $dbm = array();
+    private $model_list = array();
 
     /**
      * libtemplate class instance
@@ -119,6 +119,10 @@ abstract class X {
     private $display_html = '';
     public $stop_run = false;
     private $headers = array();
+    abstract public function Gindex();
+    final public static function singleton() {
+        return parent::__singleton();
+    }
     /**
      * construct base data that main init X class properties value
      * and common tpl data
@@ -126,8 +130,7 @@ abstract class X {
      * @access protected
      */
     final public function call_init() {
-        $xconfig = XConfig::singleton();
-        $this->_CFG = $xconfig->get_cfg();
+        $this->_CFG = XConfig::CFG();
         $this->display_html = '';
         $this->visit_time = empty($_SERVER['REQUEST_TIME']) ? time() : $_SERVER['REQUEST_TIME'];
         $this->visit_ip = get_uip();
@@ -146,7 +149,7 @@ abstract class X {
      * @access public
      * @return void
      */
-    final public function getOptions($method_name) {
+    final public function get_options($method_name) {
         $request_method_list = array('G'=>'GET','P'=>'POST','U'=>'PUT','D'=>'DELETE','T'=>'TRACE','H'=>'HEAD');
         $support_list = array();
         foreach($request_method_list as $prefix => $method) {
@@ -176,23 +179,24 @@ abstract class X {
     }
 
     /**
-     * do call model class method
+     * do call model class
      *
      * @param string $model_name  call model class name, could use directory
      * @return Object  the model class instance
      */
-    final protected function LM($model_name, $method_name) {
-        if(isset($this->dbm[$model_name])) return $this->dbm[$model_name];
-        $model_file = __X_APP_ROOT__."/{$this->_CFG->php_model_dir_name}/$model_name.php";
-        $model_class = basename($model_name);
-        if(!class_exists($model_class,false)) {
-            if(!file_exists($model_file)) throw new XException("$file not exists");
-            check_syntax($model_file);
-            include_once($model_file);
+    final protected function LM($model_name) {
+        if(!isset($this->dbm[$model_name])) {
+            $model_file = __X_APP_ROOT__."/{$this->_CFG->php_model_dir_name}/$model_name.php";
+            $model_class = basename($model_name);
+            if(!class_exists($model_class,false)) {
+                if(!file_exists($model_file)) throw new XException("$file not exists");
+                check_syntax($model_file);
+                include_once($model_file);
+            }
         }
-        $model_ref = new ReflectionClass($model_class);
-        $this->dbm[$model_name] = $model_ref->newInstance();
-        return $this->dbm[$model_name];
+        $model_ins = $model_class :: singleton();
+        $this->model_list[$model_name] = true;
+        return $model_ins;
     }
 
     /**
@@ -213,11 +217,10 @@ abstract class X {
             check_syntax($file);
             include_once $file;
         }
-        $view_ref = new ReflectionClass($view_class);
-        $ins = $view_ref->newInstance();
+        $ins = $view_class :: singleton();
         $ins->call_init();
         if($method_name == null) return $ins;
-        return call_user_func(array($ins,$method_name));
+        return $ins->$method_name();
     }
     /**
      * user array save your site config by key/value storage to file
@@ -264,7 +267,7 @@ abstract class X {
      */
     final public function run($method_name) {
         if($this->stop_run) return;
-        $re = call_user_func(array($this,$method_name));
+        $re = $this->$method_name();
         $this->init_tpl();
     }
 
@@ -466,18 +469,9 @@ abstract class X {
         }
         return $this->__xget__($name);
     }
-    final public function __isset($name) {
-        return isset($this->$name);
-    }
-    final public function __set($name, $value) {
-        if(isset($this->$name)) {
-            throw new XException('Can not allow set X class properties');
-        }
-        $this->__xset__($name,$value);
-    }
     public function __xget__($name) {}
     public function __xset__($name,$value) {}
-    public function __destruct() {
+    final public function __destruct() {
         $this->tpl_instance = null;
         unset($this);
     }

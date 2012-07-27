@@ -50,6 +50,7 @@ class XTemplate {
         if(PHP_SAPI == 'cli' && $comp_file_time <= $guess_path_time) {
             check_syntax($cache_file);
         }
+        $this->_var->__X_RUN_TIME__ = 'Processed: '. (microtime(true) - __X_RUN_START_TIME__) . " seconds";
         include($cache_file);
     }
     public function get_html() {
@@ -81,7 +82,7 @@ class XTemplate {
         $comp_file_time = file_exists($cache_file) ? filemtime($cache_file):0;
         $guess_path_time = filemtime($tpl_file);
         $this->new_complie = false;
-        is_dir(dirname($cache_file)) or amkdir(dirname($cache_file));
+        is_dir(dirname($cache_file)) or mkdir(dirname($cache_file), 0700, true);
         if(__X_SHOW_ERROR__ || $comp_file_time <= $guess_path_time) {
             $this->new_complie = true;
             if($this->T->type == 'json') {

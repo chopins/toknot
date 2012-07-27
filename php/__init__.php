@@ -49,6 +49,12 @@
         define('__X_APP_ROOT__', dirname(__FILE__).'/mysite');
         include_once(dirname(dirname(__FILE__)) . '/fw-2.2/__init__.php');
     [/CODE]
+
+[关于代码命名规则]
+    1.框架类： 首单词全小写，后续单词首字母大写
+    2.框架内部使用方法，全小写，单词间用下划线连接 _
+    3.框架全局变量全部位于 $_ENV中， 并且全大写
+    4.框架常量,全大写
 */
 
 /******用户定义常量检查开始********************/
@@ -61,7 +67,7 @@ defined('__X_APP_DATA_DIR__') || define('__X_APP_DATA_DIR__',__X_APP_ROOT__.'/'.
 defined('__X_NO_WEB_SERVER__') || define('__X_NO_WEB_SERVER__', false);
 
 /******用户定义常量结束********************/
-
+define('__X_RUN_START_TIME__', microtime(true));
 define('__X_FRAMEWORK_ROOT__', __DIR__); //不要修改本常量
 set_include_path(get_include_path(). PATH_SEPARATOR . __DIR__);
 $start_time = microtime(true);
@@ -76,7 +82,7 @@ set_error_handler('error2debug');
 register_shutdown_function('XExitAlert');
 include_once('XDataStruct.php');
 try {
-    $_X_APP_RUNING =  new XScheduler();
+    $_X_APP_RUNING = XScheduler::singleton();
 } catch(XException $e) {
     echo $e->getXDebugTraceAsString();
 }
