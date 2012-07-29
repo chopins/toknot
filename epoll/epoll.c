@@ -114,13 +114,13 @@ zend_module_entry epoll_module_entry = {
 #ifdef COMPILE_DL_EPOLL
 ZEND_GET_MODULE(epoll)
 #endif
-
+/* {{{proto resource epoll_create(int size) 
+   open an epoll file descriptor*/
 static PHP_FUNCTION(epoll_create)
 {
-	zval **max_event;
 	int epollfd;
-	php_streams *stream;
-	epollfd = epoll_create(10);
+    php_stream *stream;
+	epollfd = epoll_create(FD_SETSIZE);
 	if(epollfd == -1) {
 		switch(errno) {
 			EPOLL_ERROR_CASE(CREATE,EMFILE);
@@ -132,20 +132,114 @@ static PHP_FUNCTION(epoll_create)
 
 		RETURN_FALSE;
 	}
-	stream = php_stream_fopen_from_fd(fd, "r", NULL);
+    stream = php_stream_fopen_from_fd(fd, "r", NULL);
 	stream->flags |= PHP_STREAM_FLAG_NO_SEEK;
+
 	php_stream_to_zval(stream, return_value);
 }
+/* }}} */
 
+/* {{{proto epoll_ctl(int epfd, int op, int fd, int epoll_event, [mixed callback])
+ */
 static PHP_FUNCTION(epoll_ctl)
 {
-	zval *zstream, **fd, *zcallback,
-	php_streams *stream;
+	zval **fd, zcallback, zepollfd;
+    long op, events;
+    int ret, file_desc, epollfd;
+    php_stream stream, epoll_stream;
+    php_epoll_event  epoll_event;
+    php_event_callback_t *callback,
+	char *func_name;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ZsZz|z", &zepollfd, &op, &fd, &events,&callback) != SUCCESS) {
+		return;
+	}
+
+	if (Z_TYPE_PP(fd) != IS_RESOURCE) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "fd argument must be valid PHP stream resource");
+		RETURN_FALSE;
+
+    }
+
+	php_stream_from_zval(stream, &fd);
+	EPOLL_FD(stream, file_desc);
+    php_stream_from_zval(epoll_stream, zepollfd);
+    EPOLL_FD(epoll_stream, epollfd);
+
+    if(zcallback) {
+        if (!zend_is_callable(zcallback, 0, &func_name TSRMLS_CC)) {
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "'%s' is not a valid callback", func_name);
+            efree(func_name);
+            RETURN_FALSE;
+        }
+        epoll_event.data.func = func_name;
+        efree(func_name);
+    }
+
+    epoll_event.data.fd = file_desc;
+    epoll_event.events = events;
+    ret = epoll_ctl(epollfd, op, file_desc, epoll_event);
+    if(ret == -1) {
+		switch(errno) {
+			EPOLL_ERROR_CASE(CREATE,EBADF);
+			EPOLL_ERROR_CASE(CREATE,EEXIST);
+			EPOLL_ERROR_CASE(CREATE,ENOENT);
+			EPOLL_ERROR_CASE(CREATE,EINVAL);
+			EPOLL_ERROR_CASE(CREATE,ENOMEM);
+			EPOLL_ERROR_CASE(CREATE,ENOSPC);
+			EPOLL_ERROR_CASE(CREATE,EPERM);
+			EPOLL_DEFAULT_ERROR(errno);
+		}
+
+		RETURN_FALSE;
+
+    }
+    RETURN_LONG(ret);
 }
+/* }}} */
+
+/* {{{proto epoll_wait(resource epollfd, mixed &epoll_event, int maxevents, int timeout)
+ */
 static PHP_FUNCTION(epoll_wait)
 {
-	zval *zstream;
+	zval *z_events = NULL, **fd, zepollfd;
+    long epollfd,maxevents, timeout;
+    php_epoll_event  epoll_event;
+    php_stream epoll_stream;
+    php_event_callback_t *callback,
+	char *func_name;
+
+    int ret;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rZll", &epollfd, &events,&maxevents,&timeout) != SUCCESS) {
+		return;
+	}
+    if(maxevents <0 ) {
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "maxevents must be greater than zero");
+		RETURN_FALSE;
+    }
+    php_stream_from_zval(epoll_stream, zepollfd);
+    EPOLL_FD(epoll_stream, epollfd);
+
+    ret = epoll_wait(epollfd, epoll_event, maxevents, timeout);
+    ALLOC_INIT_ZVAL(z_events);
+	array_init(z_events);
+    add_assoc_resource(z_events, "fd", epoll_event.data.fd);
+    add_assoc_long(z_events, "events", epoll_event.events);
+    add_assoc_string(z_events,"callback", epoll_event.data.func);
+    if(ret == -1) {
+		switch(errno) {
+			EPOLL_ERROR_CASE(CREATE,EBADF);
+			EPOLL_ERROR_CASE(CREATE,EFAULT);
+			EPOLL_ERROR_CASE(CREATE,EINTR);
+			EPOLL_ERROR_CASE(CREATE,EINVAL);
+			EPOLL_DEFAULT_ERROR(errno);
+		}
+
+		RETURN_FALSE;
+	}
+    RETURN_LONG(ret);
 }
+/* }}} */
 
 /* {{{ PHP_INI
  */
