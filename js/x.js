@@ -33,7 +33,189 @@ if(typeof Node == 'undefined') {
         DOCUMENT_NODE:9,
         DOCUMENT_FRAGMENT_NODE:11
     }
-}
+};
+if(typeof(JSON) === 'undefined') {
+    var JSON;
+    if (!JSON) {
+        JSON = {};
+    }
+    (function () {
+        "use strict";
+        function f(n) {
+            return n < 10 ? '0' + n : n;
+        }
+        if (typeof Date.prototype.toJSON !== 'function') {
+            Date.prototype.toJSON = function (key) {
+                return isFinite(this.valueOf()) ?
+                    this.getUTCFullYear() + '-' +
+                    f(this.getUTCMonth() + 1) + '-' +
+                    f(this.getUTCDate()) + 'T' +
+                    f(this.getUTCHours()) + ':' +
+                    f(this.getUTCMinutes()) + ':' +
+                    f(this.getUTCSeconds()) + 'Z' : null;
+            };
+            String.prototype.toJSON =
+                Number.prototype.toJSON =
+                Boolean.prototype.toJSON = function (key) {
+                    return this.valueOf();
+                };
+        }
+        var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+            escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+            gap,
+            indent,
+            meta = {             '\b': '\\b',
+                '\t': '\\t',
+                '\n': '\\n',
+                '\f': '\\f',
+                '\r': '\\r',
+                '"' : '\\"',
+                '\\': '\\\\'
+            },
+            rep;
+        function quote(string) {
+            escapable.lastIndex = 0;
+            return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+                var c = meta[a];
+                return typeof c === 'string' ? c :
+                    '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+            }) + '"' : '"' + string + '"';
+        }
+        function str(key, holder) {
+            var i,             k,             v,             length,
+                mind = gap,
+                partial,
+                value = holder[key];
+            if (value && typeof value === 'object' &&
+                    typeof value.toJSON === 'function') {
+                value = value.toJSON(key);
+            }
+            if (typeof rep === 'function') {
+                value = rep.call(holder, key, value);
+            }
+            switch (typeof value) {
+            case 'string':
+                return quote(value);
+            case 'number':
+                return isFinite(value) ? String(value) : 'null';
+            case 'boolean':
+            case 'null':
+                return String(value);
+            case 'object':
+                if (!value) {
+                    return 'null';
+                }
+                gap += indent;
+                partial = [];
+                if (Object.prototype.toString.apply(value) === '[object Array]') {
+                    length = value.length;
+                    for (i = 0; i < length; i += 1) {
+                        partial[i] = str(i, value) || 'null';
+                    }
+                    v = partial.length === 0 ? '[]' : gap ?
+                        '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']' :
+                        '[' + partial.join(',') + ']';
+                    gap = mind;
+                    return v;
+                }
+                if (rep && typeof rep === 'object') {
+                    length = rep.length;
+                    for (i = 0; i < length; i += 1) {
+                        k = rep[i];
+                        if (typeof k === 'string') {
+                            v = str(k, value);
+                            if (v) {
+                                partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                            }
+                        }
+                    }
+                } else {
+                    for (k in value) {
+                        if (Object.prototype.hasOwnProperty.call(value, k)) {
+                            v = str(k, value);
+                            if (v) {
+                                partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                            }
+                        }
+                    }
+                }
+                v = partial.length === 0 ? '{}' : gap ?
+                    '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}' :
+                    '{' + partial.join(',') + '}';
+                gap = mind;
+                return v;
+            }
+        }
+        if (typeof JSON.stringify !== 'function') {
+            JSON.stringify = function (value, replacer, space) {
+                var i;
+                gap = '';
+                indent = '';
+                if (typeof space === 'number') {
+                    for (i = 0; i < space; i += 1) {
+                        indent += ' ';
+                    }
+                } else if (typeof space === 'string') {
+                    indent = space;
+                }
+                rep = replacer;
+                if (replacer && typeof replacer !== 'function' &&
+                        (typeof replacer !== 'object' ||
+                        typeof replacer.length !== 'number')) {
+                    throw new Error('JSON.stringify');
+                }
+                return str('', {'': value});
+            };
+        }
+        if (typeof JSON.parse !== 'function') {
+            JSON.parse = function (text, reviver) {
+                var j;
+                function walk(holder, key) {
+                    var k, v, value = holder[key];
+                    if (value && typeof value === 'object') {
+                        for (k in value) {
+                            if (Object.prototype.hasOwnProperty.call(value, k)) {
+                                v = walk(value, k);
+                                if (v !== undefined) {
+                                    value[k] = v;
+                                } else {
+                                    delete value[k];
+                                }
+                            }
+                        }
+                    }
+                    return reviver.call(holder, key, value);
+                }
+                text = String(text);
+                cx.lastIndex = 0;
+                if (cx.test(text)) {
+                    text = text.replace(cx, function (a) {
+                        return '\\u' +
+                            ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                    });
+                }
+                if (/^[\],:{}\s]*$/
+                        .test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
+                            .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+                            .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+                    j = eval('(' + text + ')');
+                    return typeof reviver === 'function' ?
+                        walk({'': j}, '') : j;
+                }
+                throw new SyntaxError('JSON.parse');
+            };
+        }
+        if (!Object.prototype.toJSONString) {
+            Object.prototype.toJSONString = function (filter) {
+                return JSON.stringify(this, filter);
+            };
+            Object.prototype.parseJSON = function (filter) {
+                return JSON.parse(this, filter);
+            };
+        }
+    }());
+};
+
 var debug = true;
 if(typeof console == 'undefined' && debug) {
     console = {};
@@ -49,7 +231,7 @@ doc : window.document,
 xPNode : window.document.body, //X.$(ele)方法返回对象的父对象
 isReady : false,
 ugent : navigator.userAgent.toLowerCase(),
-intervarlHandle : [],
+intervalHandle : [],
 timeoutHandle : [],
 cache : {},
 maxZIndex : 0,
@@ -71,19 +253,25 @@ createNode : function(t) {return X.$(X.doc.createElement(t));},
 FIREFOX : /.*{firefox}\/([\w.]+).*/.test(this.ugent),
 WEBKIT : /(Webkit)/i.test(this.ugent),
 jsPath  : function(){
-        return X.doc.scripts[0].src.substring(0,X.doc.scripts[0].src.lastIndexOf("/")+1);
+    var scripts = X.doc.scripts;
+    var cidx = scripts.length - 1;
+    var shash = scripts[cidx].src.lastIndexOf("/");
+    if(shash < 0) return '';
+    return scripts[cidx].src.substring(0,shash+1);
 },
 inputType : {INPUT_TEXT:1,INPUT_PASSWORD:2,INPUT_CHECKBOX:3,
             INPUT_RADIO:4,INPUT_TEXTAREA:5,INPUT_BUTTON:6,INPUT_SUBMIT:7,
             INPUT_IMAGE:8,INPUT_SELECT:9},
-loadJSON : function() {
-    typeof(JSON) === 'undefined' && X.loadJSFile(X.jsPath()+'json.js');
-},
-loadJSFile : function(fs) {
+loadJSFile : function(fs, bodyEnd) {
     var f = X.createNode('script');
     f.setAttribute('type','text/javascript');
     f.setAttribute('src', fs);
+    if(bodyEnd) {
+        X.doc.body.appendChild(f);
+        return f;
+    }
     X.doc.getElementsByTagName('head')[0].appendChild(f);
+    return f;
 },
 unloadExecList : [],
 eventList : [],
@@ -125,7 +313,6 @@ error : function(msg,url , line) {
 init  : function() {
     window.onload = function() {
     window.onerror = X.error;
-    X.loadJSON();
     if(X.doc) {
         X.doc.onkeydown = X.kEF;
         X.doc.onkeyup = X.kEF;
@@ -248,7 +435,7 @@ setTimeout : function(func,time) {
 },
 setInterval : function(func, time) {
     var id = window.setInterval(func, time);
-    X.intervarlHandle.push(id);
+    X.intervalHandle.push(id);
     return id;
 },
 clearTimeout : function(id) {
@@ -259,8 +446,9 @@ clearTimeout : function(id) {
 },
 clearInterval : function(id) {
     window.clearInterval(id);
-    var i = X.timeoutHandle.indexOf(id)
-    if(i>-1) delete X.timeoutHandle[i];
+    for(var i in X.intervalHandle) {
+        if(X.intervalHandle[i] == id) delete X.intervalHandle[i];
+    }
 },
 /**
  * HTML DOM 元素访问函数
@@ -551,12 +739,13 @@ $ : function(ele) {
                 addListener : function(e,call_action) {
                     //console.warn('addEventListener Element '+ this + ' Function is ' + call_action);
                     call_action.handObj = this;
-                    if(e == 'scroll') {
+                    var iserr = false;
+                    switch(e) {
+                        case 'scroll':
                         this.scrollOffset = X.scrollOffset();
                         X.wSFL.push(call_action);   
                         return;
-                    }
-                    if(e == 'resize') {
+                        case 'resize':
                         var l = {func:call_action,obj:this};
                         if(window.top == window.self) {
                             X.wRSFL.push(l);
@@ -564,6 +753,20 @@ $ : function(ele) {
                             window.top.X.wRSFL.push(l);
                         }
                         return;
+                        case 'error':
+                        var iserr = true;
+                        case 'load':
+                        if(navigator.IE && this.tag == 'script') {
+                            this.onreadystatechange = function(e) {
+                                if(script.readyState == 'loaded') {
+                                    if(iserr) call_action(e);
+                                } else if(script.readyState == 'complete') {
+                                    if(!iserr) call_action(e);
+                                }
+                            }
+                            return;
+                        }
+                        break;
                     }
                     if(typeof X.eventList[e] == 'undefined') X.eventList[e] = [];
                     var l = X.eventList[e].push(call_action) - 1;
@@ -998,14 +1201,16 @@ $ : function(ele) {
          *  X.Ajax.head(url,callFunc) HEAD方法请求
          *             url      : string  请求URL
          *             callFunc : function 请求返回回调函数
-         *                           callFunc(responseHead, lastModified, resourceAvailable)
+         *                           callFunc(responseHead)
          *  X.Ajax.put(url, data, callFunc) PUT 方法请求
          *  X.Ajax.options(url ,callFunc)  OPTIONS 方法请求
          *  X.Ajax.del(url,callFunc)  DELETE方法请求
-         *  X.Ajax.trace(url,callFunc) TRACE方法请求
+         *  X.Ajax.trace(url,callFunc) TRACE方法请求 
+         *                           callFunc(responseHead, responseText)
          *  X.Ajax.file(formObj, callFunc)  上传文件
          *              formObj  : ELEMENT_NODE  上传文件表单
          *              callFunc : function  请求返回回调函数
+         *  X.Ajax.jsonp(url,callFunc)  JSONP请求
          *  X.Ajax.waitTime : 等待超时时间
          */
         Ajax : {
@@ -1017,7 +1222,7 @@ $ : function(ele) {
             method : null,
             data : null,
             callFunc : [],
-            defaultDomain : 'http://'+window.location.host,
+            defaultDomain : window.location.host,
             rewriteTag : '/?',
             waitTime : 10000,
             outObj : [],
@@ -1038,9 +1243,10 @@ $ : function(ele) {
                 X.Ajax.MimeType = mime + ';charset='+X.Ajax.charset;
             },
             setUrl : function(url) {
-                var h = url.substr(url, 4);
-                if(h.toLowerCase() != 'http') {
-                    url = X.Ajax.defaultDomain + url;
+                if(url.substr(0,4).toLowerCase() != 'http://' &&
+                        url.substr(0,5).toLowerCase() != 'https://') {
+                    var protocol = window.location.protocol=="https:" ? 'https':'http';
+                    url = protocol+'://'+X.Ajax.defaultDomain + url;
                 };
                 X.Ajax.url = url.strpos('?') != false ? url+'&is_ajax=1' : url+'?is_ajax=1';
                 X.Ajax.url+= '&t='+(new Date().getTime());
@@ -1065,30 +1271,61 @@ $ : function(ele) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
                 X.Ajax.method = method;
-                var openId = X.Ajax.openInstanceId;
-                if(callFunc) X.Ajax.callFunc[openId] = callFunc;
-                X.Ajax.openInstanceId++;
-                X.Ajax.callServer(openId);
+                X.Ajax.callServer(callFunc);
             },
             put : function(url ,data, callFunc) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
                 X.Ajax.setData(data);
                 X.Ajax.method  = 'PUT';
-                var openId = X.Ajax.openInstanceId;
-                if(callFunc) X.Ajax.callFunc[openId] = callFunc;
-                X.Ajax.openInstanceId++;
-                X.Ajax.callServer(openId);
+                X.Ajax.callServer(callFunc);
             },
             post : function(url, data, callFunc) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
                 X.Ajax.setData(data);
                 X.Ajax.method  = 'POST';
-                var openId = X.Ajax.openInstanceId;
-                if(callFunc) X.Ajax.callFunc[openId] = callFunc;
+                X.Ajax.callServer(callFunc);
+            },
+            jsonp : function(url, callFunc) {
+                X.Ajax.setUrl(url);
+                X.Ajax.url += '&jsonp=X.Ajax.callback';
+                X.Ajax.openInstance[openId] = {};
+                X.Ajax.openInstance[openId].url = X.Ajax.url;
+                if(callFunc) X.Ajax.openInstance[openId].callFunc = callFunc;
                 X.Ajax.openInstanceId++;
-                X.Ajax.callServer(openId);
+                X.Ajax.openInstance[openId].js = X.loadJSFile(X.Ajax.url, true);
+                X.Ajax.openInstanceId[openId].js.addListener('error',X.Ajax.jsonperror);
+            },
+            jsonperror : function(e) {
+                var js = X.getEventNode(e);
+                js.destroy();
+                console.warn('JSONP Load Error');
+            },
+            callback : function(reData) {
+                var csrc = X.doc.scripts;
+                csrc = csrc[csrc.length -1];
+                for(var i in X.Ajax.openInstanceId) {
+                    var sIns = X.Ajax.openInstanceId[i];
+                    if(sIns.url && sIns.callFunc && sIns.url == csrc) {
+                        sIns.callFunc(reData);
+                    }
+                }
+            },
+            socket : function(url, openFunc, receiveFunc) {
+                if(navigator.FIREFOX && typeof(WebSocket) == 'undefined') {
+                    var socket =  new MozWebSocket(url);
+                } else if(typeof(WebSocket) == 'undefined') {
+                    return false;
+                }
+                if(url.substr(0,4).toLowerCase() != 'ws://' && url.substr(0,5).toLowerCase() != 'wss://') {
+                    var protocol = window.location.protocol=="https:" ? 'wss':'ws';
+                    url = protocol+'://'+ X.Ajax.defaultDomain + url;
+                }
+                var socket = new WebSocket(url);
+                socket.onopen = openFunc;
+                socket.onmessage = receiveFunc;
+                return socket;
             },
             file : function(form, callFunc) {
                 var enc = form.getAttribute('enctype');
@@ -1104,7 +1341,12 @@ $ : function(ele) {
                 upload_target.setCss('border:none;height:0;width:0;');
                 upload_target.setAttribute('frameboder','none');
                 X.doc.body.appendChild(upload_target);
-                upload_target.addListener('load',function() {
+                upload_target.addListener('readystatechange',function() {
+                    if(document.readyState == 'loaded') {
+                        console.warn('Ajax Uplad File Error');
+                        return false;
+                    }
+                    if(document.readyState == 'complete') {
                     var restr = upload_target.getIframeBody().innerHTML;
                     setTimeout(function(){upload_target.destroy();},1000);
                     if(restr == '') {
@@ -1115,11 +1357,11 @@ $ : function(ele) {
                         var res = JSON.parse(restr);
                         } catch(e) {
                             if(/413/i.test(restr)) {
-                                console.warn('X.Ajax upload file is Too large');
+                                console.warn('Ajax upload file is Too large');
                                 return 413;
                             }
                             if(/512/i.test(restr)) {
-                                console.warn('X.Ajax upload file timeout');
+                                console.warn('Ajax upload file timeout');
                                 return 512;
                             }
                             console.warn('Ajax Upload File response data is not JSON'+e);
@@ -1132,7 +1374,7 @@ $ : function(ele) {
                             console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
                         }
                     }
-                });
+                }});
                 form.submit();
             },
             setData : function(data) {
@@ -1160,69 +1402,84 @@ $ : function(ele) {
             showStatus : function() {
                 X.Ajax.statusObj = X.setTimeout(function() {X.Ajax.message = X.Ajax.messageList.still;X.Ajax.showMessageNode();},3000);
             },
-            callServer : function(openId) {
+            callServer : function(callFunc) {
                 if(!X.Ajax.XMLHttp) return;
                 X.Ajax.message = X.Ajax.messageList.current;
                 X.Ajax.showMessageNode();
-                //console.warn('Ajax instance id is '+openId);
-                X.Ajax.openInstance[openId] = X.Ajax.XMLHttp;
-                //console.warn(X.Ajax.openInstance[openId]);
-                //console.warn('Ajax instance method is '+ X.Ajax.method);
-                //console.warn('Ajax instance call url is '+ X.Ajax.url);
-                X.Ajax.openInstance[openId].open(X.Ajax.method, X.Ajax.url,X.Ajax.waitTime);
+                var openId = X.Ajax.openInstanceId;
+                X.Ajax.openInstance[openId] = {};
+                if(callFunc) X.Ajax.openInstance[openId].callFunc = callFunc;
+                X.Ajax.openInstanceId++;
+
+                X.Ajax.openInstance[openId].XMLHttp = X.Ajax.XMLHttp;
+                X.Ajax.openInstance[openId].XMLHttp.open(X.Ajax.method, X.Ajax.url,X.Ajax.waitTime);
                 if (X.Ajax.method == "POST") 
-                    X.Ajax.openInstance[openId].setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                X.Ajax.openInstance[openId].send(X.Ajax.data);
-                X.Ajax.outObj[openId] = X.setTimeout(function(){
-                                                            X.Ajax.openInstance[openId].abort();
+                    X.Ajax.openInstance[openId].XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                X.Ajax.openInstance[openId].XMLHttp.send(X.Ajax.data);
+                X.Ajax.openInstance[openId].outObj = X.setTimeout(function(){
+                                                            X.Ajax.openInstance[openId].XMLHttp.abort();
                                                             delete X.Ajax.openInstance[openId];
                                                             X.Ajax.complete();
                                                     }, X.Ajax.waitTime);
                 X.Ajax.openInstance[openId].method = X.Ajax.method ;
                 X.Ajax.showStatus();
-                X.Ajax.openInstance[openId].onreadystatechange = function() {
-                    if (X.Ajax.openInstance[openId].readyState == 4) {
-                        X.clearTimeout(X.Ajax.outObj[openId]);
+                X.Ajax.openInstance[openId].XMLHttp.onreadystatechange = function() {
+                    if (X.Ajax.openInstance[openId].XMLHttp.readyState == 4) {
+                        X.clearTimeout(X.Ajax.openInstance[openId].outObj);
                         X.clearTimeout(X.Ajax.statusObj);
                         X.Ajax.complete();
-                        if(X.Ajax.openInstance[openId].status == 200) {
-                            if (X.Ajax.callFunc) {
-                                if(X.Ajax.openInstance[openId].method = X.Ajax.method == 'HEAD') {
-                                    X.Ajax.callFunc[openId](X.Ajax.openInstance[openId].getAllResponseHeaders(),
-                                                            X.Ajax.openInstance[openId].getLastModified(),
-                                                            X.Ajax.openInstance[openId].getIsResourceAvailable());
-                                    return;
+                        if(X.Ajax.openInstance[openId].method == 'HEAD') {
+                            if(X.Ajax.openInstance[openId].XMLHttp.status == 0) {
+                                return X.Ajax.openInstance[openId].callFunc(0);
+                            }
+                            var headerStr = X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders();
+                            var headerArr = headerStr.split("\r\n");
+                            var header = [];
+                            for(var h in headerArr) {
+                                if(typeof(headerArr[h]) == 'string') {
+                                    var fvs = headerArr[h].trim();
+                                    if(fvs == '') continue;
+                                    var fv = fvs.split(':');
+                                    header[fv[0].trim()] = fv[1].trim();
                                 }
-                                if(X.Ajax.openInstance[openId].method == X.Ajax.method == 'TRACE') {
-                                    X.Ajax.callFunc[openId](X.Ajax.openInstance[openId].responseText);
-                                    return;
-                                }
-                                if(X.Ajax.dataType.toLowerCase() == 'json') {
-                                    try{
-                                        if(X.Ajax.openInstance[openId].responseText == '') {
-                                            X.Ajax.callFunc[openId](X.Ajax.openInstance[openId].responseText);
-                                        } else {
-                                            var reJSON = JSON.parse(X.Ajax.openInstance[openId].responseText);
-                                            try {
-                                                X.Ajax.callFunc[openId](reJSON);
-                                            } catch(e) {
-                                                console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
-                                            }
-                                            if(reJSON.debug) {
-                                                X.debugInnerHTML(reJSON.debug);
-                                            }
+                            }
+                            X.Ajax.openInstance[openId].callFunc(header);
+                            return;
+                        }
+                        if(X.Ajax.openInstance[openId].method == 'TRACE') {
+                            X.Ajax.openInstance[openId].callFunc(
+                                    X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders(),
+                                    X.Ajax.openInstance[openId].XMLHttp.responseText);
+                            return;
+                        }
+                        if(X.Ajax.openInstance[openId].XMLHttp.status == 200) {
+                            switch(X.Ajax.dataType.toLowerCase()) {
+                                case 'xml':
+                                    var reData = X.Ajax.openInstance[openId].XMLHttp.responseXML;
+                                break;
+                                case 'json':
+                                    var reData = X.Ajax.openInstance[openId].XMLHttp.responseText;
+                                    if(reData != '') {
+                                        try{ var reData = JSON.parse(reData); }
+                                        catch(e) {
+                                            console.warn('Ajax JSON Parse Error: '+e + ' in File '+e.fileName + ' Line '+e.lineNumber);
+                                            return;
                                         }
-                                    } catch(e) {
-                                        console.warn('Ajax response data is not JSON Object Error: '+e + ' in File '+e.fileName + ' Line '+e.lineNumber);
                                     }
-                                } else {
-                                    X.Ajax.callFunc(X.Ajax.openInstance[openId].responseXML); 
-                                }
+                                break;
+                                default:
+                                    var reData = X.Ajax.openInstance[openId].XMLHttp.responseText;
+                                break;
+                            }
+                            if(X.Ajax.openInstance[openId].callFunc) {
+                                X.Ajax.openInstance[openId].callFunc(reData); 
+                                /*try { X.Ajax.openInstance[openId].callFunc(reData); 
+                                } catch(e) {
+                                console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
+                                }*/
                             }
                         } else {
-                            if(X.Ajax.openInstance[openId].status == 0) {
-                                console.warn('Ajax requset timeout');
-                            }
+                            console.warn('Ajax requset timeout');
                         }
                         delete X.Ajax.openInstance[openId];
                     }
@@ -1584,7 +1841,7 @@ $ : function(ele) {
          * @return box : ELEMENT_NODE   返回控件所在DIV对象
          *
          * 外部可调用方法:
-         * @box.hide()       销毁控件
+         * @box.iHide()       销毁控件
          * @box.msg(msg, cls, visibility)     显示提示信息
          *              msg        : string   提示信息内容
          *              cls        : string   提示信息样式名 
@@ -1626,9 +1883,9 @@ $ : function(ele) {
                 closeDiv.setStyle('float','right');
             }
             if(zIndex) box.setZIndex(zIndex);
-            box.hide = function(e) {
-                box.destroy();
+            box.iHide = function() {
                 if(cover) X.hiddenPageCover();
+                box.destroy();
             };
             closeDiv.addListener('click',box.hide);
             titleDiv.appendChild(closeDiv);
@@ -1934,6 +2191,15 @@ $ : function(ele) {
             X.pageCover.style.display = 'block';
             X.pageCover.style.height = height+'px';
             X.pageCover.style.width = width +'px';
+            X.pageCover.addListener('resize',X.resizePageCover);
+        },
+        resizePageCover : function() {
+            var viewSize = X.pageShowSize();
+            var height = X.doc.body.offsetHeight > viewSize.h ? X.doc.body.offsetHeight+15 : viewSize.h;
+            var width = X.doc.body.offsetWidth > viewSize.w ? X.doc.body.offsetWidth+15 : viewSize.w;
+            X.pageCover.style.height = height+'px';
+            X.pageCover.style.width = width +'px';
+
         },
         hiddenPageCover : function() {
             X.pageCover.style.display = 'none';

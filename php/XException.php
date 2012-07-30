@@ -118,13 +118,12 @@ class XException  extends ErrorException {
         if(__X_SHOW_ERROR__) {
             $__X_RUN_TIME__ = microtime(true) - __X_RUN_START_TIME__;
             $str .= "<div class='debug_process'>Processed:{$__X_RUN_TIME__} second</div></div>";
-            switch(true) {
-                case isset($_ENV['__X_AJAX_REQUEST__']) && $_ENV['__X_AJAX_REQUEST__'] == true :
+            if(isset($_ENV['__X_AJAX_REQUEST__']) && $_ENV['__X_AJAX_REQUEST__']) {
                 return strip_tags($str);
-                case PHP_SAPI == 'cli' && isset($_ENV['__X_OUT_BROWSER__']) 
-                                       && $_ENV['__X_OUT_BROWSER__'] ==false:
+            } elseif(PHP_SAPI == 'cli' && isset($_ENV['__X_OUT_BROWSER__'])
+                                       && $_ENV['__X_OUT_BROWSER__'] ==false) {
                 return strip_tags($str);
-                default:
+            } else {
                 $str = $this->errcss . $str;
                 return $str;
             }

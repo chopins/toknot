@@ -35,9 +35,22 @@ class XSVNClient {
         dl_extension('svn', 'svn_checkout');
    //     $this->deamon();
     }
+    /**
+     * set_repos_name 
+     * 
+     * @param mixed $name 
+     * @access public
+     * @return void
+     */
     public function set_repos_name($name) {
         $this->repos_name = $name;
     }
+    /**
+     * repos_list 
+     * 
+     * @access public
+     * @return array
+     */
     public function repos_list() {
         return scandir($this->server_data_dir);
     }
@@ -45,7 +58,7 @@ class XSVNClient {
         return svn_ls($this->server_url.'/'.$this->repos_name.$dir);
     }
     public function checkout() {
-        return svn_checkout($this->server_url.$this->repos_name, 
+        return svn_checkout($this->server_url.'/'.$this->repos_name, 
                         $this->local_dir.'/'.$this->repos_name);
     }
     public function worker_revision() {
@@ -54,6 +67,19 @@ class XSVNClient {
     }
     public function update($filepath) {
         return = svn_update($this->local_dir.'/'.$this->repos_name.$filepath);
+    }
+    /**
+     * change_list 
+     * get server repository lastest to local woker revision change log list
+     * 
+     * @access public
+     * @return void
+     */
+    public function change_list() {
+        $local_revision = $this->worker_revision();
+        $log_list = svn_log($this->server_url.'/'.$this->repos_name,SVN_REVISION_HEAD
+                            $local_revision);
+        return $log_list;
     }
     public function update_all() {
         return svn_update($this->local_dir.'/'.$this->repos_name);

@@ -388,7 +388,7 @@ final class XScheduler extends XObject {
         $request_method = substr($_ENV['__X_CALL_PAGE_FUNC__'],0,1);
         if($request_method == 'O') {
             $this->app_instance = $_ENV['__X_CALL_PAGE_NAME__']::singleton();
-            $this->app_instance->run('get_options',substr($_ENV['__X_CALL_PAGE_FUNC__'],1));
+            $this->app_instance->get_options($_ENV['__X_CALL_PAGE_NAME__'], $_ENV['__X_CALL_PAGE_FUNC__']);
             return;
         }
         $call_method = $ref->hasMethod($_ENV['__X_CALL_PAGE_FUNC__']);

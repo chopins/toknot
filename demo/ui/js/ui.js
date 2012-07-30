@@ -4,7 +4,7 @@ var dop = {
     accessUri : '/index/home',
     requestUri : '/call',
     epollUri : '/epoll',
-    epollFreTime : 300,
+    epollFreqTime : 1000,
     activeNav : null,
     mainBlockId : 'b-center',
     leftNavGetUri : null,
@@ -28,6 +28,7 @@ var dop = {
         dop.mainBlock = X.$(dop.mainBlockId);
         dop.leftNavBox = X.createNode('div');
         dop.leftNavBox.addClass('left-block');
+        dop.leftNavBox.hide();
         dop.mainBlock.appendChild(dop.leftNavBox);
         dop.pageRight = X.createNode('div');
         dop.pageRight.addClass('right-block');
@@ -41,8 +42,8 @@ var dop = {
     ajaxHeadEpoll : function() {
        X.Ajax.head(dop.epollUri, function(header) {
             if(header == 0) {
-                dop.epollFreTime += 3000;
-                setTimeout(dop.ajaxHeadEpoll,dop.epollFreTime);
+                dop.epollFreqTime += 3000;
+                setTimeout(dop.ajaxHeadEpoll,dop.epollFreqTime);
                 return;
             }
             if(header['Authorization'] == 'nologin') {
@@ -59,7 +60,8 @@ var dop = {
     sendToken : function() {
     },
     epoll : function() {
-        dop.sock = X.Ajax.socket(dop.epollUri, dop.sendToken, dop.notifyUpdate);
+        //dop.sock = X.Ajax.socket(dop.epollUri, dop.sendToken, dop.notifyUpdate);
+        dop.sock = false;
         if(!dop.sock) {
             dop.ajaxHeadEpoll();
         }
@@ -115,6 +117,7 @@ var dop = {
     },
     // 创建左侧导航栏
     createLeftNav : function() {
+        dop.leftNavBox.show();
         if(!dop.leftNavGetUri) return;
                 var tli= X.createNode('div');
         tli.addClass('left-nav-div');
@@ -207,12 +210,14 @@ var dop = {
     },
     //用户登录操作
     userLoginAct : function(e) {
-        var inputBox = this.box;
-        inputBox.submitInput(this.url,function(re) {
+        var btn = X.getEventNode(e);
+        var inputBox = btn.parentBox;
+        inputBox.submitInput(btn.url,function(re) {
             if(re.status == 1) {
                 inputBox.iHide();
                 dop.leftNavGetUri = re.data;
                 dop.showView();
+                dop.epoll();
                 return;
             }
             inputBox.msg(re.message, '',true);

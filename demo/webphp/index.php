@@ -28,10 +28,8 @@ class index extends X {
         if(empty($this->R->A->password)) {
             return $this->exit_json(0,'密码不能为空');
         }
-        $admin_user = new XTxtDB();
-        $admin_user->open('admin_table');
         $password = md5($this->R->A->password, true);
-        $user_info = $admin_user->get($this->R->A->username);
+        $user_info = $this->LM('user')->get_user_info($this->R->A->username);
         if(empty($user_info) || $user_info['password'] != $password) {
             return $this->exit_json(0,'用户名或密码错误');
         }

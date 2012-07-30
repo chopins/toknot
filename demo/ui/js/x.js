@@ -33,7 +33,189 @@ if(typeof Node == 'undefined') {
         DOCUMENT_NODE:9,
         DOCUMENT_FRAGMENT_NODE:11
     }
-}
+};
+if(typeof(JSON) === 'undefined') {
+    var JSON;
+    if (!JSON) {
+        JSON = {};
+    }
+    (function () {
+        "use strict";
+        function f(n) {
+            return n < 10 ? '0' + n : n;
+        }
+        if (typeof Date.prototype.toJSON !== 'function') {
+            Date.prototype.toJSON = function (key) {
+                return isFinite(this.valueOf()) ?
+                    this.getUTCFullYear() + '-' +
+                    f(this.getUTCMonth() + 1) + '-' +
+                    f(this.getUTCDate()) + 'T' +
+                    f(this.getUTCHours()) + ':' +
+                    f(this.getUTCMinutes()) + ':' +
+                    f(this.getUTCSeconds()) + 'Z' : null;
+            };
+            String.prototype.toJSON =
+                Number.prototype.toJSON =
+                Boolean.prototype.toJSON = function (key) {
+                    return this.valueOf();
+                };
+        }
+        var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+            escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+            gap,
+            indent,
+            meta = {             '\b': '\\b',
+                '\t': '\\t',
+                '\n': '\\n',
+                '\f': '\\f',
+                '\r': '\\r',
+                '"' : '\\"',
+                '\\': '\\\\'
+            },
+            rep;
+        function quote(string) {
+            escapable.lastIndex = 0;
+            return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+                var c = meta[a];
+                return typeof c === 'string' ? c :
+                    '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+            }) + '"' : '"' + string + '"';
+        }
+        function str(key, holder) {
+            var i,             k,             v,             length,
+                mind = gap,
+                partial,
+                value = holder[key];
+            if (value && typeof value === 'object' &&
+                    typeof value.toJSON === 'function') {
+                value = value.toJSON(key);
+            }
+            if (typeof rep === 'function') {
+                value = rep.call(holder, key, value);
+            }
+            switch (typeof value) {
+            case 'string':
+                return quote(value);
+            case 'number':
+                return isFinite(value) ? String(value) : 'null';
+            case 'boolean':
+            case 'null':
+                return String(value);
+            case 'object':
+                if (!value) {
+                    return 'null';
+                }
+                gap += indent;
+                partial = [];
+                if (Object.prototype.toString.apply(value) === '[object Array]') {
+                    length = value.length;
+                    for (i = 0; i < length; i += 1) {
+                        partial[i] = str(i, value) || 'null';
+                    }
+                    v = partial.length === 0 ? '[]' : gap ?
+                        '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']' :
+                        '[' + partial.join(',') + ']';
+                    gap = mind;
+                    return v;
+                }
+                if (rep && typeof rep === 'object') {
+                    length = rep.length;
+                    for (i = 0; i < length; i += 1) {
+                        k = rep[i];
+                        if (typeof k === 'string') {
+                            v = str(k, value);
+                            if (v) {
+                                partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                            }
+                        }
+                    }
+                } else {
+                    for (k in value) {
+                        if (Object.prototype.hasOwnProperty.call(value, k)) {
+                            v = str(k, value);
+                            if (v) {
+                                partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                            }
+                        }
+                    }
+                }
+                v = partial.length === 0 ? '{}' : gap ?
+                    '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}' :
+                    '{' + partial.join(',') + '}';
+                gap = mind;
+                return v;
+            }
+        }
+        if (typeof JSON.stringify !== 'function') {
+            JSON.stringify = function (value, replacer, space) {
+                var i;
+                gap = '';
+                indent = '';
+                if (typeof space === 'number') {
+                    for (i = 0; i < space; i += 1) {
+                        indent += ' ';
+                    }
+                } else if (typeof space === 'string') {
+                    indent = space;
+                }
+                rep = replacer;
+                if (replacer && typeof replacer !== 'function' &&
+                        (typeof replacer !== 'object' ||
+                        typeof replacer.length !== 'number')) {
+                    throw new Error('JSON.stringify');
+                }
+                return str('', {'': value});
+            };
+        }
+        if (typeof JSON.parse !== 'function') {
+            JSON.parse = function (text, reviver) {
+                var j;
+                function walk(holder, key) {
+                    var k, v, value = holder[key];
+                    if (value && typeof value === 'object') {
+                        for (k in value) {
+                            if (Object.prototype.hasOwnProperty.call(value, k)) {
+                                v = walk(value, k);
+                                if (v !== undefined) {
+                                    value[k] = v;
+                                } else {
+                                    delete value[k];
+                                }
+                            }
+                        }
+                    }
+                    return reviver.call(holder, key, value);
+                }
+                text = String(text);
+                cx.lastIndex = 0;
+                if (cx.test(text)) {
+                    text = text.replace(cx, function (a) {
+                        return '\\u' +
+                            ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+                    });
+                }
+                if (/^[\],:{}\s]*$/
+                        .test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@')
+                            .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+                            .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+                    j = eval('(' + text + ')');
+                    return typeof reviver === 'function' ?
+                        walk({'': j}, '') : j;
+                }
+                throw new SyntaxError('JSON.parse');
+            };
+        }
+        if (!Object.prototype.toJSONString) {
+            Object.prototype.toJSONString = function (filter) {
+                return JSON.stringify(this, filter);
+            };
+            Object.prototype.parseJSON = function (filter) {
+                return JSON.parse(this, filter);
+            };
+        }
+    }());
+};
+
 var debug = true;
 if(typeof console == 'undefined' && debug) {
     console = {};
@@ -49,7 +231,7 @@ doc : window.document,
 xPNode : window.document.body, //X.$(ele)方法返回对象的父对象
 isReady : false,
 ugent : navigator.userAgent.toLowerCase(),
-intervarlHandle : [],
+intervalHandle : [],
 timeoutHandle : [],
 cache : {},
 maxZIndex : 0,
@@ -80,9 +262,6 @@ jsPath  : function(){
 inputType : {INPUT_TEXT:1,INPUT_PASSWORD:2,INPUT_CHECKBOX:3,
             INPUT_RADIO:4,INPUT_TEXTAREA:5,INPUT_BUTTON:6,INPUT_SUBMIT:7,
             INPUT_IMAGE:8,INPUT_SELECT:9},
-loadJSON : function() {
-    typeof(JSON) === 'undefined' && X.loadJSFile(X.jsPath()+'json.js');
-},
 loadJSFile : function(fs, bodyEnd) {
     var f = X.createNode('script');
     f.setAttribute('type','text/javascript');
@@ -123,10 +302,16 @@ unloadExec : function() {
     }
     if(X.Ajax.XMLHttp) X.Ajax.XMLHttp = null;
     if(X.Ajax.openInstance.length>0) {
-        for(var a in X.Ajax.openInstance) if(!isNaN(a)) X.Ajax.openInstance[a].abort();
+        for(var a in X.Ajax.openInstance) if(!isNaN(a)) X.Ajax.openInstance[a].XMLHttp.abort();
         X.Ajax.openInstance = [];
     }
     for(var i=0;i<X.unloadExecList.length;i++) X.unloadExecList[i]();
+    if(X.timeoutHandle.length >0) {
+        for(var a in X.timeoutHandle) if(!isNaN(a)) X.clearTimeout(X.timeoutHandle[a]);
+    }
+    if(X.intervalHandle.length >0) {
+        for(var a in X.intervalHandle) if(!isNaN(a)) X.clearTimeout(X.intervalHandle[a]);
+    }
     if(X.unloadExecMessage) return X.unloadExecMessage;
 },
 error : function(msg,url , line) {
@@ -134,7 +319,6 @@ error : function(msg,url , line) {
 init  : function() {
     window.onload = function() {
     window.onerror = X.error;
-    X.loadJSON();
     if(X.doc) {
         X.doc.onkeydown = X.kEF;
         X.doc.onkeyup = X.kEF;
@@ -257,7 +441,7 @@ setTimeout : function(func,time) {
 },
 setInterval : function(func, time) {
     var id = window.setInterval(func, time);
-    X.intervarlHandle.push(id);
+    X.intervalHandle.push(id);
     return id;
 },
 clearTimeout : function(id) {
@@ -268,8 +452,9 @@ clearTimeout : function(id) {
 },
 clearInterval : function(id) {
     window.clearInterval(id);
-    var i = X.timeoutHandle.indexOf(id)
-    if(i>-1) delete X.timeoutHandle[i];
+    for(var i in X.intervalHandle) {
+        if(X.intervalHandle[i] == id) delete X.intervalHandle[i];
+    }
 },
 /**
  * HTML DOM 元素访问函数
@@ -655,13 +840,13 @@ $ : function(ele) {
                     var refObjWeight = spec ? specPos.w : pageSize.w;
                     var YOffset = X.scrollOffset().y;
                     var XOffset = X.scrollOffset().x;
-                    var topY = refObjHeight/3-objPos.h/2;
-                    var leftX = refObjWeight/2-objPos.w/2;
+                    var topY = Math.ceil(refObjHeight/3-objPos.h/2);
+                    var leftX = Math.ceil(refObjWeight/2-objPos.w/2);
                     if(YOffset>0) topY = YOffset + topY;
                     if(XOffset>0) left = XOffset + leftX;
                     if(spec) {
-                        topY = topY + specPos.y;
-                        leftX = leftX + specPos.x;
+                        topY = Math.ceil(topY + specPos.y);
+                        leftX = Math.ceil(leftX + specPos.x);
                     }
                     if(topY <0) topY =0;
                     this.style.left = leftX+'px';
@@ -670,7 +855,7 @@ $ : function(ele) {
                         if(objPos.y<YOffset) obj.style.top = YOffset+'px';
                         if(this.interOffsetEff) X.clearInterval(this.interOffsetEff);
                         var MoveDown = objPos.y<=topY;
-                        var step = Math.abs(topY-objPos.y)/100;
+                        var step = Math.ceil(Math.abs(topY-objPos.y)/100);
                         this.interOffsetEff = X.setInterval(function(){
                                 var y = obj.getPos().y;
                                 if(y>=topY && !MoveDown) {y=y-step;obj.style.top = y+'px';return;}
@@ -1143,7 +1328,12 @@ $ : function(ele) {
                     var protocol = window.location.protocol=="https:" ? 'wss':'ws';
                     url = protocol+'://'+ X.Ajax.defaultDomain + url;
                 }
-                var socket = new WebSocket(url);
+                try {
+                    var socket = new WebSocket(url);
+                } catch(e) {
+                    console.warn('WebSocket can not connect '+url);
+                    return false;
+                }
                 socket.onopen = openFunc;
                 socket.onmessage = receiveFunc;
                 return socket;
@@ -1169,7 +1359,7 @@ $ : function(ele) {
                     }
                     if(document.readyState == 'complete') {
                     var restr = upload_target.getIframeBody().innerHTML;
-                    setTimeout(function(){upload_target.destroy();},1000);
+                    X.setTimeout(function(){upload_target.destroy();},1000);
                     if(restr == '') {
                         callFunc('');
                     }
@@ -1763,7 +1953,7 @@ $ : function(ele) {
                 msgDiv.show(visibility);
                 msgDiv.innerHTML = message;
                 if(cls) msgDiv.addClass(cls);
-                setTimeout(function() {
+                X.setTimeout(function() {
                     msgDiv.hide(visibility);
                 },2000);
             }
@@ -1772,11 +1962,14 @@ $ : function(ele) {
                 var bi = button.copyNode(true);
                 bi.addClass(buttonList[j].cls);
                 bi.innerHTML = buttonList[j].label;
-                bi.setAttribute('value',buttonList[j].value);
+                bi.setAttribute('type', 'button');
+                if(buttonList[j].value) {
+                    bi.setAttribute('value',buttonList[j].value);
+                }
                 if(typeof buttonList[j].call == 'string') eval('var call_func = '+buttonList[j].call)
                 else call_func = buttonList[j].call;
                 bi.addListener('click',call_func);
-                bi.box = box;
+                bi.parentBox = box;
                 if(buttonList[j].url) bi.url = buttonList[j].url;
                 buttonDiv.appendChild(bi);
             }
@@ -2012,6 +2205,15 @@ $ : function(ele) {
             X.pageCover.style.display = 'block';
             X.pageCover.style.height = height+'px';
             X.pageCover.style.width = width +'px';
+            X.pageCover.addListener('resize',X.resizePageCover);
+        },
+        resizePageCover : function() {
+            var viewSize = X.pageShowSize();
+            var height = X.doc.body.offsetHeight > viewSize.h ? X.doc.body.offsetHeight+15 : viewSize.h;
+            var width = X.doc.body.offsetWidth > viewSize.w ? X.doc.body.offsetWidth+15 : viewSize.w;
+            X.pageCover.style.height = height+'px';
+            X.pageCover.style.width = width +'px';
+
         },
         hiddenPageCover : function() {
             X.pageCover.style.display = 'none';

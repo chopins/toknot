@@ -371,7 +371,8 @@ function not_found() {
     die;
 }
 function xprint($buff) {
-    if(PHP_SAPI == 'cli' && $_ENV['__X_OUT_BROWSER__'] == false) {
+    if((isset($_ENV['__X_AJAX_REQUEST__']) && $_ENV['__X_AJAX_REQUEST__']) || 
+           (PHP_SAPI == 'cli' && $_ENV['__X_OUT_BROWSER__'] == false)) {
         $html = strip_tags($buff);
     } else {
         $html = $buff;

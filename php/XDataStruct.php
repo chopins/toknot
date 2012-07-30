@@ -75,8 +75,13 @@ class XObject {
         if($this->propertieChange) return true;
         $ref = new ReflectionObject($this);
         $list = $ref->getDefaultProperties();
+        $static_list = $ref->getStaticProperties();
         foreach($list as $key=>$value) {
-            if($this->$key != $value) return true;
+            if(isset($static_list[$key])) {
+                if(self::$$key != $value) return true;
+            } else {
+                if($this->$key != $value) return true;
+            }
         }
         return false;
     }
@@ -116,6 +121,9 @@ class XArrayElementObject  extends XObject{
         } else {
             $this->$name = new XArrayElementObject($value);
         }
+    }
+    public function __toString() {
+        return $this->value;
     }
 }
 
@@ -209,6 +217,5 @@ class XArrayObject implements ArrayAccess,Countable {
     public function __unset($sKey) {
         $this->offsetUnset($sKey);
     }
-
 }
 

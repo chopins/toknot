@@ -119,7 +119,6 @@ abstract class X extends XObject{
     private $display_html = '';
     public $stop_run = false;
     private $headers = array();
-    abstract public function Gindex();
     final public static function singleton() {
         return parent::__singleton();
     }
@@ -149,11 +148,14 @@ abstract class X extends XObject{
      * @access public
      * @return void
      */
-    final public function get_options($method_name) {
+    final public function get_options($view_class,$method_name) {
         $request_method_list = array('G'=>'GET','P'=>'POST','U'=>'PUT','D'=>'DELETE','T'=>'TRACE','H'=>'HEAD');
         $support_list = array();
+        $method_name = substr($method_name,1);
+        $ref = new ReflectionClass($view_class);
         foreach($request_method_list as $prefix => $method) {
-            if($this->__isset($prefix.$method_name)) {
+            $name = $prefix.$method_name;
+            if($ref->hasMethod($name)) {
                 $support_list[] = $method;
             }
         }
@@ -185,6 +187,7 @@ abstract class X extends XObject{
      * @return Object  the model class instance
      */
     final protected function LM($model_name) {
+        $model_name = ltrim($model_name,'/');
         if(!isset($this->dbm[$model_name])) {
             $model_file = __X_APP_ROOT__."/{$this->_CFG->php_model_dir_name}/$model_name.php";
             $model_class = basename($model_name);
@@ -211,6 +214,7 @@ abstract class X extends XObject{
      */
     final protected function CV($view, $method_name = null) {
         $view_class = basename($view);
+        $view = ltrim($view,'/');
         if(!class_exists($view_class, false)) {
             $file = __X_APP_ROOT__. "/{$this->_CFG->php_dir_name}/{$view}.php";
             if(!file_exists($file)) throw new XException("$file not exists");

@@ -10,6 +10,16 @@ class epoll extends X {
         header('WebSocket-Location: http://phpframe:80/epoll');
 
     }
+    public function Hindex() {
+        if($this->CV('index')->checklogin()) {
+            $time = gmdate("D, d M Y H:i:s", time());
+            sleep(2);
+            header("Last-Modified:{$time} GMT");
+        } else {
+            header("Authorization:nologin");
+        }
+    }
+
     public function setKey() {
     }
 }
