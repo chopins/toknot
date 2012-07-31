@@ -1,5 +1,6 @@
 <?php
 class project extends X{
-    public function Glist() {
+    public function all() {
+        $this->exit_json(1,'OK','项目');
     }
 }

@@ -43,11 +43,11 @@ class index extends X {
         $nav_list = array("{$this->R->S->username}|/user/info|true",
                           '后台首页|/index',
                           '个人信息|/user/info',
-                          '项目|/project/list',
-                          '服务器|/server/list',
-                          'Push|/push/list',
-                          '短信|/message/list',
-                          '用户列表|/user/list',
+                          '项目|/project/all',
+                          '服务器|/server/all',
+                          'Push|/push/all',
+                          '短信|/message/all',
+                          '用户列表|/user/all',
                           'Dopush|/dopush/info',
                           '退出|/index/logout');
         return $this->exit_json(1,'', $nav_list);

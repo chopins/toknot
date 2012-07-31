@@ -152,10 +152,9 @@ abstract class X extends XObject{
         $request_method_list = array('G'=>'GET','P'=>'POST','U'=>'PUT','D'=>'DELETE','T'=>'TRACE','H'=>'HEAD');
         $support_list = array();
         $method_name = substr($method_name,1);
-        $ref = new ReflectionClass($view_class);
         foreach($request_method_list as $prefix => $method) {
             $name = $prefix.$method_name;
-            if($ref->hasMethod($name)) {
+            if(method_exists($view_class,$name)) {
                 $support_list[] = $method;
             }
         }
@@ -212,7 +211,7 @@ abstract class X extends XObject{
      * @access protected
      * @return void
      */
-    final protected function CV($view, $method_name = null) {
+    final protected function CV($view) {
         $view_class = basename($view);
         $view = ltrim($view,'/');
         if(!class_exists($view_class, false)) {
@@ -223,8 +222,7 @@ abstract class X extends XObject{
         }
         $ins = $view_class :: singleton();
         $ins->call_init();
-        if($method_name == null) return $ins;
-        return $ins->$method_name();
+        return $ins;
     }
     /**
      * user array save your site config by key/value storage to file

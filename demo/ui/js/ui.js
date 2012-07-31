@@ -2,9 +2,9 @@ var dop = {
     userLoginStatus : false,
     loginUri  : '/index/checklogin',
     accessUri : '/index/home',
-    requestUri : '/call',
-    epollUri : '/epoll',
-    epollFreqTime : 1000,
+    requestUri : '/channel/call',
+    epollUri : '/channel/poll',
+    epollFreqTime : 5000,
     activeNav : null,
     mainBlockId : 'b-center',
     leftNavGetUri : null,
@@ -14,9 +14,12 @@ var dop = {
     pageRight : null,
     userName : null,
     loginStatus : false,
+    pageReady : 0,
     notifyPool : null,
     lastModified : 0,
     sock : null,
+    epollSt : 0,
+    enableAct : [],
     //初始化后台
     init : function() {
         dop.initUI();
@@ -37,31 +40,46 @@ var dop = {
         X.$(document.body).addListener('resize',dop.bodyResize);
     },
     notifyUpdate : function (header) {
-        dop.request('/notify/update');
+        var accessData = {};
+        accessData['act'] = '/notify/update';
+        accessData['modified_time'] = header['DATA_MODIFIED'];
+        dop.request(accessData);
     },
     ajaxHeadEpoll : function() {
-       X.Ajax.head(dop.epollUri, function(header) {
+        console.log(X.time());
+        X.clearTimeout(dop.epollSt);
+        var sendHeader = [{k:'Client-Modified', v:dop.lastModified}];
+        X.Ajax.waitTime = 20000;
+        X.Ajax.hpost(dop.epollUri,sendHeader,[],function(state, header) {
+            if(state != 4) return;
             if(header == 0) {
                 dop.epollFreqTime += 3000;
-                setTimeout(dop.ajaxHeadEpoll,dop.epollFreqTime);
+                X.setTimeout(dop.ajaxHeadEpoll,dop.epollFreqTime);
                 return;
             }
-            if(header['Authorization'] == 'nologin') {
+            if(header['AUTHORIZATION'] == 'nologin') {
                 dop.loginStatus = false;
                 return dop.userLoginView(re);
             } else {
-                if(header['lastModified'] > dop.lastModified) {
+                if(header['DATA_MODIFIED'] > dop.lastModified) {
+                    dop.lastModified = header['DATA_MODIFIED'];
                     dop.notifyUpdate(header);
                 }
-                setTimeout(dop.ajaxHeadEpoll, dop.epollFreTime);
+                console.log(X.time());
+                dop.epollSt = X.setTimeout(dop.ajaxHeadEpoll, dop.epollFreqTime);
+                return;
             }
-        });
+        }, function(retext) {});
     },
     sendToken : function() {
     },
     epoll : function() {
         //dop.sock = X.Ajax.socket(dop.epollUri, dop.sendToken, dop.notifyUpdate);
         dop.sock = false;
+        if(dop.pageReady < 2) {
+            X.setTimeout(dop.epoll,1000);
+            return;
+        }
         if(!dop.sock) {
             dop.ajaxHeadEpoll();
         }
@@ -75,12 +93,15 @@ var dop = {
             } else if(re.status == -1) {
                 return X.alertBox(re.data.title,re.message,null,'',1);
             } else {
-                if(re.data) {
-                    if(typeof(re.data.act) != 'undefined' && typeof(re.data.part) != 'undefined') {
-                        dop.pageAutoAct(re.data.act,re.data.part);
-                    } else if(re.status == 1) {
-                        dop.createRightBlock(re);
+                if(re.data && typeof(re.data.act) != 'undefined' && typeof(re.data.part) != 'undefined') {
+                    dop.pageAutoAct(re.data.act,re.data.part);
+                } else if(re.status == 1) {
+                    if(dop.pageReady == 0) {
+                        dop.pageReady = 1;
+                    } else if(dop.pageReady == 1) {
+                        dop.pageReady = 2;
                     }
+                    dop.createRightBlock(re);
                 }
             }
         });
@@ -139,6 +160,11 @@ var dop = {
                     nav.addClass('left-nav-head');
                 }
                 dop.leftNavBox.appendChild(nav);
+            }
+            if(dop.pageReady == 0) {
+                dop.pageReady = 1;
+            } else if(dop.pageReady == 1) {
+                dop.pageReady = 2;
             }
         });
     },

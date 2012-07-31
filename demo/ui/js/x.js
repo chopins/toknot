@@ -1240,6 +1240,9 @@ $ : function(ele) {
             hiddenStatus : true,
             openInstance : [],
             openInstanceId : 0,
+            headers : [],
+            headCallFunc : null,
+            receiveHead : false,
             setMimeType : function() {
                 if(X.Ajax.dataType.toLowerCase() == 'json') {
                     var mime = 'text/html';
@@ -1261,8 +1264,13 @@ $ : function(ele) {
             del : function(url, callFunc) {
                 X.Ajax.__get(url,callFunc,'DELETE');
             },
-            head : function(url, callFunc) {
-                X.Ajax.__get(url,callFunc,'HEAD');
+            head : function(url,head, callFunc) {
+                X.Ajax.init();
+                X.Ajax.setUrl(url);
+                X.Ajax.receiveHead = true;
+                X.Ajax.method = 'HEAD';
+                X.Ajax.headers = head;
+                X.Ajax.callServer(callFunc);
             },
             get : function(url , callFunc) {
                 X.Ajax.__get(url,callFunc,'GET');
@@ -1277,6 +1285,7 @@ $ : function(ele) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
                 X.Ajax.method = method;
+                X.Ajax.receiveHead = false;
                 X.Ajax.callServer(callFunc);
             },
             put : function(url ,data, callFunc) {
@@ -1284,11 +1293,23 @@ $ : function(ele) {
                 X.Ajax.setUrl(url);
                 X.Ajax.setData(data);
                 X.Ajax.method  = 'PUT';
+                X.Ajax.receiveHead = false;
+                X.Ajax.callServer(callFunc);
+            },
+            hpost : function (url, head,data, headCallFunc,callFunc) {
+                X.Ajax.init();
+                X.Ajax.setUrl(url);
+                X.Ajax.setData(data);
+                X.Ajax.method = 'POST';
+                X.Ajax.headers = head;
+                X.Ajax.receiveHead = true;
+                X.Ajax.headCallFunc = headCallFunc
                 X.Ajax.callServer(callFunc);
             },
             post : function(url, data, callFunc) {
                 X.Ajax.init();
                 X.Ajax.setUrl(url);
+                X.Ajax.receiveHead = false;
                 X.Ajax.setData(data);
                 X.Ajax.method  = 'POST';
                 X.Ajax.callServer(callFunc);
@@ -1426,6 +1447,17 @@ $ : function(ele) {
                 X.Ajax.openInstance[openId].XMLHttp.open(X.Ajax.method, X.Ajax.url,X.Ajax.waitTime);
                 if (X.Ajax.method == "POST") 
                     X.Ajax.openInstance[openId].XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                if (X.Ajax.headers.length > 0) {
+                    for(var h in X.Ajax.headers) {
+                        if(!isNaN(h)) {
+                            X.Ajax.openInstance[openId].XMLHttp.setRequestHeader(X.Ajax.headers[h].k, X.Ajax.headers[h].v);
+                        }
+                    }
+                    X.Ajax.headers = [];
+                }
+                X.Ajax.openInstance[openId].receiveHead = X.Ajax.receiveHead;
+                X.Ajax.openInstance[openId].headCallFunc = X.Ajax.headCallFunc;
                 X.Ajax.openInstance[openId].XMLHttp.send(X.Ajax.data);
                 X.Ajax.openInstance[openId].outObj = X.setTimeout(function(){
                                                             X.Ajax.openInstance[openId].XMLHttp.abort();
@@ -1435,28 +1467,35 @@ $ : function(ele) {
                 X.Ajax.openInstance[openId].method = X.Ajax.method ;
                 X.Ajax.showStatus();
                 X.Ajax.openInstance[openId].XMLHttp.onreadystatechange = function() {
-                    if (X.Ajax.openInstance[openId].XMLHttp.readyState == 4) {
-                        X.clearTimeout(X.Ajax.openInstance[openId].outObj);
-                        X.clearTimeout(X.Ajax.statusObj);
-                        X.Ajax.complete();
+                    if(X.Ajax.openInstance[openId].receiveHead) {
+                        var headerStr = X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders();
+                        var headerArr = headerStr.split("\n");
+                        var header = {};
+                        for(var h in headerArr) {
+                            if(typeof(headerArr[h]) == 'string') {
+                                var fvs = headerArr[h].trim();
+                                if(fvs == '') continue;
+                                var fv = fvs.split(':');
+                                header[fv[0].trim().replace(/-/g,'_').toUpperCase()] = fv[1].trim();
+                            }
+                        }
                         if(X.Ajax.openInstance[openId].method == 'HEAD') {
                             if(X.Ajax.openInstance[openId].XMLHttp.status == 0) {
                                 return X.Ajax.openInstance[openId].callFunc(0);
                             }
-                            var headerStr = X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders();
-                            var headerArr = headerStr.split("\r\n");
-                            var header = [];
-                            for(var h in headerArr) {
-                                if(typeof(headerArr[h]) == 'string') {
-                                    var fvs = headerArr[h].trim();
-                                    if(fvs == '') continue;
-                                    var fv = fvs.split(':');
-                                    header[fv[0].trim()] = fv[1].trim();
-                                }
-                            }
                             X.Ajax.openInstance[openId].callFunc(header);
                             return;
+                        } else if(X.Ajax.openInstance[openId].headCallFunc) {
+                            X.Ajax.openInstance[openId].headCallFunc(
+                                    X.Ajax.openInstance[openId].XMLHttp.readyState,
+                                    header);
                         }
+                    }
+                    if (X.Ajax.openInstance[openId].XMLHttp.readyState == 4) {
+                        X.clearTimeout(X.Ajax.openInstance[openId].outObj);
+                        X.clearTimeout(X.Ajax.statusObj);
+                        X.Ajax.complete();
+                        
                         if(X.Ajax.openInstance[openId].method == 'TRACE') {
                             X.Ajax.openInstance[openId].callFunc(
                                     X.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders(),
@@ -1497,6 +1536,8 @@ $ : function(ele) {
                 }
             },
             init : function() {
+                X.Ajax.headCallFunc = null;
+                X.Ajax.receiveHead = false;
                 X.Ajax.setMimeType();
                 if(window.XMLHttpRequest) {
                     X.Ajax.XMLHttp = new XMLHttpRequest();
