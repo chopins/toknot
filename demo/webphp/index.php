@@ -13,6 +13,9 @@ class index extends X {
         } else {
             $this->T->name = 'home';
             $this->T->type = 'htm';
+            $this->T->static_cache = true;
+            $this->T->check_cache();
+            if($this->T->be_cache) return;
             $this->D->top_nav = array();
             $this->D->footer_nav = array();
         }

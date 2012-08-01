@@ -284,6 +284,7 @@ unload : function(cf) {
 },
 unloadExecMessage : null,
 unloadExec : function() {
+    console.log(X.time());
     if(X.doc && X.isReady) {
         X.doc.onkeydown = null;
         X.doc.onkeyup = null;
@@ -291,7 +292,8 @@ unloadExec : function() {
         X.doc.onmousedown = null;
         window.onscroll = null;
         if(window.top == window.self) {
-            X.doc.body.onresize = null;
+            //firefox onresize bug
+            //X.doc.body.onresize = null;
         }
         for(var es in X.eventList) {
             for(var k in X.eventList[es]) {
@@ -313,6 +315,7 @@ unloadExec : function() {
         for(var a in X.intervalHandle) if(!isNaN(a)) X.clearTimeout(X.intervalHandle[a]);
     }
     if(X.unloadExecMessage) return X.unloadExecMessage;
+    console.log(X.time());
 },
 error : function(msg,url , line) {
 },

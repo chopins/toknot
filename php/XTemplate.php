@@ -40,14 +40,8 @@ class XTemplate extends XObject {
 
     /**
      * T 
-     * the T object has below properties:
-     * $T->name           the template file name not contain file extension suffix
-     * $T->type           the filetype of template file
-     * $T->data_cache     if be set true, will cache XTemplate::$_var data
-     * $T->cache_time     the cache data or file expires seconds if open cache, and default 300 seconds
-     * $T->static_cache   save view-class output html to file if be set true
      * 
-     * @var object
+     * @var XTemplateObject
      * @access public
      */
     public $T = null;
@@ -79,6 +73,7 @@ class XTemplate extends XObject {
         $this->_var = $D;
         $this->fetch_templete();
         $this->display();
+        $this->create_cache();
     }
     public function get_cache($T) {
         if($T->static_cache) {
@@ -325,7 +320,9 @@ class XTemplate extends XObject {
                 $this->out_html.=$this->$1($2);}'.$this->tst,$str);
     }
     public function __destruct() {
-        $this->create_cache(); 
+        unset($this->_var);
+        unset($this);
+        unset($this->out_html);
     }
     public function create_cache() {
         if($this->T->static_cache || $this->T->data_cache) {
@@ -341,7 +338,7 @@ class XTemplate extends XObject {
                 mkdir($cache_dir, 0700,true);
             }
             $cache_file = "{$cache_dir}/{$this->T->name}.{$this->T->type}";
-            file_put_contents($cache_file, $this->cache_string);
+            file_put_contents($cache_file, $cache_string);
         }
     }
 }

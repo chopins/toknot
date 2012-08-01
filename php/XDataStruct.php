@@ -220,14 +220,71 @@ class XArrayObject implements ArrayAccess,Countable {
     }
 }
 
+/**
+ * XTemplateObject 
+ * the XTemplate class $T properties of proto
+ * 
+ * @uses XObject
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XTemplateObject extends XObject {
-    public $name;
-    public $type;
-    public $data_cache;
+    /**
+     * name 
+     * the template file name
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $name = null;
+
+    /**
+     * type 
+     * the template filetype
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $type = 'htm';
+
+    /**
+     * data_cache 
+     * only cache view data
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $data_cache = false;
+
+    /**
+     * cache_time 
+     * the cache data or file expires seconds if open cache, and default 300 seconds
+     * 
+     * @var float
+     * @access public
+     */
     public $cache_time = 300;
-    public $static_cache;
+
+    /**
+     * static_cache 
+     * save view-class output html to file if be set true
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $static_cache = false;
+
+    /**
+     * TPL_INI 
+     * configuration for tpl
+     * 
+     * @var mixed
+     * @access public
+     */
     public $TPL_INI;
     private $cache_dir;
+    public $be_cache = false;
     public function __construct($TPL_INI, $cache_dir) {
         $this->TPL_INI = $TPL_INI;
         $this->cache_dir = $cache_dir;
@@ -235,14 +292,65 @@ class XTemplateObject extends XObject {
     public function check_cache() {
         $ins = XTemplate::singleton($this->TPL_INI);
         $ins->set_cache_dir($this->cache_dir);
-        return $ins->get_cache($this);
+        $this->be_cache = $ins->get_cache($this);
     }
 }
 
-class XDataBaseConf extends XObject {
+/**
+ * XDBConf 
+ * the Database config object proto
+ * 
+ * @uses XObject
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
+class XDBConf extends XObject {
+
+    /**
+     * dbtype 
+     * set database type
+     * 
+     * @var mixed
+     * @access public
+     */
     public $dbtype = null;
+
+    /**
+     * dbhost 
+     * set database connect host or open path
+     * 
+     * @var mixed
+     * @access public
+     */
     public $dbhost = null;
+
+    /**
+     * dbuser 
+     * the database username
+     * 
+     * @var mixed
+     * @access public
+     */
     public $dbuser = null;
+
+    /**
+     * dbpass 
+     * the database password of user
+     * 
+     * @var mixed
+     * @access public
+     */
     public $dbpass = null;
+
+
+    /**
+     * dbport 
+     * if connect by network, set the connect port
+     * 
+     * @var mixed
+     * @access public
+     */
     public $dbport = null;
+    public $pconnect = false;
 }

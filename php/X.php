@@ -287,11 +287,14 @@ abstract class X extends XObject{
      * instantiated libtemplate class and parse tpl file and output html
      */
     final private function init_tpl() {
-        if($this->T->isChange() == false) {
+        if($this->T->name === null) {
+            return;
+        }
+        $this->tpl_instance = XTemplate :: singleton($this->_CFG->tpl);
+        if($this->T->be_cache) {
             return;
         }
         $this->construct_standard_template_data();
-        $this->tpl_instance = XTemplate :: singleton($this->_CFG->tpl);
         $this->tpl_instance->set_cache_dir(__X_APP_DATA_DIR__.'/'.$this->_CFG->app->data_cache);
         $this->tpl_instance->execute($this->T, $this->D);
     }
