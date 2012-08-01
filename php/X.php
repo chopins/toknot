@@ -135,7 +135,7 @@ abstract class X extends XObject{
         $this->visit_ip = get_uip();
         $this->R = new XRequest($this->_CFG);
         $this->D = new XStdClass();
-        $this->T = new XObject();
+        $this->T = new XTemplateObject($this->_CFG->tpl, __X_APP_DATA_DIR__.'/'.$this->_CFG->app->data_cache);
         $this->init_var_dirname();
         $this->initStat = true;
     }
@@ -278,7 +278,7 @@ abstract class X extends XObject{
      */
     final private function construct_standard_template_data() {
         $this->D->R = $this->R;
-        foreach($this->_CFG->tpl_common_tpldata as $key => $value) {
+        foreach($this->_CFG->tpl->common_tpldata as $key => $value) {
             $this->D->$key = $value;
         }
     }
@@ -291,11 +291,9 @@ abstract class X extends XObject{
             return;
         }
         $this->construct_standard_template_data();
-        $this->tpl_instance = new XTemplate($this->_CFG,$this->T,$this->D);
-        $this->tpl_instance->fetch_templete();
-        if(is_object($this->tpl_instance)) {
-            $this->tpl_instance->display();
-        }
+        $this->tpl_instance = XTemplate :: singleton($this->_CFG->tpl);
+        $this->tpl_instance->set_cache_dir(__X_APP_DATA_DIR__.'/'.$this->_CFG->app->data_cache);
+        $this->tpl_instance->execute($this->T, $this->D);
     }
     final public function get_json_tpl() {
         return $this->tpl_instance->get_json_tpl();
@@ -452,8 +450,8 @@ abstract class X extends XObject{
     }
 
     final private function init_var_dirname() {
-        if($this->_CFG->check_data_dir === false) return;
-        $cache_dir = __X_APP_DATA_DIR__."/{$this->_CFG->data_cache}"; 
+        if($this->_CFG->app->check_data_dir === false) return;
+        $cache_dir = __X_APP_DATA_DIR__."/{$this->_CFG->app->data_cache}"; 
         $conf_dir = __X_APP_DATA_DIR__.'/conf';
         if(is_file(__X_APP_DATA_DIR__)) throw new XException(__X_APP_DATA_DIR__ .'is not directory');
         else if(!file_exists(__X_APP_DATA_DIR__)) mkdir(__X_APP_DATA_DIR__);

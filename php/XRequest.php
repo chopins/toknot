@@ -33,8 +33,8 @@ final class XSessionObject extends XArrayObject {
     private $sess_file = '';
     public function __construct($cfg) {
         $this->cfg = $cfg;
-        $this->sess_name = $this->cfg->session_session_name;
-        $this->save_path = __X_APP_DATA_DIR__."/{$this->cfg->session_save_path}";
+        $this->sess_name = $this->cfg->session_name;
+        $this->save_path = __X_APP_DATA_DIR__."/{$this->cfg->save_path}";
         $this->use_php_session = extension_loaded('session') && PHP_SAPI != 'cli';
         $this->startSession();
         $this->initArray();
@@ -269,15 +269,15 @@ class XRequest {
     private $AS = false;
     private $ajax_data_key = 'data';
     private $ajax_flag = 'is_ajax';
-    private $_CFG = null;
+    private $sess_ini = null;
     /**
      * construct request data structure
      */
     public function __construct($_CFG) {
         $this->M = $_SERVER['REQUEST_METHOD'];
-        $this->ajax_data_key = $_CFG->ajax_key;
-        $this->ajax_flag = $_CFG->ajax_flag;
-        $this->_CFG = $_CFG;
+        $this->ajax_data_key = $_CFG->app->ajax_key;
+        $this->ajax_flag = $_CFG->app->ajax_flag;
+        $this->sess_ini = $_CFG->session;
         $this->check_ajax_status();
         $this->G = new XArrayObject($_GET);
         $this->P = new XArrayObject($_POST);
@@ -320,7 +320,7 @@ class XRequest {
         $this->_R->$pro = $value;
     }
     public function initSession() {
-        $this->S = new XSessionObject($this->_CFG);
+        $this->S = new XSessionObject($this->sess_ini);
     }
     public function getAjaxData() {
         if($this->AS) {

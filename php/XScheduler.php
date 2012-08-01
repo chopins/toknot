@@ -34,25 +34,43 @@ final class XScheduler extends XObject {
     private $exception_string = '';
     private $server = null;
     private $utf8 = 'utf8';
-    private $encodeing = '';
-    private $_CFG;
+    public $encodeing = '';
+    public $timezone;
+    public $php_dir_name;
+    public $url_file_suffix;
     public static function singleton() {
         return parent::__singleton();
     }
+    protected function get_ini() {
+        $CFG = XConfig::CFG();
+        $this->encoding = $CFG->app->encoding;
+        $this->php_dir_name = $CFG->php_dir_name;
+        $this->timezone = $CFG->app->timezone;
+        $this->url_file_suffix = $CFG->app->url_file_suffix;
+        $this->uri_mode = $CFG->app->uri_mode;
+        $this->web_index = $CFG->web->index;
+        $this->subsite_mode = $CFG->app->subsite_mode;
+        $this->subsite_start_level = $CFG->app->subsite_start_level;
+        $this->error_log_dir = $CFG->app->error_log_dir;
+        $this->ui_dir_name = $CFG->ui_dir_name;
+    }
     protected function __construct() {
         if(version_compare(PHP_VERSION,'5.3.0') < 0) {
-            throw new XException('XPHPFramework need run in php varsion lagre 5.3.0, your php version is'.PHP_VERSION);
+            throw new XException('only be run on php of varsion  5.3.0 or lastest, current php of version'.PHP_VERSION);
         }
+
         define('PHP_CLI',PHP_SAPI =='cli');
+
         if(PHP_CLI == false) define('__X_WEB_ROOT__',dirname($_SERVER['SCRIPT_FILENAME']));
         defined('__X_APP_ROOT__') || define('__X_APP_ROOT__',__X_WEB_ROOT__);
+
         $_ENV['__X_OUT_BROWSER__']     = false;
         $_ENV['__X_EXCEPTION_THROW__'] = false;
         $_ENV['__X_FATAL_EXCEPTION__'] = false;
-        $xconfig = XConfig::singleton();
-        $this->_CFG = $xconfig->get_cfg_arr();
-        $this->encoding = $this->_CFG['encoding'];
-        $_ENV['__X_CALL_PAGE_DIR__']   = __X_APP_ROOT__.'/'.$this->_CFG['php_dir_name'];
+
+        $this->get_ini();
+
+        $_ENV['__X_CALL_PAGE_DIR__']   = __X_APP_ROOT__. "/{$this->php_dir_name}";
         $this->check_superglobals();
         $this->set_time_zone();
         if(PHP_CLI && __X_NO_WEB_SERVER__ === false) {
@@ -68,7 +86,7 @@ final class XScheduler extends XObject {
     }
 
     public function call_loop() {
-        $_ENV['__X_CALL_PAGE_FILE__'] = __X_APP_ROOT__.'/'. $this->_CFG['php_dir_name'].__X_DAEMON_LOOP_FILE__;
+        $_ENV['__X_CALL_PAGE_FILE__'] = __X_APP_ROOT__."/{$this->php_dir_name}".__X_DAEMON_LOOP_FILE__;
         if(!file_exists($_ENV['__X_CALL_PAGE_FILE__'])) {
             throw new XException("File {$_ENV['__X_CALL_PAGE_FILE__']} not be found");
         }
@@ -285,27 +303,27 @@ final class XScheduler extends XObject {
             $uri_path     = $uri;
         }
         $call_page_func = $call_page_name = $prefix_path = '';
-        $url_file_suffix = '.'.$this->_CFG['url_file_suffix'];
-        if($this->_CFG['uri_mode'] == 1 && isset($query_string)) {
+        $url_file_suffix = '.'.$this->url_file_suffix;
+        if($this->uri_mode == 1 && isset($query_string)) {
             $_GET['a']      = empty($_GET['a']) ? '':$_GET['a'];
             $uri_path       = dirname($_GET['a']);
             $call_page_func = basename($_GET['a']);
-        } else if($this->_CFG['uri_mode'] == 2) { //PATH_INFO mode
+        } else if($this->uri_mode == 2) { //PATH_INFO mode
             if(empty($_SERVER['PATH_INFO'])) {
                 $_SERVER['PATH_INFO'] = str_replace('/'.basename($_SERVER['SCRIPT_FILENAME']),'',$_SERVER['PHP_SELF']);
             }
             $uri_path = dirname($_SERVER['PATH_INFO']);
             $call_page_func = basename($_SERVER['PATH_INFO']);
             if(empty($_SERVER['PATH_INFO'])) $call_page_func = basename($_SERVER['DOCUMENT_URI'], $uri_file_suffix);
-        } else if($this->_CFG['uri_mode'] == 4) {
+        } else if($this->uri_mode == 4) {
         } else {
             if($uri_path == '/') {
-                $_SERVER['DOCUMENT_URI'] = strtok($this->_CFG['web_index'],':');
+                $_SERVER['DOCUMENT_URI'] = strtok($this->web_index,':');
                 $call_page_func = basename($_SERVER['DOCUMENT_URI'],$url_file_suffix);
                 $call_page_name = $call_page_func;
             } else if(dirname($uri_path) == '/') {
                 $call_page_name = basename($uri_path);
-                $call_page_func = basename(strtok($this->_CFG['web_index'],':'), $url_file_suffix);
+                $call_page_func = basename(strtok($this->web_index,':'), $url_file_suffix);
             } else {
                 $call_page_func = basename($uri_path, $url_file_suffix);
                 $call_page_name = basename(dirname($uri_path));
@@ -314,8 +332,8 @@ final class XScheduler extends XObject {
             }
         }
         $add_sub_domain_path = '';
-        if($this->_CFG['subsite_mode'] > 0) {
-            if($this->_CFG['subsite_mode'] < $this->_CFG['subsite_start_level']) {
+        if($this->subsite_mode > 0) {
+            if($this->subsite_mode < $this->subsite_start_level) {
                 throw new XException('subsite_start_level not be greater than subsite_mode in your confingure file');
             }
             if($_SERVER['SERVER_ADDR'] != $_SERVER['HTTP_HOST']) {
@@ -326,8 +344,8 @@ final class XScheduler extends XObject {
                    $sub_domain_list        = explode('.',$_SERVER['HTTP_HOST']);
                     $sub_domain_list       = array_reverse($sub_domain_list);
                     $sub_domain_list_count = count($sub_domain_list) -1;
-                    if($sub_domain_list_count >= $this->_CFG['subsite_start_level']) {
-                        for($i=$this->_CFG['subsite_start_level'];$i<=$this->_CFG['subsite_mode'];$i++) {
+                    if($sub_domain_list_count >= $this->subsite_start_level) {
+                        for($i=$this->subsite_start_level;$i<=$this->subsite_mode;$i++) {
                             $add_sub_domain_path = "{$sub_domain_list[$i]}/{$add_sub_domain_path}";
                         }
                     }
@@ -361,8 +379,8 @@ final class XScheduler extends XObject {
         $_ENV['__X_CALL_PAGE_NAME__']    = $call_page_name;
         $_ENV['__X_CALL_PAGE_FILE__']    = "{$_ENV['__X_CALL_PAGE_DIR__']}{$add_sub_domain_path}{$prefix_path}/{$call_page_name}.php";
         $_ENV['__X_CALL_PAGE_FUNC__']    = $request_method.$call_page_func;
-        $_ENV['__X_APP_UI_DIR__']        = __X_APP_ROOT__.'/'.$this->_CFG['ui_dir_name'];
-        $_ENV['__X_APP_PHP_ERROR_LOG__'] = __X_APP_DATA_DIR__.'/'.$this->_CFG['error_log_dir'].'/'.date('Ymd');
+        $_ENV['__X_APP_UI_DIR__']        = __X_APP_ROOT__.'/'.$this->ui_dir_name;
+        $_ENV['__X_APP_PHP_ERROR_LOG__'] = __X_APP_DATA_DIR__.'/'.$this->error_log_dir.'/'.date('Ymd');
     }
 
     /**
@@ -443,9 +461,9 @@ final class XScheduler extends XObject {
      * @return void
      */
     public function set_time_zone() {
-        if(empty($this->_CFG['timezone'])) {
+        if(empty($this->timezone)) {
             throw new XException('Application timezone unset in config file ');
         }
-        date_default_timezone_set($this->_CFG['timezone']);
+        date_default_timezone_set($this->timezone);
     }
 }

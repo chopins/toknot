@@ -25,17 +25,19 @@ exists_frame();
  */
 abstract class XDataModel extends XObject {
 	public $cache_file = '/data/cache/lib_exec_cache.dat';
-    protected $dbtype = null;
-    protected $dbname = null;
-    protected $dbins = null;
-    protected $db_data_path = null;
-    public $_CFG = null;
+    protected $dbconf = array();
+    protected $dbconf_id = 0;
+    protected $_CFG = null;
     final public static function singleton() {
         return parent::__singleton();
     }
     final protected function __construct() {
         $this->_CFG = XConfig::CFG();
+        $this->cache_file = $this->_CFG->cache_file;
         $this->db_data_path = __X_APP_DATA_DIR__.'/'.$this->_CFG->db_data;
+        if(method_exists($this,'auto_conf')) {
+            $this->auto_conf();
+        }
     }
     final public function connect_database($init_function) {
         $this->$init_function();

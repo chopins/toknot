@@ -85,9 +85,6 @@ class XObject {
         }
         return false;
     }
-    public function __toString() {
-        return $this->value;
-    }
 }
 
 /**
@@ -135,6 +132,10 @@ class XStdClass extends XObject {
     final public function __xset__($name, $value) {
         $this->$name = new XStdClass($value);
     }
+    public function __toString() {
+        return $this->value;
+    }
+
 }
 
 
@@ -219,3 +220,29 @@ class XArrayObject implements ArrayAccess,Countable {
     }
 }
 
+class XTemplateObject extends XObject {
+    public $name;
+    public $type;
+    public $data_cache;
+    public $cache_time = 300;
+    public $static_cache;
+    public $TPL_INI;
+    private $cache_dir;
+    public function __construct($TPL_INI, $cache_dir) {
+        $this->TPL_INI = $TPL_INI;
+        $this->cache_dir = $cache_dir;
+    }
+    public function check_cache() {
+        $ins = XTemplate::singleton($this->TPL_INI);
+        $ins->set_cache_dir($this->cache_dir);
+        return $ins->get_cache($this);
+    }
+}
+
+class XDataBaseConf extends XObject {
+    public $dbtype = null;
+    public $dbhost = null;
+    public $dbuser = null;
+    public $dbpass = null;
+    public $dbport = null;
+}
