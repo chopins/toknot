@@ -354,31 +354,31 @@ final class XScheduler extends XObject {
         }
         switch($_SERVER['REQUEST_METHOD']) {
             case 'GET':
-                $request_method = 'G';
+                $request_method = 'g';
             break;
             case 'POST':
-                $request_method = 'P';
+                $request_method = 'p';
             break;
             case 'PUT':
-                $request_method = 'U';
+                $request_method = 'u';
             break;
             case 'HEAD':
-                $request_method = 'H';
+                $request_method = 'h';
             break;
             case 'TRACE':
-                $request_method = 'T';
+                $request_method = 't';
             break;
             case 'DELETE':
-                $request_method = 'D';
+                $request_method = 'd';
             break;
             default :
-                $request_method = 'O';
+                $request_method = 'o';
             break;
         }
 
         $_ENV['__X_CALL_PAGE_NAME__']    = $call_page_name;
         $_ENV['__X_CALL_PAGE_FILE__']    = "{$_ENV['__X_CALL_PAGE_DIR__']}{$add_sub_domain_path}{$prefix_path}/{$call_page_name}.php";
-        $_ENV['__X_CALL_PAGE_FUNC__']    = $request_method.$call_page_func;
+        $_ENV['__X_CALL_PAGE_FUNC__']    = $request_method.ucfirst($call_page_func);
         $_ENV['__X_APP_UI_DIR__']        = __X_APP_ROOT__.'/'.$this->ui_dir_name;
         $_ENV['__X_APP_PHP_ERROR_LOG__'] = __X_APP_DATA_DIR__.'/'.$this->error_log_dir.'/'.date('Ymd');
     }
@@ -404,7 +404,7 @@ final class XScheduler extends XObject {
         $method = $_ENV['__X_CALL_PAGE_FUNC__'];
         $ref = new ReflectionClass($_ENV['__X_CALL_PAGE_NAME__']);
         $request_method = substr($_ENV['__X_CALL_PAGE_FUNC__'],0,1);
-        if($request_method == 'O') {
+        if($request_method == 'o') {
             $this->app_instance = $_ENV['__X_CALL_PAGE_NAME__']::singleton();
             $this->app_instance->get_options($_ENV['__X_CALL_PAGE_NAME__'], $_ENV['__X_CALL_PAGE_FUNC__']);
             return;

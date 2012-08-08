@@ -22,6 +22,9 @@ body {margin:0;padding:0;width:100%;height:100%;}
 background:none repeat scroll 0 0 #EEE;}
 .b-right-tab-nav:hover {background-color:#FCFCFC;}
 .b-right-tab-nav-active {background-color:#FFF;font-weight:bold;border-bottom:1px solid #FFF;}
+.b-right-block-table-item {border-bottom: 1px solid #CCC;padding:10px;color:#4183C4;font-weight:bold;}
+.b-right-block-table-item-btn {color:#333;font-size:12px;font-weight:normal;}
+.b-right-block-table-item-summary {color:#666;font-size:12px;font-weight:normal;}
 .left-block{float:left;width:220px;background:none repeat scroll 0 0 #EEE;margin:10px;border-radius: 2px 2px 2px 2px;}
 .right-block {float:left;margin-top:10px;width:80%;}
 .left-nav-div{cursor:pointer;background:#FFF;border: 1px solid #D8D8D8;padding:8px 10px;color:#4183C4;}

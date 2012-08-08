@@ -34,6 +34,7 @@ abstract class X extends XObject{
      */
     private $model_list = array();
 
+    private $view_instance_list = array();
     /**
      * libtemplate class instance
      *
@@ -129,6 +130,8 @@ abstract class X extends XObject{
      * @access protected
      */
     final public function call_init() {
+        $class_name = get_class($this);
+        $this->view_instance_list[$class_name] = true;
         $this->_CFG = XConfig::CFG();
         $this->display_html = '';
         $this->visit_time = empty($_SERVER['REQUEST_TIME']) ? time() : $_SERVER['REQUEST_TIME'];
@@ -187,17 +190,21 @@ abstract class X extends XObject{
      */
     final protected function LM($model_name) {
         $model_name = ltrim($model_name,'/');
-        if(!isset($this->dbm[$model_name])) {
+        if(!isset($this->model_list[$model_name])) {
             $model_file = __X_APP_ROOT__."/{$this->_CFG->php_model_dir_name}/$model_name.php";
             $model_class = basename($model_name);
+            $model_class = $model_class.'Model';
             if(!class_exists($model_class,false)) {
                 if(!file_exists($model_file)) throw new XException("$file not exists");
                 check_syntax($model_file);
                 include_once($model_file);
             }
+            if(!class_exists($model_class,false)) {
+                throw new XException("$model_name not found, $suffix");
+            }
         }
         $model_ins = $model_class :: singleton();
-        $this->model_list[$model_name] = true;
+        $this->model_list[$model_name] = $model_ins;
         return $model_ins;
     }
 
@@ -222,8 +229,10 @@ abstract class X extends XObject{
         }
         $ins = $view_class :: singleton();
         $ins->call_init();
+        $this->view_instance_list[$view_class] = $ins;
         return $ins;
     }
+
     /**
      * user array save your site config by key/value storage to file
      *

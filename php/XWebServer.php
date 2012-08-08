@@ -351,7 +351,7 @@ final class XWebServer extends XHTTPResponse {
         $int_hash = 5831;
         $str_key = md5(__FILE__.__METHOD__.posix_getpid());
         for($i=0;$i<32;$i++) {
-            $int_hash = ((($int_hash <<5) + $int_hash) + ord($str_key[$i])) % 0x7fffffff;
+            $int_hash = ((($int_hash <<5) + $int_hash) + ord($str_key[$i])) & 0x7fffffff;
         }
         return $int_hash;
     }

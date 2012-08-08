@@ -7,24 +7,20 @@ class index extends X {
     public function checklogin() {
         return $this->loginStat = !empty($this->R->S->username);
     }
-    public function gindex() {
+    public function gIndex() {
         if($this->R->AS) {
             return $this->exit_json(1,'ok');
         } else {
             $this->T->name = 'home';
             $this->T->type = 'htm';
-            $this->T->static_cache = true;
-            $this->T->check_cache();
-            if($this->T->be_cache) return;
+         //   $this->T->static_cache = true;
+         //   $this->T->check_cache();
+         //   if($this->T->be_cache) return;
             $this->D->top_nav = array();
             $this->D->footer_nav = array();
         }
     }
-    public function glogout($te= 1) {
-        session_destroy();
-        return $this->exit_json(1,'成功退出',array('act'=>'refresh','part'=>'page'));
-    }
-    public function plogin() {
+    public function pLogin() {
         if(empty($this->R->A->username)) {
             return $this->exit_json(0,'用户名不能为空');
         }
@@ -41,18 +37,17 @@ class index extends X {
         $this->R->C->username->set();
         return $this->exit_json(1,'登录成功','/index/mynav');
     }
-    public function gmynav() {
+    public function gMynav() {
         if($this->loginStat == false) return $this->exit_json(0,'', $this->login_ui());
         $nav_list = array("{$this->R->S->username}|/user/info|true",
                           '后台首页|/index',
                           '个人信息|/user/info',
                           '项目|/project/all',
                           '服务器|/server/all',
-                          'Push|/push/all',
                           '短信|/message/all',
                           '用户列表|/user/all',
                           'Dopush|/dopush/info',
-                          '退出|/index/logout');
+                          '退出|/user/logout');
         return $this->exit_json(1,'', $nav_list);
     }
     public function login_ui() {
@@ -68,7 +63,14 @@ class index extends X {
                             'title'=>'登录');
         return $login_form;
     }
-    public function gchecklogin() {
+    private function cookie_is_disable() {
+        $this->exit_json(-1,'COOKIE_ERR',$this->R->S->get_session_sid());
+    }
+    public function gChecklogin() {
+        $this->R->S->check_cookie_status();
+        if($this->R->S->cookie_be_disable == true) {
+            return $this->cookie_is_disable();
+        }
         if($this->loginStat == false) {
             $login_form = $this->login_ui(); 
             $this->exit_json(0,'未登录', $login_form);

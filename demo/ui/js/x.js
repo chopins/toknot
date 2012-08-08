@@ -232,7 +232,10 @@ xPNode : window.document.body, //X.$(ele)方法返回对象的父对象
 isReady : false,
 ugent : navigator.userAgent.toLowerCase(),
 intervalHandle : [],
+intervalHandleID : 1,
+timeoutHandleID : 1,
 timeoutHandle : [],
+loopTimerID : null,
 cache : {},
 maxZIndex : 0,
 keyList : {keyup:[],keydown:[]},
@@ -284,7 +287,6 @@ unload : function(cf) {
 },
 unloadExecMessage : null,
 unloadExec : function() {
-    console.log(X.time());
     if(X.doc && X.isReady) {
         X.doc.onkeydown = null;
         X.doc.onkeyup = null;
@@ -293,7 +295,7 @@ unloadExec : function() {
         window.onscroll = null;
         if(window.top == window.self) {
             //firefox onresize bug
-            //X.doc.body.onresize = null;
+            X.doc.body.onresize = null;
         }
         for(var es in X.eventList) {
             for(var k in X.eventList[es]) {
@@ -308,14 +310,11 @@ unloadExec : function() {
         X.Ajax.openInstance = [];
     }
     for(var i=0;i<X.unloadExecList.length;i++) X.unloadExecList[i]();
-    if(X.timeoutHandle.length >0) {
-        for(var a in X.timeoutHandle) if(!isNaN(a)) X.clearTimeout(X.timeoutHandle[a]);
-    }
-    if(X.intervalHandle.length >0) {
-        for(var a in X.intervalHandle) if(!isNaN(a)) X.clearTimeout(X.intervalHandle[a]);
+    if(X.timeoutHandle.length >0 || X.intervalHandle.length > 0) {
+        clearInterval(X.loopTimerID);
+        X.loopTimerID = null;
     }
     if(X.unloadExecMessage) return X.unloadExecMessage;
-    console.log(X.time());
 },
 error : function(msg,url , line) {
 },
@@ -437,27 +436,52 @@ mousedown : function() {
 mouseup : function() {
     return X.dMEP('mouseup'); 
 },
+loopTimer : function() {
+    X.loopTimerID = setInterval(function() {
+        if(X.timeoutHandle.length <= 0 && X.intervalHandle.length <= 0) {
+            clearInterval(X.loopTimerID);
+            X.loopTimerID = null;
+            return;
+        }
+        var ctime = X.time();
+        for(var id in X.timeoutHandle) {
+            if(!isNaN(id) && ctime - X.timeoutHandle[id].startTime >= X.timeoutHandle[id].freqTime) {
+                X.timeoutHandle[id].func();    
+                delete X.timeoutHandle[id];
+            }
+        }
+        for(var id in X.intervalHandle) {
+            if(!isNaN(id) && ctime - X.intervalHandle[id].startTime >= X.intervalHandle[id].freqTime) {
+                X.intervalHandle[id].func();    
+            }
+        }
+    }, 20);
+},
 setTimeout : function(func,time) {
-    var id = window.setTimeout(func,time)
-    X.timeoutHandle.push(id);
+    if(X.loopTimerID == null) X.loopTimer();
+    var id = X.timeoutHandleID;
+    X.timeoutHandle[id] = {};
+    X.timeoutHandle[id].startTime = X.time();
+    X.timeoutHandle[id].freqTime = time;
+    X.timeoutHandle[id].func = func;
+    X.timeoutHandleID++;
     return id;
 },
 setInterval : function(func, time) {
-    var id = window.setInterval(func, time);
-    X.intervalHandle.push(id);
+    if(X.loopTimerID == null) X.loopTimer();
+    var id = X.intervalHandleID;
+    X.intervalHandle[id] = {};
+    X.intervalHandle[id].startTime = X.time();
+    X.intervalHandle[id].freqTime = time;
+    X.intervalHandle[id].func = func;
+    X.intervalHandleID++;
     return id;
 },
 clearTimeout : function(id) {
-    window.clearTimeout(id);
-    for(var i in X.timeoutHandle) {
-        if(X.timeoutHandle[i] == id) delete X.timeoutHandle[i];
-    }
+    if(X.timeoutHandle[id]) delete X.timeoutHandle[id];
 },
 clearInterval : function(id) {
-    window.clearInterval(id);
-    for(var i in X.intervalHandle) {
-        if(X.intervalHandle[i] == id) delete X.intervalHandle[i];
-    }
+    if(X.intervalHandle[id]) delete X.intervalHandle[id];
 },
 /**
  * HTML DOM 元素访问函数
@@ -1468,6 +1492,7 @@ $ : function(ele) {
                                                             X.Ajax.complete();
                                                     }, X.Ajax.waitTime);
                 X.Ajax.openInstance[openId].method = X.Ajax.method ;
+                X.Ajax.openInstance[openId].url = X.Ajax.url;
                 X.Ajax.showStatus();
                 X.Ajax.openInstance[openId].XMLHttp.onreadystatechange = function() {
                     if(X.Ajax.openInstance[openId].receiveHead) {
@@ -1515,7 +1540,7 @@ $ : function(ele) {
                                     if(reData != '') {
                                         try{ var reData = JSON.parse(reData); }
                                         catch(e) {
-                                            console.warn('Ajax JSON Parse Error: '+e + ' in File '+e.fileName + ' Line '+e.lineNumber);
+                                            console.warn('Ajax JSON Parse Error, Request URL:'+X.Ajax.openInstance[openId].url);
                                             return;
                                         }
                                     }

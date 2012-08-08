@@ -65,22 +65,24 @@ defined('__X_APP_DATA_DIR_NAME__') || define('__X_APP_DATA_DIR_NAME__','var');
 defined('__X_APP_USER_CONF_FILE_NAME__') || define('__X_APP_USER_CONF_FILE_NAME__','config.ini');
 defined('__X_APP_DATA_DIR__') || define('__X_APP_DATA_DIR__',__X_APP_ROOT__.'/'.__X_APP_DATA_DIR_NAME__);
 defined('__X_NO_WEB_SERVER__') || define('__X_NO_WEB_SERVER__', false);
-
+defined('__X_FIND_SLOW__') || define('__X_FIND_SLOW__', true);
 /******用户定义常量结束********************/
-define('__X_RUN_START_TIME__', microtime(true));
+define('__X_RUN_START_TIME__',microtime(true));
 define('__X_FRAMEWORK_ROOT__', __DIR__); //不要修改本常量
-set_include_path(get_include_path(). PATH_SEPARATOR . __DIR__);
-$start_time = microtime(true);
 clearstatcache();
 if(PHP_SAPI ==  'cli' && !isset($_SERVER['argv'])) {
     $_SERVER['argc'] = $argc;
     $_SERVER['argv'] = $argv;
 }
-include_once('XFunction.php');
+include_once(__X_FRAMEWORK_ROOT__.'/XFunction.php');
+if(__X_FIND_SLOW__) {
+    register_tick_function('find_php_slow_pointer');
+    declare(ticks=1);
+}
 spl_autoload_register('XAutoload');
 set_error_handler('error2debug');
 register_shutdown_function('XExitAlert');
-include_once('XDataStruct.php');
+load_php(__X_FRAMEWORK_ROOT__.'/XDataStruct.php');
 try {
     $_X_APP_RUNING = XScheduler::singleton();
 } catch(XException $e) {

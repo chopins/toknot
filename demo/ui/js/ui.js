@@ -2,7 +2,7 @@ var dop = {
     userLoginStatus : false,
     loginUri  : '/index/checklogin',
     accessUri : '/index/home',
-    requestUri : '/channel/call',
+    channelUri : '/channel/call',
     epollUri : '/channel/poll',
     epollFreqTime : 5000,
     activeNav : null,
@@ -20,11 +20,14 @@ var dop = {
     sock : null,
     epollSt : 0,
     enableAct : [],
+    sid : '',
     //初始化后台
     init : function() {
         dop.initUI();
         dop.getUri();
         dop.checkUserLogin();
+        dop.start = X.time();
+        if(typeof(XSID) != 'undefined') dop.sid = XSID;
     },
     //初始化页面
     initUI : function() {
@@ -41,15 +44,14 @@ var dop = {
     },
     notifyUpdate : function (header) {
         var accessData = {};
-        accessData['act'] = '/notify/update';
+        accessData['act'] = '/channel/get';
         accessData['modified_time'] = header['DATA_MODIFIED'];
         dop.request(accessData);
     },
     ajaxHeadEpoll : function() {
-        console.log(X.time());
         X.clearTimeout(dop.epollSt);
         var sendHeader = [{k:'Client-Modified', v:dop.lastModified}];
-        X.Ajax.waitTime = 20000;
+        X.Ajax.waitTime = 30000;
         X.Ajax.hpost(dop.epollUri,sendHeader,[],function(state, header) {
             if(state != 4) return;
             if(header == 0) {
@@ -65,7 +67,6 @@ var dop = {
                     dop.lastModified = header['DATA_MODIFIED'];
                     dop.notifyUpdate(header);
                 }
-                console.log(X.time());
                 dop.epollSt = X.setTimeout(dop.ajaxHeadEpoll, dop.epollFreqTime);
                 return;
             }
@@ -85,8 +86,8 @@ var dop = {
         }
     },
     request : function(accessData) {
-       if(!accessData) accessData = {act:dop.accessUri};
-       X.Ajax.post(dop.requestUri,accessData, function(re) {
+        if(!accessData) accessData = {act:dop.accessUri};
+        X.Ajax.post(dop.channelUri,accessData, function(re) {
             if(re.status == 0 && re.data == 'nologin') {
                 dop.loginStatus = false;
                 return dop.userLoginView(re);
@@ -125,7 +126,13 @@ var dop = {
     },
     //检查用户是否登录
     checkUserLogin : function() {
-        X.Ajax.get(dop.loginUri,function(re) {
+        X.Ajax.get(dop.loginUri+'?'+dop.sid,function(re) {
+            if(re.status == -1) {
+                X.alertBox('错误','Cookie被禁用',function(){
+                    window.location.reload();
+                    },'b-input-box',true);
+                return;
+            }
             if(re.status == 1) {
                 dop.leftNavGetUri = re.data;
                 dop.loginStatus = true;
@@ -195,7 +202,14 @@ var dop = {
         }
         dop.request();
     },
-    //创建页面右侧横向导航
+    /**
+     * 创建页面右侧横向导航
+     * 
+     * opreate_nav 功能页面标签数据
+     * 数据格式:  {Lable_name|action_uri,....}
+     *
+     *  
+     */
     createRightTabNav : function(opreate_nav) {
         var tabNavBlock = X.createNode('div');
         tabNavBlock.setClass('b-right-tab-block');
@@ -217,6 +231,18 @@ var dop = {
         tabNavBlock.appendChild(tabNavNodeContainer);
         dop.pageRight.appendChild(tabNavBlock);
     },
+
+    /**
+     *  创建整个右侧页面
+     *
+     *  re.message 为右侧页面标题
+     *  re.data.opreate_nav 为页面导航
+     *  re.data.table_data  为页面正文数据
+     *      table_data      包括以下字段
+     *            type      数据类型，可能值为 table
+     *            data      数据实体
+     *
+     */
     createRightBlock : function(re) {
         if(dop.rightBar == null) {
             dop.rightBar = X.createNode('div');
@@ -227,9 +253,35 @@ var dop = {
         if(re.data.opreate_nav) {
             dop.createRightTabNav(re.data.opreate_nav);
         }
-        if(re.data.table_title) {
+        if(re.data.table_data) {
+            if(re.data.table_data.type == 'table') {
+                dop.createRightBlockTable(re.data.table_data);
+            } else {
+            }
         }
     },
+    createRightBlockTable : function(table_data) {
+        var rightTable = X.createNode('div');
+        var itemProto = X.createNode('div');
+        itemProto.setClass('b-right-block-table-item');
+        var optBtnDiv = X.createNode('div');
+        optBtnDiv.setClass('b-right-block-table-item-btn');
+        optBtnDiv.innerHTML = '全部发布|发布|停止发布|发布日志|SVN日志|查看项目文件';
+        var summaryInfo = X.createNode('div');
+        summaryInfo.setClass('b-right-block-table-item-summary');
+        summaryInfo.innerHTML = 'SVN最新版本|最新发布时间';
+        for(var i in table_data.data) {
+            var item = itemProto.copyNode(true);
+            item.innerHTML = table_data.data[i];
+            var btnDiv = optBtnDiv.copyNode(true);
+            var summary = summaryInfo.copyNode(true);
+            item.appendChild(btnDiv);
+            item.appendChild(summary);
+            rightTable.appendChild(item);
+        }
+        dop.pageRight.appendChild(rightTable);
+    },
+
     //显示登录框
     userLoginView : function(re) {
         X.inputBox(re.data.title,'',re.data.input,re.data.button,re.data.cls,true,100);

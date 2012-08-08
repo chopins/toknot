@@ -1,7 +1,30 @@
 <?php
 exists_frame();
 function XAutoload($class_name) {
-    require_once("$class_name.php");
+    load_php(__X_FRAMEWORK_ROOT__."/{$class_name}.php");
+}
+function find_php_slow_pointer($dump = false) {
+    static $run_slow_list;
+    static $run_time;
+    static $i;
+    $arr = debug_backtrace();
+    if($dump) {
+        $tmp = $run_slow_list;
+        unset($run_slow_list);
+        return $tmp;
+    }
+    if($i>0) {
+        $end = end($run_time);
+    }
+    $run_time[$i] = microtime(true);
+    if(isset($end) && $end < $run_time[$i] - 1) {
+        $pt = $run_time[$i] - $end;
+        $run_slow_list[$i] = "<b>{$arr[0]['file']} line {$arr[0]['line']} -- Processed: {$pt} </b><br />";
+    }
+    $i++;
+}
+function load_php($file) {
+    include_once($file);
 }
 function exists_frame() {
     if(!defined('__X_IN_FRAME__')) throw new XException('Constants IN_FRAME undefined',1,__FILE__,__LINE__);
@@ -198,6 +221,9 @@ function conv_quotation($str) {
 function is_image($file_mime) {
     list($type, $ext) = explode('/',$file_mime);
     return $type == 'image';
+}
+function file_suffix($file) {
+    return strrev(strtok(strrev($file),'.'));
 }
 function ext($file_mime) {
     list($type, $ext)= explode('/',$file_mime);

@@ -25,20 +25,61 @@ exists_frame();
  */
 abstract class XDataModel extends XObject {
 	public $cache_file = null;
+    public $text_data_dir = null;
+
+    /**
+     * _CFG 
+     * application of all configuration object 
+     *
+     * @var stdClass
+     * @access protected
+     */
     protected $_CFG = null;
+
+    /**
+     * DB 
+     * the database connect instance handler of stroage object
+     * the object only has properties:
+     *      database name is propertie name
+     *      database connect instance handler is propertie value
+     * 
+     * @var stdClass
+     * @access protected
+     */
     protected $DB = null;
+    
+    /**
+     * singleton 
+     * 
+     * @static
+     * @final
+     * @access public
+     * @return XDataModel
+     */
     final public static function singleton() {
         return parent::__singleton();
     }
     final protected function __construct() {
         $this->_CFG = XConfig::CFG();
-        $this->cache_file = __X_APP_DATA_DIR__.'/'.$this->_CFG->app->data_cache.'/'.$this->_CFG->app->cache_file;
-        $this->db_data_path = __X_APP_DATA_DIR__.'/'.$this->_CFG->app->db_data;
+        $this->cache_file = __X_APP_DATA_DIR__."/{$this->_CFG->app->data_cache}/{$this->_CFG->app->cache_file}";
+        $this->db_data_path = __X_APP_DATA_DIR__."/{$this->_CFG->app->db_data}";
+        $this->text_data_dir = "{$this->db_data_path}/{$this->_CFG->text->data_dirname}";
         $this->DB = new stdClass;
         if(method_exists($this,'auto_conf')) {
-            $this->dbconf[] = $this->auto_conf();
+            $this->auto_conf();
         }
     }
+
+    /**
+     * use_conf 
+     * use one config of item form application config file
+     * 
+     * @param string $key   the key is use database name 
+     * @param mixed $id     one kind of database has many group config and it one index 
+     * @final
+     * @access public
+     * @return XDBConf
+     */
     final public function use_conf($key, $id) {
         $conf_ins = new XDBConf();
         switch(strtolower($key)) {
@@ -61,19 +102,42 @@ abstract class XDataModel extends XObject {
                 $conf_ins->dbtype = 'txtdb';
                 $conf_ins->dbhost = $this->set_db_path($this->_CFG->$key->data_dirname);
                 $conf_ins->dbname = $this->_CFG->$key->$id->name;
+                if(isset($this->_CFG->$key->$id->block_size)) {
+                    $conf_ins->block_size = $this->_CFG->$key->$id->block_size;
+                }
             return $conf_ins;
             case 'txtkvdb':
             break;
         }
     }
-    final public function connect_database($conf_ins) {
+
+    /**
+     * connect_database 
+     * use one XBDConf config instance connect one database
+     * 
+     * @param XDBConf $conf_ins 
+     * @final
+     * @access public
+     * @return void
+     */
+    final public function connect_database(XDBConf $conf_ins) {
         $dbc = XDbConnect :: singleton();
         $dbc->create_instance($conf_ins->dbtype);
         $dbname = $conf_ins->dbname;
         $this->DB->$dbname = $dbc->get_instance();
         $this->select_db($conf_ins);
     }
-    final private function select_db($conf_ins) {
+
+    /**
+     * select_db 
+     * select one database
+     * 
+     * @param XDBConf $conf_ins 
+     * @final
+     * @access private
+     * @return void
+     */
+    final private function select_db(XDBConf $conf_ins) {
         $dbname = $conf_ins->dbname;
         switch(strtolower($conf_ins->dbtype)) {
             case 'mysql':
@@ -84,12 +148,48 @@ abstract class XDataModel extends XObject {
                 $this->DB->$dbname->connect($conf_ins->dbname);
             case 'txtdb':
                 $this->DB->$dbname->set_db_dir($conf_ins->dbhost);
+                if(isset($conf_ins->block_size)) {
+                    $this->DB->$dbname->set_block_size($conf_ins->block_size);
+                }
                 $this->DB->$dbname->open($conf_ins->dbname);
             break;
         }
     }
+
+    /**
+     * set_db_path 
+     * set the database data file save directory if it is local database
+     * 
+     * @param string $dbtype_path 
+     * @final
+     * @access public
+     * @return string
+     */
     final public function set_db_path($dbtype_path) {
         return $this->db_data_path.'/'.$dbtype_path;
+    }
+    final public function write_text_data($filename, $data) {
+        if(!is_dir($this->text_data_dir) || !is_writable($this->text_data_dir)) {
+            return false;
+        }
+        $data = serialize($data);
+        return file_put_contents("{$this->text_data_dir}/{$filename}.dat",$data);
+    }
+    final public function get_text_data($filename) {
+        $data_file = "{$this->text_data_dir}/{$filename}.dat";
+        if(!file_exists($data_file) || !is_readable($data_file)) {
+            return false;
+        }
+        $data = file_get_contents($data_file);
+        return unserialize($data);
+    }
+    final public function rm_text_data($filename) {
+        $data_file = "{$this->text_data_dir}/{$filename}.dat";
+        if(file_exists($data_file)) {
+            if(!is_writable($data_file)) return false;
+            @unlink($data_file);
+        }
+        return true;
     }
     public function page_count() {
         $this->page_num = ceil($this->record_num/$this->limit);

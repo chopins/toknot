@@ -134,7 +134,18 @@ class XTemplate extends XObject {
         if(PHP_SAPI == 'cli' && $comp_file_time <= $guess_path_time) {
             check_syntax($cache_file);
         }
-        $this->_var->__X_RUN_TIME__ = 'Processed: '. (microtime(true) - __X_RUN_START_TIME__) . " seconds";
+        $this->_var->__X_RUN_TIME__ = 'Processed: '. (microtime(true) - __X_RUN_START_TIME__) . " seconds<br />";
+        if(__X_FIND_SLOW__) {
+            $slow_pointer = find_php_slow_pointer(true);
+            unregister_tick_function('find_php_slow_pointer');
+            $this->_var->__X_RUN_TIME__.= '<div><b>PHP Slow Pointer:</b><br />';
+            if(is_array($slow_pointer)) {
+                foreach($slow_pointer as $msg) {
+                    $this->_var->__X_RUN_TIME__.=$msg;
+                }
+            }
+            $this->_var->__X_RUN_TIME__.='</div>';
+        }
         include($cache_file);
     }
     public function get_html() {

@@ -14,7 +14,6 @@
  * @link       http://blog.toknot.com
  * @since      File available since Release $id$
  */
-exists_frame();
 /**
  * XSSH2 
  * 
@@ -40,8 +39,9 @@ class XSSH2 {
         $this->ssh_user = $_CFG->ssh_user;
     }
     public function connect() {
-        $methods = array('hostkey'=>'ssh-rsa',
-        if(!($this->ssh_con = ssh2_connect($this->host,$this->port))) {
+        $methods = array('hostkey'=>'ssh-rsa');
+        $this->ssh_con = ssh2_connect($this->host,$this->port);
+        if(!$this->ssh_con) {
             throw new XException('cannot connect to ssh server');
         }
         $fingerprint = ssh2_fingerprint($this->ssh_con, SSH2_FINGERPRINT_MD5 | SSH2_FINGERPRINT_HEX);

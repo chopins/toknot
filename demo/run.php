@@ -11,5 +11,6 @@
 define('__X_IN_FRAME__', true);
 define('__X_SHOW_ERROR__',true);
 define('__X_APP_ROOT__', dirname(__FILE__));
+define('__X_OPEN_COMPILER__',true);
 //运行框架程序
 include_once(dirname(dirname(__FILE__)) . '/php/__init__.php');

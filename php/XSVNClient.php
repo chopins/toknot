@@ -30,11 +30,12 @@ class XSVNClient {
     private $server_url;
     private $local_dir;
     private $repos_name = null;
-    public function __construct() {
-        $this->load_cfg();
+    public function __construct($_CFG) {
+        $this->load_cfg($_CFG);
         dl_extension('svn', 'svn_checkout');
    //     $this->deamon();
     }
+
     /**
      * set_repos_name 
      * 
@@ -45,6 +46,7 @@ class XSVNClient {
     public function set_repos_name($name) {
         $this->repos_name = $name;
     }
+
     /**
      * repos_list 
      * 
@@ -52,7 +54,15 @@ class XSVNClient {
      * @return array
      */
     public function repos_list() {
-        return scandir($this->server_data_dir);
+        $repos_list = array();
+        $arr = scandir($this->server_data_dir);
+        $k = 0;
+        foreach($arr as $repos_name) {
+            if($repos_name == '.' || $repos_name == '..') continue;
+            $repos_info = svn_info($this->local_dir.'/'.$repos_name, false);
+            $repos_list[$k] = $repos_info[0];
+        }
+        return $repos_list;
     }
     public function ls($dir = '/') {
         return svn_ls($this->server_url.'/'.$this->repos_name.$dir);
@@ -63,10 +73,10 @@ class XSVNClient {
     }
     public function worker_revision() {
         $info = svn_info($this->local_dir.'/'.$this->repos_name, false);
-        return $info[0];
+        return $info[0]['revision'];
     }
     public function update($filepath) {
-        return = svn_update($this->local_dir.'/'.$this->repos_name.$filepath);
+        return svn_update($this->local_dir.'/'.$this->repos_name.$filepath);
     }
     /**
      * change_list 
@@ -77,7 +87,7 @@ class XSVNClient {
      */
     public function change_list() {
         $local_revision = $this->worker_revision();
-        $log_list = svn_log($this->server_url.'/'.$this->repos_name,SVN_REVISION_HEAD
+        $log_list = svn_log($this->server_url.'/'.$this->repos_name,SVN_REVISION_HEAD,
                             $local_revision);
         return $log_list;
     }
@@ -90,10 +100,7 @@ class XSVNClient {
     public function logs($path = '/') {
         return svn_log($this->server_url.'/'.$this->repos_name.$path);
     }
-    private function load_cfg($_CFG=null) {
-        if($_CFG === null) {
-            global $_CFG;
-        }
+    private function load_cfg($_CFG) {
         $this->server_url = $_CFG->svn->server_url;
         $this->server_data_dir = $_CFG->svn->server_data_dir;
         $this->local_dir = $_CFG->svn->local_dir;

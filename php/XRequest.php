@@ -25,17 +25,24 @@ exists_frame();
  * @author chopins xiao <chopins.xiao@gmail.com>
  */
 final class XSessionObject extends XArrayObject {
-    private $cfg = null;
     private $sid = null;
     private $use_php_session = true;
     private $sess_name = 'xsess_';
     private $save_path  = '';
     private $sess_file = '';
+    private $path_depth = 2;
+    private $txtdb_ins = null;
+    public $cookie_be_disable = false;
+    public $use_url_sid = false;
     public function __construct($cfg) {
-        $this->cfg = $cfg;
-        $this->sess_name = $this->cfg->session_name;
-        $this->save_path = __X_APP_DATA_DIR__."/{$this->cfg->save_path}";
-        $this->use_php_session = extension_loaded('session') && PHP_SAPI != 'cli';
+        $this->sess_name = $cfg->session_name;
+        $this->save_path = __X_APP_DATA_DIR__."/{$cfg->save_path}";
+        if($cfg->use_php_session == false) {
+            $this->use_php_session = false;
+        } else {
+            $this->use_php_session = extension_loaded('session') && PHP_SAPI != 'cli';
+        }
+
         $this->startSession();
         $this->initArray();
     }
@@ -44,6 +51,19 @@ final class XSessionObject extends XArrayObject {
     }
     public function get_session_sid() {
         return $this->sid;
+    }
+    public function check_cookie_status() {
+        if(empty($_COOKIE[$this->sess_name])) {
+            if($this->cookie_be_disable) {
+                ini_set('session.use_trans_sid',true);
+            }
+            $this->cookie_be_disable = true;
+            if(isset($_GET[$this->sess_name])) {
+                $this->cookie_be_disable = false;
+                $this->use_url_sid = true;
+                session_id($_GET[$this->sess_name]);
+            }
+        }
     }
     private function initArray() {
         if($this->use_php_session) {
@@ -60,10 +80,15 @@ final class XSessionObject extends XArrayObject {
             $this->sid = session_id();
             if(empty($this->sid)) {
                 session_name($this->sess_name);
-                session_save_path($this->save_path);
+                if(ini_get('session.save_handler') == 'files') {
+                    session_save_path($this->save_path);
+                }
+                if(ini_get('session.cookie_httponly') == false) {
+                    ini_set('session.cookie_httponly',true);
+                }
                 session_start();
+                $this->sid = session_id();
             }
-            $this->sid = session_id();
         } else {
             if(isset($_COOKIE[$this->sess_name])) {
                 $this->sid = $_COOKIE[$this->sess_name];
@@ -99,7 +124,9 @@ final class XSessionObject extends XArrayObject {
     public function __destruct() {
         if(!$this->use_php_session) {
             $data = serialize($this->storage);
-            file_put_contents($this->sess_file,$data);
+            file_put_contents($this->sess_file,$data, LOCK_EX);
+        } else {
+            session_write_close();
         }
     }
 }
@@ -270,6 +297,7 @@ class XRequest {
     private $ajax_data_key = 'data';
     private $ajax_flag = 'is_ajax';
     private $sess_ini = null;
+
     /**
      * construct request data structure
      */
@@ -300,9 +328,12 @@ class XRequest {
             if(!is_object($this->S)) $this->initSession();
             $sid = $this->S->get_session_sid();
             $sname = $this->S->get_session_name();
-            $this->C->{$sname} = $sid;
-            $this->C->{$sname}->httponly = true;
-            $this->C->{$sname}->set();
+            if($this->sess_ini->use_php_session == false ||
+                    !extension_loaded('session') && PHP_SAPI == 'cli') {
+                $this->C->{$sname} = $sid;
+                $this->C->{$sname}->httponly = true;
+                $this->C->{$sname}->set();
+            }
             break;
             case 'A':
             $this->check_ajax_status();
@@ -348,6 +379,11 @@ class XRequest {
             throw new XException("request ajax data decode error,$error");
         } else {
             return -1;
+        }
+    }
+    public function __destruct() {
+        if(extension_loaded('session') && PHP_SAPI != 'cli') {
+            session_write_close();
         }
     }
 }
