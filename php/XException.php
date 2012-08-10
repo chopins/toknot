@@ -102,6 +102,9 @@ class XException  extends ErrorException {
         $str .='<div class="debug_area">';
         $str .="<div ><span class='message'>{$this->message}</span>\n<ul>";
         $str .="<div class='debug_throw'>Throw Exception in file {$this->errfile} line {$this->errline}</div>\n";
+        if(PHP_CLI && function_exists('posix_getpid')) {
+            $str .= 'Process ID:'.posix_getpid()."\n";
+        }
         if(defined('__X_CALL_PAGE_FILE__')) {
             $str .='<div ><span class="call_file">Call PHP File is '.__X_CALL_PAGE_FILE__."</span>\n";
         }
@@ -163,7 +166,9 @@ class XException  extends ErrorException {
                     $par .= 'Object <span title="'.print_r($value,true).'">'.get_class($value).'</span>';
                 } else {
                     if(is_string($value)) {
-                        $value = '<span title="'.$value.'">'. substr($value,0,32). '</span>';
+                        if(PHP_CLI == false) {
+                            $value = '<span title="'.$value.'">'. substr($value,0,32). '</span>';
+                        }
                     }
                     $par .= "'$value'";
                 }

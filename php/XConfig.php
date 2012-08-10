@@ -16,12 +16,15 @@ final class XConfig extends XObject {
     public static function singleton() {
         return parent::__singleton();
     }
-
-    private function detach($array) {
+    public static function parse_ini($ini_file) {
+        $o_ini = parse_ini_file($ini_file);
+        return self::detach($o_ini);
+    }
+    private static function detach($array) {
         $return_array = array();
         foreach($array as $key => $var) {
             if(is_array($var)) {
-                $return_array[$key] = $this->detach($var);
+                $return_array[$key] = self::detach($var);
                 continue;
             } 
             $sep_offset = strpos($key,'.');
@@ -48,7 +51,7 @@ final class XConfig extends XObject {
             $user_config =  parse_ini_file($app_config);
             $o_ini = array_replace_recursive($o_ini,$user_config);
         }
-        self::$_CFG = $this->detach($o_ini);
+        self::$_CFG = self::detach($o_ini);
     }
     public static function CFG() {
         $conf = self::singleton();

@@ -78,21 +78,30 @@ final class XScheduler extends XObject {
             return new XWebServer($this);
         } else if(PHP_CLI && array_search('-d',$_SERVER['argv']) !== false) {
             return $this->call_loop();
-        } else {
+        } else if(!PHP_CLI){
             ini_get('register_globals') and new XException('Need close php register_globals in php.ini');
             $this->load_app();
             echo $this->get_html();
+        } elseif(PHP_CLI && __X_NO_WEB_SERVER__ && __X_DAEMON_LOOP_FILE__) {
+            return $this->call_loop(false);
+        } else {
+            throw new XException('Run error');
         }
     }
 
-    public function call_loop() {
-        $_ENV['__X_CALL_PAGE_FILE__'] = __X_APP_ROOT__."/{$this->php_dir_name}".__X_DAEMON_LOOP_FILE__;
+    private function call_loop($_daemon = true) {
+        $loop_file = rtrim(__X_DAEMON_LOOP_FILE__,'/');
+        $_ENV['__X_CALL_PAGE_FILE__'] = __X_APP_ROOT__."/{$this->php_dir_name}".'/'.__X_DAEMON_LOOP_FILE__;
         if(!file_exists($_ENV['__X_CALL_PAGE_FILE__'])) {
             throw new XException("File {$_ENV['__X_CALL_PAGE_FILE__']} not be found");
         }
-        daemon();
+        if($_daemon) {
+            daemon();
+        }
         include_once($_ENV['__X_CALL_PAGE_FILE__']);
-        exit(0);
+        if($_daemon) {
+            exit(0);
+        }
     }
     /**
      * Load user application view class

@@ -66,6 +66,7 @@ defined('__X_APP_USER_CONF_FILE_NAME__') || define('__X_APP_USER_CONF_FILE_NAME_
 defined('__X_APP_DATA_DIR__') || define('__X_APP_DATA_DIR__',__X_APP_ROOT__.'/'.__X_APP_DATA_DIR_NAME__);
 defined('__X_NO_WEB_SERVER__') || define('__X_NO_WEB_SERVER__', false);
 defined('__X_FIND_SLOW__') || define('__X_FIND_SLOW__', true);
+defined('__X_DAEMON_LOOP_FILE__') || define('__X_DAEMON_LOOP_FILE__',false);
 /******用户定义常量结束********************/
 define('__X_RUN_START_TIME__',microtime(true));
 define('__X_FRAMEWORK_ROOT__', __DIR__); //不要修改本常量
