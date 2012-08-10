@@ -1,0 +1,57 @@
+1344598652.3125:PID:32664:Watcher Starter
+1344598652.3135:PID:32665:Dispatcher start
+1344598729.0638:PID:32709:Watcher Starter
+1344598729.0648:PID:32710:Dispatcher start
+1344598773.3375:PID:32709:New events
+1344598773.3532:PID:32709:New events
+1344598773.4571:PID:349:new Transporter Start
+1344598861.6401:PID:456:Watcher Starter
+1344598861.641:PID:457:Dispatcher start
+1344598867.1078:PID:456:New events
+1344598917.1765:PID:541:Watcher Starter
+1344598917.1774:PID:542:Dispatcher start
+1344598921.1883:PID:541:New events
+1344598948.9695:PID:587:Watcher Starter
+1344598948.9705:PID:588:Dispatcher start
+1344598952.4041:PID:587:New events
+1344599051.9941:PID:851:Watcher Starter
+1344599051.995:PID:852:Dispatcher start
+1344599063.2364:PID:851:New events
+1344599111.017:PID:1014:Watcher Starter
+1344599111.0179:PID:1015:Dispatcher start
+1344599118.5328:PID:1014:New events
+1344599118.5339:PID:1014:New events
+1344599118.6377:PID:1043:new Transporter Start
+1344599179.237:PID:1014:New events
+1344599179.2381:PID:1014:New events
+1344599179.3422:PID:1271:new Transporter Start
+1344599313.4023:PID:1509:Watcher Starter
+1344599313.4036:PID:1510:Dispatcher start
+1344599321.7499:PID:1509:New events
+1344599321.7509:PID:1509:New events
+1344599321.8547:PID:1572:new Transporter Start
+1344599321.8569:PID:1573:send file /home/chopin/Code/toknot/demo/daemon/php/test/1 to /home/chopin/test/1
+1344599322.1388:PID:1577:send file /home/chopin/Code/toknot/demo/daemon/php/test/1 to /home/chopin/test/1
+1344599322.4403:PID:1572:transporter exit
+1344600203.6797:PID:1737:Watcher Starter
+1344600203.6809:PID:1738:Dispatcher start
+1344600207.6424:PID:1737:New events
+1344600207.6435:PID:1737:New events
+1344600207.7477:PID:1747:new Transporter Start
+1344600207.7502:PID:1748:send file /home/chopin/Code/toknot/demo/daemon/php/test/2 to /home/chopin/test/2
+1344600208.0277:PID:1749:send file /home/chopin/Code/toknot/demo/daemon/php/test/2 to /home/chopin/test/2
+1344600208.3166:PID:1747:transporter exit
+1344600288.2396:PID:1829:Watcher Starter
+1344600288.2405:PID:1830:Dispatcher start
+1344600291.6428:PID:1829:New events
+1344600291.6438:PID:1829:New events
+1344600291.7479:PID:1839:new Transporter Start
+1344600291.7501:PID:1840:send file /home/chopin/Code/toknot/demo/daemon/php/test/3 to /home/chopin/test/3
+1344600292.0193:PID:1841:send file /home/chopin/Code/toknot/demo/daemon/php/test/3 to /home/chopin/test/3
+1344600292.2872:PID:1839:transporter exit
+1344600418.5873:PID:1829:New events
+1344600418.5885:PID:1829:New events
+1344600418.6927:PID:1959:new Transporter Start
+1344600418.6953:PID:1960:send file /home/chopin/Code/toknot/demo/daemon/php/test/4 to /home/chopin/test/4
+1344600418.9695:PID:1961:send file /home/chopin/Code/toknot/demo/daemon/php/test/4 to /home/chopin/test/4
+1344600419.2378:PID:1959:transporter exit
