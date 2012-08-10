@@ -280,7 +280,6 @@ class XInotifySync {
         fclose($this->sync_sock);
         setproctitle('php:XInotifySync Transporter');
         $this->logs('new Transporter Start');
-        print_rn($change_list);
         $sendfile_list = $change_list['U'];
         $file_num = count($sendfile_list);
         $move_del = array_diff_key($change_list['MF'],$change_list['MT']);
@@ -340,7 +339,7 @@ class XInotifySync {
         $ssh_ins->connect();
         $ssh_ins->create_sftp();
         if(is_dir($watch_info['local_path'])) {
-            $ssh_ins->mkdir($r_file,0644);
+            $ssh_ins->mkdir($watch_info['target_path'],0644);
         } else {
             $ssh_ins->sendfile($watch_info['local_path'],$watch_info['target_path'],0644);
         }
@@ -382,17 +381,17 @@ class XInotifySync {
         }
         setproctitle('php:XInotifySync Deleter');
         $ssh_conn_list = array();
-        foreach($delete['file'] as $file) {
+        foreach($delete as $file) {
             if(!in_array($file['target_ip'],$ssh_conn_list)) {
-                $ssh_ins = new XSSH2($delete['target_ip'],$delete['target_port'],
-                                $delete['username'],$delete['password']);
+                $ssh_ins = new XSSH2($file['target_ip'],$file['target_port'],
+                                $file['username'],$file['password']);
                 $ssh_ins->connect();
                 $ssh_ins->create_sftp();
             } else {
                 $ssh_ins = $ssh_conn_list[$file['target_ip']];
             }
-            $this->logs("rm file $file");
-            $ssh_ins->rm($file);
+            $this->logs("rm file {$file['target_path']}");
+            $ssh_ins->rm($file['target_path']);
         }
         foreach($ssh_conn_list as $ssh_ins) {
             $ssh_ins->disconnect();
@@ -436,7 +435,10 @@ class XInotifySync {
             $tpath = "{$watch_descriptor['target_path']}/{$name}";
             if(is_dir($path_dir)) {
                 $nwd = $this->watch($path_dir, $watch_descriptor['target_ip'],
-                             $watch_descriptor['target_port'], $tpath);
+                             $watch_descriptor['target_port'], 
+                            $watch_descriptor['username'],
+                            $watch_descriptor['password'],
+                             $tpath);
                 $this->add_sub_dir($nwd);
             }
         }
@@ -451,17 +453,19 @@ class XInotifySync {
         $this->add_form_file($this->watch_list_conf);
     }
     public function watch_loop() {
+        $proto_array = array();
+            $change['D'] = array();
+            $change['MT'] = array();
+            $change['MF'] = array();
+            $change['U'] = array();
+
         while(true) {
             $move_status = 0;
             stream_set_blocking($this->inotify_instance,1);
             $events = $this->get();
             $present_timestamp = time();
             $this->logs('New events');
-            $change = array();
-            $change['D'] = array();
-            $change['MT'] = array();
-            $change['MF'] = array();
-            $change['U'] = array();
+            $change = $proto_array; 
             foreach($events as $ev => $ev_info) {
                 if(!isset($this->watch_descriptor[$ev_info['wd']])) {
                     continue;
@@ -478,17 +482,19 @@ class XInotifySync {
                     case IN_CREATE|IN_ISDIR: //创建文件夹
                         $wd = $this->watch($os_path, $watch_info['target_ip'],
                                             $watch_info['target_port'],
+                                            $watch_info['username'],
+                                            $watch_info['password'],
                                             $os_tpath);
                         $chain = 'U';
                         $nid = $wd;
                     break;
                     case IN_CREATE:
-                        $chain = 'U';
-                        $nid = $wd;
+                        $chain = null;
                     break;
                     case IN_CLOSE_WRITE:  //修改
                         $chain = 'U';
                         $nid = $wd;
+                        $this->msg('write');
                     break;
                     case IN_MOVED_TO:
                         $chain = 'U';
@@ -497,6 +503,8 @@ class XInotifySync {
                     case IN_MOVED_TO|IN_ISDIR: //移进
                         $wd = $this->watch($os_path, $watch_info['target_ip'],
                                             $watch_info['target_port'],
+                                            $watch_info['username'],
+                                            $watch_info['password'],
                                             $os_tpath);
                         $nid = $ev_info['cookie'];
                         $chain = 'MT';
@@ -527,6 +535,7 @@ class XInotifySync {
                     default:
                     break;
                 }
+                if($chain == null) continue;
                 $array = array();
                 $array['local_path'] = $os_path;
                 $array['target_path'] = $os_tpath;
@@ -536,7 +545,9 @@ class XInotifySync {
                 $array['password'] = $watch_info['password'];
                 $change[$chain][$nid] = $array;
             }
-            $this->notify_file_list($change);
+            if($change != $proto_array) {
+                $this->notify_file_list($change);
+            }
         }
     }
     public function __destruct() {
