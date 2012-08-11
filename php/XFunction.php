@@ -1,7 +1,30 @@
 <?php
 exists_frame();
 function XAutoload($class_name) {
-    require_once("$class_name.php");
+    load_php(__X_FRAMEWORK_ROOT__."/{$class_name}.php");
+}
+function find_php_slow_pointer($dump = false) {
+    static $run_slow_list;
+    static $run_time;
+    static $i;
+    $arr = debug_backtrace();
+    if($dump) {
+        $tmp = $run_slow_list;
+        unset($run_slow_list);
+        return $tmp;
+    }
+    if($i>0) {
+        $end = end($run_time);
+    }
+    $run_time[$i] = microtime(true);
+    if(isset($end) && $end < $run_time[$i] - 1) {
+        $pt = $run_time[$i] - $end;
+        $run_slow_list[$i] = "<b>{$arr[0]['file']} line {$arr[0]['line']} -- Processed: {$pt} </b><br />";
+    }
+    $i++;
+}
+function load_php($file) {
+    include_once($file);
 }
 function exists_frame() {
     if(!defined('__X_IN_FRAME__')) throw new XException('Constants IN_FRAME undefined',1,__FILE__,__LINE__);
@@ -114,39 +137,7 @@ function xtobin($str) {
     }
     return pack('H*',$hex_str);
 }
-/* Auto create directory by path */
-function amkdir($path) {
-    define('__X_AMKIDR_SUCC__',1);
-    define('__X_AMKIDR_DIR_EXITS__',2);
-    define('__X_AMKIDR_FILE_EXITS__',3);
-    if(is_dir($path)) return __X_AMKIDR_DIR_EXITS__;
-    if(file_exists($path)) return __X_AMKIDR_FILE_EXITS__;
-    $sub_name = basename($path);
-    $parent_path = dirname($path);
-    $path_list = array();
-    do {
-        if(is_file($parent_path)) return 2;
-        $path_list[] = $sub_name;
-        $sub_name = basename($parent_path);
-        $parent_path = dirname($parent_path);
-    } while($parent_path != '/' && $parent_path!='.');
-    $dir_spec = DIRECTORY_SEPARATOR;
-    $path_list = array_reverse($path_list);
-    foreach($path_list as $sub_path) {
-        $cpath = $parent_path.$dir_spec.$sub_path;
-        if(is_dir($cpath)) {
-            if(!is_writable($cpath)) {
-                if(__X_SHOW_ERROR__) throw new XException("$cpath write failure, not permission");
-                return false;
-            }
-            continue;
-        } else {
-            mkdir($cpath);
-        }
-        $parent_path = $cpath;
-    }
-    return true;
-}
+
 /*convert word to upper or lower by rand*/
 function rand_strtoupper($str) {
     $len = strlen($str);
@@ -205,6 +196,7 @@ function is_word($word, $min=4,$max=10) {
 function is_moblie($tel) {
     return preg_match('/^1[358]{1}[0-9]{9}$/i',$tel);
 }
+
 /*check string is YYYY-mm-dd or YYY/mm/dd of farmat date*/
 function is_day_str($day) {
     return preg_match('/^([12]{1}[0-9]{3})(\-|\/)(0[1-9]{1}|1[12]{1})(\-|\/)([12]{1}[0-9]|3[01]{1})/',$day);
@@ -229,6 +221,9 @@ function conv_quotation($str) {
 function is_image($file_mime) {
     list($type, $ext) = explode('/',$file_mime);
     return $type == 'image';
+}
+function file_suffix($file) {
+    return strrev(strtok(strrev($file),'.'));
 }
 function ext($file_mime) {
     list($type, $ext)= explode('/',$file_mime);
@@ -268,8 +263,17 @@ function arr_conv(&$arr) {
     }
     return $arr;
 }
-/*check needle in arr*/
-function arr_in_arr($needle, $arr) {
+
+/**
+ * arr_in_arr 
+ * check needle in arr
+ * 
+ * @param array $needle 
+ * @param array $arr 
+ * @access public
+ * @return void
+ */
+function arr_in_arr(array $needle, array $arr) {
     $inter = array_intersect($needle,$arr);
     if(count($inter) != count($needle)) {
         return false;
@@ -277,6 +281,7 @@ function arr_in_arr($needle, $arr) {
     $diff = array_diff($needle,$inter);
     return empty($diff);
 }
+
 /*check two array have same value*/
 function arr_same($arr1,$arr2) {
     if(count($arr1) != count($arr2)) {
@@ -360,7 +365,7 @@ function byte_format($number) {
     if($number >= 1073741824*1048576) return round($number/1073741824/1048576,2).'P';
 }
 function support_url_mode($path_uri, $params='') {
-    global $_CFG;
+    $_CFG = XConfig::CFG();
     $domain = empty($_SERVER['HTTP_HOST']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST'];
     switch($_CFG->uri_mode) {
         case 1:
@@ -392,7 +397,8 @@ function not_found() {
     die;
 }
 function xprint($buff) {
-    if(PHP_SAPI == 'cli' && $_ENV['__X_OUT_BROWSER__'] == false) {
+    if((isset($_ENV['__X_AJAX_REQUEST__']) && $_ENV['__X_AJAX_REQUEST__']) || 
+           (PHP_SAPI == 'cli' && $_ENV['__X_OUT_BROWSER__'] == false)) {
         $html = strip_tags($buff);
     } else {
         $html = $buff;
@@ -468,7 +474,7 @@ function file_str_line($filename, $line_str) {
 function array2object(array $array) {
     foreach($array as $key =>$value) {
         if(is_array($value)) {
-            $array[$key] = $this->array2object($value);
+            $array[$key] = array2object($value);
         }
     }
     return (object)$array;

@@ -1,8 +1,12 @@
 <?php
-exists_frame();
-final class XDba extends XMySQLDba {
-}
-class XMySQLDba {
+/**
+ * XMySQLDba 
+ * 
+ * @package DataBase
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
+class XMySQLConnect extends XObject {
     private $read_con = null;
     private $con = null;
     private $res;
@@ -10,26 +14,41 @@ class XMySQLDba {
     private $dba_table;
     private $select_api = false;
     private $api_fetch = false;
+    private $host = 'localhost';
+    private $user = null;
+    private $pass = null;
+    private $pconnect = false;
     public $sql = null;
+    public static $table_list = array(); 
     private $cfg;
-    public function __construct() {
-        global $_CFG;
-        $this->cfg = $_CFG->db;
-        $this->connect();
+    protected function __construct() {
         $this->dba_table = new XMySQLTable($this);
     }
-    private function connect() {
-        if($this->cfg->select_api) $this->select_api = $this->cfg->select_api;
-        $con =@mysql_connect($this->cfg->host, $this->cfg->user, $this->cfg->password);
+    public static function singleton() {
+        return parent::__singleton();
+    }
+    public function get_tables() {
+        self::$table_list = $this->get_all_row('SHOW TABLES');
+    }
+    public function select_db($dbname) {
+        $sr = @mysql_select_db($dbname, $this->con);
+        if($sr === false) throw new XException('MySQL select DB error:#'.mysql_errno().'-'.mysql_error($this->con));
+    }
+    public function set_pconnect($p = true) {
+        $this->pconnect = $p;
+    }
+    public function connect($host,$user,$password) {
+        $con = $this->pconnect ? @mysql_pconnect($host,$user,$password) : @mysql_connect($host, $user, $password);
         if($con === false) throw new XException('MySQL connect Error:#'.mysql_errno().'-'.mysql_error());
-        $sr = @mysql_select_db($this->cfg->name, $con);
-        if($sr === false) throw new XException('MySQL select DB error:#'.mysql_errno().'-'.mysql_error($con));
         mysql_query('SET NAMES "utf8"', $con);
         $this->con = $con;
     }
     public function __get($table) {
-        $this->dba_table->table = $table;
-        return $this->dba_table;
+        if(in_array($table,self::table_list)) {
+            $this->dba_table->table = $table;
+            return $this->dba_table;
+        }
+        return null;
     }
     public function free() {
         if($this->api_res) $this->res->free();
@@ -40,11 +59,6 @@ class XMySQLDba {
     }
     public function query($sql) {
         $this->sql = $sql;
-        if($this->select_api && $this->put_api($sql)) {
-            $this->api_res = true;
-            $this->res =  new dba_interface();
-            return;
-        }
         $this->free();
         $this->res = mysql_query($sql, $this->con);
         if($this->res === false) {
@@ -52,7 +66,7 @@ class XMySQLDba {
         }
         return $this->res;
     }
-    public function put_api($sql) {
+    public function is_select($sql) {
         $sql_parts = explode(' ',trim($sql));
         if(strtoupper($sql_parts[0]) == 'SELECT') {
             return true;
@@ -64,19 +78,14 @@ class XMySQLDba {
         return mysql_fetch_assoc($this->res);
     }
     private function row() {
-        if($this->api_res) return $this->res->fetch_row();
         return mysql_fetch_row($this->res);
     }
     private function count_rows() {
-        if($this->api_res) return $this->res->num_rows();
         return mysql_num_rows($this->res);
     }
     public function fetch($sql) {
         $return = array();
         $this->query($sql);
-        if($this->api_fetch) {
-            $this->api_fetch = false;
-        }
         while($row = $this->assoc()) {
             $return[] = $row;
         }
@@ -115,10 +124,17 @@ class XMySQLDba {
     }
 
 }
+/**
+ * XMySQLTable 
+ * 
+ * @package DataBase
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XMySQLTable {
     public $table = null;
     public $dba = null;
-    public $field_list = null;
+    public static $field_list = null;
     public $primary_name = null;
     //public $res = null;
     public function __construct($db) {
@@ -126,14 +142,14 @@ class XMySQLTable {
         //$this->columnus();
     }
     public function columnus() {
-        if($this->field_list == null) {
+        if(self::$field_list == null) {
             $arr = $this->dba->fetch("SHOW COLUMNS FROM `{$this->table}`");
             foreach($arr as $key => $value) {
                 $return[] = $value['Field'];
             }
-            $this->field_list = $return;
+            self::$field_list = $return;
         }
-        return $this->field_list;
+        return self:$field_list;
     }
     public function columnus_list_sql() {
         $this->columnus();

@@ -1,5 +1,28 @@
 <?php
+/**
+ * Toknot
+ *
+ * XException class
+ *
+ * PHP version 5.3
+ * 
+ * @package XException
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release $id$
+ */
+
 exists_frame();
+/**
+ * XException 
+ * 
+ * @uses ErrorException
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XException  extends ErrorException {
     protected $code = 0;
     protected $message = '';
@@ -16,6 +39,7 @@ class XException  extends ErrorException {
         .debug_args{background-color:#FAD5D2;font-size:12px;margin-right:10px;}
         .debug-func{color:#176B4E;font-weight:normal;}
         .debug_throw{color:#A9291F;}
+        .debug_process {color:#333;font-size:12px;}
         </style>';
     public function __construct($message, $code =0,$file= null,$line= null,$error_handler_function_throw=false) {
         $this->error_handler_function_throw = $error_handler_function_throw;
@@ -78,6 +102,9 @@ class XException  extends ErrorException {
         $str .='<div class="debug_area">';
         $str .="<div ><span class='message'>{$this->message}</span>\n<ul>";
         $str .="<div class='debug_throw'>Throw Exception in file {$this->errfile} line {$this->errline}</div>\n";
+        if(PHP_CLI && function_exists('posix_getpid')) {
+            $str .= 'Process ID:'.posix_getpid()."\n";
+        }
         if(defined('__X_CALL_PAGE_FILE__')) {
             $str .='<div ><span class="call_file">Call PHP File is '.__X_CALL_PAGE_FILE__."</span>\n";
         }
@@ -90,31 +117,30 @@ class XException  extends ErrorException {
         } else {
             $str .= $this->earch($traceArr);
         }
-        $str .='</ul></div></div>';
-        $_ENV['__X_OUT_BROWSER__'] = false;
-        if(__X_SHOW_ERROR__ && PHP_SAPI == 'cli' && 
-                isset($_ENV['__X_OUT_BROWSER__']) && $_ENV['__X_OUT_BROWSER__'] ==false) {
-            return strip_tags($str);
+        $str .='</ul></div>';
+        if(__X_SHOW_ERROR__) {
+            $__X_RUN_TIME__ = microtime(true) - __X_RUN_START_TIME__;
+            $str .= "<div class='debug_process'>Processed:{$__X_RUN_TIME__} second</div></div>";
+            if(isset($_ENV['__X_AJAX_REQUEST__']) && $_ENV['__X_AJAX_REQUEST__']) {
+                return strip_tags($str);
+            } elseif(PHP_SAPI == 'cli' && isset($_ENV['__X_OUT_BROWSER__'])
+                                       && $_ENV['__X_OUT_BROWSER__'] ==false) {
+                return strip_tags($str);
+            } else {
+                $str = $this->errcss . $str;
+                return $str;
+            }
         }
         if(__X_SHOW_ERROR__ === null) {
             not_found();
         }
-        if(__X_SHOW_ERROR__) {
-            $str = $this->errcss . $str;
-            return $str;
-        } else {
-            $str = strip_tags($str);
-            $str = '----------------------------'.date('Y-m-d H:i:s')."------------------------\n$str";
-            if(isset($GLOBALS['_CFG'])) {
-                $str .= $GLOBALS['_CFG']->exception_seg_line."\n";
-            } else {
-                $str .="===========================================================================\n";
-            }
-            file_put_contents(__X_APP_PHP_ERROR_LOG__,$str,FILE_APPEND);
-            not_found();
-            return false;
-        }
-        return;
+        $str = strip_tags($str);
+        $str = '----------------------------'.date('Y-m-d H:i:s')."------------------------\n$str";
+        $str .= isset($GLOBALS['_CFG']) ? $GLOBALS['_CFG']->exception_seg_line."\n"
+                : "===========================================================================\n";
+        file_put_contents(__X_APP_PHP_ERROR_LOG__,$str,FILE_APPEND);
+        not_found();
+        return false;
     }
     public function __toString() {
         return $this->getXDebugTraceAsString();
@@ -140,7 +166,9 @@ class XException  extends ErrorException {
                     $par .= 'Object <span title="'.print_r($value,true).'">'.get_class($value).'</span>';
                 } else {
                     if(is_string($value)) {
-                        $value = substr($value,0,32);
+                        if(PHP_CLI == false) {
+                            $value = '<span title="'.$value.'">'. substr($value,0,32). '</span>';
+                        }
                     }
                     $par .= "'$value'";
                 }

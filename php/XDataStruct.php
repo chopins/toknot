@@ -1,27 +1,27 @@
 <?php
 /**
- * XPHPFramework
+ * Toknot
  *
  * XObject class, XArrayObject class, XArrayElementObject class, XStdClass class,
  *
  * PHP version 5.3
  * 
- * @category XDataStruct
- * @package XPHPFramework
+ * @package XDataStruct
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       http://blog.toknot.com
- * @since      File available since Release 2.2
+ * @since      File available since Release $id$
  */
 exists_frame();
 
 /**
+ * XObject 
  * base single depth object class of XPHPFramework
- *
- * @category XDataStruct
- * @package XPHPFramework
- * @author chopins xiao <chopins.xiao@gmail.com>
+ * 
+ * @package XDataStruct
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
 class XObject {
     /**
@@ -31,6 +31,32 @@ class XObject {
      * @access private
      */
     private $propertieChange = false;
+
+    private static $instance = null;
+    /**
+     * singleton 
+     * 
+     * @param callable $funcname 
+     * @param mixed $params 
+     * @static
+     * @access public
+     * @return object
+     */
+    final protected static function __singleton($funcname = null, $params = null) {
+        $class_name = get_called_class();
+        if(self::$instance && self::$instance instanceof $class_name) {
+            return self::$instance;
+        }
+        self::$instance = new $class_name;
+        if($funcname) {
+            if(!is_array($params)) {
+                call_user_func($funcname,$params);
+            } else {
+                call_user_func_array($funcname,$params);
+            }
+        }
+        return self::$instance;
+    }
 
     /**
      * final __set function that changed propertie status
@@ -49,21 +75,26 @@ class XObject {
         if($this->propertieChange) return true;
         $ref = new ReflectionObject($this);
         $list = $ref->getDefaultProperties();
+        $static_list = $ref->getStaticProperties();
         foreach($list as $key=>$value) {
-            if($this->$key != $value) return true;
+            if(isset($static_list[$key])) {
+                if(self::$$key != $value) return true;
+            } else {
+                if($this->$key != $value) return true;
+            }
         }
         return false;
     }
-    public function __toString() {
-        return $this->value;
-    }
 }
+
 /**
+ * XArrayElementObject 
  * XArrayObject element object class
- *
- * @category XArrayObject
- * @package XPHPFramework
- * @author chopins xiao <chopins.xiao@gmail.com>
+ * 
+ * @uses XObject
+ * @package XDataStruct
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
 class XArrayElementObject  extends XObject{
     /**
@@ -88,6 +119,9 @@ class XArrayElementObject  extends XObject{
             $this->$name = new XArrayElementObject($value);
         }
     }
+    public function __toString() {
+        return $this->value;
+    }
 }
 
 class XStdClass extends XObject {
@@ -98,6 +132,10 @@ class XStdClass extends XObject {
     final public function __xset__($name, $value) {
         $this->$name = new XStdClass($value);
     }
+    public function __toString() {
+        return $this->value;
+    }
+
 }
 
 
@@ -180,6 +218,139 @@ class XArrayObject implements ArrayAccess,Countable {
     public function __unset($sKey) {
         $this->offsetUnset($sKey);
     }
-
 }
 
+/**
+ * XTemplateObject 
+ * the XTemplate class $T properties of proto
+ * 
+ * @uses XObject
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
+class XTemplateObject extends XObject {
+    /**
+     * name 
+     * the template file name
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $name = null;
+
+    /**
+     * type 
+     * the template filetype
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $type = 'htm';
+
+    /**
+     * data_cache 
+     * only cache view data
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $data_cache = false;
+
+    /**
+     * cache_time 
+     * the cache data or file expires seconds if open cache, and default 300 seconds
+     * 
+     * @var float
+     * @access public
+     */
+    public $cache_time = 300;
+
+    /**
+     * static_cache 
+     * save view-class output html to file if be set true
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $static_cache = false;
+
+    /**
+     * TPL_INI 
+     * configuration for tpl
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $TPL_INI;
+    private $cache_dir;
+    public $be_cache = false;
+    public function __construct($TPL_INI, $cache_dir) {
+        $this->TPL_INI = $TPL_INI;
+        $this->cache_dir = $cache_dir;
+    }
+    public function check_cache() {
+        $ins = XTemplate::singleton($this->TPL_INI);
+        $ins->set_cache_dir($this->cache_dir);
+        $this->be_cache = $ins->get_cache($this);
+    }
+}
+
+/**
+ * XDBConf 
+ * the Database config object proto
+ * 
+ * @uses XObject
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
+class XDBConf extends XObject {
+
+    /**
+     * dbtype 
+     * set database type
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $dbtype = null;
+
+    /**
+     * dbhost 
+     * set database connect host or open path
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $dbhost = null;
+
+    /**
+     * dbuser 
+     * the database username
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $dbuser = null;
+
+    /**
+     * dbpass 
+     * the database password of user
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $dbpass = null;
+
+
+    /**
+     * dbport 
+     * if connect by network, set the connect port
+     * 
+     * @var mixed
+     * @access public
+     */
+    public $dbport = null;
+    public $pconnect = false;
+}
