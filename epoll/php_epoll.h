@@ -20,14 +20,11 @@
 
 #ifndef PHP_EPOLL_H
 #define PHP_EPOLL_H
-#define PHP_LIBEVENT_VERSION "0.0.1"
+#define PHP_EPOLL_VERSION "0.0.1"
 
 extern zend_module_entry epoll_module_entry;
 #define phpext_epoll_ptr &epoll_module_entry
 
-#ifdef ZTS
-#include "TSRM.h"
-#endif
 
 PHP_MINIT_FUNCTION(epoll);
 PHP_MSHUTDOWN_FUNCTION(epoll);
@@ -54,8 +51,8 @@ PHP_FUNCTION(epoll_wait);
 #define EPOLL_CREATE_EMFILE \
 	"The user limit on the total number of epoll instances has been reached"
 #define EPOLL_CREATE_ENFILE \
-
 	"The system limit on the total number of file descriptors has been reached"
+
 #define EPOLL_CREATE_ENOMEM \
 	"Insufficient kernel memory is available"
 #define EPOLL_CREATE_EINVAL \
@@ -78,7 +75,7 @@ PHP_FUNCTION(epoll_wait);
 
 #define EPOLL_ERROR_CASE(func, errno) \
 	case (errno): \
-		php_error_docref(NULL TSRMLS_CC, E_WARNING, INOTIFY_##func##_##errno); \
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, EPOLL_##func##_##errno); \
 		break;
 #define EPOLL_DEFAULT_ERROR(errno) \
 	default: \

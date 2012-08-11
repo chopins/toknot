@@ -13,9 +13,9 @@ dnl [  --with-epoll             Include epoll support])
 
 dnl Otherwise use enable:
 
-dnl PHP_ARG_ENABLE(epoll, whether to enable epoll support,
+PHP_ARG_ENABLE(epoll, whether to enable epoll support,
 dnl Make sure that the comment is aligned:
-dnl [  --enable-epoll           Enable epoll support])
+[  --enable-epoll           Enable epoll support])
 
 if test "$PHP_EPOLL" != "no"; then
   dnl Write more examples of tests here...

@@ -49,13 +49,6 @@
 #include <sys/types.h>
 #endif
 
-#if PHP_MAJOR_VERSION < 5
-# ifdef PHP_WIN32
-typedef SOCKET php_socket_t;
-# else
-typedef int php_socket_t;
-# endif
-
 #ifdef COMPILE_DL_LIBEVENT
 ZEND_GET_MODULE(epoll)
 #endif
@@ -72,22 +65,47 @@ typedef struct _php_epoll_data {
 	int		fd;
 	uint32_t u32;
 	uint64_t u64;
-} php_epoll_data_t
+} php_epoll_data_t;
 
 typedef struct _php_epoll_event {
 	uint32_t	events;
 	php_epoll_data_t  data;
-} php_epoll_event
+} php_epoll_event;
+
+
+/* {{{ arginfo */
+ZEND_BEGIN_ARG_INFO_EX(arginfo_epoll_create, 0, ZEND_RETURN_VALUE, 1)
+	ZEND_ARG_INFO(0, size)
+ZEND_END_ARG_INFO()
+
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_epoll_ctl, 0, ZEND_RETURN_VALUE, 5)
+	ZEND_ARG_INFO(0, epollfd)
+	ZEND_ARG_INFO(0, op)
+	ZEND_ARG_INFO(0, fd)
+	ZEND_ARG_INFO(0, epoll_event)
+	ZEND_ARG_INFO(0, callback)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_epoll_wait, 0, ZEND_RETURN_VALUE, 4)
+	ZEND_ARG_INFO(0, epollfd)
+	ZEND_ARG_INFO(0, epoll_event)
+	ZEND_ARG_INFO(0, maxevents)
+	ZEND_ARG_INFO(0, timeout)
+ZEND_END_ARG_INFO()
+/* }}} */
+
 
 /* {{{ epoll_functions[]
  *
  * Every user visible function must have an entry in epoll_functions[].
  */
 const zend_function_entry epoll_functions[] = {
+
 	PHP_FE(epoll_create,   arginfo_epoll_create)
 	PHP_FE(epoll_ctl,      arginfo_epoll_ctl)
 	PHP_FE(epoll_wait,     arginfo_epoll_wait)
-	{NULL, NULL, NULL}
+	{NULL, NULL, NULL}	/* Must be the last line in inotify_functions[] */
 };
 /* }}} */
 
@@ -111,16 +129,20 @@ zend_module_entry epoll_module_entry = {
 };
 /* }}} */
 
+
+
+
 #ifdef COMPILE_DL_EPOLL
 ZEND_GET_MODULE(epoll)
 #endif
 /* {{{proto resource epoll_create(int size) 
    open an epoll file descriptor*/
-static PHP_FUNCTION(epoll_create)
+PHP_FUNCTION(epoll_create)
 {
 	int epollfd;
+    long size;
     php_stream *stream;
-	epollfd = epoll_create(FD_SETSIZE);
+	epollfd = epoll_create(size);
 	if(epollfd == -1) {
 		switch(errno) {
 			EPOLL_ERROR_CASE(CREATE,EMFILE);
@@ -132,7 +154,7 @@ static PHP_FUNCTION(epoll_create)
 
 		RETURN_FALSE;
 	}
-    stream = php_stream_fopen_from_fd(fd, "r", NULL);
+    stream = php_stream_fopen_from_fd(epollfd, "r", NULL);
 	stream->flags |= PHP_STREAM_FLAG_NO_SEEK;
 
 	php_stream_to_zval(stream, return_value);
@@ -141,29 +163,24 @@ static PHP_FUNCTION(epoll_create)
 
 /* {{{proto epoll_ctl(int epfd, int op, int fd, int epoll_event, [mixed callback])
  */
-static PHP_FUNCTION(epoll_ctl)
+PHP_FUNCTION(epoll_ctl)
 {
-	zval **fd, zcallback, zepollfd;
+	zval *fd, *zcallback, *zepollfd;
     long op, events;
     int ret, file_desc, epollfd;
-    php_stream stream, epoll_stream;
-    php_epoll_event  epoll_event;
-    php_event_callback_t *callback,
+    php_stream *stream, *epoll_stream;
+    php_epoll_event  *epoll_event;
 	char *func_name;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ZsZz|z", &zepollfd, &op, &fd, &events,&callback) != SUCCESS) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ZsZz|z", &zepollfd, &op, &fd, &events,&zcallback) != SUCCESS) {
 		return;
 	}
 
-	if (Z_TYPE_PP(fd) != IS_RESOURCE) {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "fd argument must be valid PHP stream resource");
-		RETURN_FALSE;
-
-    }
 
 	php_stream_from_zval(stream, &fd);
 	EPOLL_FD(stream, file_desc);
-    php_stream_from_zval(epoll_stream, zepollfd);
+
+    php_stream_from_zval(epoll_stream, &zepollfd);
     EPOLL_FD(epoll_stream, epollfd);
 
     if(zcallback) {
@@ -200,7 +217,7 @@ static PHP_FUNCTION(epoll_ctl)
 
 /* {{{proto epoll_wait(resource epollfd, mixed &epoll_event, int maxevents, int timeout)
  */
-static PHP_FUNCTION(epoll_wait)
+PHP_FUNCTION(epoll_wait)
 {
 	zval *z_events = NULL, **fd, zepollfd;
     long epollfd,maxevents, timeout;
