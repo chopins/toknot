@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | PHP Version 5                                                        |
   +----------------------------------------------------------------------+
-  | Copyright (c) 1997-2011 The PHP Group                                |
+  | Copyright (c) 1997-2012 The PHP Group                                |
   +----------------------------------------------------------------------+
   | This source file is subject to version 3.01 of the PHP license,      |
   | that is bundled with this package in the file LICENSE, and is        |
@@ -16,25 +16,15 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: header 310447 2011-04-23 21:14:10Z bjori $ */
+/* $Id$ */
 
 #ifndef PHP_EPOLL_H
 #define PHP_EPOLL_H
+#define PHP_EPOLL_VERSION "0.0.1"
 
 extern zend_module_entry epoll_module_entry;
 #define phpext_epoll_ptr &epoll_module_entry
 
-#ifdef PHP_WIN32
-#	define PHP_EPOLL_API __declspec(dllexport)
-#elif defined(__GNUC__) && __GNUC__ >= 4
-#	define PHP_EPOLL_API __attribute__ ((visibility("default")))
-#else
-#	define PHP_EPOLL_API
-#endif
-
-#ifdef ZTS
-#include "TSRM.h"
-#endif
 
 PHP_MINIT_FUNCTION(epoll);
 PHP_MSHUTDOWN_FUNCTION(epoll);
@@ -42,42 +32,57 @@ PHP_RINIT_FUNCTION(epoll);
 PHP_RSHUTDOWN_FUNCTION(epoll);
 PHP_MINFO_FUNCTION(epoll);
 
-PHP_FUNCTION(confirm_epoll_compiled);	/* For testing, remove later. */
+PHP_FUNCTION(epoll_create);
+PHP_FUNCTION(epoll_ctl);
+PHP_FUNCTION(epoll_wait);
 
-/* 
-  	Declare any global variables you may need between the BEGIN
-	and END macros here:     
 
-ZEND_BEGIN_MODULE_GLOBALS(epoll)
-	long  global_value;
-	char *global_string;
-ZEND_END_MODULE_GLOBALS(epoll)
-*/
 
-/* In every utility function you add that needs to use variables 
-   in php_epoll_globals, call TSRMLS_FETCH(); after declaring other 
-   variables used by that function, or better yet, pass in TSRMLS_CC
-   after the last function argument and declare your utility function
-   with TSRMLS_DC after the last declared argument.  Always refer to
-   the globals in your function as EPOLL_G(variable).  You are 
-   encouraged to rename these macros something shorter, see
-   examples in any other php module directory.
-*/
+#define PHP_EPOLL_VERSION "0.0.1"
 
-#ifdef ZTS
-#define EPOLL_G(v) TSRMG(epoll_globals_id, zend_epoll_globals *, v)
-#else
-#define EPOLL_G(v) (epoll_globals.v)
-#endif
+#define EPOLL_BUF_TOO_SMALL(ret,errno) \
+	((ret) == 0 || ((ret) == -1 && (errno) == EINVAL))
+#define EPOLL_FD(stream, fd) \
+	php_stream_cast((stream), PHP_STREAM_AS_FD_FOR_SELECT, (void*)&(fd), 1);
+
+/* Define some error messages for the error numbers set by inotify_*() functions, 
+ as strerror() messages are not always usefull here */
+
+#define EPOLL_CREATE_EMFILE \
+	"The user limit on the total number of epoll instances has been reached"
+#define EPOLL_CREATE_ENFILE \
+	"The system limit on the total number of file descriptors has been reached"
+
+#define EPOLL_CREATE_ENOMEM \
+	"Insufficient kernel memory is available"
+#define EPOLL_CREATE_EINVAL \
+	"size is not positive"
+
+#define EPOLL_CTL_EEXIST \
+	"the supplied file descriptor already registered with the epoll instance"
+#define EPOLL_CTL_EBADF \
+	"The given epoll resource or file descriptor is not valid"
+#define EPOLL_CTL_EINVAL \
+	"The given epoll resource is not valid or  file descriptor is not supported"
+#define EPOLL_CTL_ENOMEM \
+	"Insufficient kernel memory was available"
+#define EPOLL_CTL_ENOSPC \
+	"The user limit on the total number of inotify watches was reached or the kernel failed to allocate a needed resource"
+#define EPOLL_CTL_NOENT \
+	"op was EPOLL_CTL_MOD or EPOLL_CTL_DEL and fd is not registered with this epoll instance"
+#define EPOLL_CTL_EPERM \
+	"The target file fd does not support epoll"
+
+#define EPOLL_ERROR_CASE(func, errno) \
+	case (errno): \
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, EPOLL_##func##_##errno); \
+		break;
+#define EPOLL_DEFAULT_ERROR(errno) \
+	default: \
+		php_error_docref(NULL TSRMLS_CC, E_WARNING, "%s", strerror(errno)); \
+		break;
+
 
 #endif	/* PHP_EPOLL_H */
 
 
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

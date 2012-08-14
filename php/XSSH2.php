@@ -103,21 +103,24 @@ class XSSH2 {
         }
     }
     public function rm($path) {
-        if(!$this->sftp_file_exists($path)) return;
+        if(!$this->sftp_file_exists($path)) return 1;
         if($this->sftp_is_dir($path)) {
             $file_list = $this->sftp_ls($path);
             foreach($file_list as $file) {
                 if($file == '.' || $file == '..') continue;
                 $this->rm($file);
             }
-            return ssh2_sftp_rmdir($this->sftp,$path);
+            $result = rmdir("ssh2.sftp://{$this->sftp}/{$path}");
+            //$result = ssh2_sftp_rmdir($this->sftp,$path);
+            return $result;
         } else {
             return ssh2_sftp_unlink($this->sftp, $path);
         }
     }
-    public function sendfile($local_file, $remote_file,$mode) {
+    public function sendfile($local_file, $remote_file,$mode = 0644) {
         $dir = dirname($remote_file);
         $this->mkdir($dir);
+        //return ssh2_scp_send($this->ssh_con,$local_file,$remote_file,$mode);
         $sftp_stream = fopen("ssh2.sftp://{$this->sftp}{$remote_file}", 'w');
         if(!$sftp_stream) return false;
         $local_file_stream = fopen($local_file,'r');
@@ -133,8 +136,6 @@ class XSSH2 {
         fclose($local_file_stream);
         $this->disconnect();
         return true;
-        //return copy($local_file,"ssh2.sftp://{$this->sftp}{$remote_file}");
-        //return ssh2_scp_send($this->ssh_con,$local_file,$remote_file,$mode);
     }
     public function disconnect() {
         $stream = ssh2_exec($this->ssh_con,'exit;');

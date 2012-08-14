@@ -408,8 +408,7 @@ function xprint($buff) {
 function printn($str) {
     $trace = debug_backtrace();
     ob_start('xprint');
-    echo "<pre><span style=\"font-size:10px;\">------Print in {$trace[0]['file']} line {$trace[0]['line']}-------</span>
-        \n$str<br /></pre>\n";
+    echo "<pre><span style=\"font-size:10px;\">------Print in {$trace[0]['file']} line {$trace[0]['line']}-------</span>\n$str<br /></pre>\n";
     ob_end_flush();
 }
 function dump($str) {

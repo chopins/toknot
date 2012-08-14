@@ -257,7 +257,7 @@ class XInotifySync {
     }
     /**
      * sync_file 
-     * file opreate process
+     * file or directory transport opreate process
      * 
      * @param mixed $str 
      * @access public
@@ -288,15 +288,14 @@ class XInotifySync {
             $sendfile_list += $move_create;
         }
         $move = array_intersect_key($change_list['MF'],$change_list['MT']);
-        $move_to = array_intersect_key($change_list['MT'], $change_list['MF']);
         if(count($move) > 0) {
             $pid = $this->exec_sync_mv($move, $move_to);
             pcntl_waitpid($pid, $status);
         }
+        if(count($move_del) > 0) {
+            $change_list['D'] += $move_del;
+        }
         if(count($change_list['D']) > 0) {
-            if(count($move_del) > 0) {
-                $change_list['D'] += $move_del;
-            }
             $pid = $this->exec_sync_rm($change_list['D']);
             pcntl_waitpid($pid, $status);
         }
@@ -325,6 +324,15 @@ class XInotifySync {
         $this->rm_transporter_pid();
         exit(0);
     }
+
+    /**
+     * exec_sync_send_file 
+     * create a file or directory sysnc of instance
+     * 
+     * @param mixed $watch_info 
+     * @access public
+     * @return void
+     */
     public function exec_sync_send_file($watch_info) {
         $pid = pcntl_fork();
         if($pid > 0) return $pid;
@@ -340,10 +348,37 @@ class XInotifySync {
         $ssh_ins->create_sftp();
         if(is_dir($watch_info['local_path'])) {
             $ssh_ins->mkdir($watch_info['target_path'],0644);
+            $this->send_all_sub_file($ssh_ins, $watch_info['local_path'],
+                                        $watch_info['target_path'],0644);
         } else {
             $ssh_ins->sendfile($watch_info['local_path'],$watch_info['target_path'],0644);
         }
         exit(0);
+    }
+
+    /**
+     * send_all_sub_file 
+     * send files and directories inside the local path 
+     * 
+     * @param mixed $ssh_ins 
+     * @param mixed $local_path 
+     * @param mixed $target_path 
+     * @access public
+     * @return void
+     */
+    public function send_all_sub_file($ssh_ins, $local_path, $target_path) {
+        $dh = opendir($local_path);
+        while(false !== ($f = readdir($dh))) {
+            if($f == '.' || $f == '..') continue;
+            $local_file = "{$local_path}/{$f}";
+            $remote_file = "{$target_path}/{$f}";
+            if(is_dir($local_file)) {
+                $ssh_ins->mkdir($remote_file);
+                $this->send_all_sub_file($ssh_ins,$local_file, $remote_file);
+            } else {
+                $ssh_ins->sendfile($local_file,$remote_file, 0644);
+            }
+        }
     }
     public function exec_sync_mv($move_form, $move_to) {
         $pid = pcntl_fork();
@@ -390,6 +425,7 @@ class XInotifySync {
             } else {
                 $ssh_ins = $ssh_conn_list[$file['target_ip']];
             }
+            $this->msg("rm file {$file['target_path']}");
             $this->logs("rm file {$file['target_path']}");
             $ssh_ins->rm($file['target_path']);
         }
@@ -453,17 +489,38 @@ class XInotifySync {
         $this->add_form_file($this->watch_list_conf);
     }
     public function watch_loop() {
-        $proto_array = array();
-            $change['D'] = array();
-            $change['MT'] = array();
-            $change['MF'] = array();
-            $change['U'] = array();
-
+        $proto_array = array(
+                'D' => array(),
+                'MT' => array(),
+                'MF' => array(),
+                'U' => array());
+        $event_counter = 0;
         while(true) {
             $move_status = 0;
             stream_set_blocking($this->inotify_instance,1);
             $events = $this->get();
-            $present_timestamp = time();
+            if($event_counter === 0) {
+                $event_counter = 1;
+                $first_timestamp = microtime(true);
+            } else if($event_counter === 1) {
+                $event_counter = 2;
+                $second_timestamp = microtime(true);
+                $frep_time = (float)$second_timestamp - (float)$first_timestamp;
+                if($frep_time > 0.11) {
+                    $event_counter = $second_timestamp = $first_timestamp = 0;
+                } else if($frep_time >= 0.099 && $frep_time <= 0.11) {
+                    usleep(30000);
+                    $event_counter = $second_timestamp = $first_timestamp = 0;
+                }
+            } else if($event_counter === 2) {
+                $event_counter = 0;
+                $thrid_timestamp = microtime(true);
+                $frep_time = (float)$thrid_timestamp - (float)$second_timestamp;
+                if($frep_time <= 0.09) {
+                    usleep(50000);
+                }
+                $second_timestamp = $first_timestamp = 0;
+            }
             $this->logs('New events');
             $change = $proto_array; 
             foreach($events as $ev => $ev_info) {
