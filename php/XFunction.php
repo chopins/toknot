@@ -1,4 +1,19 @@
 <?php
+/**
+ * Toknot
+ *
+ * X class
+ *
+ * PHP version 5.3
+ * 
+ * @package Base
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release 2.2
+ */
+
 exists_frame();
 function XAutoload($class_name) {
     load_php(__X_FRAMEWORK_ROOT__."/{$class_name}.php");
