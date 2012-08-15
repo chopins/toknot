@@ -172,7 +172,7 @@ abstract class X extends XObject{
      * @access protected
      * @return void
      */
-    final protected function xheader($header) {
+    final protected function xHeader($header) {
         if(PHP_SAPI == 'cli') {
             $header = trim($header);
             if(in_array($header,$this->headers)) return;
@@ -238,7 +238,7 @@ abstract class X extends XObject{
      *
      * @param array $runtime_config  your site configuration
      */
-    final protected function save_all_runtime_config(array $runtime_config) {
+    final protected function saveAllRuntimeConfig(array $runtime_config) {
         $file_config = $this->load_runtime_config();
         $runtime_config = array_merge($file_config,$runtime_config);
         file_put_contents(__X_APP_DATA_DIR__."/{$this->_CFG->runtime_config}", serialize($runtime_config));
@@ -249,7 +249,7 @@ abstract class X extends XObject{
      *
      * @return array  return all configuration
      */
-    final protected function load_runtime_config() {
+    final protected function loadRuntimeConfig() {
         if(!file_exists(__X_APP_DATA_DIR__."/{$this->_CFG->runtime_config}")) {
             $runtime_config = array();
             file_put_contents(__X_APP_DATA_DIR__."/{$this->_CFG->runtime_config}", serialize($runtime_config));
@@ -265,7 +265,7 @@ abstract class X extends XObject{
      * @param string $key  key name of one config
      * @param string $value  the one config value
      */
-    final protected function save_runtime_config($key, $value) {
+    final protected function saveRuntimeConfig($key, $value) {
         $runtime_config = $this->load_runtime_config();
         $runtime_config->$key = $value;
         file_put_contents(__X_APP_DATA_DIR__."/{$this->_CFG->runtime_config}", serialize($runtime_config));
@@ -307,7 +307,7 @@ abstract class X extends XObject{
         $this->tpl_instance->set_cache_dir(__X_APP_DATA_DIR__.'/'.$this->_CFG->app->data_cache);
         $this->tpl_instance->execute($this->T, $this->D);
     }
-    final public function get_json_tpl() {
+    final public function getJSONTpl() {
         return $this->tpl_instance->get_json_tpl();
     }
     final public function get_display_html() {
@@ -324,7 +324,7 @@ abstract class X extends XObject{
      * @param string $date  date of get log one day
      * @return array  return one array, one element is a error trace_item
      */
-    final public function get_error_log($date = '') {
+    final public function getErrorLog($date = '') {
         if(empty($date)) {
             $date = date('Ymd');
         }
@@ -362,7 +362,7 @@ abstract class X extends XObject{
      * @param string $message   this response result description
      * @param array $data   this response return result data
      */
-    final public function exit_json($status, $message, $data = null) {
+    final public function exitJSON($status, $message, $data = null) {
         $return_data= array();
         $return_data['status'] = $status;
         $return_data['message'] = $message;
@@ -380,7 +380,7 @@ abstract class X extends XObject{
      * @access public
      * @return void
      */
-    final public function exit_xml($status, $message, $data = null) {
+    final public function exitXML($status, $message, $data = null) {
         $xml  = '<?xml version="1.0" encoding="'.$this->_CFG->encoding.'"?>';
         $xml .= '<root>';
         $xml .= "<status>{$status}</status>";
@@ -401,7 +401,7 @@ abstract class X extends XObject{
      * @access public
      * @return void
      */
-    final public function array2xml(array $array) {
+    final public function array2XML(array $array) {
         $xml = '';
         foreach($data as $key=>$value) {
             if(is_array($value)) {
@@ -418,7 +418,7 @@ abstract class X extends XObject{
      * @param string $var_name  the variables name
      * @param array $array   the variables value that is  array
      */
-    final public function exit_js_array($var_name,$array) {
+    final public function exitJSArray($var_name,$array) {
         $json = json_encode($array);
         $js = "var $var_name=$json;";
         $this->xexit($js);
@@ -430,7 +430,7 @@ abstract class X extends XObject{
      * @param string $var_name  the javascript variables name
      * @param mixed $value   the javascript variables value
      */
-    final public function set_js_var($var_name,$value) {
+    final public function setJSVar($var_name,$value) {
         if(is_resource($value)) throw new XException('can not set resource to javascript of variables');
         if(is_object($value) || is_array($value)) {
             $value = json_encode($value);
@@ -441,7 +441,7 @@ abstract class X extends XObject{
     /**
      * user application exec exit operation instend exit() of php
      */
-     final public function xexit($str = null) {
+     final public function xExit($str = null) {
          if(PHP_CLI) {
             echo $str;
             return $this->__destruct();
@@ -455,7 +455,7 @@ abstract class X extends XObject{
      *
      * @return string   HTML text format of javascript text
      */
-    final public function get_js() {
+    final public function getJS() {
         $re = "<script type=\"text/javascript\">{$this->_x_js}</script>";
         $this->_x_js = '';
         return $re;

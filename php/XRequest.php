@@ -230,7 +230,32 @@ class XCookieObject extends XArrayObject {
         return $this->cookie_uri_str_arr;
     }
 }
-
+class XRequestElementValue extends XArrayObject {
+    public function isEmail() {
+        return is_email($this->value);
+    }
+    public function isNumber() {
+        return is_numeric($this->value);
+    }
+    public function isWord() {
+        return is_word($this->value);
+    }
+    public function isZhMoblie() {
+        return is_moblie($this->value);
+    }
+    public function isString() {
+        return is_string($this->value);
+    }
+    public function isInt() {
+        return is_int($this->value);
+    }
+    public function noQuotes() {
+        return str_replace(array("'",'"'),'',$this->value);
+    }
+}
+class XRequestArray extends XArrayObject {
+    protected $elementObjectName = 'XRequestElementValue';
+}
 /**
  * base request operation class
  *
@@ -307,8 +332,8 @@ class XRequest {
         $this->ajax_flag = $_CFG->app->ajax_flag;
         $this->sess_ini = $_CFG->session;
         $this->check_ajax_status();
-        $this->G = new XArrayObject($_GET);
-        $this->P = new XArrayObject($_POST);
+        $this->G = new XRequestElementValue($_GET);
+        $this->P = new XRequestElementValue($_POST);
         $this->C = new XCookieObject($_COOKIE);
         $this->_R = new XArrayObject($_REQUEST);
     }

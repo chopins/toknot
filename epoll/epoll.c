@@ -60,7 +60,7 @@ ZEND_DECLARE_MODULE_GLOBALS(epoll)
 
 /* True global resources - no need for thread safety here */
 static int le_epoll;
-typedef struct _php_epoll_data {
+typedef union _php_epoll_data {
 	zval  * func;
 	int		fd;
 	uint32_t u32;
@@ -161,7 +161,13 @@ PHP_FUNCTION(epoll_create)
 }
 /* }}} */
 
-/* {{{proto epoll_ctl(int epfd, int op, int fd, int epoll_event, [mixed callback])
+/* {{{proto epoll_add_event(resource fd, int events)
+ */
+PHP_FUNCTION(epoll_add_event) 
+{
+}
+
+/* {{{proto epoll_ctl(resource epfd, int op,  resource events)
  */
 PHP_FUNCTION(epoll_ctl)
 {
@@ -169,10 +175,10 @@ PHP_FUNCTION(epoll_ctl)
     long op, events;
     int ret, file_desc, epollfd;
     php_stream *stream, *epoll_stream;
-    php_epoll_event  *epoll_event;
+    epoll_event  *epoll_event;
 	char *func_name;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ZsZz|z", &zepollfd, &op, &fd, &events,&zcallback) != SUCCESS) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rlrz|z", &zepollfd, &op, &fd, &events,&zcallback) != SUCCESS) {
 		return;
 	}
 

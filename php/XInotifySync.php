@@ -121,9 +121,10 @@ class XInotifySync {
         echo "$time:PID:$pid:$msg\r\n";
     }
     public function logs($msg) {
-        $time = microtime(true);
+        list(,$time) = explode(' ', microtime());
         $pid = posix_getpid();
-        $str = "$time:PID:$pid:$msg\r\n";
+        $date = date('Ymd.H:i:s');
+        $str = "{$date}.{$time}:PID:$pid:$msg\r\n";
         $date = date('Ymd');
         file_put_contents("{$this->log_file_dir}/log_{$date}",$str,FILE_APPEND);
     }
@@ -184,7 +185,6 @@ class XInotifySync {
         }
     }
     public function file_transport_process_exit($signo) {
-        $this->msg('file transport complete');
         pcntl_wait($status);
     }
     /**
@@ -273,9 +273,9 @@ class XInotifySync {
         chdir('/');
         umask('0');
         posix_setsid();
- //       fclose(STDIN);
- //       fclose(STDOUT);
-  //      fclose(STDERR);
+        fclose(STDIN);
+        fclose(STDOUT);
+        fclose(STDERR);
         $this->transporter_pid();
         fclose($this->sync_sock);
         setproctitle('php:XInotifySync Transporter');
@@ -425,7 +425,6 @@ class XInotifySync {
             } else {
                 $ssh_ins = $ssh_conn_list[$file['target_ip']];
             }
-            $this->msg("rm file {$file['target_path']}");
             $this->logs("rm file {$file['target_path']}");
             $ssh_ins->rm($file['target_path']);
         }

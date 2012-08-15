@@ -110,14 +110,23 @@ class XArrayElementObject  extends XObject{
         $this->value = $value;
         $this->name = $name;
     }
-    public function __xset__($name,$value) {
+    /**
+     * set 
+     * modify the storage value of specify key in XArrayObject
+     * 
+     * @param mixed $value 
+     * @access public
+     * @return void
+     */
+    public function set($value) {
         if(is_array($value)) {
-            $this->$name = new XArrayObject($value);
-        } else if(is_object($value) || is_resource($value)) {
-            $this->$name = $value;
+            $this->name = new XArrayObject($value);
         } else {
-            $this->$name = new XArrayElementObject($value);
+            $this->name = $value;
         }
+    }
+    public function __unset($name) {
+        if($name == 'name') unset($this);
     }
     public function __toString() {
         return $this->value;
@@ -200,6 +209,14 @@ class XArrayObject implements ArrayAccess,Countable {
         } else {
             $this->storage->offsetSet($key, $this->setElement($value,$sKey));
         }
+    }
+    public function isArray($key) {
+        if($this->offsetExists($key)) {
+            $keyValue = $this->offsetGet($key);
+            if(is_array($keyValue)) return true;
+            return $keyValue instanceof XArrayObject;
+        }
+        return false;
     }
     public function offsetSet($sKey, $value) {
         $this->setKeyValue($sKey,$value);
