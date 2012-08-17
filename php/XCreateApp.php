@@ -13,10 +13,14 @@
  */
 
 class XCreateApp {
-    public $app_path = null;
+    public $toknot_path = null;
     public function __construct($app_path) {
-        //mkdir($app_path);
-        mkdir("{$app_pah}/model");
+        $app_path = realpath($app_path);
+        if(!is_dir($app_path)) {
+            if(file_exists($app_path)) die("$app_path is exists and is not directory");
+            mkdir($app_path);
+        }
+        mkdir("{$app_path}/model");
         mkdir("{$app_path}/php");
         mkdir("{$app_path}/ui");
         mkdir("{$app_path}/ui/js");
@@ -32,10 +36,36 @@ class XCreateApp {
         mkdir("{$app_path}/var/error_log");
         mkdir("{$app_path}/var/run");
         mkdir("{$app_path}/var/session");
+        $this->get_toknot_reletive_path($app_path);
         file_put_contents("{$app_path}/run.php",$this->get_run_php_code());
-        file_put_contents("{$app_path}/var/conf/config.ini",$this->get_default_config_code());
+        file_put_contents("{$app_path}/var/conf/config.ini",$this->get_default_config_code($app_path));
+        echo "Application initialization success\r\n";
+        echo "application create at {$app_path}\r\n";
+        echo "config.ini of application inside {$app_path}/var/conf/\r\n";
+        echo "set application static path is {$app_path}/static, if update, edit tpl.static_dir_name option at config.ini\r\n";
+        echo "more message see {$app_path}/run.php and {$app_path}/var/conf/config.ini\r\n";
+        echo "Goodluck!\r\n";
+        exit(0);
     }
-    public function get_default_config_code() {
+    public function get_toknot_reletive_path($app_path) {
+        $toknot_path = dirname(__FILE__);
+        $tlen = strlen($toknot_path);
+        $alen = strlen($app_path);
+        $len = min($tlen, $alen);
+        $same = '';
+        for($i=0; $i<$len; $i++) {
+            if($toknot_path[$i] == $app_path[$i]) {
+                $same .= $app_path[$i];
+            } else {
+                break;
+            }
+        }
+        if(substr($same,-1) != DIRECTORY_SEPARATOR) {
+            $same = dirname($same);
+        }
+        $this->toknot_path =  str_replace($same,'',$toknot_path);
+    }
+    public function get_default_config_code($app_path) {
         return <<<EOF
 ;User Application Configuration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -113,7 +143,7 @@ class XCreateApp {
 ;URL format
 ;   0 is default mode, similar http://localhost/directory/.../CLASS_NAME/METHOD_NAME.php
 ;       need webserver always exec entrance file, the file suffix defined app.url_file_suffix
-    1 QUERY_STRING mode, similar http://localhost/index.php?/directory/.../CLASS_NAME/METHOD_NAME
+;    1 QUERY_STRING mode, similar http://localhost/index.php?/directory/.../CLASS_NAME/METHOD_NAME
 ;   2 PATH_INFO mode, similar http://localhost/index.php/directory/.../CLASS_NAME/METHOD_NAME 
 ;       need webserver support PATH_INFO
 ;   3 ENTIR_PATH mode，similar URL为http://localhost/directory/CLASS_NAME/METHOD_NAME
@@ -223,7 +253,7 @@ class XCreateApp {
 ;session.use_toknot_sess = false;
 
 ;set session name
-session.session_name = XSID   
+;session.session_name = XSID   
 
 ;session file of session data stored directory name inside __X_APP_DATA_DIR__
 ;   include if use session extension with php and set save_handler is files 
@@ -274,7 +304,7 @@ tpl.html_cache_dirname = html_cache
 
 ;static file output path, this is obsolete path, and in web document root
 ; CSS, JS compression and save path
-;tpl.static_dir_name =   
+tpl.static_dir_name =  {$app_path}/static 
 
 ;JS,CSS file access path by URL of HTTP request, such as request http://domian/static/x.js
 ;   the option set /static
@@ -320,7 +350,6 @@ tpl.html_suffix = .htm
 EOF;
     }
     public function get_run_php_code() {
-        $tk_path = dirname(__FILE__);
         $code = <<<EOF
 <?php
 /**
@@ -333,7 +362,7 @@ EOF;
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       http://blog.toknot.com
- * @since      File available since Release $id$
+ * @since      File available since Release \$id\$
  */
 
 /*
@@ -368,7 +397,7 @@ EOF;
 
 define('__X_IN_FRAME__', true);
 define('__X_SHOW_ERROR__',true);
-define('__X_APP_ROOT__', '{$this->app_path}');
+define('__X_APP_ROOT__', dirname(__FILE__));
 define('__X_EXCEPTION_LEVEL__',2);
 define('__X_APP_DATA_DIR_NAME__','var');
 define('__X_APP_USER_CONF_FILE_NAME__','config.ini');
@@ -378,8 +407,14 @@ define('__X_FIND_SLOW__', false);
 define('__X_DAEMON_LOOP_FILE__',false);
 
 //include __init__.php of toknot frameworker
-include_once("{$tk_path}/__init__.php");
+include_once(dirname(__FILE__)."/{$this->toknot_path}/__init__.php");
 EOF;
         return $code;
     }
 }
+if(empty($argv[1])) {
+    echo "Error:Need set Application path\r\n";
+    echo "such as:\r\n\tphp XCreateApp.php /home/yourname/application_name\r\n";
+    return;
+}
+return new XCreateApp($argv[1]);
