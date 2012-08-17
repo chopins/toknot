@@ -62,21 +62,26 @@ class XCreateApp {
         }
         if(substr($same,-1) != DIRECTORY_SEPARATOR) {
             $same = dirname($same);
+        } else  {
+            $same = substr($same,0,-1);
         }
-        $ds = 'dirname(__FILE__)');
+        $ds = 'dirname(__FILE__)';
         $i = 1;
-        while(true) {
-            $path = dirname($app_path);
-            if($path == $same) {
-                break;
+        if($same != $app_path) {
+            while(true) {
+                if($i >4) break;
+                $i++;
+                $path = dirname($app_path);
+                $ds = "dirname({$ds})";
+                if($path == $same) {
+                    break;
+                }
             }
-            $ds = "dirname({$ds})";
-            $i++;
         }
         if($i > 3) {
-            $this->toknot_path = "$toknot_path".DIRECTORY_SEPARATOR."__init__.php";
+            $this->toknot_path = "'$toknot_path".DIRECTORY_SEPARATOR."__init__.php'";
         } else {
-            $this->toknot_path = $ds.DIRECTORY_SEPARATOR.str_replace($same,'',$toknot_path).DIRECTORY_SEPARATOR."__init__.php"
+            $this->toknot_path = $ds.".'".str_replace($same,'',$toknot_path).DIRECTORY_SEPARATOR."__init__.php'";
         }
     }
     public function get_default_config_code($app_path) {
@@ -84,10 +89,12 @@ class XCreateApp {
         $ini_content = file($default_ini);
         $return_content = '';
         foreach($ini_content as $line_no=>$line) {
-            if($line_no <= 5) continue;
-            if($line_no == 243) {
-                $line = "tpl.static_dir_name = {$app_path}/static";
-            } elseif(substr($line,1) != ';') {
+            if($line_no <= 6) continue;
+            $first_char = trim(substr($line,0,1));
+            if($line_no == 242) {
+                $line = "tpl.static_dir_name = {$app_path}/static\n";
+            } elseif(empty($first_char)) {
+            } elseif($first_char != ';'){
                 $line = ";$line";
             }
             $return_content .= $line;
