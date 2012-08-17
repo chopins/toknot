@@ -1,14 +1,14 @@
 #Usage
-##Initialization Your Application
->  Please run like : `php XCreateApp.php /directory-path/application`  in CLI
+##Initialization Your Application  
+  Please run like : `php XCreateApp.php /directory-path/application`  in CLI  
 
 
 #介绍Instruction
-Toknot is php framework  
-Toknot/php      is php framework
-Toknot/js       is javascript framework
-Toknot/epoll    is epoll of php extensions
-Toknot/demo     is framework demo
+Toknot is php framework   
+  * Toknot/php      is php framework  
+  * Toknot/js       is javascript framework  
+  * Toknot/epoll    is epoll of php extensions   
+  * Toknot/demo     is framework demo    
 
 本项目是一个轻量级PHP WEB开发框架，专注于页面逻辑处理与展示，让项目代码更加简单  
 框架支持ReST或普通HTML压缩输出  
