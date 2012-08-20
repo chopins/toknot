@@ -75,11 +75,15 @@ class XInotifySync {
             dl('posix.so');
         }
         $cfg = XConfig::CFG();
+        $cfg = $cfg->app;
         $this->log_file_dir = __X_APP_DATA_DIR__."/{$cfg->log_dir}/sync";
         xmkdir($this->log_file_dir);
-        $this->run_dir = __X_APP_DATA_DIR__."{$cfg->run_dir}/sync";
+        $this->run_dir = __X_APP_DATA_DIR__."/{$cfg->run_dir}/sync";
         xmkdir($this->run_dir);
-
+        $watch_list_conf = __X_APP_DATA_DIR__."/conf/{$watch_list_conf}";
+        if(!file_exists($watch_list_conf)) {
+            throw new XException("Watch config file ({$watch_list_conf}) not exists");
+        }
         $ips = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM,STREAM_IPPROTO_IP);
         //fork inotify process
         setproctitle('php:XInotifySync Main process');
