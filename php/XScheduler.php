@@ -51,7 +51,7 @@ final class XScheduler extends XObject {
         $this->web_index = $CFG->web->index;
         $this->subsite_mode = $CFG->app->subsite_mode;
         $this->subsite_start_level = $CFG->app->subsite_start_level;
-        $this->error_log_dir = $CFG->app->error_log_dir;
+        $this->log_dir = $CFG->app->log_dir;
         $this->ui_dir_name = $CFG->ui_dir_name;
     }
     protected function __construct() {
@@ -389,7 +389,7 @@ final class XScheduler extends XObject {
         $_ENV['__X_CALL_PAGE_FILE__']    = "{$_ENV['__X_CALL_PAGE_DIR__']}{$add_sub_domain_path}{$prefix_path}/{$call_page_name}.php";
         $_ENV['__X_CALL_PAGE_FUNC__']    = $request_method.ucfirst($call_page_func);
         $_ENV['__X_APP_UI_DIR__']        = __X_APP_ROOT__.'/'.$this->ui_dir_name;
-        $_ENV['__X_APP_PHP_ERROR_LOG__'] = __X_APP_DATA_DIR__.'/'.$this->error_log_dir.'/'.date('Ymd');
+        $_ENV['__X_APP_PHP_LOG__'] = __X_APP_DATA_DIR__.'/'.$this->log_dir.'/'.date('Ymd');
     }
 
     /**

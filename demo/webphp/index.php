@@ -9,7 +9,7 @@ class index extends X {
     }
     public function gIndex() {
         if($this->R->AS) {
-            return $this->exit_json(1,'ok');
+            return $this->exitJSON(1,'ok');
         } else {
             $this->T->name = 'home';
             $this->T->type = 'htm';
@@ -22,23 +22,23 @@ class index extends X {
     }
     public function pLogin() {
         if(empty($this->R->A->username)) {
-            return $this->exit_json(0,'用户名不能为空');
+            return $this->exitJSON(0,'用户名不能为空');
         }
         if(empty($this->R->A->password)) {
-            return $this->exit_json(0,'密码不能为空');
+            return $this->exitJSON(0,'密码不能为空');
         }
         $password = md5($this->R->A->password, true);
         $user_info = $this->LM('user')->get_user_info($this->R->A->username);
         if(empty($user_info) || $user_info['password'] != $password) {
-            return $this->exit_json(0,'用户名或密码错误');
+            return $this->exitJSON(0,'用户名或密码错误');
         }
         $this->R->S->username = $this->R->A->username;
         $this->R->C->username = $this->R->A->username;
         $this->R->C->username->set();
-        return $this->exit_json(1,'登录成功','/index/mynav');
+        return $this->exitJSON(1,'登录成功','/index/mynav');
     }
     public function gMynav() {
-        if($this->loginStat == false) return $this->exit_json(0,'', $this->login_ui());
+        if($this->loginStat == false) return $this->exitJSON(0,'', $this->login_ui());
         $nav_list = array("{$this->R->S->username}|/user/info|true",
                           '后台首页|/index',
                           '个人信息|/user/info',
@@ -48,7 +48,7 @@ class index extends X {
                           '用户列表|/user/all',
                           'Dopush|/dopush/info',
                           '退出|/user/logout');
-        return $this->exit_json(1,'', $nav_list);
+        return $this->exitJSON(1,'', $nav_list);
     }
     public function login_ui() {
         $login_form_input = array();
@@ -64,7 +64,7 @@ class index extends X {
         return $login_form;
     }
     private function cookie_is_disable() {
-        $this->exit_json(-1,'COOKIE_ERR',$this->R->S->get_session_sid());
+        $this->exitJSON(-1,'COOKIE_ERR',$this->R->S->get_session_sid());
     }
     public function gChecklogin() {
         $this->R->S->check_cookie_status();
@@ -73,11 +73,11 @@ class index extends X {
         }
         if($this->loginStat == false) {
             $login_form = $this->login_ui(); 
-            $this->exit_json(0,'未登录', $login_form);
+            $this->exitJSON(0,'未登录', $login_form);
         } else {
             $this->R->C->username = $this->R->S->username;
             $this->R->C->username->set();
-            $this->exit_json(1,'已登录','/index/mynav');
+            $this->exitJSON(1,'已登录','/index/mynav');
         }
     }
 }
