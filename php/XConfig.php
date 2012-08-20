@@ -16,10 +16,28 @@ final class XConfig extends XObject {
     public static function singleton() {
         return parent::__singleton();
     }
+
+    /**
+     * parse_ini 
+     * 
+     * @param string $ini_file 
+     * @static
+     * @access public
+     * @return array
+     */
     public static function parse_ini($ini_file) {
         $o_ini = parse_ini_file($ini_file);
         return self::detach($o_ini);
     }
+
+    /**
+     * detach 
+     * 
+     * @param array $array 
+     * @static
+     * @access private
+     * @return array
+     */
     private static function detach($array) {
         $return_array = array();
         foreach($array as $key => $var) {

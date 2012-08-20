@@ -38,6 +38,7 @@ final class XScheduler extends XObject {
     public $timezone;
     public $php_dir_name;
     public $url_file_suffix;
+    public $url_list_file;
     public static function singleton() {
         return parent::__singleton();
     }
@@ -47,12 +48,13 @@ final class XScheduler extends XObject {
         $this->php_dir_name = $CFG->php_dir_name;
         $this->timezone = $CFG->app->timezone;
         $this->url_file_suffix = $CFG->app->url_file_suffix;
-        $this->uri_mode = $CFG->app->uri_mode;
+        $this->url_mode = $CFG->app->url_mode;
         $this->web_index = $CFG->web->index;
         $this->subsite_mode = $CFG->app->subsite_mode;
         $this->subsite_start_level = $CFG->app->subsite_start_level;
         $this->log_dir = $CFG->app->log_dir;
         $this->ui_dir_name = $CFG->ui_dir_name;
+        $this->url_list_file = $CFG->app->url_list_file;
     }
     protected function __construct() {
         if(version_compare(PHP_VERSION,'5.3.0') < 0) {
@@ -311,20 +313,27 @@ final class XScheduler extends XObject {
         } else {
             $uri_path     = $uri;
         }
+        if(empty($uri_path)) $uri_path = '/';
         $call_page_func = $call_page_name = $prefix_path = '';
         $url_file_suffix = '.'.$this->url_file_suffix;
-        if($this->uri_mode == 1 && isset($query_string)) {
+        if($this->url_mode == 1 && isset($query_string)) {
             $_GET['a']      = empty($_GET['a']) ? '':$_GET['a'];
             $uri_path       = dirname($_GET['a']);
             $call_page_func = basename($_GET['a']);
-        } else if($this->uri_mode == 2) { //PATH_INFO mode
+        } else if($this->url_mode == 2) { //PATH_INFO mode
             if(empty($_SERVER['PATH_INFO'])) {
                 $_SERVER['PATH_INFO'] = str_replace('/'.basename($_SERVER['SCRIPT_FILENAME']),'',$_SERVER['PHP_SELF']);
             }
             $uri_path = dirname($_SERVER['PATH_INFO']);
             $call_page_func = basename($_SERVER['PATH_INFO']);
             if(empty($_SERVER['PATH_INFO'])) $call_page_func = basename($_SERVER['DOCUMENT_URI'], $uri_file_suffix);
-        } else if($this->uri_mode == 4) {
+        } else if($this->url_mode == 4) {
+            $url_list = XConfig::parse_ini($this->url_list_file);
+            if(isset($url_list[$uri_path])) {
+                list($call_page_name,$call_page_func) = explode('::',$url_list[$uri_path]);
+            } else {
+                not_found();
+            }
         } else {
             if($uri_path == '/') {
                 $_SERVER['DOCUMENT_URI'] = strtok($this->web_index,':');
