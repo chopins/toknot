@@ -81,7 +81,7 @@ if(__X_FIND_SLOW__) {
     declare(ticks=1);
 }
 spl_autoload_register('XAutoload');
-//set_error_handler('error2debug');
+set_error_handler('error2debug');
 register_shutdown_function('XExitAlert');
 load_php(__X_FRAMEWORK_ROOT__.'/XDataStruct.php');
 try {

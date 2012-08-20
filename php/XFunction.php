@@ -551,6 +551,12 @@ function daemon() {
     if($sub_pid == -1) throw new XException('fork #3 ERROR');
     if($sub_pid >0) die;
 }
+function xmkdir($dir) {
+    if(!is_dir($dir)) {
+        if(file_exists($dir)) throw XException("{$dir} is exit and is not dir");
+        mkdir($dir);
+    }
+}
 define('UPFILE_NOT_EXISTS',957);
 define('UPFILE_FILE_TYPE_ERROR', 9550);
 define('UNAUTH_ACCESS',102);
