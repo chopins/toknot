@@ -137,7 +137,9 @@ final class XInotifySync {
         return $wd;
     }
     public function rm($wd) {
-        inotify_rm_watch($this->inotify_instance, $wd);
+        try{
+            @inotify_rm_watch($this->inotify_instance, $wd);
+        }catch(XException $e) {}
         if(is_dir($this->watch_descriptor[$wd]['local_path'])) {
             $this->rm_sub_dir($this->watch_descriptor[$wd]['local_path']);
         }
@@ -146,8 +148,8 @@ final class XInotifySync {
     public function rm_dir_wd($path) {
         foreach($this->watch_descriptor as $wd => $info) {
             if($path == $info['local_path']) {
+                $this->rm($wd); //force remove watch_descriptor even it auto remove
                 unset($this->watch_descriptor[$wd]);
-                //$this->rm($wd);
             }
         }
     }
