@@ -7,13 +7,16 @@
  *
  * PHP version 5.3
  * 
- * @package XInotifySync
+ * @package XDataStruct
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       http://blog.toknot.com
  * @since      File available since Release $id$
  */
+
+exists_frame();
+
 /**
  * XInotifySync 
  * 
@@ -21,35 +24,18 @@
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
-class XInotifySync {
+final class XInotifySync {
     /**
      * inotify_instance 
      * 
      * @var mixed
-     * @access public
+     * @access private
      */
-    public $inotify_instance = null;
-    public $watch_descriptor = array();
-    public $pending_event = 0;
-    public $watch_list_conf_wd = null;
+    private $inotify_instance = null;
+    private $watch_descriptor = array();
+    private $pending_event = 0;
+    private $watch_list_conf_wd = null;
 
-    /**
-     * inotify_sock 
-     * file watch process sock
-     * 
-     * @var mixed
-     * @access public
-     */
-    public $inotify_sock = null;
-
-    /**
-     * sync_sock 
-     * file send process sock
-     * 
-     * @var mixed
-     * @access public
-     */
-    public $sync_sock = null;
     /**
      * max_sync_process_num 
      * max send file process
@@ -59,21 +45,16 @@ class XInotifySync {
      */
     public $max_sync_process_num = 5;
     public $max_transporter = 5;
-    public $log_file_dir = null;
-    public $ssh_ins = null;
-    public $run_dir = '/tmp';
-    public $watch_list_conf = null;
-    public $tmp_echnage = 'inotify_change.dat';
+    private $log_file_dir = null;
+    private $ssh_ins = null;
+    private $run_dir = '/tmp';
+    private $watch_list_conf = null;
+
     public function __construct($watch_list_conf) {
-        if(extension_loaded('inotify') == false) {
-            dl('inotify.so');
-        }
-        if(extension_loaded('proctitle') ==false) {
-            dl('proctitle.so');
-        }
-        if(extension_loaded('posix') == false) {
-            dl('posix.so');
-        }
+        dl_extension('inotify','inotify_init');
+        dl_extension('proctitle','setproctitle');
+        dl_extension('posix','posix_getpid');
+
         $cfg = XConfig::CFG();
         $cfg = $cfg->app;
         $this->log_file_dir = __X_APP_DATA_DIR__."/{$cfg->log_dir}/sync";
@@ -96,7 +77,7 @@ class XInotifySync {
             fclose($ips[1]);
             $this->create_inotify_instance();
             $this->watch_list_conf = $watch_list_conf;
-            $this->watch_list_conf_wd = inotify_add_watch($this->inotify_instance,$watch_list_conf,IN_MODIFY);
+            $this->watch_list_conf_wd = inotify_add_watch($this->inotify_instance,$watch_list_conf,IN_CLOSE_WRITE);
             $this->add_form_file($this->watch_list_conf);
             $this->watch_loop();
             $this->logs('Watcher Exit');
@@ -119,16 +100,16 @@ class XInotifySync {
            pcntl_wait($status);
         }
     }
-    public function err($msg) {
+    private function err($msg) {
         $this->msg($msg);
         exit(1);
     }
-    public function msg($msg) {
+    private function msg($msg) {
         $time = microtime(true);
         $pid = posix_getpid();
         echo "$time:PID:$pid:$msg\r\n";
     }
-    public function logs($msg) {
+    private function logs($msg) {
         list(,$time) = explode(' ', microtime());
         $pid = posix_getpid();
         $date = date('Ymd.H:i:s');
@@ -136,7 +117,7 @@ class XInotifySync {
         $date = date('Ymd');
         file_put_contents("{$this->log_file_dir}/log_{$date}",$str,FILE_APPEND);
     }
-    public function create_inotify_instance() {
+    private function create_inotify_instance() {
         $this->inotify_instance = inotify_init();
     }
     public function watch($path,$ip,$port,$username, $password,$tpath) {
@@ -202,7 +183,7 @@ class XInotifySync {
      * @access public
      * @return void
      */
-    public function sync_master_process_loop() {
+    private function sync_master_process_loop() {
         while(1) {
             if(is_resource($this->sync_sock) == false) {
                 $this->err('pip error');
@@ -242,7 +223,7 @@ class XInotifySync {
             }
         }
     }
-    public function merge(&$file_info, $unit) {
+    private function merge(&$file_info, $unit) {
         foreach($unit as $t => $value) {
             if($t == 'MT' || $t == 'MF') {
                 foreach($value as $i => $f) {
@@ -255,11 +236,11 @@ class XInotifySync {
             }
         }
     }
-    public function transporter_pid() {
+    private function transporter_pid() {
         $pid = posix_getpid();
         file_put_contents($this->run_dir.'/'.$pid,$pid);
     }
-    public function rm_transporter_pid() {
+    private function rm_transporter_pid() {
         $pid = posix_getpid();
         unlink($this->run_dir.'/'.$pid);
     }
@@ -268,10 +249,10 @@ class XInotifySync {
      * file or directory transport opreate process
      * 
      * @param mixed $str 
-     * @access public
+     * @access private
      * @return void
      */
-    public function transporter_file($change_list) {
+    private function transporter_file($change_list) {
         $fock_pid = pcntl_fork();
         if($fock_pid == -1) throw new XException('fork #1 Error');
         if($fock_pid >0) return $fock_pid;
@@ -338,10 +319,10 @@ class XInotifySync {
      * create a file or directory sysnc of instance
      * 
      * @param mixed $watch_info 
-     * @access public
+     * @access private
      * @return void
      */
-    public function exec_sync_send_file($watch_info) {
+    private function exec_sync_send_file($watch_info) {
         $pid = pcntl_fork();
         if($pid > 0) return $pid;
         if($pid == -1) {
@@ -371,10 +352,10 @@ class XInotifySync {
      * @param mixed $ssh_ins 
      * @param mixed $local_path 
      * @param mixed $target_path 
-     * @access public
+     * @access private
      * @return void
      */
-    public function send_all_sub_file($ssh_ins, $local_path, $target_path) {
+    private function send_all_sub_file($ssh_ins, $local_path, $target_path) {
         $dh = opendir($local_path);
         while(false !== ($f = readdir($dh))) {
             if($f == '.' || $f == '..') continue;
@@ -388,7 +369,7 @@ class XInotifySync {
             }
         }
     }
-    public function exec_sync_mv($move_form, $move_to) {
+    private function exec_sync_mv($move_form, $move_to) {
         $pid = pcntl_fork();
         if($pid > 0) return $pid;
         if($pid == -1) {
@@ -415,7 +396,7 @@ class XInotifySync {
         }
         exit(0);
     }
-    public function exec_sync_rm($delete) {
+    private function exec_sync_rm($delete) {
         $pid = pcntl_fork();
         if($pid >0) return $pid;
         if($pid == -1) {
@@ -450,7 +431,7 @@ class XInotifySync {
      * @access public
      * @return void
      */
-    public function notify_file_list($change) {
+    private function notify_file_list($change) {
         $change_str = serialize($change) . "\r\n";
         $read = null;
         $write = array($this->inotify_sock);
@@ -468,7 +449,7 @@ class XInotifySync {
         $ini = XConfig::parse_ini($file);
         $this->add_form_array($ini);
     }
-    public function add_sub_dir($wd) {
+    private function add_sub_dir($wd) {
         $watch_descriptor = $this->watch_descriptor[$wd];
         $dh = opendir($watch_descriptor['local_path']);
         if($dh === false) return;
@@ -495,16 +476,16 @@ class XInotifySync {
         }
         $this->add_form_file($this->watch_list_conf);
     }
-    public function watch_loop() {
+    private function watch_loop() {
         $proto_array = array(
                 'D' => array(),
                 'MT' => array(),
                 'MF' => array(),
                 'U' => array());
         $event_counter = 0;
+        stream_set_blocking($this->inotify_instance,1);
         while(true) {
             $move_status = 0;
-            stream_set_blocking($this->inotify_instance,1);
             $events = $this->get();
             if($event_counter === 0) {
                 $event_counter = 1;

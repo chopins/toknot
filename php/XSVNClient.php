@@ -30,8 +30,9 @@ class XSVNClient {
     private $server_url;
     private $local_dir;
     private $repos_name = null;
-    public function __construct($_CFG) {
-        $this->load_cfg($_CFG);
+    private $config_list = array();
+    public function __construct($config_file) {
+        $this->load_cfg($config_file);
         dl_extension('svn', 'svn_checkout');
    //     $this->deamon();
     }
@@ -100,10 +101,17 @@ class XSVNClient {
     public function logs($path = '/') {
         return svn_log($this->server_url.'/'.$this->repos_name.$path);
     }
-    private function load_cfg($_CFG) {
-        $this->server_url = $_CFG->svn->server_url;
-        $this->server_data_dir = $_CFG->svn->server_data_dir;
-        $this->local_dir = $_CFG->svn->local_dir;
+    public function use_confg($idx) {
+        $this->server_url = $this->config_list[$idx]['server_url'];
+        $this->server_data_dir = $this->config_list[$idx]['repos_path'];
+        $this->local_dir = $this->config_list[$idx]['worker_path'];
+    }
+    private function load_cfg($config_file) {
+        $config_file = __X_APP_DATA_DIR__."/conf/{$config_file}";
+        if(!file_exists($config_file)) {
+            throw new XException("{$config_file} not exists");
+        }
+        $this->config_list = XConfig::parse_ini($config_file);
         return;
     }
 }

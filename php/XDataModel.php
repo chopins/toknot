@@ -58,6 +58,9 @@ abstract class XDataModel extends XObject {
         }
     }
     final protected function DB($table_name) {
+        if($table_name instanceof XDBConf) {
+            return $this->connect_database($table_name);
+        }
         if(isset($this->connect_pool[$table_name])) {
             return $this->connect_pool[$table_name];
         }

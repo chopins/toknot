@@ -52,6 +52,13 @@ final class XSessionObject extends XArrayObject {
     public function get_session_sid() {
         return $this->sid;
     }
+    public function get_session_last_modified($sid = null) {
+        if(!$sid) $sid = $this->sid;
+        if($this->use_php_session && ini_get('session.save_handler') == 'files') {
+            return filemtime("{$this->save_path}/sess_{$sid}";
+        }
+        return NULL;
+    }
     public function check_cookie_status() {
         if(empty($_COOKIE[$this->sess_name])) {
             if($this->cookie_be_disable) {

@@ -60,6 +60,9 @@ class XTxtDB {
      * @access private
      */
     private $last_key = null;
+    private $db_name = null;
+    private $db_dir = null;
+    
 
     /**
      * space_flag 
@@ -122,6 +125,9 @@ class XTxtDB {
     public function get_db_charset() {
         return $this->db_charset;
     }
+    public function get_db_path() {
+        return "{$this->db_dir}/{$this->db_name}.db";
+    }
     public function __destruct() {
         if(is_resource($this->db)) {
             fclose($this->db);
@@ -134,6 +140,7 @@ class XTxtDB {
         if(file_exists($file_path)) return false;
         $this->db = fopen($file_path,'x+b');
         $this->write_db_info();
+        $this->db_name = $file;
         return;
     }
     private function check_key_type($key) {
@@ -187,6 +194,7 @@ class XTxtDB {
         if(!file_exists($file_path)) return $this->create($file);
         $this->db = fopen($file_path,'r+b');
         $this->get_db_info();
+        $this->db_name = $file;
     }
 
     /**
@@ -205,11 +213,13 @@ class XTxtDB {
         $value = serialize(array('k'=>$key,'v'=>$value));
         $len = strlen($value);
         $key = md5($key, true);
+        flock($this->db, LOCK_SH);
         if($len > $this->block_data_size) {
             $r = $this->multi_line_add($key, $value, $expire);
         } else {
             $r = $this->single_line_add($key, $value, $expire);
         }
+        flock($this->db, LOCK_UN);
         return $r ? $len : $r;
     }
 
@@ -421,11 +431,13 @@ class XTxtDB {
         $key = md5($key, true);
         $value = serialize(array('k'=>$key,'v'=>$value));
         $len = strlen($value);
+        flock($this->db, LOCK_SH);
         if($len > $this->block_data_size) {
             $this->multi_line_set($key, $value);
         } else {
             $this->single_line_set($key, $value);
         }
+        flock($this->db, LOCK_UN);
         return true;
     }
     /**

@@ -7,13 +7,16 @@
  *
  * PHP version 5.3
  * 
- * @package XSSH2
+ * @package XDataStruct
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       http://blog.toknot.com
  * @since      File available since Release $id$
  */
+
+exists_frame();
+
 /**
  * XSSH2 
  * 
@@ -34,9 +37,7 @@ class XSSH2 {
     private $auth_type = 1; // 1 is username and password, 0 is auth_pub_file
     public function __construct($host, $port,
                                 $ssh_user = null, $ssh_pass = null, $keyfile_dir =null) {
-        if(!extension_loaded('ssh2')) {
-            dl('ssh2.so');
-        }
+        dl_extension('ssh2','ssh2_connect');
         $this->host = $host;
         $this->port = $port;
         $this->keyfile_dir - $keyfile_dir;
