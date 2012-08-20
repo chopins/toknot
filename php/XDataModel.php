@@ -26,7 +26,7 @@ exists_frame();
 abstract class XDataModel extends XObject {
 	public $cache_file = null;
     public $text_data_dir = null;
-
+    private $connect_pool = array();
     /**
      * _CFG 
      * application of all configuration object 
@@ -36,18 +36,6 @@ abstract class XDataModel extends XObject {
      */
     protected $_CFG = null;
 
-    /**
-     * DB 
-     * the database connect instance handler of stroage object
-     * the object only has properties:
-     *      database name is propertie name
-     *      database connect instance handler is propertie value
-     * 
-     * @var stdClass
-     * @access protected
-     */
-    protected $DB = null;
-    
     /**
      * singleton 
      * 
@@ -68,6 +56,12 @@ abstract class XDataModel extends XObject {
         if(method_exists($this,'auto_conf')) {
             $this->auto_conf();
         }
+    }
+    final protected function DB($table_name) {
+        if(isset($this->connect_pool[$table_name])) {
+            return $this->connect_pool[$table_name];
+        }
+        throw new XException("database connect instance of $table_name is not exists");
     }
 
     /**
@@ -124,7 +118,7 @@ abstract class XDataModel extends XObject {
         $dbc = XDbConnect :: singleton();
         $dbc->create_instance($conf_ins->dbtype);
         $dbname = $conf_ins->dbname;
-        $this->DB->$dbname = $dbc->get_instance();
+        $this->connect_pool[$dbname] = $dbc->get_instance();
         $this->select_db($conf_ins);
     }
 
@@ -141,17 +135,17 @@ abstract class XDataModel extends XObject {
         $dbname = $conf_ins->dbname;
         switch(strtolower($conf_ins->dbtype)) {
             case 'mysql':
-                $this->DB->$dbname->connect($conf_ins->host,$conf_ins->user,$conf_ins->pass);
-                $this->DB->$dbname->select_db($conf_ins->dbname);
+                $this->connect_pool[$dbname]->connect($conf_ins->host,$conf_ins->user,$conf_ins->pass);
+                $this->connect_pool[$dbname]->select_db($conf_ins->dbname);
             case 'firebird':
-                $this->DB->$dbname->set_db_path($conf_ins->dbhost);
-                $this->DB->$dbname->connect($conf_ins->dbname);
+                $this->connect_pool[$dbname]->set_db_path($conf_ins->dbhost);
+                $this->connect_pool[$dbname]->connect($conf_ins->dbname);
             case 'txtdb':
-                $this->DB->$dbname->set_db_dir($conf_ins->dbhost);
+                $this->connect_pool[$dbname]->set_db_dir($conf_ins->dbhost);
                 if(isset($conf_ins->block_size)) {
-                    $this->DB->$dbname->set_block_size($conf_ins->block_size);
+                    $this->connect_pool[$dbname]->set_block_size($conf_ins->block_size);
                 }
-                $this->DB->$dbname->open($conf_ins->dbname);
+                $this->connect_pool[$dbname]->open($conf_ins->dbname);
             break;
         }
     }
