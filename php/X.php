@@ -200,7 +200,7 @@ abstract class X extends XObject{
                 include_once($model_file);
             }
             if(!class_exists($model_class,false)) {
-                throw new XException("$model_name not found, $suffix");
+                throw new XException("$model_name not found");
             }
         }
         $model_ins = $model_class :: singleton();
