@@ -93,6 +93,7 @@ class XTxtDB {
      */
     public function set_db_dir($path) {
         $this->db_dir = $path;
+        xmkdir($this->db_dir);
     }
 
     /**
