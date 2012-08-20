@@ -64,7 +64,7 @@ class XInotifySync {
     public $run_dir = '/tmp';
     public $watch_list_conf = null;
     public $tmp_echnage = 'inotify_change.dat';
-    public function __construct($watch_list_conf, $run_dir,$log_file_dir) {
+    public function __construct($watch_list_conf) {
         if(extension_loaded('inotify') == false) {
             dl('inotify.so');
         }
@@ -74,8 +74,12 @@ class XInotifySync {
         if(extension_loaded('posix') == false) {
             dl('posix.so');
         }
-        $this->log_file_dir = $log_file_dir;
-        $this->run_dir = $run_dir;
+        $cfg = XConfig::CFG();
+        $this->log_file_dir = __X_APP_DATA_DIR__."/{$cfg->log_dir}/sync";
+        xmkdir($this->log_file_dir);
+        $this->run_dir = __X_APP_DATA_DIR__."{$cfg->run_dir}/sync";
+        xmkdir($this->run_dir);
+
         $ips = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM,STREAM_IPPROTO_IP);
         //fork inotify process
         setproctitle('php:XInotifySync Main process');
