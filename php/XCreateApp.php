@@ -15,11 +15,12 @@
 class XCreateApp {
     public $toknot_path = null;
     public function __construct($app_path) {
-        $app_path = realpath($app_path);
         if(!is_dir($app_path)) {
-            if(file_exists($app_path)) die("$app_path is exists and is not directory");
+            if(file_exists($app_path)) die("$app_path is exists and is not directory\r\n");
+            if(!is_writable(dirname($app_path))) die("can not create $app_path, no permission\r\n");
             mkdir($app_path);
         }
+        $app_path = realpath($app_path);
         mkdir("{$app_path}/model");
         mkdir("{$app_path}/php");
         mkdir("{$app_path}/ui");

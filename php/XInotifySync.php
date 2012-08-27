@@ -139,17 +139,25 @@ final class XInotifySync {
     public function rm($wd) {
         try{
             @inotify_rm_watch($this->inotify_instance, $wd);
+            $parent_path = $this->watch_descriptor[$wd]['local_path'];
+            $path_len = strlen($parent_path) - 1;
+            unset($this->watch_descriptor[$wd]);
+            if(is_dir($this->watch_descriptor[$wd]['local_path'])) {
+                foreach($this->watch_descriptor as $wd => $info) {
+                    if(substr($info['local_path'],0,$path_len) == $parent_path) {
+                        @inotify_rm_watch($this->inotify_instance, $wd);
+                        unset($this->watch_descriptor[$wd]);
+                    }
+                }
+            }
         }catch(XException $e) {}
-        if(is_dir($this->watch_descriptor[$wd]['local_path'])) {
-            $this->rm_sub_dir($this->watch_descriptor[$wd]['local_path']);
-        }
-        unset($this->watch_descriptor[$wd]);
     }
     public function rm_dir_wd($path) {
         foreach($this->watch_descriptor as $wd => $info) {
             if($path == $info['local_path']) {
                 $this->rm($wd); //force remove watch_descriptor even it auto remove
                 unset($this->watch_descriptor[$wd]);
+                break;
             }
         }
     }
@@ -557,7 +565,7 @@ final class XInotifySync {
                         $chain = 'MT';
                     break;
                     case IN_MOVED_FROM|IN_ISDIR: //移除文件夹
-                        $this->rm_dir_wd($os_path);
+                        $this->rm_dir_wd($os_path, true);
                         $nid = $ev_info['cookie'];
                         $chain = 'MF';
                     break;
