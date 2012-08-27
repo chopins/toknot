@@ -14,10 +14,6 @@
  * @link       http://blog.toknot.com
  * @since      File available since Release 0.4
  */
-/**
- * TODO:
- * 目前程序使用共享内存进行进程管理，进程休眠使用usleep提供，但是CPU时间增加过快
- */
 exists_frame();
 
 /**
@@ -160,17 +156,13 @@ final class XWebServer extends XHTTPResponse {
         $this->check_extension();
         $this->load_cfg();
         $this->run_mode();
-        $this->base_shmop_key = $this->get_shmop_key();
         $this->master_pid = posix_getpid();
-  //      $this->run_cron_process();
         $this->run_web();
     }
     private function run_cron_process() {
         $pid = pcntl_fork();
         if($pid == -1) throw new XException('fork accept worker process error');
         if($pid >0) {
-            $shmop_id = shmop_open($this->base_shmop_key-1,'c',0600,1);
-            shmop_write($shmop_id,self::WP_WAIT,0);
             $this->cron_process['shmid'] = $shmop_id;
             $this->cron_process['pid'] = $pid;
             return;
@@ -236,7 +228,11 @@ final class XWebServer extends XHTTPResponse {
         if($_CFG == null) $_CFG = $GLOBALS['_CFG'];
         $this->run_dir = empty($_CFG->run_dir) ?
             __X_APP_DATA_DIR__.'/run': $_CFG->run_dir;
-        if(!is_dir($this->run_dir) || !is_writable($this->run_dir)) throw new XException('webserver run dir not exists or unwriteable');
+
+        if(!is_dir($this->run_dir) || !is_writable($this->run_dir)) {
+            throw new XException('webserver run dir not exists or unwriteable');
+        }
+
         $this->main_pid_file = empty($_CFG->web->pid_file) ? 
                 "{$this->run_dir}/xweb.pid" : "{$this->run_dir}/{$_CFG->web->pid_file}";
         $this->index = explode(' ',$_CFG->web->index);
@@ -368,7 +364,6 @@ final class XWebServer extends XHTTPResponse {
         dl_extension('proctitle','setproctitle');
         dl_extension('posix','posix_getpid');
         dl_extension('libevent','event_base_new');
-        dl_extension('shmop','shmop_open');
     }
     private function setproctitle($name) {
         setproctitle($name);
@@ -390,10 +385,6 @@ final class XWebServer extends XHTTPResponse {
                 array($this,'web_accept'), array($evt,$base_evt,$shmop_id));
         event_base_set($evt,$base_evt);
         event_add($evt);
-        $this->add_sig_event($base_evt, SIGTERM,'worker_event_exit');
-        $this->add_sig_event($base_evt, SIGINT,'worker_event_exit');
-        $this->add_sig_event($base_evt, SIGHUP,'worker_event_exit');
-        $this->add_sig_event($base_evt, SIGPIPE,'connect_abort');
 
         return $base_evt;
     }
@@ -428,16 +419,6 @@ final class XWebServer extends XHTTPResponse {
             $this->master_worker_sock = $mws[0];
             $this->web_worker_loop($mws[0]);
             return;
-        }
-        if($restart_worker == false) {
-            $this->master_process = true;
-            pcntl_signal(SIGCHLD, array($this,'process_signal'));
-            pcntl_signal(SIGINT, array($this,'process_signal'));
-            pcntl_signal(SIGHUP,array($this,'process_signal'));
-            pcntl_signal(SIGTERM,array($this,'process_signal'));
-            pcntl_signal(SIGUSR1, array($this,'process_signal'));
-            pcntl_signal(SIGUSR2, array($this,'process_signal'));
-            $this->master_loop();
         }
     }
     private function run_new_worker_process($base_evt= null, $sig_evt = null) {

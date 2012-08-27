@@ -51,7 +51,7 @@ define('__X_APP_USER_CONF_FILE_NAME__','config.ini');
 define('__X_APP_DATA_DIR__',__X_APP_ROOT__.'/'.__X_APP_DATA_DIR_NAME__);
 define('__X_FIND_SLOW__', false);
 define('__X_NO_WEB_SERVER__',true);
-define('__X_DAEMON_LOOP_FILE__','/sync.php');
+define('__X_DAEMON_LOOP_FILE__','/daemon.php');
 
 //include __init__.php of toknot frameworker
-include_once(dirname(dirname(__FILE__))."/Toknot/__init__.php");
+include_once(dirname(dirname(__FILE__))."/php/__init__.php");

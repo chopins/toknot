@@ -54,4 +54,4 @@ define('__X_FIND_SLOW__', false);
 define('__X_DAEMON_LOOP_FILE__','/daemon.php');
 
 //include __init__.php of toknot frameworker
-include_once(dirname(dirname(__FILE__)).'/Toknot/__init__.php');
+include_once(dirname(dirname(__FILE__)).'/php/__init__.php');
