@@ -1,17 +1,15 @@
 <?php
-
 /**
- * Toknot
+ * toknot
  * initialization and load frameworker
  *
- * PHP version 5.3
+ * php version 5.3
  * 
- * @package XDataStruct
  * @author chopins xiao <chopins.xiao@gmail.com>
- * @copyright  2012 The Authors
- * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @copyright  2012 the authors
+ * @license    http://opensource.org/licenses/bsd-license.php new bsd license
  * @link       http://blog.toknot.com
- * @since      File available since Release $id$
+ * @since      file available since release $id$
  */
 
 /*
@@ -57,6 +55,7 @@
     4.框架常量,全大写
 */
 
+
 /******用户定义常量检查开始********************/
 defined('__X_IN_FRAME__') ||  define('__X_IN_FRAME__', true);
 defined('__X_SHOW_ERROR__') || define('__X_SHOW_ERROR__',true); 
@@ -68,22 +67,31 @@ defined('__X_NO_WEB_SERVER__') || define('__X_NO_WEB_SERVER__', false);
 defined('__X_FIND_SLOW__') || define('__X_FIND_SLOW__', true);
 defined('__X_DAEMON_LOOP_FILE__') || define('__X_DAEMON_LOOP_FILE__',false);
 /******用户定义常量结束********************/
+
+
 define('__X_RUN_START_TIME__',microtime(true));
 define('__X_FRAMEWORK_ROOT__', __DIR__); //不要修改本常量
+
 clearstatcache();
+
 if(PHP_SAPI ==  'cli' && !isset($_SERVER['argv'])) {
     $_SERVER['argc'] = $argc;
     $_SERVER['argv'] = $argv;
 }
+
 include_once(__X_FRAMEWORK_ROOT__.'/XFunction.php');
+
 if(__X_FIND_SLOW__) {
     register_tick_function('find_php_slow_pointer');
     declare(ticks=1);
 }
+
 spl_autoload_register('XAutoload');
 set_error_handler('error2debug');
 register_shutdown_function('XExitAlert');
+
 load_php(__X_FRAMEWORK_ROOT__.'/XDataStruct.php');
+
 try {
     $_X_APP_RUNING = XScheduler::singleton();
 } catch(XException $e) {

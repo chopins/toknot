@@ -7,8 +7,6 @@
  *
  * PHP version 5.3
  * 
- * @category XRequest
- * @package XPHPFramework
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -21,7 +19,6 @@ exists_frame();
 /**
  * session array object
  *
- * @package XPHPFramework
  * @author chopins xiao <chopins.xiao@gmail.com>
  */
 final class XSessionObject extends XArrayObject {
@@ -143,7 +140,6 @@ final class XSessionObject extends XArrayObject {
 /**
  * one cookie object
  *
- * @package XPHPFramework
  * @author chopins xiao <chopins.xiao@gmail.com>
  */
 class XCookieElementObject {//extends XArrayElementObject {
@@ -221,7 +217,6 @@ class XCookieElementObject {//extends XArrayElementObject {
 /**
  * cookie array object
  *
- * @package XPHPFramework
  * @author chopins xiao <chopins.xiao@gmail.com>
  */
 class XCookieObject extends XArrayObject {
@@ -239,6 +234,15 @@ class XCookieObject extends XArrayObject {
         return $this->cookie_uri_str_arr;
     }
 }
+
+/**
+ * XRequestElementValue 
+ * 
+ * @uses XArrayObject
+ * @package 
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XRequestElementValue extends XArrayObject {
     public function isEmail() {
         return is_email($this->value);
@@ -262,13 +266,21 @@ class XRequestElementValue extends XArrayObject {
         return str_replace(array("'",'"'),'',$this->value);
     }
 }
+
+/**
+ * XRequestArray 
+ * 
+ * @uses XArrayObject
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XRequestArray extends XArrayObject {
     protected $elementObjectName = 'XRequestElementValue';
 }
+
 /**
  * base request operation class
  *
- * @package XPHPFramework
  * @author chopins xiao <chopins.xiao@gmail.com>
  */
 class XRequest {

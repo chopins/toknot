@@ -6,8 +6,6 @@
  *
  * PHP version 5.3
  * 
- * @category php
- * @package Server
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -22,7 +20,6 @@ exists_frame();
  * XHTTPResponse 
  * 
  * @abstract
- * @package Server
  * @version $id$
  * @copyright 2012 The Author
  * @author Chopins xiao <chopins.xiao@gmail.com> 
@@ -43,21 +40,112 @@ abstract class XHTTPResponse {
      * @access private
      */
     public $response_status_code = 200;
+    /**
+     * request_static_file 
+     * 
+     * @var string
+     * @access public
+     */
     public $request_static_file = null;
+    /**
+     * index 
+     * 
+     * @var array
+     * @access public
+     */
     public $index = array('index.php','index.html');
+    /**
+     * request_static_file_type 
+     * 
+     * @var string
+     * @access public
+     */
     public $request_static_file_type = null;
+    /**
+     * request_static_file_state 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $request_static_file_state = null;
+    /**
+     * request_body_length 
+     * 
+     * @var float
+     * @access public
+     */
     public $request_body_length = 512000;
+    /**
+     * content_type 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $content_type = null;
+    /**
+     * content_charset 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $content_charset = null;
+    /**
+     * content_length 
+     * 
+     * @var float
+     * @access public
+     */
     public $content_length = 0;
+    /**
+     * document_root 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $document_root;
+    /**
+     * upfile_tmp_dir 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $upfile_tmp_dir;
+    /**
+     * upfile_tmp_list 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $upfile_tmp_list;
+    /**
+     * boundary 
+     * 
+     * @var string
+     * @access public
+     */
     public $boundary = null;
+    /**
+     * user_headers 
+     * 
+     * @var array
+     * @access public
+     */
     public $user_headers = array();
+    /**
+     * cookie_header 
+     * 
+     * @var array
+     * @access public
+     */
     public $cookie_header = null;
-    public function get_request_body_by_form_urlencode($connect) {
+    /**
+     * get_request_body_by_form_urlencode 
+     * 
+     * @param resource $connect 
+     * @access protected
+     * @return void
+     */
+    protected function get_request_body_by_form_urlencode($connect) {
         $receive_length = 0;
         $body = '';
         while($read = fread($connect,1024)) {
@@ -68,7 +156,14 @@ abstract class XHTTPResponse {
         }
         parse_str($body,$_POST);
     }
-    public function get_request_body_by_multipart($connect) {
+    /**
+     * get_request_body_by_multipart 
+     * 
+     * @param resource $connect 
+     * @access protected
+     * @return void
+     */
+    protected function get_request_body_by_multipart($connect) {
         $receive_length = 0;
         $boundary_count = 0;
         $cl_count = 0;
@@ -197,7 +292,14 @@ abstract class XHTTPResponse {
             }
         }
     }
-    public function get_request_header($connect) {
+    /**
+     * get_request_header 
+     * 
+     * @param resource $connect 
+     * @access protected
+     * @return void
+     */
+    protected function get_request_header($connect) {
         $this->request_static_file = null;
         $this->request_static_file_state = false;
         $this->get_request_start_line($connect);
@@ -292,9 +394,14 @@ abstract class XHTTPResponse {
         }
     }
     /**
+     * get_request_start_line 
      * RFC 3986 , RFC1738
+     * 
+     * @param resource $connect 
+     * @access protected
+     * @return void
      */
-    public function get_request_start_line($connect) {
+    protected function get_request_start_line($connect) {
         $start_line = trim(fgets($connect));
         if(empty($start_line)) {
             return $this->return_server_status(400);
@@ -324,7 +431,14 @@ abstract class XHTTPResponse {
             $_SERVER['QUERY_STRING'] = '';
         }
     }
-    public function return_server_status($code) {
+    /**
+     * return_server_status 
+     * 
+     * @param int $code 
+     * @access protected
+     * @return void
+     */
+    protected function return_server_status($code) {
         $response_status_array = array(
             100=>'Continue',101=>'Switching Protocols',
             200=>'OK',201=>'Created',202=>'Accepted',
@@ -347,7 +461,14 @@ abstract class XHTTPResponse {
         $this->response_status_code = $code;
         $this->response_status = "HTTP/1.1 $code {$response_status_array[$code]}\r\n";
     }
-    public function get_access_file_info($uri) {
+    /**
+     * get_access_file_info 
+     * 
+     * @param string $uri 
+     * @access protected
+     * @return void
+     */
+    protected function get_access_file_info($uri) {
         $uri_info = pathinfo($uri);
         if(isset($uri_info['extension']) && $uri_info['extension'] != $this->php_file_ext) {
             $this->request_static_file = true;
@@ -375,7 +496,12 @@ abstract class XHTTPResponse {
         }
     }
     /**
+     * get_request_body 
      * RFC 1867
+     * 
+     * @param resource $connect 
+     * @access private
+     * @return void
      */
     private function get_request_body($connect) {
         if(!empty($this->content_type)) {
@@ -388,12 +514,24 @@ abstract class XHTTPResponse {
         }
         return;
     }
+
+    /**
+     * set_length 
+     * 
+     * @param int $len 
+     * @access private
+     * @return void
+     */
     private function set_length($len) {
         return "Content-Length:$len\r\n";
     }
   
     /**
+     * get_response_header 
      * RFC2616 set HTTP/1.1 response header
+     * 
+     * @access private
+     * @return void
      */
     private function get_response_header() {
         if(!empty($this->user_headers)) {
@@ -455,11 +593,22 @@ abstract class XHTTPResponse {
         $header .= "Server:XPHPFramework\r\n";
         return $header;
     }
+    /**
+     * set_server_date 
+     * 
+     * @param int $time 
+     * @access private
+     * @return void
+     */
     private function set_server_date($time) {
         return gmdate('D, d M Y H:i:s', $time);
     }
     /**
+     * get_setcookie_header 
      * RFC6265 set cookie
+     * 
+     * @access private
+     * @return void
      */
     private function get_setcookie_header() {
         $header = '';

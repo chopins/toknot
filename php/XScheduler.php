@@ -6,8 +6,6 @@
  *
  * PHP version 5.3
  * 
- * @category php
- * @package Base
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -21,7 +19,6 @@ exists_frame();
  * 
  * @uses XObject
  * @final
- * @package Base
  * @version $id$
  * @copyright 2012 The Author
  * @author Chopins xiao <chopins.xiao@gmail.com> 
@@ -29,19 +26,92 @@ exists_frame();
  */
 
 final class XScheduler extends XObject {
+    /**
+     * app_instance 
+     * 
+     * @var object
+     * @access public
+     */
     public $app_instance;
+    /**
+     * app_method 
+     * 
+     * @var mixed
+     * @access private
+     */
     private $app_method;
+    /**
+     * exception_string 
+     * 
+     * @var string
+     * @access private
+     */
     private $exception_string = '';
+    /**
+     * server 
+     * 
+     * @var mixed
+     * @access private
+     */
     private $server = null;
+    /**
+     * utf8 
+     * 
+     * @var string
+     * @access private
+     */
     private $utf8 = 'utf8';
+    /**
+     * encodeing 
+     * 
+     * @var string
+     * @access public
+     */
     public $encodeing = '';
+    /**
+     * timezone 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $timezone;
+    /**
+     * php_dir_name 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $php_dir_name;
+    /**
+     * url_file_suffix 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $url_file_suffix;
+    /**
+     * url_list_file 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $url_list_file;
+    /**
+     * singleton 
+     * 
+     * @static
+     * @access public
+     * @return void
+     */
     public static function singleton() {
         return parent::__singleton();
     }
+    /**
+     * get_ini 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function get_ini() {
         $CFG = XConfig::CFG();
         $this->encoding = $CFG->app->encoding;
@@ -56,6 +126,12 @@ final class XScheduler extends XObject {
         $this->ui_dir_name = $CFG->ui_dir_name;
         $this->url_list_file = $CFG->app->url_list_file;
     }
+    /**
+     * __construct 
+     * 
+     * @access protected
+     * @return void
+     */
     protected function __construct() {
         if(version_compare(PHP_VERSION,'5.3.0') < 0) {
             throw new XException('only be run on php of varsion  5.3.0 or lastest, current php of version'.PHP_VERSION);
@@ -91,6 +167,13 @@ final class XScheduler extends XObject {
         }
     }
 
+    /**
+     * call_loop 
+     * 
+     * @param boolean $_daemon 
+     * @access private
+     * @return void
+     */
     private function call_loop($_daemon = true) {
         $loop_file = rtrim(__X_DAEMON_LOOP_FILE__,'/');
         $_ENV['__X_CALL_PAGE_FILE__'] = __X_APP_ROOT__."/{$this->php_dir_name}".'/'.__X_DAEMON_LOOP_FILE__;

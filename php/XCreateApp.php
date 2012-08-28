@@ -1,7 +1,7 @@
 <?php
 /**
  * Toknot
- * initialization and load frameworker
+ * Create User Application
  *
  * PHP version 5.3
  * 
@@ -22,7 +22,7 @@ class XCreateApp {
         }
         $app_path = realpath($app_path);
         mkdir("{$app_path}/model");
-        mkdir("{$app_path}/php");
+        mkdir("{$app_path}/service");
         mkdir("{$app_path}/ui");
         mkdir("{$app_path}/ui/js");
         mkdir("{$app_path}/ui/css");
@@ -37,8 +37,9 @@ class XCreateApp {
         mkdir("{$app_path}/var/log");
         mkdir("{$app_path}/var/run");
         mkdir("{$app_path}/var/session");
+        mkdir("{$app_path}/public");
         $this->get_toknot_reletive_path($app_path);
-        file_put_contents("{$app_path}/run.php",$this->get_run_php_code());
+        file_put_contents("{$app_path}/public/run.php",$this->get_run_php_code());
         file_put_contents("{$app_path}/var/conf/config.ini",$this->get_default_config_code($app_path));
         echo "Application initialization success\r\n";
         echo "application create at {$app_path}\r\n";
@@ -66,7 +67,7 @@ class XCreateApp {
         } else  {
             $same = substr($same,0,-1);
         }
-        $ds = 'dirname(__FILE__)';
+        $ds = 'dirname(dirname(__FILE__))';
         $i = 1;
         if($same != $app_path) {
             while(true) {
@@ -93,7 +94,7 @@ class XCreateApp {
             if($line_no <= 6) continue;
             $first_char = trim(substr($line,0,1));
             if($line_no == 242) {
-                $line = "tpl.static_dir_name = {$app_path}/static\n";
+                $line = "tpl.static_dir_name = {$app_path}/public/static\n";
             } elseif(empty($first_char)) {
             } elseif($first_char != ';'){
                 $line = ";$line";
@@ -150,7 +151,7 @@ class XCreateApp {
 
 define('__X_IN_FRAME__', true);
 define('__X_SHOW_ERROR__',true);
-define('__X_APP_ROOT__', dirname(__FILE__));
+define('__X_APP_ROOT__', dirname(dirname(__FILE__)));
 define('__X_EXCEPTION_LEVEL__',2);
 define('__X_APP_DATA_DIR_NAME__','var');
 define('__X_APP_USER_CONF_FILE_NAME__','config.ini');

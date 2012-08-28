@@ -5,8 +5,6 @@
  * XTxtDB class
  *
  * PHP version 5.3
- * @category database
- * @package toknot
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -14,15 +12,16 @@
  * @since      File available since Release 2.2
  *
  */
+
 exists_frame();
+
 /**
+ * XTxtDB 
  * key/value database classes with text, The data stroage type is accordance with the linear
  * and get key or set key is seek text file form file start to file end
  * 
- * @package XPHPFramework
  * @author chopins xiao <chopins.xiao@gmail.com>
  */
-
 class XTxtDB {
 
     /**
@@ -56,11 +55,23 @@ class XTxtDB {
      * last_key 
      * lastest use key of name
      * 
-     * @var mixed
+     * @var string
      * @access private
      */
     private $last_key = null;
+    /**
+     * db_name 
+     * 
+     * @var string
+     * @access private
+     */
     private $db_name = null;
+    /**
+     * db_dir 
+     * 
+     * @var string
+     * @access private
+     */
     private $db_dir = null;
     
 
@@ -72,7 +83,14 @@ class XTxtDB {
      * @access private
      */
     private $space_flag = ' ';
+    /**
+     * db_charset 
+     * 
+     * @var string
+     * @access private
+     */
     private $db_charset = 'utf8';
+
     const KEY_SIZE = 0x10;
     const BLOCK_MIN_SIZE = 48;
     const FLAG_SIZE = 1;
@@ -83,8 +101,13 @@ class XTxtDB {
     const ORDER_DESC = 2;
     const BLOCK_SEP = "\0x1E";
     const BLOCK_INSIDE_SEP = "\0x1F";
-    public function __construct() {
-    }
+    /**
+     * __construct 
+     * 
+     * @access public
+     * @return void
+     */
+    public function __construct() {}
 
     /**
      * set_db_dir 
@@ -122,18 +145,43 @@ class XTxtDB {
     public function get_block_size() {
         return $this->block_size;
     }
+    /**
+     * get_db_charset 
+     * 
+     * @access public
+     * @return void
+     */
     public function get_db_charset() {
         return $this->db_charset;
     }
+    /**
+     * get_db_path 
+     * 
+     * @access public
+     * @return void
+     */
     public function get_db_path() {
         return "{$this->db_dir}/{$this->db_name}.db";
     }
+    /**
+     * __destruct 
+     * 
+     * @access public
+     * @return void
+     */
     public function __destruct() {
         if(is_resource($this->db)) {
             fclose($this->db);
             $this->db = null;
         }
     }
+    /**
+     * create 
+     * 
+     * @param mixed $file 
+     * @access public
+     * @return void
+     */
     public function create($file) {
         $this->set_block_data_size();
         $file_path = "{$this->db_dir}/{$file}.db";
@@ -143,6 +191,13 @@ class XTxtDB {
         $this->db_name = $file;
         return;
     }
+    /**
+     * check_key_type 
+     * 
+     * @param mixed $key 
+     * @access private
+     * @return void
+     */
     private function check_key_type($key) {
         $this->last_key = $key;
         if(!is_int($key) && !is_string($key)) {
@@ -151,15 +206,33 @@ class XTxtDB {
         }
         return true;
     }
+    /**
+     * db_type 
+     * 
+     * @access private
+     * @return void
+     */
     private function db_type() {
         return pack('H*',dechex(crc32(self::DB_TYPE)));
     }
+    /**
+     * write_db_info 
+     * 
+     * @access private
+     * @return void
+     */
     private function write_db_info() {
         $db_type = $this->db_type();
         $line = "{$db_type}BT=".self::BLOCK_SEP."&SP=0&BS={$this->block_size}&BDS={$this->block_data_size}&CS={$this->db_charset}\r\n\r\n";
         $line = pack("a{$this->block_size}",$line);
         fwrite($this->db, $line);
     }
+    /**
+     * get_db_info 
+     * 
+     * @access private
+     * @return void
+     */
     private function get_db_info() {
         fseek($this->db,0);
         $db_type = $this->db_type();
@@ -185,10 +258,23 @@ class XTxtDB {
             $field = strtok('=');
         }
     }
+    /**
+     * set_block_data_size 
+     * 
+     * @access private
+     * @return void
+     */
     private function set_block_data_size() {
         $this->block_data_size = $this->block_size - self::KEY_SIZE 
             - self::FLAG_SIZE - 1;
     }
+    /**
+     * open 
+     * 
+     * @param mixed $file 
+     * @access public
+     * @return void
+     */
     public function open($file) {
         $file_path = "{$this->db_dir}/{$file}.db";
         if(!file_exists($file_path)) return $this->create($file);
@@ -201,10 +287,11 @@ class XTxtDB {
      * add 
      * add new key
      * 
-     * @param mixed $key 
-     * @param array $array 
+     * @param string $key 
+     * @param mixed $value
+     * @param int $expire
      * @access public
-     * @return void
+     * @return int
      */
     public function add($key, $value, $expire =0) {
         $this->check_key_type($key);
@@ -250,7 +337,7 @@ class XTxtDB {
     /**
      * del 
      * 
-     * @param mixed $key 
+     * @param string $key 
      * @access public
      * @return void
      */
@@ -270,6 +357,15 @@ class XTxtDB {
         }
         return true;
     }
+    /**
+     * multi_line_add 
+     * 
+     * @param string $key 
+     * @param string $data 
+     * @param int $expire 
+     * @access private
+     * @return void
+     */
     private function multi_line_add($key , $data, $expire) {
         $chunk_arr = chunk_split($data, $this->block_data_size);
         $flag = count($chunk_arr);
@@ -300,6 +396,14 @@ class XTxtDB {
         }
         return true;
     }
+    /**
+     * single_line_add 
+     * 
+     * @param string $key 
+     * @param string $data 
+     * @access private
+     * @return boolean
+     */
     private function single_line_add($key , $data) {
         $empty_line = null;
         while(!feof($this->db)) {
@@ -321,6 +425,12 @@ class XTxtDB {
         fwrite($this->db,"{$key}1{$data}".self::BLOCK_SEP, $this->block_size);
         return true;
     }
+    /**
+     * next_line 
+     * 
+     * @access private
+     * @return boolean
+     */
     private function next_line() {
         if(feof($this->db)) return false;
         $next_offset = $this->block_size - (ftell($this->db) % $this->block_size);
@@ -342,10 +452,24 @@ class XTxtDB {
             fseek($this->db, $current - $seek_line_start, SEEK_SET);
         }
     }
+    /**
+     * pack_empty_line 
+     * 
+     * @access private
+     * @return void
+     */
     private function pack_empty_line() {
         $len = $this->block_size - strlen(self::BLOCK_SEP);
         return pack("a{$len}",''). self::BLOCK_SEP;
     }
+    /**
+     * multi_line_set 
+     * 
+     * @param string $key 
+     * @param string $data 
+     * @access private
+     * @return boolean
+     */
     private function multi_line_set($key , $data) {
         $chunk_arr = chunk_split($data, $this->block_data_size);
         $pack_empty = $this->pack_empty_line();
@@ -387,6 +511,14 @@ class XTxtDB {
         }
         return true;
     }
+    /**
+     * single_line_set 
+     * 
+     * @param string $key 
+     * @param string $data 
+     * @access private
+     * @return boolean
+     */
     private function single_line_set($key, $data) {
         $pack_empty = $this->pack_empty_line();
         $write_complete = false;
@@ -419,10 +551,10 @@ class XTxtDB {
      * set 
      * add new key if key not exists , update key if key is exists;
      * 
-     * @param mixed $key 
-     * @param mixed $value 
+     * @param string $key 
+     * @param string $value 
      * @access public
-     * @return void
+     * @return boolean
      */
     public function set($key, $value) {
         $this->check_key_type($key);
@@ -444,9 +576,9 @@ class XTxtDB {
      * get 
      * get a key
      * 
-     * @param mixed $key 
+     * @param string $key 
      * @access public
-     * @return void
+     * @return mixed
      */
     public function get($key) {
         $this->check_key_type($key);
@@ -479,6 +611,15 @@ class XTxtDB {
         $data = unserialize($data);
         return $data['v'];
     }
+    /**
+     * compare_key 
+     * 
+     * @param array $return_data 
+     * @param int $int 
+     * @param string $comparison 
+     * @access private
+     * @return void
+     */
     private function compare_key(&$return_data, $int, $comparison) {
         $data = trim(fread($this->db, $this->block_data_size));
         $data = unserialize($data);
@@ -492,12 +633,40 @@ class XTxtDB {
             }
         }
     }
+    /**
+     * key_greater_than 
+     * 
+     * @param int $int 
+     * @param int $find 
+     * @param int $order 
+     * @access public
+     * @return mixed
+     */
     public function key_greater_than($int, $find = self::FIND_START, $order = self::ORDER_ASC) {
         return $this->key_compare_than($int, $find,$order,'>');
     }
+    /**
+     * key_less_than 
+     * 
+     * @param int $int 
+     * @param int $find 
+     * @param int $order 
+     * @access public
+     * @return mixed
+     */
     public function key_less_than($int , $find = self::FIND_START, $order = self::ORDER_ASC) {
         return $this->key_compare_than($int, $find,$order,'<');
     }
+    /**
+     * key_compare_than 
+     * 
+     * @param int $int 
+     * @param int $find 
+     * @param int $order 
+     * @param string $comparison 
+     * @access private
+     * @return mixed
+     */
     private function key_compare_than($int, $find, $order, $comparison) {
         $int = (int)$int;
         $return_data = array();

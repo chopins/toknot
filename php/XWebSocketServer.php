@@ -6,7 +6,6 @@
  *
  * PHP version 5.3
  * 
- * @package Server
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -20,7 +19,6 @@ exists_frame();
  * XWebSocketServer 
  * 
  * @uses XHTTPResponse
- * @package Server
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */

@@ -5,7 +5,6 @@
  *
  * PHP version 5.3
  * 
- * @package XDataStruct
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -19,13 +18,30 @@ exists_frame();
  * This is data model class base class
  * 
  * @abstract
- * @package DataBase
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
 abstract class XDataModel extends XObject {
+    /**
+     * cache_file 
+     * 
+     * @var mixed
+     * @access public
+     */
 	public $cache_file = null;
+    /**
+     * text_data_dir 
+     * 
+     * @var mixed
+     * @access public
+     */
     public $text_data_dir = null;
+    /**
+     * connect_pool 
+     * 
+     * @var array
+     * @access private
+     */
     private $connect_pool = array();
     /**
      * _CFG 
@@ -47,6 +63,13 @@ abstract class XDataModel extends XObject {
     final public static function singleton() {
         return parent::__singleton();
     }
+    /**
+     * __construct 
+     * 
+     * @final
+     * @access protected
+     * @return void
+     */
     final protected function __construct() {
         $this->_CFG = XConfig::CFG();
         $this->cache_file = __X_APP_DATA_DIR__."/{$this->_CFG->app->data_cache}/{$this->_CFG->app->cache_file}";
@@ -57,6 +80,14 @@ abstract class XDataModel extends XObject {
             $this->auto_conf();
         }
     }
+    /**
+     * DB 
+     * 
+     * @param mixed $table_name 
+     * @final
+     * @access protected
+     * @return void
+     */
     final protected function DB($table_name) {
         if($table_name instanceof XDBConf) {
             return $this->connect_database($table_name);
@@ -165,6 +196,15 @@ abstract class XDataModel extends XObject {
     final public function set_db_path($dbtype_path) {
         return $this->db_data_path.'/'.$dbtype_path;
     }
+    /**
+     * write_text_data 
+     * 
+     * @param mixed $filename 
+     * @param mixed $data 
+     * @final
+     * @access public
+     * @return void
+     */
     final public function write_text_data($filename, $data) {
         if(!is_dir($this->text_data_dir) || !is_writable($this->text_data_dir)) {
             return false;
@@ -172,6 +212,14 @@ abstract class XDataModel extends XObject {
         $data = serialize($data);
         return file_put_contents("{$this->text_data_dir}/{$filename}.dat",$data);
     }
+    /**
+     * get_text_data 
+     * 
+     * @param mixed $filename 
+     * @final
+     * @access public
+     * @return void
+     */
     final public function get_text_data($filename) {
         $data_file = "{$this->text_data_dir}/{$filename}.dat";
         if(!file_exists($data_file) || !is_readable($data_file)) {
@@ -180,6 +228,14 @@ abstract class XDataModel extends XObject {
         $data = file_get_contents($data_file);
         return unserialize($data);
     }
+    /**
+     * rm_text_data 
+     * 
+     * @param mixed $filename 
+     * @final
+     * @access public
+     * @return void
+     */
     final public function rm_text_data($filename) {
         $data_file = "{$this->text_data_dir}/{$filename}.dat";
         if(file_exists($data_file)) {
@@ -188,9 +244,21 @@ abstract class XDataModel extends XObject {
         }
         return true;
     }
+    /**
+     * page_count 
+     * 
+     * @access public
+     * @return void
+     */
     public function page_count() {
         $this->page_num = ceil($this->record_num/$this->limit);
     }
+    /**
+     * get_page 
+     * 
+     * @access public
+     * @return void
+     */
     public function get_page() {
         if(isset($_GET['r'])) {
             $r = (int) $_GET['r'];
@@ -202,6 +270,13 @@ abstract class XDataModel extends XObject {
             $this->start = ($page -1) * $this->limit;
         }
     }
+    /**
+     * get_data_cache 
+     * 
+     * @param mixed $n 
+     * @access public
+     * @return mixed
+     */
 	public function get_data_cache($n) {
         if(file_exists(__X_APP_ROOT__ . $this->cache_file)) {
             $data = unserialize(file_get_contents(__X_APP_ROOT__ . $this->cache_file));
@@ -220,12 +295,27 @@ abstract class XDataModel extends XObject {
             return false;
         }
     }
+    /**
+     * update_data_cache 
+     * 
+     * @param mixed $n 
+     * @access public
+     * @return void
+     */
     public function update_data_cache($n) {
         $expire = $this->get_data_cache('data_cache_update_flag');
         if($expire == false) $expire = array();
         $expire[$n] = true;
         $this->set_data_cache('data_cache_update_flag',$expire);
     }
+    /**
+     * set_data_cache 
+     * 
+     * @param mixed $n 
+     * @param mixed $data 
+     * @access public
+     * @return void
+     */
     public function set_data_cache($n,$data) {
         if(file_exists(__X_APP_ROOT__ . $this->cache_file)) {
             $cd = unserialize(file_get_contents(__X_APP_ROOT__ . $this->cache_file));

@@ -6,7 +6,6 @@
  *
  * PHP version 5.3
  * 
- * @package XDataStruct
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -19,7 +18,6 @@ exists_frame();
  * XObject 
  * base single depth object class of XPHPFramework
  * 
- * @package XDataStruct
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
@@ -59,7 +57,14 @@ class XObject {
     }
 
     /**
-     * final __set function that changed propertie status
+     * __set 
+     * that changed propertie status
+     * 
+     * @param mixed $propertie 
+     * @param mixed $value 
+     * @final
+     * @access public
+     * @return void
      */
     final public function __set($propertie, $value) {
         $this->propertieChange = true;
@@ -68,8 +73,14 @@ class XObject {
     public function __xset__($propertie, $value) {
         $this->$propertie = $value;
     }
+
     /**
+     * isChange 
      * check class propertie whether change default value or set new propertie and it value;
+     * 
+     * @final
+     * @access public
+     * @return void
      */
     final public function isChange() {
         if($this->propertieChange) return true;
@@ -92,7 +103,6 @@ class XObject {
  * XArrayObject element object class
  * 
  * @uses XObject
- * @package XDataStruct
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
@@ -133,6 +143,14 @@ class XArrayElementObject  extends XObject{
     }
 }
 
+/**
+ * XStdClass 
+ * Toknot stdClass
+ * 
+ * @uses XObject
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
+ */
 class XStdClass extends XObject {
     public $value = null;
     public function __construct($value = null) {
@@ -149,7 +167,13 @@ class XStdClass extends XObject {
 
 
 /**
+ * XArrayObject 
  * This class allows arrays to work as object;
+ * 
+ * @uses ArrayAccess
+ * @uses Countable
+ * @version $id$
+ * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
 class XArrayObject implements ArrayAccess,Countable {
     protected $storage = null;
@@ -242,7 +266,6 @@ class XArrayObject implements ArrayAccess,Countable {
  * the XTemplate class $T properties of proto
  * 
  * @uses XObject
- * @package 
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
@@ -318,7 +341,6 @@ class XTemplateObject extends XObject {
  * the Database config object proto
  * 
  * @uses XObject
- * @package 
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */

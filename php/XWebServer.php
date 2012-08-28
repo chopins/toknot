@@ -6,8 +6,6 @@
  *
  * PHP version 5.3
  * 
- * @category php
- * @package Server
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -22,7 +20,6 @@ exists_frame();
  * 
  * @uses XHTTPResponse
  * @final
- * @package Server
  * @version $id$
  * @copyright 2012 The Author
  * @author Chopins xiao <chopins.xiao@gmail.com> 

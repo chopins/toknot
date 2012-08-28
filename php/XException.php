@@ -6,7 +6,6 @@
  *
  * PHP version 5.3
  * 
- * @package XException
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License

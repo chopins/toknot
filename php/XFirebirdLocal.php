@@ -1,4 +1,17 @@
 <?php
+/**
+ * Toknot
+ * XFirebirdLocal class
+ *
+ * PHP version 5.3
+ * 
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 The Authors
+ * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @link       http://blog.toknot.com
+ * @since      File available since Release $id$
+ */
+
 class XFirebirdLocal {
     public $dbpath = '';
     public $con = null;

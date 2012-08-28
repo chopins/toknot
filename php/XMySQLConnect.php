@@ -1,8 +1,20 @@
 <?php
 /**
+ * toknot
+ * XMySQLConnect class
+ *
+ * php version 5.3
+ * 
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 the authors
+ * @license    http://opensource.org/licenses/bsd-license.php new bsd license
+ * @link       http://blog.toknot.com
+ * @since      file available since release $id$
+ */
+exists_frame();
+/**
  * XMySQLDba 
  * 
- * @package DataBase
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */

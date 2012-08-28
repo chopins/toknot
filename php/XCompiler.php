@@ -1,4 +1,17 @@
 <?php
+/**
+ * toknot
+ * XCompiler class
+ *
+ * php version 5.3
+ * 
+ * @author chopins xiao <chopins.xiao@gmail.com>
+ * @copyright  2012 the authors
+ * @license    http://opensource.org/licenses/bsd-license.php new bsd license
+ * @link       http://blog.toknot.com
+ * @since      file available since release $id$
+ */
+
 
 class XCompiler {
     public static function init() {

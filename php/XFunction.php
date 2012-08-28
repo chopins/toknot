@@ -6,7 +6,6 @@
  *
  * PHP version 5.3
  * 
- * @package Base
  * @author chopins xiao <chopins.xiao@gmail.com>
  * @copyright  2012 The Authors
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
@@ -15,9 +14,27 @@
  */
 
 exists_frame();
+
+/**
+ * XAutoload 
+ * __autoload implements of frameworker
+ * 
+ * @param string $class_name 
+ * @access public
+ * @return void
+ */
 function XAutoload($class_name) {
     load_php(__X_FRAMEWORK_ROOT__."/{$class_name}.php");
 }
+
+/**
+ * find_php_slow_pointer 
+ * find your application slow when it runtime greater than 1 second
+ * 
+ * @param bool $dump 
+ * @access public
+ * @return void
+ */
 function find_php_slow_pointer($dump = false) {
     static $run_slow_list;
     static $run_time;
@@ -38,12 +55,40 @@ function find_php_slow_pointer($dump = false) {
     }
     $i++;
 }
-function load_php($file) {
+
+/**
+ * load_php 
+ * 
+ * @param string $file 
+ * @access public
+ * @return void
+ */
+ function load_php($file) {
     include_once($file);
 }
-function exists_frame() {
+
+/**
+ * exists_frame 
+ * 
+ * @access public
+ * @return void
+ */
+ function exists_frame() {
     if(!defined('__X_IN_FRAME__')) throw new XException('Constants IN_FRAME undefined',1,__FILE__,__LINE__);
 }
+
+/**
+ * error2debug 
+ * error handler function of frameworker that convert to exception
+ * 
+ * @param int $errno 
+ * @param string $errstr 
+ * @param string $errfile 
+ * @param int $errline 
+ * @param string $errcontext 
+ * @access public
+ * @return void
+ */
 function error2debug($errno, $errstr, $errfile, $errline,$errcontext) {
     if(isset($_ENV['__X_EXCEPTION_THROW_DISABEL__']) 
             && $_ENV['__X_EXCEPTION_THROW_DISABEL__']) return;
@@ -66,6 +111,14 @@ function error2debug($errno, $errstr, $errfile, $errline,$errcontext) {
     }
     throw new XException($errstr,$errno,$errfile,$errline,true);
 }
+
+/**
+ * XExitAlert 
+ * 
+ * @param string $str 
+ * @access public
+ * @return void
+ */
 function XExitAlert($str = '') {
     $error_arr = error_get_last();
     $_ENV['__X_OUT_BROWSER__'] = false;
@@ -90,6 +143,14 @@ function XExitAlert($str = '') {
         }
     }
 }
+
+/**
+ * get_file_mime 
+ * 
+ * @param string $file 
+ * @access public
+ * @return string
+ */
 function get_file_mime($file) {
     if(function_exists('finfo_open')) {
         $fo = new finfo(FILEINFO_MIME);
@@ -103,9 +164,25 @@ function get_file_mime($file) {
         return fread($re, 1024);
     }
 }
+/**
+ * x_notice 
+ * 
+ * @param sting $str 
+ * @access public
+ * @return void
+ */
 function x_notice($str) {
     echo "<b>$str</b>";
 }
+
+/**
+ * conv_human_time 
+ * convert human time expression to seconds time
+ * 
+ * @param string $ts 
+ * @access public
+ * @return string
+ */
 function conv_human_time($ts) {
     $suffix = substr($ts,-1,1);
     if(is_numeric($suffix)) return $ts;
@@ -119,6 +196,15 @@ function conv_human_time($ts) {
         default: return false;
     }
 }
+
+/**
+ * conv_human_byte 
+ * convert human size expression to byte number
+ * 
+ * @param string $bs 
+ * @access public
+ * @return string
+ */
 function conv_human_byte($bs) {
     $suffix = substr($bs, -1,1);
     if(is_numeric($suffix)) return $suffix;
@@ -133,6 +219,15 @@ function conv_human_byte($bs) {
         case 'p':return (float)$number * 1125899906842624;
     }
 }
+
+/**
+ * time33 
+ * get number of a string use time33 algorithm 
+ * 
+ * @param string $str 
+ * @access public
+ * @return int
+ */
 function time33($str) {
     $int_hash = 5831;
     for($i=0;$i<32;$i++) {
@@ -140,20 +235,15 @@ function time33($str) {
     }
     return $int_hash;
 }
-function xfrombin($str) {
-    list($str) = unpack('H*',$str);
-    
-}
-function xtobin($str) {
-    $len = strlen($str);
-    $hex_str = '';
-    for($i=0;$i<$len;$i++) {
-        $hex_str .= dechex(ord($str[$i]));
-    }
-    return pack('H*',$hex_str);
-}
 
-/*convert word to upper or lower by rand*/
+/**
+ * rand_strtoupper 
+ * convert word to upper or lower by rand 
+ * 
+ * @param string $str 
+ * @access public
+ * @return string
+ */
 function rand_strtoupper($str) {
     $len = strlen($str);
     $re = '';
@@ -163,7 +253,16 @@ function rand_strtoupper($str) {
     return $re;
 }
 
-/*cutting str to param lenght and add suffix*/
+/**
+ * str_cutting 
+ * cutting str to param lenght and add suffix
+ * 
+ * @param string $str 
+ * @param int $len 
+ * @param string $suffix 
+ * @access public
+ * @return string
+ */
 function str_cutting($str,$len, $suffix='...') {
     $strlen = mb_strlen($str,'utf-8');
     if($strlen <= $len) {
@@ -172,11 +271,28 @@ function str_cutting($str,$len, $suffix='...') {
         return mb_substr($str,0, $len-3,'utf-8') . $suffix;
     }
 }
-/*get english char of sort number*/
+
+/**
+ * word_number 
+ * get order number of a english char
+ * 
+ * @param string $w 
+ * @access public
+ * @return int
+ */
 function word_number($w) {
     return ord(strtolower($w)) -97;
 }
-/*get rand string*/
+/**
+ * randstr 
+ * get rand string
+ * 
+ * @param int $min 
+ * @param int $max 
+ * @param int $num 
+ * @access public
+ * @return string
+ */
 function randstr($min, $max=null, $num = false) {
     $word = '1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM';
     if(isset($_ENV['filter_confuse']) && $_ENV['filter_confuse'] == true) {
@@ -203,20 +319,50 @@ function randstr($min, $max=null, $num = false) {
     }
     return $re;
 }
-/*check word is not specify char*/
+/**
+ * is_word 
+ * check word is not specify char
+ * 
+ * @param mixed $word 
+ * @param int $min 
+ * @param int $max 
+ * @access public
+ * @return int
+ */
 function is_word($word, $min=4,$max=10) {
     return preg_match("/^[A_Za-z0-9_\x7f-\xff]{{$min},{$max}}$/i",$word);
 }
-/*check number is china of moblie number*/
+/**
+ * is_moblie 
+ * check number is china of moblie number
+ * 
+ * @param mixed $tel 
+ * @access public
+ * @return int
+ */
 function is_moblie($tel) {
     return preg_match('/^1[358]{1}[0-9]{9}$/i',$tel);
 }
 
-/*check string is YYYY-mm-dd or YYY/mm/dd of farmat date*/
+/**
+ * is_day_str 
+ * check string is YYYY-mm-dd or YYY/mm/dd of farmat date
+ * 
+ * @param mixed $day 
+ * @access public
+ * @return int
+ */
 function is_day_str($day) {
     return preg_match('/^([12]{1}[0-9]{3})(\-|\/)(0[1-9]{1}|1[12]{1})(\-|\/)([12]{1}[0-9]|3[01]{1})/',$day);
 }
-/*check email address is vaild*/
+
+/**
+ * is_email
+ * check email address is vaild
+ *  
+ * @param mixed $user_email
+ * @return boolean
+ */
 function is_email($user_email) { 
     $chars = '/^([a-z0-9+_]|\\-|\\.)+@(([a-z0-9_]|\\-)+\\.)+[a-z]{2,6}$/i';
     if (strpos($user_email, '@') !== false && strpos($user_email, '.') !== false)
@@ -224,7 +370,15 @@ function is_email($user_email) {
     else
         return false;
 }
-/*convert " ' < > \ to html char*/
+
+/**
+ * conv_quotation 
+ * convert " ' < > \ to html char
+ * 
+ * @param string $str 
+ * @access public
+ * @return string
+ */
 function conv_quotation($str) {
     $str = str_replace('"','&#39;',$str);
     $str = str_replace("'",'&#34;',$str);
@@ -557,8 +711,3 @@ function xmkdir($dir) {
         mkdir($dir);
     }
 }
-define('UPFILE_NOT_EXISTS',957);
-define('UPFILE_FILE_TYPE_ERROR', 9550);
-define('UNAUTH_ACCESS',102);
-define('UPFILE_SIZE_LARGER',4032);
-define('UPFILE_FAILURE',5000);
