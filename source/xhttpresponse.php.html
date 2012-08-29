@@ -1,0 +1,691 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Wed, 29 Aug 2012 07:49:30 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XHTTPResponse.php (ToKnot Documentation)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xhttpresponse.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>XHTTPResponse.php</h1>
+<div class="comment" id="overview_description"><p>Toknot</p><p>XHTTPResponse class</p><p>PHP version 5.3</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Toknot
+<a name="line4"></a> *
+<a name="line5"></a> * XHTTPResponse class
+<a name="line6"></a> *
+<a name="line7"></a> * PHP version 5.3
+<a name="line8"></a> * 
+<a name="line9"></a> * @author chopins xiao <chopins.xiao@gmail.com>
+<a name="line10"></a> * @copyright  2012 The Authors
+<a name="line11"></a> * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line12"></a> * @link       http://blog.toknot.com
+<a name="line13"></a> * @since      File available since Release 0.1
+<a name="line14"></a> */
+<a name="line15"></a>
+<a name="line16"></a>exists_frame();
+<a name="line17"></a>
+<a name="line18"></a>
+<a name="line19"></a>/**
+<a name="line20"></a> * XHTTPResponse 
+<a name="line21"></a> * 
+<a name="line22"></a> * @abstract
+<a name="line23"></a> * @version $id$
+<a name="line24"></a> * @copyright 2012 The Author
+<a name="line25"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line26"></a> * @license http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line27"></a> */
+<a name="line28"></a>abstract class XHTTPResponse {
+<a name="line29"></a>    /**
+<a name="line30"></a>     * response_status 
+<a name="line31"></a>     * 
+<a name="line32"></a>     * @var string
+<a name="line33"></a>     * @access private
+<a name="line34"></a>     */
+<a name="line35"></a>    public $response_status = '';
+<a name="line36"></a>    /**
+<a name="line37"></a>     * response_status_code 
+<a name="line38"></a>     * 
+<a name="line39"></a>     * @var float
+<a name="line40"></a>     * @access private
+<a name="line41"></a>     */
+<a name="line42"></a>    public $response_status_code = 200;
+<a name="line43"></a>    /**
+<a name="line44"></a>     * request_static_file 
+<a name="line45"></a>     * 
+<a name="line46"></a>     * @var string
+<a name="line47"></a>     * @access public
+<a name="line48"></a>     */
+<a name="line49"></a>    public $request_static_file = null;
+<a name="line50"></a>    /**
+<a name="line51"></a>     * index 
+<a name="line52"></a>     * 
+<a name="line53"></a>     * @var array
+<a name="line54"></a>     * @access public
+<a name="line55"></a>     */
+<a name="line56"></a>    public $index = array('index.php','index.html');
+<a name="line57"></a>    /**
+<a name="line58"></a>     * request_static_file_type 
+<a name="line59"></a>     * 
+<a name="line60"></a>     * @var string
+<a name="line61"></a>     * @access public
+<a name="line62"></a>     */
+<a name="line63"></a>    public $request_static_file_type = null;
+<a name="line64"></a>    /**
+<a name="line65"></a>     * request_static_file_state 
+<a name="line66"></a>     * 
+<a name="line67"></a>     * @var mixed
+<a name="line68"></a>     * @access public
+<a name="line69"></a>     */
+<a name="line70"></a>    public $request_static_file_state = null;
+<a name="line71"></a>    /**
+<a name="line72"></a>     * request_body_length 
+<a name="line73"></a>     * 
+<a name="line74"></a>     * @var float
+<a name="line75"></a>     * @access public
+<a name="line76"></a>     */
+<a name="line77"></a>    public $request_body_length = 512000;
+<a name="line78"></a>    /**
+<a name="line79"></a>     * content_type 
+<a name="line80"></a>     * 
+<a name="line81"></a>     * @var mixed
+<a name="line82"></a>     * @access public
+<a name="line83"></a>     */
+<a name="line84"></a>    public $content_type = null;
+<a name="line85"></a>    /**
+<a name="line86"></a>     * content_charset 
+<a name="line87"></a>     * 
+<a name="line88"></a>     * @var mixed
+<a name="line89"></a>     * @access public
+<a name="line90"></a>     */
+<a name="line91"></a>    public $content_charset = null;
+<a name="line92"></a>    /**
+<a name="line93"></a>     * content_length 
+<a name="line94"></a>     * 
+<a name="line95"></a>     * @var float
+<a name="line96"></a>     * @access public
+<a name="line97"></a>     */
+<a name="line98"></a>    public $content_length = 0;
+<a name="line99"></a>    /**
+<a name="line100"></a>     * document_root 
+<a name="line101"></a>     * 
+<a name="line102"></a>     * @var mixed
+<a name="line103"></a>     * @access public
+<a name="line104"></a>     */
+<a name="line105"></a>    public $document_root;
+<a name="line106"></a>    /**
+<a name="line107"></a>     * upfile_tmp_dir 
+<a name="line108"></a>     * 
+<a name="line109"></a>     * @var mixed
+<a name="line110"></a>     * @access public
+<a name="line111"></a>     */
+<a name="line112"></a>    public $upfile_tmp_dir;
+<a name="line113"></a>    /**
+<a name="line114"></a>     * upfile_tmp_list 
+<a name="line115"></a>     * 
+<a name="line116"></a>     * @var mixed
+<a name="line117"></a>     * @access public
+<a name="line118"></a>     */
+<a name="line119"></a>    public $upfile_tmp_list;
+<a name="line120"></a>    /**
+<a name="line121"></a>     * boundary 
+<a name="line122"></a>     * 
+<a name="line123"></a>     * @var string
+<a name="line124"></a>     * @access public
+<a name="line125"></a>     */
+<a name="line126"></a>    public $boundary = null;
+<a name="line127"></a>    /**
+<a name="line128"></a>     * user_headers 
+<a name="line129"></a>     * 
+<a name="line130"></a>     * @var array
+<a name="line131"></a>     * @access public
+<a name="line132"></a>     */
+<a name="line133"></a>    public $user_headers = array();
+<a name="line134"></a>    /**
+<a name="line135"></a>     * cookie_header 
+<a name="line136"></a>     * 
+<a name="line137"></a>     * @var array
+<a name="line138"></a>     * @access public
+<a name="line139"></a>     */
+<a name="line140"></a>    public $cookie_header = null;
+<a name="line141"></a>    /**
+<a name="line142"></a>     * get_request_body_by_form_urlencode 
+<a name="line143"></a>     * 
+<a name="line144"></a>     * @param resource $connect 
+<a name="line145"></a>     * @access protected
+<a name="line146"></a>     * @return void
+<a name="line147"></a>     */
+<a name="line148"></a>    protected function get_request_body_by_form_urlencode($connect) {
+<a name="line149"></a>        $receive_length = 0;
+<a name="line150"></a>        $body = '';
+<a name="line151"></a>        while($read = fread($connect,1024)) {
+<a name="line152"></a>            $receive_length+=strlen($read);
+<a name="line153"></a>            if($receive_length > $this->request_body_length) 
+<a name="line154"></a>                return $this->return_server_status(413);
+<a name="line155"></a>            $body .= $read;
+<a name="line156"></a>        }
+<a name="line157"></a>        parse_str($body,$_POST);
+<a name="line158"></a>    }
+<a name="line159"></a>    /**
+<a name="line160"></a>     * get_request_body_by_multipart 
+<a name="line161"></a>     * 
+<a name="line162"></a>     * @param resource $connect 
+<a name="line163"></a>     * @access protected
+<a name="line164"></a>     * @return void
+<a name="line165"></a>     */
+<a name="line166"></a>    protected function get_request_body_by_multipart($connect) {
+<a name="line167"></a>        $receive_length = 0;
+<a name="line168"></a>        $boundary_count = 0;
+<a name="line169"></a>        $cl_count = 0;
+<a name="line170"></a>        $form_input = array();
+<a name="line171"></a>        $body_end = false;
+<a name="line172"></a>        while($read = fgets($connect)) {
+<a name="line173"></a>            $receive_length+=strlen($read);
+<a name="line174"></a>            if($receive_length > $this->request_body_length) {
+<a name="line175"></a>                return $this->return_server_status(413);
+<a name="line176"></a>            }
+<a name="line177"></a>            if($read == "{$this->boundary}\r\n") {
+<a name="line178"></a>                $boundary_count++;
+<a name="line179"></a>            } else if($read == "\r\n" && $cl_count == $boundary_count-1) {
+<a name="line180"></a>                $cl_count++;
+<a name="line181"></a>            } else if($read == "{$this->boundary}--\r\n") {
+<a name="line182"></a>                $body_end = true;
+<a name="line183"></a>                break;
+<a name="line184"></a>            } else {
+<a name="line185"></a>                if($boundary_count == $cl_count +1) {
+<a name="line186"></a>                    $field_str = strtolower(trim(strtok($read,':')));
+<a name="line187"></a>                    if($field_str == 'content-disposition') {
+<a name="line188"></a>                        $field_sub = strtok(';');
+<a name="line189"></a>                        if($field_sub === false) continue;
+<a name="line190"></a>                        $form_data = $form_file_name = $form_input_name = $field_is_array = false;
+<a name="line191"></a>                        $field_sub = trim($field_sub);
+<a name="line192"></a>                        while($field_sub !== false) {
+<a name="line193"></a>                            $field_sub = trim($field_sub);;
+<a name="line194"></a>                            switch($field_sub) {
+<a name="line195"></a>                            case 'form-data':
+<a name="line196"></a>                                $form_data = true;
+<a name="line197"></a>                                $field_sub = strtok('=');
+<a name="line198"></a>                            break;
+<a name="line199"></a>                            case 'name':
+<a name="line200"></a>                                $field_sub = strtok(';');
+<a name="line201"></a>                                $form_input_name = trim(trim($field_sub),'"');
+<a name="line202"></a>                                $field_sub = strtok('=');
+<a name="line203"></a>                            break;
+<a name="line204"></a>                            case 'filename':
+<a name="line205"></a>                                $field_sub = strtok('"');
+<a name="line206"></a>                                $form_file_name = trim($field_sub);
+<a name="line207"></a>                                $field_sub = strtok('=');
+<a name="line208"></a>                            break;
+<a name="line209"></a>                            default:
+<a name="line210"></a>                                $field_sub = strtok('=');
+<a name="line211"></a>                            }
+<a name="line212"></a>                        }
+<a name="line213"></a>                        if($form_data && $form_input_name) {
+<a name="line214"></a>                            if(substr($form_input_name,-1,2) == '[]') {
+<a name="line215"></a>                                $form_input[$boundary_count]['name_is_array'] = true;
+<a name="line216"></a>                                $form_input_name = substr($form_inpt_name,0,strlen($form_input_name)-2);
+<a name="line217"></a>                            } else {
+<a name="line218"></a>                                $form_input[$boundary_count]['name_is_array'] = false;
+<a name="line219"></a>                            }
+<a name="line220"></a>                            $form_input[$boundary_count]['name'] =  $form_input_name;
+<a name="line221"></a>                            if($form_file_name) {
+<a name="line222"></a>                                $form_input[$boundary_count]['file'] = $form_file_name;
+<a name="line223"></a>                            }
+<a name="line224"></a>                        }
+<a name="line225"></a>                    } else if('content-type' == $field_str) {
+<a name="line226"></a>                        $field_value = strtok(';');
+<a name="line227"></a>                        if($field_value === false) {
+<a name="line228"></a>                            list(,$field_value) = explode(':',$read,2);
+<a name="line229"></a>                            $form_input[$boundary_count]['type'] = trim($field_value);
+<a name="line230"></a>                        } else {
+<a name="line231"></a>                            $form_input[$boundary_count]['type'] = trim($field_value);
+<a name="line232"></a>                        }
+<a name="line233"></a>                    }
+<a name="line234"></a>                } else {
+<a name="line235"></a>                    if(isset($form_input[$boundary_count]['fp'])) {
+<a name="line236"></a>                        $form_input[$boundary_count]['size'] += strlen($read);
+<a name="line237"></a>                        $re = fwrite($form_input[$boundary_count]['fp'],$read);
+<a name="line238"></a>                    } elseif(isset($form_input[$boundary_count['data']])) {
+<a name="line239"></a>                        $form_input[$boundary_count]['data'] .= $read;
+<a name="line240"></a>                    } else {
+<a name="line241"></a>                        if(isset($form_input[$boundary_count]['file'])) {
+<a name="line242"></a>                            $form_input[$boundary_count]['tmp'] = tempnam($this->upfile_tmp_dir,'tmp_XPF_');
+<a name="line243"></a>                            $this->upfile_tmp_list[] = $form_input[$boundary_count]['tmp'];
+<a name="line244"></a>                            $form_input[$boundary_count]['fp'] = @fopen($form_input[$boundary_count]['tmp'], 'w');
+<a name="line245"></a>                            if($form_input[$boundary_count]['fp'] == false) {
+<a name="line246"></a>                                $errno = UPLOAD_ERR_CANT_WRITE;
+<a name="line247"></a>                            } else if(strlen($read) > 0) {
+<a name="line248"></a>                                $re = fwrite($form_input[$boundary_count]['fp'],$read);
+<a name="line249"></a>                            } else {
+<a name="line250"></a>                                unset($form_input[$boundary_count]['fp']);
+<a name="line251"></a>                            }
+<a name="line252"></a>                        } else {
+<a name="line253"></a>                            $form_input[$boundary_count]['data'] = $read;
+<a name="line254"></a>                        }
+<a name="line255"></a>                        $form_input[$boundary_count]['size'] = strlen($read);
+<a name="line256"></a>                    }
+<a name="line257"></a>                }
+<a name="line258"></a>            }
+<a name="line259"></a>        }
+<a name="line260"></a>        foreach($form_input as $field) {
+<a name="line261"></a>            $input =  array();
+<a name="line262"></a>            if(isset($field['file']) && $field['file']) {
+<a name="line263"></a>                if(isset($errno) && $errno == UPLOAD_ERR_CANT_WRITE) {
+<a name="line264"></a>                    $errno = UPLOAD_ERR_CANT_WRITE;
+<a name="line265"></a>                } elseif($body_end == false ) {
+<a name="line266"></a>                    $errno = UPLOAD_ERR_PARTIAL;
+<a name="line267"></a>                } else if(!isset($field['fp'])) {
+<a name="line268"></a>                    $errno = UPLOAD_ERR_NO_FILE;
+<a name="line269"></a>                } else {
+<a name="line270"></a>                    $errno = UPLOAD_ERR_OK;
+<a name="line271"></a>                }
+<a name="line272"></a>                fclose($field['fp']);
+<a name="line273"></a>                if($field['name_is_array']) {
+<a name="line274"></a>                    $_FILES[$field['name']]['name'][] = $field['file'];
+<a name="line275"></a>                    $_FILES[$field['name']]['type'][] = $field['type'];
+<a name="line276"></a>                    $_FILES[$field['name']]['size'][] = $field['size'];
+<a name="line277"></a>                    $_FILES[$field['name']]['tmp_name'][] = $field['tmp'];
+<a name="line278"></a>                    $_FILES[$name]['error'][] = $errno;
+<a name="line279"></a>                } else {
+<a name="line280"></a>                    $_FILES[$field['name']]['name'] = $field['file'];
+<a name="line281"></a>                    $_FILES[$field['name']]['type'] = $field['type'];
+<a name="line282"></a>                    $_FILES[$field['name']]['size'] = $field['size'];
+<a name="line283"></a>                    $_FILES[$field['name']]['tmp_name'] = $field['tmp'];
+<a name="line284"></a>                    $_FILES[$name]['error'] = $errno;
+<a name="line285"></a>                }
+<a name="line286"></a>            } else {
+<a name="line287"></a>                if($field['name_is_array']) {
+<a name="line288"></a>                    $_POST[$field['name']][] = rtrim($field['data']);
+<a name="line289"></a>                } else {
+<a name="line290"></a>                    $_POST[$field['name']] = rtrim($field['data']);
+<a name="line291"></a>                }
+<a name="line292"></a>            }
+<a name="line293"></a>        }
+<a name="line294"></a>    }
+<a name="line295"></a>    /**
+<a name="line296"></a>     * get_request_header 
+<a name="line297"></a>     * 
+<a name="line298"></a>     * @param resource $connect 
+<a name="line299"></a>     * @access protected
+<a name="line300"></a>     * @return void
+<a name="line301"></a>     */
+<a name="line302"></a>    protected function get_request_header($connect) {
+<a name="line303"></a>        $this->request_static_file = null;
+<a name="line304"></a>        $this->request_static_file_state = false;
+<a name="line305"></a>        $this->get_request_start_line($connect);
+<a name="line306"></a>        while($read = fgets($connect,1024)) {
+<a name="line307"></a>            switch($read) {
+<a name="line308"></a>                case "\r\n":
+<a name="line309"></a>                return;
+<a name="line310"></a>                default:
+<a name="line311"></a>                $field = explode(':',$read,2);
+<a name="line312"></a>                $field_name = strtoupper(trim($field[0]));
+<a name="line313"></a>                $field_value = empty($field[1]) ? '' : trim($field[1]);
+<a name="line314"></a>                switch($field_name) {
+<a name="line315"></a>                    case 'HOST':
+<a name="line316"></a>                    $_SERVER['HTTP_HOST'] = $field_value;
+<a name="line317"></a>                    break;
+<a name="line318"></a>                    case 'USER-AGENT':
+<a name="line319"></a>                    $_SERVER['HTTP_USER_AGENT'] = $field_value;
+<a name="line320"></a>                    break;
+<a name="line321"></a>                    case 'REFERER':
+<a name="line322"></a>                    $_SERVER['HTTP_REFERER'] = $field_value;
+<a name="line323"></a>                    break;
+<a name="line324"></a>                    case 'ACCEPT':
+<a name="line325"></a>                    $_SERVER['HTTP_ACCEPT'] = $field_value;
+<a name="line326"></a>                    break;
+<a name="line327"></a>                    case 'ACCEPT-CHARSET':
+<a name="line328"></a>                    $_SERVER['HTTP_ACCEPT_CHARSET'] = $field_value;
+<a name="line329"></a>                    break;
+<a name="line330"></a>                    case 'ACCEPT-ENCODING':
+<a name="line331"></a>                    $_SERVER['HTTP_ACCEPT_ENCODING'] = $field_value;
+<a name="line332"></a>                    break;
+<a name="line333"></a>                    case 'ACCEPT-LANGUAGE':
+<a name="line334"></a>                    $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $field_value;
+<a name="line335"></a>                    break;
+<a name="line336"></a>                    case 'CONNECTION':
+<a name="line337"></a>                    $_SERVER['HTTP_CONNECTION'] = $field_value;
+<a name="line338"></a>                    break;
+<a name="line339"></a>                    case 'COOKIE':
+<a name="line340"></a>                    $_SERVER['HTTP_COOKIE'] = $field_value;
+<a name="line341"></a>                    get_cookie();
+<a name="line342"></a>                    break;
+<a name="line343"></a>                    case 'CONTENT-TYPE':
+<a name="line344"></a>                    $field_value = strtolower($field_value);
+<a name="line345"></a>                    $sub_field = strtok($field_value,';');
+<a name="line346"></a>                    $this->boundary = null;
+<a name="line347"></a>                    while($sub_field !== false) {
+<a name="line348"></a>                        $sub_field = trim($sub_field);
+<a name="line349"></a>                        switch($sub_field) {
+<a name="line350"></a>                            case 'multipart/form-data':
+<a name="line351"></a>                            $this->content_type = $sub_field;
+<a name="line352"></a>                            $sub_field = strtok('=');
+<a name="line353"></a>                            break;
+<a name="line354"></a>                            case 'boundary':
+<a name="line355"></a>                            $sub_field = strtok(';');
+<a name="line356"></a>                            if($sub_field === false) {
+<a name="line357"></a>                                $lt = explode('=',$field_value,2);
+<a name="line358"></a>                                $this->boundary = '--'. trim(array_pop($lt));
+<a name="line359"></a>                            } else {
+<a name="line360"></a>                                $this->boundary = '--'.trim($sub_field);
+<a name="line361"></a>                            }
+<a name="line362"></a>                            break;
+<a name="line363"></a>                            case 'application/x-www-form-urlencoded':
+<a name="line364"></a>                            $this->content_type = $sub_field;
+<a name="line365"></a>                            $sub_field = strtok('=');
+<a name="line366"></a>                            break;
+<a name="line367"></a>                            case 'charset':
+<a name="line368"></a>                            $sub_field = strtok(';');
+<a name="line369"></a>                            if($sub_field === false) {
+<a name="line370"></a>                                $lt = explode('=',$field_value,2);
+<a name="line371"></a>                                $this->content_charset = trim(array_pop($lt));
+<a name="line372"></a>                            } else {
+<a name="line373"></a>                                $this->content_charset = trim($sub_field);
+<a name="line374"></a>                            }
+<a name="line375"></a>                            break;
+<a name="line376"></a>                            default:
+<a name="line377"></a>                            $sub_field = strtok('=');
+<a name="line378"></a>                            break;
+<a name="line379"></a>                        }
+<a name="line380"></a>                    }
+<a name="line381"></a>                    break;
+<a name="line382"></a>                    case 'CONTENT-LENGTH':
+<a name="line383"></a>                    $this->content_length = $field_value;
+<a name="line384"></a>                        if($field_value > $this->request_body_length) {
+<a name="line385"></a>                            return $this->return_server_status('413');
+<a name="line386"></a>                        }
+<a name="line387"></a>                    break;
+<a name="line388"></a>                    default:
+<a name="line389"></a>                    $field_name = 'HTTP_' . str_replace('-','_',strtoupper($field_name));
+<a name="line390"></a>                    $_SERVER[$field_name] = $field_value;
+<a name="line391"></a>                    break;
+<a name="line392"></a>                }
+<a name="line393"></a>            }
+<a name="line394"></a>        }
+<a name="line395"></a>    }
+<a name="line396"></a>    /**
+<a name="line397"></a>     * get_request_start_line 
+<a name="line398"></a>     * RFC 3986 , RFC1738
+<a name="line399"></a>     * 
+<a name="line400"></a>     * @param resource $connect 
+<a name="line401"></a>     * @access protected
+<a name="line402"></a>     * @return void
+<a name="line403"></a>     */
+<a name="line404"></a>    protected function get_request_start_line($connect) {
+<a name="line405"></a>        $start_line = trim(fgets($connect));
+<a name="line406"></a>        if(empty($start_line)) {
+<a name="line407"></a>            return $this->return_server_status(400);
+<a name="line408"></a>        }
+<a name="line409"></a>        $uri_list = explode(' ', $start_line);
+<a name="line410"></a>        if($uri_list[0] != 'POST' && $uri_list[0] != 'GET') {
+<a name="line411"></a>            $this->return_server_status('405');
+<a name="line412"></a>            return false;
+<a name="line413"></a>        }
+<a name="line414"></a>        if(empty($uri_list[2]) || $uri_list[2] != 'HTTP/1.1') {
+<a name="line415"></a>            $this->return_server_status('505');
+<a name="line416"></a>            return false;
+<a name="line417"></a>        }
+<a name="line418"></a>        $_SERVER['REQUEST_METHOD'] = $uri_list[0];
+<a name="line419"></a>        if(empty($uri_list[1])) {
+<a name="line420"></a>            $uri_list[1] = '/';
+<a name="line421"></a>            $_SERVER['DOCUMENT_URI'] = $this->index[0];
+<a name="line422"></a>        }
+<a name="line423"></a>        $this->get_access_file_info($uri_list[1]);
+<a name="line424"></a>        $_SERVER['REQUEST_URI'] = urldecode($uri_list[1]);
+<a name="line425"></a>        if(($qtag_idx = strpos($_SERVER['REQUEST_URI'],'?')) !== false) {
+<a name="line426"></a>            $_SERVER['DOCUMENT_URI'] = substr($_SERVER['REQUEST_URI'],0,$qtag_idx);
+<a name="line427"></a>            $_SERVER['QUERY_STRING'] = substr($_SERVER['REQUEST_URI'],$qtag_idx+1);
+<a name="line428"></a>            parse_str($_SERVER['QUERY_STRING'], $_GET);
+<a name="line429"></a>        } else {
+<a name="line430"></a>            $_SERVER['DOCUMENT_URI'] = $uri_list[1] == '/' ? $this->index[0] : $_SERVER['REQUEST_URI'];
+<a name="line431"></a>            $_SERVER['QUERY_STRING'] = '';
+<a name="line432"></a>        }
+<a name="line433"></a>    }
+<a name="line434"></a>    /**
+<a name="line435"></a>     * return_server_status 
+<a name="line436"></a>     * 
+<a name="line437"></a>     * @param int $code 
+<a name="line438"></a>     * @access protected
+<a name="line439"></a>     * @return void
+<a name="line440"></a>     */
+<a name="line441"></a>    protected function return_server_status($code) {
+<a name="line442"></a>        $response_status_array = array(
+<a name="line443"></a>            100=>'Continue',101=>'Switching Protocols',
+<a name="line444"></a>            200=>'OK',201=>'Created',202=>'Accepted',
+<a name="line445"></a>            203=>'Non-Authoritative Information',
+<a name="line446"></a>            204=>'No Content',205=>'Reset Content',
+<a name="line447"></a>            206=>'Partial Content',300=>'Multiple Choices',
+<a name="line448"></a>            301=>'Moved Permanently',302=>'Moved Temporarily',
+<a name="line449"></a>            303=>'See Other',304=>'Not Modified',305=>'Use Proxy',
+<a name="line450"></a>            400=>'Bad Request',401=>'Unauthorized',
+<a name="line451"></a>            402=>'Payment Required',403=>'Forbidden',
+<a name="line452"></a>            404=>'Not Found',405=>'Method Not Allowed',
+<a name="line453"></a>            406=>'Not Acceptable',407=>'Proxy Authentication Required',
+<a name="line454"></a>            408=>'Request Time-out',409=>'Conflict',410=>'Gone',
+<a name="line455"></a>            411=>'Length Required',412=>'Precondition Failed',
+<a name="line456"></a>            413=>'Request Entity Too Large',414=>'Request-URI Too Large',
+<a name="line457"></a>            415=>'Unsupported Media Type',500=>'Internal Server Error',
+<a name="line458"></a>            501=>'Not Implemented',502=>'Bad Gateway',503=>'Service Unavailable',
+<a name="line459"></a>            504=>'Gateway Time-out',505=>'HTTP Version not supported',
+<a name="line460"></a>            0=>null);
+<a name="line461"></a>        $this->response_status_code = $code;
+<a name="line462"></a>        $this->response_status = "HTTP/1.1 $code {$response_status_array[$code]}\r\n";
+<a name="line463"></a>    }
+<a name="line464"></a>    /**
+<a name="line465"></a>     * get_access_file_info 
+<a name="line466"></a>     * 
+<a name="line467"></a>     * @param string $uri 
+<a name="line468"></a>     * @access protected
+<a name="line469"></a>     * @return void
+<a name="line470"></a>     */
+<a name="line471"></a>    protected function get_access_file_info($uri) {
+<a name="line472"></a>        $uri_info = pathinfo($uri);
+<a name="line473"></a>        if(isset($uri_info['extension']) && $uri_info['extension'] != $this->php_file_ext) {
+<a name="line474"></a>            $this->request_static_file = true;
+<a name="line475"></a>            if(is_dir($this->document_root)) {
+<a name="line476"></a>                if(file_exists("{$this->document_root}{$uri}")) {
+<a name="line477"></a>                    $this->request_static_file = "{$this->document_root}{$uri}";
+<a name="line478"></a>                    $this->request_static_file_state = true;
+<a name="line479"></a>                    $this->request_static_file_type = get_file_mime($this->request_static_file);
+<a name="line480"></a>                    if($uri_info['extension'] == 'js') {
+<a name="line481"></a>                        list(,$charset) = explode(';',$this->request_static_file_type);
+<a name="line482"></a>                        $this->request_static_file_type = "application/x-javascript;$charset";
+<a name="line483"></a>                    } elseif($uri_info['extension'] == 'css') {
+<a name="line484"></a>                        list(,$charset) = explode(';',$this->request_static_file_type);
+<a name="line485"></a>                        $this->request_static_file_type = "text/css;$charset";
+<a name="line486"></a>                    }
+<a name="line487"></a>                } else {
+<a name="line488"></a>                    return $this->return_server_status(404);
+<a name="line489"></a>                }
+<a name="line490"></a>                if(is_readable($this->request_static_file) === false) {
+<a name="line491"></a>                    return $this->return_server_status(403);
+<a name="line492"></a>                }
+<a name="line493"></a>            } else {
+<a name="line494"></a>                $this->return_server_status(404);
+<a name="line495"></a>            }
+<a name="line496"></a>        }
+<a name="line497"></a>    }
+<a name="line498"></a>    /**
+<a name="line499"></a>     * get_request_body 
+<a name="line500"></a>     * RFC 1867
+<a name="line501"></a>     * 
+<a name="line502"></a>     * @param resource $connect 
+<a name="line503"></a>     * @access private
+<a name="line504"></a>     * @return void
+<a name="line505"></a>     */
+<a name="line506"></a>    private function get_request_body($connect) {
+<a name="line507"></a>        if(!empty($this->content_type)) {
+<a name="line508"></a>            switch($this->content_type) {
+<a name="line509"></a>                case 'application/x-www-form-urlencoded':
+<a name="line510"></a>                return $this->get_request_body_by_form_urlencode($connect);
+<a name="line511"></a>                case 'multipart/form-data':
+<a name="line512"></a>                return $this->get_request_body_by_multipart($connect);
+<a name="line513"></a>            }
+<a name="line514"></a>        }
+<a name="line515"></a>        return;
+<a name="line516"></a>    }
+<a name="line517"></a>
+<a name="line518"></a>    /**
+<a name="line519"></a>     * set_length 
+<a name="line520"></a>     * 
+<a name="line521"></a>     * @param int $len 
+<a name="line522"></a>     * @access private
+<a name="line523"></a>     * @return void
+<a name="line524"></a>     */
+<a name="line525"></a>    private function set_length($len) {
+<a name="line526"></a>        return "Content-Length:$len\r\n";
+<a name="line527"></a>    }
+<a name="line528"></a>  
+<a name="line529"></a>    /**
+<a name="line530"></a>     * get_response_header 
+<a name="line531"></a>     * RFC2616 set HTTP/1.1 response header
+<a name="line532"></a>     * 
+<a name="line533"></a>     * @access private
+<a name="line534"></a>     * @return void
+<a name="line535"></a>     */
+<a name="line536"></a>    private function get_response_header() {
+<a name="line537"></a>        if(!empty($this->user_headers)) {
+<a name="line538"></a>            foreach($this->user_headers as $header) {
+<a name="line539"></a>                $field = explode(':',$header);
+<a name="line540"></a>                $fieldname = strtolower(trim($field[0]));
+<a name="line541"></a>                switch($fieldname) {
+<a name="line542"></a>                    case 'location':
+<a name="line543"></a>                    $this->return_server_status(301);
+<a name="line544"></a>                    $u_location = $field[1];
+<a name="line545"></a>                    break;
+<a name="line546"></a>                    case 'cache-control':
+<a name="line547"></a>                    $u_cache_control = $field[1];
+<a name="line548"></a>                    break;
+<a name="line549"></a>                    case 'connection':
+<a name="line550"></a>                    $u_connect = $field[1];
+<a name="line551"></a>                    break;
+<a name="line552"></a>                    case 'content-language':
+<a name="line553"></a>                    $u_content_language = $field[1];
+<a name="line554"></a>                    break;
+<a name="line555"></a>                    default:
+<a name="line556"></a>                    break;
+<a name="line557"></a>                }
+<a name="line558"></a>            }
+<a name="line559"></a>        }
+<a name="line560"></a>        $header = $this->response_status;
+<a name="line561"></a>        if($this->request_static_file_state === true) {
+<a name="line562"></a>            $header .= "Cache-Control:max-age={$this->cache_control_time}\r\n";
+<a name="line563"></a>        } else if(!empty($u_cache_control)) {
+<a name="line564"></a>            $header .= "Cache-Control:{$u_cache_control}\r\n";
+<a name="line565"></a>        } else {
+<a name="line566"></a>            $header .= "Cache-Control:no-cache\r\n";
+<a name="line567"></a>            $header .= "Pragma:no-cache\r\n";
+<a name="line568"></a>        }
+<a name="line569"></a>        if(!empty($u_location)) {
+<a name="line570"></a>            $header .= "Location:{$u_location}\r\n";
+<a name="line571"></a>        }
+<a name="line572"></a>        if(isset($_SERVER['HTTP_CONNECTION'])) {
+<a name="line573"></a>            $header .= "Connection:{$_SERVER['HTTP_CONNECTION']}\r\n";
+<a name="line574"></a>        } else if(!empty($u_connect)) {
+<a name="line575"></a>            $header .= "Connection:{$u_connect}\r\n";
+<a name="line576"></a>        } else {
+<a name="line577"></a>            $header .= "Connection:Keep-Alive\r\n";
+<a name="line578"></a>        }
+<a name="line579"></a>        $gdate = $this->set_server_date(gtime());
+<a name="line580"></a>        $header .= "Date:{$gdate} GMT\r\n";
+<a name="line581"></a>        if(!empty($u_content_language)) {
+<a name="line582"></a>            $header .= "Content-Language:{$u_content_language}\r\n";
+<a name="line583"></a>        } else {
+<a name="line584"></a>            $header .= "Content-Language:zh\r\n";
+<a name="line585"></a>            }
+<a name="line586"></a>        if($this->request_static_file_type) {
+<a name="line587"></a>            $header .= "Content-Type:{$this->request_static_file_type}\r\n";
+<a name="line588"></a>            $last_modif = $this->set_server_date(filemtime($this->request_static_file));
+<a name="line589"></a>            $header .= "Last-Modified:{$last_modif} GMT\r\n";
+<a name="line590"></a>        } else {
+<a name="line591"></a>            $header .= "Content-Type:text/html;charset=utf-8\r\n";
+<a name="line592"></a>        }
+<a name="line593"></a>        $header .= "Server:XPHPFramework\r\n";
+<a name="line594"></a>        return $header;
+<a name="line595"></a>    }
+<a name="line596"></a>    /**
+<a name="line597"></a>     * set_server_date 
+<a name="line598"></a>     * 
+<a name="line599"></a>     * @param int $time 
+<a name="line600"></a>     * @access private
+<a name="line601"></a>     * @return void
+<a name="line602"></a>     */
+<a name="line603"></a>    private function set_server_date($time) {
+<a name="line604"></a>        return gmdate('D, d M Y H:i:s', $time);
+<a name="line605"></a>    }
+<a name="line606"></a>    /**
+<a name="line607"></a>     * get_setcookie_header 
+<a name="line608"></a>     * RFC6265 set cookie
+<a name="line609"></a>     * 
+<a name="line610"></a>     * @access private
+<a name="line611"></a>     * @return void
+<a name="line612"></a>     */
+<a name="line613"></a>    private function get_setcookie_header() {
+<a name="line614"></a>        $header = '';
+<a name="line615"></a>        $cookie_arr = $this->scheduler->app_instance->R->C->get_cookie_array();
+<a name="line616"></a>        if(empty($cookie_arr)) {
+<a name="line617"></a>            return '';
+<a name="line618"></a>        }
+<a name="line619"></a>        foreach($cookie_arr as $cs) {
+<a name="line620"></a>            $header .= $cs;
+<a name="line621"></a>        }
+<a name="line622"></a>        if(!empty($header)) {
+<a name="line623"></a>            $header = "Set-Cookie:{$header}\r\n";
+<a name="line624"></a>        }
+<a name="line625"></a>        return $header;
+<a name="line626"></a>    }
+<a name="line627"></a>  
+<a name="line628"></a>}
+<a name="line629"></a></pre>
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xhttpresponse.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

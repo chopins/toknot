@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Wed, 29 Aug 2012 07:49:30 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XSSH2.php (ToKnot Documentation)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xssh2.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>XSSH2.php</h1>
+<div class="comment" id="overview_description"><p>Toknot</p><p>XSSH2</p><p>PHP version 5.3</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>
+<a name="line3"></a>/**
+<a name="line4"></a> * Toknot
+<a name="line5"></a> *
+<a name="line6"></a> * XSSH2
+<a name="line7"></a> *
+<a name="line8"></a> * PHP version 5.3
+<a name="line9"></a> * 
+<a name="line10"></a> * @author chopins xiao <chopins.xiao@gmail.com>
+<a name="line11"></a> * @copyright  2012 The Authors
+<a name="line12"></a> * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line13"></a> * @link       http://blog.toknot.com
+<a name="line14"></a> * @since      File available since Release $id$
+<a name="line15"></a> */
+<a name="line16"></a>
+<a name="line17"></a>exists_frame();
+<a name="line18"></a>
+<a name="line19"></a>/**
+<a name="line20"></a> * XSSH2 
+<a name="line21"></a> * 
+<a name="line22"></a> * @version $id$
+<a name="line23"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line24"></a> */
+<a name="line25"></a>class XSSH2 {
+<a name="line26"></a>    private $host = 0;
+<a name="line27"></a>    private $port = 22;
+<a name="line28"></a>    private $ssh_con = null;
+<a name="line29"></a>    private $ssh_server_fp = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+<a name="line30"></a>    private $keyfile_dir = null;
+<a name="line31"></a>    private $ssh_user = 'sysnc';
+<a name="line32"></a>    private $ssh_auth_pass = null;
+<a name="line33"></a>    private $sftp = null;
+<a name="line34"></a>    private $last_error = null;
+<a name="line35"></a>    private $auth_type = 1; // 1 is username and password, 0 is auth_pub_file
+<a name="line36"></a>    public function __construct($host, $port,
+<a name="line37"></a>                                $ssh_user = null, $ssh_pass = null, $keyfile_dir =null) {
+<a name="line38"></a>        dl_extension('ssh2','ssh2_connect');
+<a name="line39"></a>        $this->host = $host;
+<a name="line40"></a>        $this->port = $port;
+<a name="line41"></a>        $this->keyfile_dir - $keyfile_dir;
+<a name="line42"></a>        $this->ssh_user = $ssh_user;
+<a name="line43"></a>        $this->ssh_auth_pass = $ssh_pass;
+<a name="line44"></a>    }
+<a name="line45"></a>    public function connect() {
+<a name="line46"></a>        $methods = array('hostkey'=>'ssh-rsa',);
+<a name="line47"></a>        $this->ssh_con = ssh2_connect($this->host,$this->port, $methods);
+<a name="line48"></a>        if($this->ssh_con == false) {
+<a name="line49"></a>            throw new XException('cannot connect to ssh server');
+<a name="line50"></a>        }
+<a name="line51"></a>        if($this->auth_type) {
+<a name="line52"></a>            ssh2_auth_password($this->ssh_con,$this->ssh_user,$this->ssh_auth_pass);
+<a name="line53"></a>        } else {
+<a name="line54"></a>            $fingerprint = ssh2_fingerprint($this->ssh_con, SSH2_FINGERPRINT_MD5 | SSH2_FINGERPRINT_HEX);
+<a name="line55"></a>            if (strcmp($this->ssh_server_fp, $fingerprint) !== 0) {
+<a name="line56"></a>                throw new XException('Unable to verify server identity!');
+<a name="line57"></a>            }
+<a name="line58"></a>            $this->auth_pub_file();
+<a name="line59"></a>        }
+<a name="line60"></a>    }
+<a name="line61"></a>    public function cmd($cmd) {
+<a name="line62"></a>        if(!($cmd_stream = ssh2_exec($this->ssh_con,$cmd))) {
+<a name="line63"></a>            throw new XException('SSH exec command '.$cmd.' failure');
+<a name="line64"></a>        }
+<a name="line65"></a>        $stderr = ssh2_fetch_stream($cmd_stream, SSH2_STREAM_STDERR);
+<a name="line66"></a>        stream_set_blocking($cmd_stream, true);
+<a name="line67"></a>        $data = stream_get_contents($cmd_stream);
+<a name="line68"></a>        fclose($stream);
+<a name="line69"></a>        $this->last_error = stream_get_contents($stderr);
+<a name="line70"></a>        fclose($stderr);
+<a name="line71"></a>        return $data;
+<a name="line72"></a>    }
+<a name="line73"></a>    public function get_last_error() {
+<a name="line74"></a>        return $this->last_error;
+<a name="line75"></a>    }
+<a name="line76"></a>    public function mkdir($path) {
+<a name="line77"></a>        if($this->sftp_file_exists($path) && $this->sftp_is_dir($path) == false) {
+<a name="line78"></a>            $this->rm($path);
+<a name="line79"></a>        }
+<a name="line80"></a>        $result = ssh2_sftp_mkdir($this->sftp, $path,0755,true);
+<a name="line81"></a>        return true;
+<a name="line82"></a>    }
+<a name="line83"></a>    public function create_sftp() {
+<a name="line84"></a>        $this->sftp = ssh2_sftp($this->ssh_con);
+<a name="line85"></a>    }
+<a name="line86"></a>    public function sftp_file_exists($path) {
+<a name="line87"></a>        $result = file_exists("ssh2.sftp://{$this->sftp}/{$path}");
+<a name="line88"></a>       return $result;
+<a name="line89"></a>    }
+<a name="line90"></a>    public function sftp_ls($path) {
+<a name="line91"></a>        return scandir("ssh2.sftp://{$this->sftp}/{$path}");
+<a name="line92"></a>    }
+<a name="line93"></a>    public function  sftp_is_dir($path) {
+<a name="line94"></a>        return is_dir("ssh2.sftp://{$this->sftp}/{$path}");
+<a name="line95"></a>    }
+<a name="line96"></a>    public function mv($from, $to) {
+<a name="line97"></a>        if($this->sftp_file_exists($to)) {
+<a name="line98"></a>            return false;
+<a name="line99"></a>        }
+<a name="line100"></a>        if($this->sftp_file_exists($from)) {
+<a name="line101"></a>            ssh2_sftp_rename($this->sftp,$from,$to);
+<a name="line102"></a>        }
+<a name="line103"></a>    }
+<a name="line104"></a>    public function rm($path) {
+<a name="line105"></a>        if(!$this->sftp_file_exists($path)) return 1;
+<a name="line106"></a>        if($this->sftp_is_dir($path)) {
+<a name="line107"></a>            $file_list = $this->sftp_ls($path);
+<a name="line108"></a>            foreach($file_list as $file) {
+<a name="line109"></a>                if($file == '.' || $file == '..') continue;
+<a name="line110"></a>                $this->rm($file);
+<a name="line111"></a>            }
+<a name="line112"></a>            $result = rmdir("ssh2.sftp://{$this->sftp}/{$path}");
+<a name="line113"></a>            //$result = ssh2_sftp_rmdir($this->sftp,$path);
+<a name="line114"></a>            return $result;
+<a name="line115"></a>        } else {
+<a name="line116"></a>            return ssh2_sftp_unlink($this->sftp, $path);
+<a name="line117"></a>        }
+<a name="line118"></a>    }
+<a name="line119"></a>    public function sendfile($local_file, $remote_file,$mode = 0644) {
+<a name="line120"></a>        $dir = dirname($remote_file);
+<a name="line121"></a>        $this->mkdir($dir);
+<a name="line122"></a>        //return ssh2_scp_send($this->ssh_con,$local_file,$remote_file,$mode);
+<a name="line123"></a>        $sftp_stream = fopen("ssh2.sftp://{$this->sftp}{$remote_file}", 'w');
+<a name="line124"></a>        if(!$sftp_stream) return false;
+<a name="line125"></a>        $local_file_stream = fopen($local_file,'r');
+<a name="line126"></a>        if(!$local_file_stream) return false;
+<a name="line127"></a>        flock($local_file_stream, LOCK_SH);
+<a name="line128"></a>        while(!feof($local_file_stream)) {
+<a name="line129"></a>            //1.6MiB/s
+<a name="line130"></a>            $len = fwrite($sftp_stream,fread($local_file_stream,10240), 10240);
+<a name="line131"></a>            if($len === false) return false;
+<a name="line132"></a>        }
+<a name="line133"></a>        fclose($sftp_stream);
+<a name="line134"></a>        flock($local_file_stream, LOCK_UN);
+<a name="line135"></a>        fclose($local_file_stream);
+<a name="line136"></a>        $this->disconnect();
+<a name="line137"></a>        return true;
+<a name="line138"></a>    }
+<a name="line139"></a>    public function disconnect() {
+<a name="line140"></a>        $stream = ssh2_exec($this->ssh_con,'exit;');
+<a name="line141"></a>        $this->ssh_con = null;
+<a name="line142"></a>    }
+<a name="line143"></a>    public function auth_pub_file() {
+<a name="line144"></a>        $ssh_auth_pub = $this->keyfile_dir.'/'.$this->host.'.id_rsa.pub';
+<a name="line145"></a>        $ssh_auth_priv = $this->keyfile_dir . '/'. $this->host.'.id_rsa';
+<a name="line146"></a>        if (!ssh2_auth_pubkey_file($this->ssh_con, $this->ssh_user,
+<a name="line147"></a>                $ssh_auth_pub, $ssh_auth_priv, $this->ssh_auth_pass)) {
+<a name="line148"></a>                    throw new XException('Autentication rejected by server');
+<a name="line149"></a>            }
+<a name="line150"></a>    }
+<a name="line151"></a>    public function __destruct() {
+<a name="line152"></a>        if(is_resource($this->ssh_con)) {
+<a name="line153"></a>            $this->disconnect();
+<a name="line154"></a>        }
+<a name="line155"></a>    }
+<a name="line156"></a>}
+<a name="line157"></a></pre>
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xssh2.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

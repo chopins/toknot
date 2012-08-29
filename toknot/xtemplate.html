@@ -1,0 +1,626 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Wed, 29 Aug 2012 07:49:30 +0000">
+
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<link rel="start" href="../../overview-summary.html">
+
+<title>XTemplate (ToKnot Documentation)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="../../toknot//package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../../toknot//package-tree.html">Tree</a></li>
+<li><a href="../../overview-files.html">Files</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../todo-list.html">Todo</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../../index.html" target="_top">Frames</a>
+<a href="../../toknot//xtemplate.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">toknot\\XTemplate</div>
+<a href="../../source/xtemplate.php.html#line22" class="location">XTemplate.php at line 22</a>
+
+<h1>Class XTemplate</h1>
+
+<pre class="tree"><a href="../../toknot//xobject.html">XObject</a><br>    └─<strong>XTemplate</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public  class <strong>XTemplate</strong><br>extends <a href="../../toknot//xobject.html">XObject</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>XTemplate</p></div>
+
+<dl>
+<dt>Version:</dt>
+<dd>$id$</dd>
+<dt>Author:</dt>
+<dd>Chopins xiao <chopins.xiao@gmail.com></dd>
+</dl>
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type"> <a href="../../toknot//xtemplateobject.html">XTemplateObject</a></td>
+<td class="description"><p class="name"><a href="#T">$T</a></p><p class="description">T</p></td>
+</tr>
+<tr>
+<td class="type"> stdClass</td>
+<td class="description"><p class="name"><a href="#TPL_INI">$TPL_INI</a></p><p class="description">TPL_INI</p></td>
+</tr>
+<tr>
+<td class="type"> stdClass</td>
+<td class="description"><p class="name"><a href="#_var">$_var</a></p><p class="description">_var</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#cache_dir">$cache_dir</a></p><p class="description">cache_dir</p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#new_complie">$new_complie</a></p><p class="description">new_complie</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#out_html">$out_html</a></p><p class="description">out_html
+the view-class output html</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#tnd">$tnd</a></p><p class="description">tnd</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#tst">$tst</a></p><p class="description">tst</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Fields inherited from toknot\\XObject</th></tr>
+<tr><td><a href="../../toknot//xobject.html#instance">instance</a>, <a href="../../toknot//xobject.html#propertieChange">propertieChange</a></td></tr></table>
+
+<table id="summary_constructor">
+<tr><th colspan="2">Constructor Summary</th></tr>
+<tr>
+<td class="type">protected  void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>()</p><p class="description">__construct</p></td>
+</tr>
+</table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#singleton()">singleton</a>(mixed TPL_INI)</p><p class="description">singleton</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#set_ini()">set_ini</a>(mixed TPL_INI)</p><p class="description">set_ini</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#execute()">execute</a>(<a href="../../toknot//xtemplateobject.html">XTemplateObject</a> T, <a href="../../toknot//xstdclass.html">XStdClass</a> D)</p><p class="description">execute</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#get_cache()">get_cache</a>(mixed T)</p><p class="description">get_cache</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#set_cache_dir()">set_cache_dir</a>(mixed dir)</p><p class="description">set_cache_dir</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#check_t_properties()">check_t_properties</a>()</p><p class="description">check_t_properties</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#display()">display</a>(mixed obc)</p><p class="description">display</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#get_html()">get_html</a>()</p><p class="description">get_html</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#get_tpl_path()">get_tpl_path</a>()</p><p class="description">get_tpl_path</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#fetch_templete()">fetch_templete</a>()</p><p class="description">fetch_templete</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_json_tpl()">parse_json_tpl</a>(mixed tpl_file, mixed comp_file)</p><p class="description">parse_json_tpl</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_json_form()">parse_json_form</a>(mixed file_str)</p><p class="description">parse_json_form</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#inc_tpl()">inc_tpl</a>(mixed tpl)</p><p class="description">inc_tpl</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_html_tpl()">parse_html_tpl</a>(mixed tpl_file, mixed comp_file)</p><p class="description">parse_html_tpl</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_inc()">parse_inc</a>(mixed str)</p><p class="description">parse_inc</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_foreach()">parse_foreach</a>(mixed str)</p><p class="description">parse_foreach</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#del_html_comment()">del_html_comment</a>(mixed str)</p><p class="description">del_html_comment</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_set()">parse_set</a>(mixed str)</p><p class="description">parse_set</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_if()">parse_if</a>(mixed str)</p><p class="description">parse_if</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_var()">parse_var</a>(mixed str)</p><p class="description">parse_var</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#inc_js()">inc_js</a>(mixed file)</p><p class="description">inc_js</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_js()">parse_js</a>(mixed str)</p><p class="description">parse_js</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#inc_css()">inc_css</a>(mixed file)</p><p class="description">inc_css</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_css()">parse_css</a>(mixed str)</p><p class="description">parse_css</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#parse_uri()">parse_uri</a>(mixed str)</p><p class="description">parse_uri</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#replace_url()">replace_url</a>(mixed matches)</p><p class="description">replace_url</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#echo_url()">echo_url</a>(mixed uri)</p><p class="description">echo_url</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#echo_value()">echo_value</a>(mixed str)</p><p class="description">echo_value</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#call_func()">call_func</a>(mixed str)</p><p class="description">call_func</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#create_cache()">create_cache</a>()</p><p class="description">create_cache</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from toknot\\XObject</th></tr>
+<tr><td><a href="../../toknot//xobject.html#__set()">__set</a>, <a href="../../toknot//xobject.html#__singleton()">__singleton</a>, <a href="../../toknot//xobject.html#__xset__()">__xset__</a>, <a href="../../toknot//xobject.html#isChange()">isChange</a></td></tr></table>
+
+<h2 id="detail_field">Field Detail</h2>
+<a href="../../source/xtemplate.php.html#line45" class="location">XTemplate.php at line 45</a>
+
+<h3 id="T">T</h3>
+<code class="signature">public  <a href="../../toknot//xtemplateobject.html">XTemplateObject</a> <strong>$T</strong> = null</code>
+<div class="details">
+<p>T</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line37" class="location">XTemplate.php at line 37</a>
+
+<h3 id="TPL_INI">TPL_INI</h3>
+<code class="signature">public  stdClass <strong>$TPL_INI</strong> = null</code>
+<div class="details">
+<p>TPL_INI</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line29" class="location">XTemplate.php at line 29</a>
+
+<h3 id="_var">_var</h3>
+<code class="signature">public  stdClass <strong>$_var</strong> = null</code>
+<div class="details">
+<p>_var</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line86" class="location">XTemplate.php at line 86</a>
+
+<h3 id="cache_dir">cache_dir</h3>
+<code class="signature">private  string <strong>$cache_dir</strong> = null</code>
+<div class="details">
+<p>cache_dir</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line62" class="location">XTemplate.php at line 62</a>
+
+<h3 id="new_complie">new_complie</h3>
+<code class="signature">private  mixed <strong>$new_complie</strong> = true</code>
+<div class="details">
+<p>new_complie</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line54" class="location">XTemplate.php at line 54</a>
+
+<h3 id="out_html">out_html</h3>
+<code class="signature">private  string <strong>$out_html</strong> = ''</code>
+<div class="details">
+<p>out_html
+the view-class output html</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line78" class="location">XTemplate.php at line 78</a>
+
+<h3 id="tnd">tnd</h3>
+<code class="signature">private  string <strong>$tnd</strong> = &quot;\nXTHTML;\n&quot;</code>
+<div class="details">
+<p>tnd</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line70" class="location">XTemplate.php at line 70</a>
+
+<h3 id="tst">tst</h3>
+<code class="signature">private  string <strong>$tst</strong> = &quot;\n\$this-&gt;out_html.=&lt;&lt;&lt;XTHTML\n&quot;</code>
+<div class="details">
+<p>tst</p></div>
+
+<hr>
+
+<h2 id="detail_method">Constructor Detail</h2>
+<a href="../../source/xtemplate.php.html#line119" class="location">XTemplate.php at line 119</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">protected  void <strong>__construct</strong>()</code>
+<div class="details">
+<p>__construct</p></div>
+
+<hr>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../../source/xtemplate.php.html#line96" class="location">XTemplate.php at line 96</a>
+
+<h3 id="singleton()">singleton</h3>
+<code class="signature">public static  void <strong>singleton</strong>(mixed TPL_INI)</code>
+<div class="details">
+<p>singleton</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line109" class="location">XTemplate.php at line 109</a>
+
+<h3 id="set_ini()">set_ini</h3>
+<code class="signature">private  void <strong>set_ini</strong>(mixed TPL_INI)</code>
+<div class="details">
+<p>set_ini</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line129" class="location">XTemplate.php at line 129</a>
+
+<h3 id="execute()">execute</h3>
+<code class="signature">public  void <strong>execute</strong>(<a href="../../toknot//xtemplateobject.html">XTemplateObject</a> T, <a href="../../toknot//xstdclass.html">XStdClass</a> D)</code>
+<div class="details">
+<p>execute</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line145" class="location">XTemplate.php at line 145</a>
+
+<h3 id="get_cache()">get_cache</h3>
+<code class="signature">public  mixed <strong>get_cache</strong>(mixed T)</code>
+<div class="details">
+<p>get_cache</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line176" class="location">XTemplate.php at line 176</a>
+
+<h3 id="set_cache_dir()">set_cache_dir</h3>
+<code class="signature">public  void <strong>set_cache_dir</strong>(mixed dir)</code>
+<div class="details">
+<p>set_cache_dir</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line189" class="location">XTemplate.php at line 189</a>
+
+<h3 id="check_t_properties()">check_t_properties</h3>
+<code class="signature">private  void <strong>check_t_properties</strong>()</code>
+<div class="details">
+<p>check_t_properties</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line216" class="location">XTemplate.php at line 216</a>
+
+<h3 id="display()">display</h3>
+<code class="signature">public  void <strong>display</strong>(mixed obc)</code>
+<div class="details">
+<p>display</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line248" class="location">XTemplate.php at line 248</a>
+
+<h3 id="get_html()">get_html</h3>
+<code class="signature">public  void <strong>get_html</strong>()</code>
+<div class="details">
+<p>get_html</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line258" class="location">XTemplate.php at line 258</a>
+
+<h3 id="get_tpl_path()">get_tpl_path</h3>
+<code class="signature">public  void <strong>get_tpl_path</strong>()</code>
+<div class="details">
+<p>get_tpl_path</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line283" class="location">XTemplate.php at line 283</a>
+
+<h3 id="fetch_templete()">fetch_templete</h3>
+<code class="signature">public  void <strong>fetch_templete</strong>()</code>
+<div class="details">
+<p>fetch_templete</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line310" class="location">XTemplate.php at line 310</a>
+
+<h3 id="parse_json_tpl()">parse_json_tpl</h3>
+<code class="signature">private  void <strong>parse_json_tpl</strong>(mixed tpl_file, mixed comp_file)</code>
+<div class="details">
+<p>parse_json_tpl</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line331" class="location">XTemplate.php at line 331</a>
+
+<h3 id="parse_json_form()">parse_json_form</h3>
+<code class="signature">private  void <strong>parse_json_form</strong>(mixed file_str)</code>
+<div class="details">
+<p>parse_json_form</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line350" class="location">XTemplate.php at line 350</a>
+
+<h3 id="inc_tpl()">inc_tpl</h3>
+<code class="signature">public  void <strong>inc_tpl</strong>(mixed tpl)</code>
+<div class="details">
+<p>inc_tpl</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line365" class="location">XTemplate.php at line 365</a>
+
+<h3 id="parse_html_tpl()">parse_html_tpl</h3>
+<code class="signature">private  void <strong>parse_html_tpl</strong>(mixed tpl_file, mixed comp_file)</code>
+<div class="details">
+<p>parse_html_tpl</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line392" class="location">XTemplate.php at line 392</a>
+
+<h3 id="parse_inc()">parse_inc</h3>
+<code class="signature">private  void <strong>parse_inc</strong>(mixed str)</code>
+<div class="details">
+<p>parse_inc</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line403" class="location">XTemplate.php at line 403</a>
+
+<h3 id="parse_foreach()">parse_foreach</h3>
+<code class="signature">private  void <strong>parse_foreach</strong>(mixed str)</code>
+<div class="details">
+<p>parse_foreach</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line416" class="location">XTemplate.php at line 416</a>
+
+<h3 id="del_html_comment()">del_html_comment</h3>
+<code class="signature">private  void <strong>del_html_comment</strong>(mixed str)</code>
+<div class="details">
+<p>del_html_comment</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line427" class="location">XTemplate.php at line 427</a>
+
+<h3 id="parse_set()">parse_set</h3>
+<code class="signature">private  void <strong>parse_set</strong>(mixed str)</code>
+<div class="details">
+<p>parse_set</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line438" class="location">XTemplate.php at line 438</a>
+
+<h3 id="parse_if()">parse_if</h3>
+<code class="signature">private  void <strong>parse_if</strong>(mixed str)</code>
+<div class="details">
+<p>parse_if</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line452" class="location">XTemplate.php at line 452</a>
+
+<h3 id="parse_var()">parse_var</h3>
+<code class="signature">private  void <strong>parse_var</strong>(mixed str)</code>
+<div class="details">
+<p>parse_var</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line465" class="location">XTemplate.php at line 465</a>
+
+<h3 id="inc_js()">inc_js</h3>
+<code class="signature">private  void <strong>inc_js</strong>(mixed file)</code>
+<div class="details">
+<p>inc_js</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line490" class="location">XTemplate.php at line 490</a>
+
+<h3 id="parse_js()">parse_js</h3>
+<code class="signature">private  void <strong>parse_js</strong>(mixed str)</code>
+<div class="details">
+<p>parse_js</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line501" class="location">XTemplate.php at line 501</a>
+
+<h3 id="inc_css()">inc_css</h3>
+<code class="signature">private  void <strong>inc_css</strong>(mixed file)</code>
+<div class="details">
+<p>inc_css</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line526" class="location">XTemplate.php at line 526</a>
+
+<h3 id="parse_css()">parse_css</h3>
+<code class="signature">private  void <strong>parse_css</strong>(mixed str)</code>
+<div class="details">
+<p>parse_css</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line537" class="location">XTemplate.php at line 537</a>
+
+<h3 id="parse_uri()">parse_uri</h3>
+<code class="signature">private  void <strong>parse_uri</strong>(mixed str)</code>
+<div class="details">
+<p>parse_uri</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line548" class="location">XTemplate.php at line 548</a>
+
+<h3 id="replace_url()">replace_url</h3>
+<code class="signature">private  void <strong>replace_url</strong>(mixed matches)</code>
+<div class="details">
+<p>replace_url</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line564" class="location">XTemplate.php at line 564</a>
+
+<h3 id="echo_url()">echo_url</h3>
+<code class="signature">public  void <strong>echo_url</strong>(mixed uri)</code>
+<div class="details">
+<p>echo_url</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line578" class="location">XTemplate.php at line 578</a>
+
+<h3 id="echo_value()">echo_value</h3>
+<code class="signature">private  void <strong>echo_value</strong>(mixed str)</code>
+<div class="details">
+<p>echo_value</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line589" class="location">XTemplate.php at line 589</a>
+
+<h3 id="call_func()">call_func</h3>
+<code class="signature">private  void <strong>call_func</strong>(mixed str)</code>
+<div class="details">
+<p>call_func</p></div>
+
+<hr>
+
+<a href="../../source/xtemplate.php.html#line613" class="location">XTemplate.php at line 613</a>
+
+<h3 id="create_cache()">create_cache</h3>
+<code class="signature">public  void <strong>create_cache</strong>()</code>
+<div class="details">
+<p>create_cache</p></div>
+
+<hr>
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="../../toknot//package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../../toknot//package-tree.html">Tree</a></li>
+<li><a href="../../overview-files.html">Files</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../todo-list.html">Todo</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../../index.html" target="_top">Frames</a>
+<a href="../../toknot//xtemplate.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

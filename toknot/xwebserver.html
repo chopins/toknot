@@ -1,0 +1,556 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Wed, 29 Aug 2012 07:49:30 +0000">
+
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<link rel="start" href="../../overview-summary.html">
+
+<title>XWebServer (ToKnot Documentation)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="../../toknot//package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../../toknot//package-tree.html">Tree</a></li>
+<li><a href="../../overview-files.html">Files</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../todo-list.html">Todo</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../../index.html" target="_top">Frames</a>
+<a href="../../toknot//xwebserver.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">toknot\\XWebServer</div>
+<a href="../../source/xwebserver.php.html#line28" class="location">XWebServer.php at line 28</a>
+
+<h1>Class XWebServer</h1>
+
+<pre class="tree"><a href="../../toknot//xhttpresponse.html">XHTTPResponse</a><br>    └─<strong>XWebServer</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public final  class <strong>XWebServer</strong><br>extends <a href="../../toknot//xhttpresponse.html">XHTTPResponse</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>XWebServer
+One multipart process webserver base on libevent,pcntl,shmop,POSIX</p></div>
+
+<dl>
+<dt>Uses:</dt>
+<dd>XHTTPResponse</dd>
+<dt>Version:</dt>
+<dd>$id$</dd>
+<dt>Copyright:</dt>
+<dd>2012 The Author</dd>
+<dt>Author:</dt>
+<dd>Chopins xiao <chopins.xiao@gmail.com></dd>
+<dt>License:</dt>
+<dd>http://opensource.org/licenses/bsd-license.php New BSD License</dd>
+</dl>
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#accept_lock">$accept_lock</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#base_shmop_key">$base_shmop_key</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#cache_control_time">$cache_control_time</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#cfg">$cfg</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#connect_abort_status">$connect_abort_status</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#connect_idx">$connect_idx</a></p></td>
+</tr>
+<tr>
+<td class="type">private  array</td>
+<td class="description"><p class="name"><a href="#connect_pool">$connect_pool</a></p><p class="description">connect_pool</p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#cron_process">$cron_process</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#document_root">$document_root</a></p></td>
+</tr>
+<tr>
+<td class="type">private  int</td>
+<td class="description"><p class="name"><a href="#errno">$errno</a></p><p class="description">errno</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#errstr">$errstr</a></p><p class="description">errstr</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#header_buff">$header_buff</a></p><p class="description">header_buff</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#ip">$ip</a></p><p class="description">ip</p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#log_handle">$log_handle</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#main_pid_file">$main_pid_file</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#master_loopbreak">$master_loopbreak</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#master_pid">$master_pid</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#master_process">$master_process</a></p></td>
+</tr>
+<tr>
+<td class="type">private  resource</td>
+<td class="description"><p class="name"><a href="#master_worker_sock">$master_worker_sock</a></p><p class="description">master_worker_sock</p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#max_worker_num">$max_worker_num</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#min_worker_num">$min_worker_num</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#open_log">$open_log</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#php_file_ext">$php_file_ext</a></p></td>
+</tr>
+<tr>
+<td class="type">private  int</td>
+<td class="description"><p class="name"><a href="#port">$port</a></p><p class="description">port</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#protocol">$protocol</a></p><p class="description">protocol</p></td>
+</tr>
+<tr>
+<td class="type">private  string</td>
+<td class="description"><p class="name"><a href="#request_body">$request_body</a></p><p class="description">request_body</p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#run_daemon">$run_daemon</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#run_dir">$run_dir</a></p></td>
+</tr>
+<tr>
+<td class="type">private  Object</td>
+<td class="description"><p class="name"><a href="#scheduler">$scheduler</a></p><p class="description">scheduler</p></td>
+</tr>
+<tr>
+<td class="type">private  resources</td>
+<td class="description"><p class="name"><a href="#server">$server</a></p><p class="description">server</p></td>
+</tr>
+<tr>
+<td class="type">private  float</td>
+<td class="description"><p class="name"><a href="#timeout">$timeout</a></p><p class="description">timeout</p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#worker_id">$worker_id</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#worker_max_connect">$worker_max_connect</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#worker_pool">$worker_pool</a></p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Fields inherited from toknot\\XHTTPResponse</th></tr>
+<tr><td><a href="../../toknot//xhttpresponse.html#boundary">boundary</a>, <a href="../../toknot//xhttpresponse.html#content_charset">content_charset</a>, <a href="../../toknot//xhttpresponse.html#content_length">content_length</a>, <a href="../../toknot//xhttpresponse.html#content_type">content_type</a>, <a href="../../toknot//xhttpresponse.html#cookie_header">cookie_header</a>, <a href="../../toknot//xhttpresponse.html#document_root">document_root</a>, <a href="../../toknot//xhttpresponse.html#index">index</a>, <a href="../../toknot//xhttpresponse.html#request_body_length">request_body_length</a>, <a href="../../toknot//xhttpresponse.html#request_static_file">request_static_file</a>, <a href="../../toknot//xhttpresponse.html#request_static_file_state">request_static_file_state</a>, <a href="../../toknot//xhttpresponse.html#request_static_file_type">request_static_file_type</a>, <a href="../../toknot//xhttpresponse.html#response_status">response_status</a>, <a href="../../toknot//xhttpresponse.html#response_status_code">response_status_code</a>, <a href="../../toknot//xhttpresponse.html#upfile_tmp_dir">upfile_tmp_dir</a>, <a href="../../toknot//xhttpresponse.html#upfile_tmp_list">upfile_tmp_list</a>, <a href="../../toknot//xhttpresponse.html#user_headers">user_headers</a></td></tr></table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from toknot\\XHTTPResponse</th></tr>
+<tr><td><a href="../../toknot//xhttpresponse.html#get_access_file_info()">get_access_file_info</a>, <a href="../../toknot//xhttpresponse.html#get_request_body()">get_request_body</a>, <a href="../../toknot//xhttpresponse.html#get_request_body_by_form_urlencode()">get_request_body_by_form_urlencode</a>, <a href="../../toknot//xhttpresponse.html#get_request_body_by_multipart()">get_request_body_by_multipart</a>, <a href="../../toknot//xhttpresponse.html#get_request_header()">get_request_header</a>, <a href="../../toknot//xhttpresponse.html#get_request_start_line()">get_request_start_line</a>, <a href="../../toknot//xhttpresponse.html#get_response_header()">get_response_header</a>, <a href="../../toknot//xhttpresponse.html#get_setcookie_header()">get_setcookie_header</a>, <a href="../../toknot//xhttpresponse.html#return_server_status()">return_server_status</a>, <a href="../../toknot//xhttpresponse.html#set_length()">set_length</a>, <a href="../../toknot//xhttpresponse.html#set_server_date()">set_server_date</a></td></tr></table>
+
+<h2 id="detail_field">Field Detail</h2>
+<a href="../../source/xwebserver.php.html#line123" class="location">XWebServer.php at line 123</a>
+
+<h3 id="accept_lock">accept_lock</h3>
+<code class="signature">private  mixed <strong>$accept_lock</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line121" class="location">XWebServer.php at line 121</a>
+
+<h3 id="base_shmop_key">base_shmop_key</h3>
+<code class="signature">private  mixed <strong>$base_shmop_key</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line114" class="location">XWebServer.php at line 114</a>
+
+<h3 id="cache_control_time">cache_control_time</h3>
+<code class="signature">private  mixed <strong>$cache_control_time</strong> = 30</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line115" class="location">XWebServer.php at line 115</a>
+
+<h3 id="cfg">cfg</h3>
+<code class="signature">private  mixed <strong>$cfg</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line132" class="location">XWebServer.php at line 132</a>
+
+<h3 id="connect_abort_status">connect_abort_status</h3>
+<code class="signature">private  mixed <strong>$connect_abort_status</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line113" class="location">XWebServer.php at line 113</a>
+
+<h3 id="connect_idx">connect_idx</h3>
+<code class="signature">private  mixed <strong>$connect_idx</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line112" class="location">XWebServer.php at line 112</a>
+
+<h3 id="connect_pool">connect_pool</h3>
+<code class="signature">private  array <strong>$connect_pool</strong> = array()</code>
+<div class="details">
+<p>connect_pool</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line131" class="location">XWebServer.php at line 131</a>
+
+<h3 id="cron_process">cron_process</h3>
+<code class="signature">private  mixed <strong>$cron_process</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line119" class="location">XWebServer.php at line 119</a>
+
+<h3 id="document_root">document_root</h3>
+<code class="signature">private  mixed <strong>$document_root</strong> = ''</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line70" class="location">XWebServer.php at line 70</a>
+
+<h3 id="errno">errno</h3>
+<code class="signature">private  int <strong>$errno</strong> = 0</code>
+<div class="details">
+<p>errno</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line77" class="location">XWebServer.php at line 77</a>
+
+<h3 id="errstr">errstr</h3>
+<code class="signature">private  string <strong>$errstr</strong> = null</code>
+<div class="details">
+<p>errstr</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line91" class="location">XWebServer.php at line 91</a>
+
+<h3 id="header_buff">header_buff</h3>
+<code class="signature">private  string <strong>$header_buff</strong> = ''</code>
+<div class="details">
+<p>header_buff</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line49" class="location">XWebServer.php at line 49</a>
+
+<h3 id="ip">ip</h3>
+<code class="signature">private  string <strong>$ip</strong> = '0.0.0.0'</code>
+<div class="details">
+<p>ip</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line124" class="location">XWebServer.php at line 124</a>
+
+<h3 id="log_handle">log_handle</h3>
+<code class="signature">private  mixed <strong>$log_handle</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line126" class="location">XWebServer.php at line 126</a>
+
+<h3 id="main_pid_file">main_pid_file</h3>
+<code class="signature">private  mixed <strong>$main_pid_file</strong> = ''</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line130" class="location">XWebServer.php at line 130</a>
+
+<h3 id="master_loopbreak">master_loopbreak</h3>
+<code class="signature">private  mixed <strong>$master_loopbreak</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line135" class="location">XWebServer.php at line 135</a>
+
+<h3 id="master_pid">master_pid</h3>
+<code class="signature">private  mixed <strong>$master_pid</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line129" class="location">XWebServer.php at line 129</a>
+
+<h3 id="master_process">master_process</h3>
+<code class="signature">private  mixed <strong>$master_process</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line63" class="location">XWebServer.php at line 63</a>
+
+<h3 id="master_worker_sock">master_worker_sock</h3>
+<code class="signature">private  resource <strong>$master_worker_sock</strong> = null</code>
+<div class="details">
+<p>master_worker_sock</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line117" class="location">XWebServer.php at line 117</a>
+
+<h3 id="max_worker_num">max_worker_num</h3>
+<code class="signature">private  mixed <strong>$max_worker_num</strong> = 20</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line116" class="location">XWebServer.php at line 116</a>
+
+<h3 id="min_worker_num">min_worker_num</h3>
+<code class="signature">private  mixed <strong>$min_worker_num</strong> = 2</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line125" class="location">XWebServer.php at line 125</a>
+
+<h3 id="open_log">open_log</h3>
+<code class="signature">private  mixed <strong>$open_log</strong> = true</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line120" class="location">XWebServer.php at line 120</a>
+
+<h3 id="php_file_ext">php_file_ext</h3>
+<code class="signature">private  mixed <strong>$php_file_ext</strong> = 'php'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line35" class="location">XWebServer.php at line 35</a>
+
+<h3 id="port">port</h3>
+<code class="signature">private  int <strong>$port</strong> = 8080</code>
+<div class="details">
+<p>port</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line42" class="location">XWebServer.php at line 42</a>
+
+<h3 id="protocol">protocol</h3>
+<code class="signature">private  string <strong>$protocol</strong> = 'tcp'</code>
+<div class="details">
+<p>protocol</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line98" class="location">XWebServer.php at line 98</a>
+
+<h3 id="request_body">request_body</h3>
+<code class="signature">private  string <strong>$request_body</strong> = ''</code>
+<div class="details">
+<p>request_body</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line127" class="location">XWebServer.php at line 127</a>
+
+<h3 id="run_daemon">run_daemon</h3>
+<code class="signature">private  mixed <strong>$run_daemon</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line128" class="location">XWebServer.php at line 128</a>
+
+<h3 id="run_dir">run_dir</h3>
+<code class="signature">private  mixed <strong>$run_dir</strong> = ''</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line84" class="location">XWebServer.php at line 84</a>
+
+<h3 id="scheduler">scheduler</h3>
+<code class="signature">private  Object <strong>$scheduler</strong> = null</code>
+<div class="details">
+<p>scheduler</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line56" class="location">XWebServer.php at line 56</a>
+
+<h3 id="server">server</h3>
+<code class="signature">private  resources <strong>$server</strong> = null</code>
+<div class="details">
+<p>server</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line105" class="location">XWebServer.php at line 105</a>
+
+<h3 id="timeout">timeout</h3>
+<code class="signature">private  float <strong>$timeout</strong> = 30</code>
+<div class="details">
+<p>timeout</p></div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line134" class="location">XWebServer.php at line 134</a>
+
+<h3 id="worker_id">worker_id</h3>
+<code class="signature">private  mixed <strong>$worker_id</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line118" class="location">XWebServer.php at line 118</a>
+
+<h3 id="worker_max_connect">worker_max_connect</h3>
+<code class="signature">private  mixed <strong>$worker_max_connect</strong> = 10</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xwebserver.php.html#line122" class="location">XWebServer.php at line 122</a>
+
+<h3 id="worker_pool">worker_pool</h3>
+<code class="signature">private  mixed <strong>$worker_pool</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="../../toknot//package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../../toknot//package-tree.html">Tree</a></li>
+<li><a href="../../overview-files.html">Files</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../todo-list.html">Todo</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../../index.html" target="_top">Frames</a>
+<a href="../../toknot//xwebserver.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

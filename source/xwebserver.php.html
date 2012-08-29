@@ -1,0 +1,803 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Wed, 29 Aug 2012 07:49:30 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XWebServer.php (ToKnot Documentation)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xwebserver.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>XWebServer.php</h1>
+<div class="comment" id="overview_description"><p>Toknot</p><p>XWebServer class</p><p>PHP version 5.3</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Toknot
+<a name="line4"></a> *
+<a name="line5"></a> * XWebServer class
+<a name="line6"></a> *
+<a name="line7"></a> * PHP version 5.3
+<a name="line8"></a> * 
+<a name="line9"></a> * @author chopins xiao <chopins.xiao@gmail.com>
+<a name="line10"></a> * @copyright  2012 The Authors
+<a name="line11"></a> * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line12"></a> * @link       http://blog.toknot.com
+<a name="line13"></a> * @since      File available since Release 0.4
+<a name="line14"></a> */
+<a name="line15"></a>exists_frame();
+<a name="line16"></a>
+<a name="line17"></a>/**
+<a name="line18"></a> * XWebServer 
+<a name="line19"></a> * One multipart process webserver base on libevent,pcntl,shmop,POSIX
+<a name="line20"></a> * 
+<a name="line21"></a> * @uses XHTTPResponse
+<a name="line22"></a> * @final
+<a name="line23"></a> * @version $id$
+<a name="line24"></a> * @copyright 2012 The Author
+<a name="line25"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line26"></a> * @license http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line27"></a> */
+<a name="line28"></a>final class XWebServer extends XHTTPResponse {
+<a name="line29"></a>    /**
+<a name="line30"></a>     * port 
+<a name="line31"></a>     * 
+<a name="line32"></a>     * @var int
+<a name="line33"></a>     * @access private
+<a name="line34"></a>     */
+<a name="line35"></a>    private $port = 8080;
+<a name="line36"></a>    /**
+<a name="line37"></a>     * protocol 
+<a name="line38"></a>     * 
+<a name="line39"></a>     * @var string
+<a name="line40"></a>     * @access private
+<a name="line41"></a>     */
+<a name="line42"></a>    private $protocol = 'tcp';
+<a name="line43"></a>    /**
+<a name="line44"></a>     * ip 
+<a name="line45"></a>     * 
+<a name="line46"></a>     * @var string
+<a name="line47"></a>     * @access private
+<a name="line48"></a>     */
+<a name="line49"></a>    private $ip = '0.0.0.0';
+<a name="line50"></a>    /**
+<a name="line51"></a>     * server 
+<a name="line52"></a>     * 
+<a name="line53"></a>     * @var resources
+<a name="line54"></a>     * @access private
+<a name="line55"></a>     */
+<a name="line56"></a>    private $server = null;
+<a name="line57"></a>    /**
+<a name="line58"></a>     * master_worker_sock 
+<a name="line59"></a>     * 
+<a name="line60"></a>     * @var resource
+<a name="line61"></a>     * @access private
+<a name="line62"></a>     */
+<a name="line63"></a>    private $master_worker_sock = null;
+<a name="line64"></a>    /**
+<a name="line65"></a>     * errno 
+<a name="line66"></a>     * 
+<a name="line67"></a>     * @var int
+<a name="line68"></a>     * @access private
+<a name="line69"></a>     */
+<a name="line70"></a>    private $errno = 0;
+<a name="line71"></a>    /**
+<a name="line72"></a>     * errstr 
+<a name="line73"></a>     * 
+<a name="line74"></a>     * @var string
+<a name="line75"></a>     * @access private
+<a name="line76"></a>     */
+<a name="line77"></a>    private $errstr = null;
+<a name="line78"></a>    /**
+<a name="line79"></a>     * scheduler 
+<a name="line80"></a>     * 
+<a name="line81"></a>     * @var Object
+<a name="line82"></a>     * @access private
+<a name="line83"></a>     */
+<a name="line84"></a>    private $scheduler = null;
+<a name="line85"></a>    /**
+<a name="line86"></a>     * header_buff 
+<a name="line87"></a>     * 
+<a name="line88"></a>     * @var string
+<a name="line89"></a>     * @access private
+<a name="line90"></a>     */
+<a name="line91"></a>    private $header_buff = '';
+<a name="line92"></a>    /**
+<a name="line93"></a>     * request_body 
+<a name="line94"></a>     * 
+<a name="line95"></a>     * @var string
+<a name="line96"></a>     * @access private
+<a name="line97"></a>     */
+<a name="line98"></a>    private $request_body = '';
+<a name="line99"></a>    /**
+<a name="line100"></a>     * timeout 
+<a name="line101"></a>     * 
+<a name="line102"></a>     * @var float
+<a name="line103"></a>     * @access private
+<a name="line104"></a>     */
+<a name="line105"></a>    private $timeout = 30;
+<a name="line106"></a>    /**
+<a name="line107"></a>     * connect_pool 
+<a name="line108"></a>     * 
+<a name="line109"></a>     * @var array
+<a name="line110"></a>     * @access private
+<a name="line111"></a>     */
+<a name="line112"></a>    private $connect_pool = array();
+<a name="line113"></a>    private $connect_idx = 0;
+<a name="line114"></a>    private $cache_control_time = 30;
+<a name="line115"></a>    private $cfg = null;
+<a name="line116"></a>    private $min_worker_num = 2;
+<a name="line117"></a>    private $max_worker_num = 20;
+<a name="line118"></a>    private $worker_max_connect = 10;
+<a name="line119"></a>    private $document_root = '';
+<a name="line120"></a>    private $php_file_ext = 'php';
+<a name="line121"></a>    private $base_shmop_key = 0;
+<a name="line122"></a>    private $worker_pool = array();
+<a name="line123"></a>    private $accept_lock = 0;
+<a name="line124"></a>    private $log_handle = null;
+<a name="line125"></a>    private $open_log = true;
+<a name="line126"></a>    private $main_pid_file = '';
+<a name="line127"></a>    private $run_daemon =  false;
+<a name="line128"></a>    private $run_dir = '';
+<a name="line129"></a>    private $master_process = false;
+<a name="line130"></a>    private $master_loopbreak = false;
+<a name="line131"></a>    private $cron_process = array();
+<a name="line132"></a>    private $connect_abort_status = false;
+<a name="line133"></a>
+<a name="line134"></a>    private $worker_id = 0;
+<a name="line135"></a>    private $master_pid = 0;
+<a name="line136"></a>
+<a name="line137"></a>    const WP_WAIT = 1;
+<a name="line138"></a>    const WP_SLEEP = 2;
+<a name="line139"></a>    const WP_BUSY = 3;
+<a name="line140"></a>    const WP_LISTEN = 4;
+<a name="line141"></a>    const WP_WORKER = 5;
+<a name="line142"></a>    const WP_EXIT = 6;
+<a name="line143"></a>    /**
+<a name="line144"></a>     * __construct 
+<a name="line145"></a>     * 
+<a name="line146"></a>     * @param mixed $scheduler 
+<a name="line147"></a>     * @access public
+<a name="line148"></a>     * @return void
+<a name="line149"></a>     */
+<a name="line150"></a>    public function __construct($scheduler) {
+<a name="line151"></a>        $this->scheduler = $scheduler;
+<a name="line152"></a>        $this->check_system();
+<a name="line153"></a>        $this->check_extension();
+<a name="line154"></a>        $this->load_cfg();
+<a name="line155"></a>        $this->run_mode();
+<a name="line156"></a>        $this->master_pid = posix_getpid();
+<a name="line157"></a>        $this->run_web();
+<a name="line158"></a>    }
+<a name="line159"></a>    private function run_cron_process() {
+<a name="line160"></a>        $pid = pcntl_fork();
+<a name="line161"></a>        if($pid == -1) throw new XException('fork accept worker process error');
+<a name="line162"></a>        if($pid >0) {
+<a name="line163"></a>            $this->cron_process['shmid'] = $shmop_id;
+<a name="line164"></a>            $this->cron_process['pid'] = $pid;
+<a name="line165"></a>            return;
+<a name="line166"></a>        }
+<a name="line167"></a>        $this->setproctitle('XServer:cron');
+<a name="line168"></a>        $this->cron_worker_loop();
+<a name="line169"></a>        return;
+<a name="line170"></a>    }
+<a name="line171"></a>    private function cron_worker_loop() {
+<a name="line172"></a>        $cron_log = array();
+<a name="line173"></a>        while(true) {
+<a name="line174"></a>            sleep(1);
+<a name="line175"></a>            $this->scheduler->load_cfg();
+<a name="line176"></a>            $cron_list = $GLOBALS['_CFG']->web->cron;
+<a name="line177"></a>            if(empty($cron_list)) continue;
+<a name="line178"></a>            foreach($cron_list as $cron) {
+<a name="line179"></a>                if(empty($cron['call_class']) || empty($cron['class_file'])
+<a name="line180"></a>                    || empty($cron['time_interval']) || !file_exists($cron['class_file'])) {
+<a name="line181"></a>                    continue;
+<a name="line182"></a>                }
+<a name="line183"></a>                if(!empty($cron['times']) && $cron_log[$cron['call_class']] >= $cron['times']) {
+<a name="line184"></a>                    continue;
+<a name="line185"></a>                }
+<a name="line186"></a>                $timeinterval = conv_human_time($cron['time_interval']);
+<a name="line187"></a>                if($timeinterval === false) {
+<a name="line188"></a>                    $suffix = substr($cron['time_interval'],-1,1);
+<a name="line189"></a>                    $exec_time = substr($cron['time_interval'],0, strlen($cron['time_interval'])-1);
+<a name="line190"></a>                    switch($suffix) {
+<a name="line191"></a>                        case 'T':
+<a name="line192"></a>                            $current_time = date('H:i');
+<a name="line193"></a>                        break;
+<a name="line194"></a>                        case 'W':
+<a name="line195"></a>                            $current_time = date('w');
+<a name="line196"></a>                        break;
+<a name="line197"></a>                        case 'D':
+<a name="line198"></a>                            $current_time = date('j');
+<a name="line199"></a>                        break;
+<a name="line200"></a>                        default:
+<a name="line201"></a>                        continue;
+<a name="line202"></a>                    }
+<a name="line203"></a>                    if($current_time != $exec_time) continue;
+<a name="line204"></a>                } else if(time() - $timeinterval < $cron_log[$cron['call_class']]['exec_time']) {
+<a name="line205"></a>                    continue;
+<a name="line206"></a>                }
+<a name="line207"></a>                if(isset($cron_log[$cron['class_class']])) {
+<a name="line208"></a>                    $cron_log[$cron['call_class']]['exec_time'] = time();
+<a name="line209"></a>                    $cron_log[$cron['call_class']]['times'] ++;
+<a name="line210"></a>                } else {
+<a name="line211"></a>                    $cron_log[$cron['call_class']]['exec_time'] = time();
+<a name="line212"></a>                    $cron_log[$cron['call_class']]['times'] = 1;
+<a name="line213"></a>                }
+<a name="line214"></a>                $pid = pcntl_fork();
+<a name="line215"></a>                if($pid > 0) continue;
+<a name="line216"></a>                if($pid == -1) exit();
+<a name="line217"></a>                include($cron['class_file']);
+<a name="line218"></a>                $ref = new ReflectionClass($cron['class_class']);
+<a name="line219"></a>                $ref->newInstance();
+<a name="line220"></a>                exit;
+<a name="line221"></a>            }
+<a name="line222"></a>        }
+<a name="line223"></a>    }
+<a name="line224"></a>    private function load_cfg($_CFG = null) {
+<a name="line225"></a>        if($_CFG == null) $_CFG = $GLOBALS['_CFG'];
+<a name="line226"></a>        $this->run_dir = empty($_CFG->run_dir) ?
+<a name="line227"></a>            __X_APP_DATA_DIR__.'/run': $_CFG->run_dir;
+<a name="line228"></a>
+<a name="line229"></a>        if(!is_dir($this->run_dir) || !is_writable($this->run_dir)) {
+<a name="line230"></a>            throw new XException('webserver run dir not exists or unwriteable');
+<a name="line231"></a>        }
+<a name="line232"></a>
+<a name="line233"></a>        $this->main_pid_file = empty($_CFG->web->pid_file) ? 
+<a name="line234"></a>                "{$this->run_dir}/xweb.pid" : "{$this->run_dir}/{$_CFG->web->pid_file}";
+<a name="line235"></a>        $this->index = explode(' ',$_CFG->web->index);
+<a name="line236"></a>        if(empty($_CFG->web->document_root) || !is_readable($_CFG->web->document_root)) {
+<a name="line237"></a>            $this->document_root = __X_APP_ROOT__;
+<a name="line238"></a>        } else  {
+<a name="line239"></a>            $this->document_root = $_CFG->web->document_root;
+<a name="line240"></a>        }
+<a name="line241"></a>        isset($_CFG->web->worker_max_connect) and ($this->max_connect = $_CFG->web->worker_max_connect);
+<a name="line242"></a>        isset($_CFG->url_file_suffix) and ($this->php_file_ext = $_CFG->url_file_suffix);
+<a name="line243"></a>        isset($_CFG->web->port) and ($this->port = $_CFG->web->port);
+<a name="line244"></a>        isset($_CFG->web->min_worker_num) and
+<a name="line245"></a>            ($this->min_worker_num = $_CFG->web->min_worker_num);
+<a name="line246"></a>        isset($_CFG->web->max_worker_num) and
+<a name="line247"></a>            ($this->max_worker_num = $_CFG->web->max_worker_num);
+<a name="line248"></a>        $this->upfile_tmp_dir = isset($_CFG->web->upfile_tmp_dir) ? $_CFG->web->upfile_tmp_dir :
+<a name="line249"></a>                                    __X_APP_DATA_DIR__."/{$_CFG->data_cache}";
+<a name="line250"></a>        isset($_CFG->web->cache_control_time) and 
+<a name="line251"></a>            ($this->cache_control_time = conv_human_time($_CFG->web->cache_control_time));
+<a name="line252"></a>        isset($_CFG->web->request_body_length) and 
+<a name="line253"></a>            ($this->request_body_length = conv_human_byte($_CFG->web->request_body_length));
+<a name="line254"></a>        isset($_CFG->web->daemon) and $this->run_daemon = $_CFG->web->daemon;
+<a name="line255"></a>    }
+<a name="line256"></a>    private function run_mode() {
+<a name="line257"></a>        $argv = '';
+<a name="line258"></a>        if($_SERVER['argc'] >= 2) {
+<a name="line259"></a>            $argv = $_SERVER['argv'];
+<a name="line260"></a>            if($this->support_argv($argv,$this->main_pid_file)) return;
+<a name="line261"></a>        }
+<a name="line262"></a>        if(array_search('-d',$argv) !== false || $this->run_daemon) {
+<a name="line263"></a>            daemon();
+<a name="line264"></a>        }
+<a name="line265"></a>        $this->setproctitle('XServer:master '.__FILE__);
+<a name="line266"></a>        $this->init_access_log($this->run_dir);
+<a name="line267"></a>        file_put_contents($this->main_pid_file, posix_getpid());
+<a name="line268"></a>    }
+<a name="line269"></a>    private function support_argv($argv,$pidfile) {
+<a name="line270"></a>        $pid = 0;
+<a name="line271"></a>        if(file_exists($pidfile)) {
+<a name="line272"></a>            $pid = file_get_contents($pidfile);
+<a name="line273"></a>        }
+<a name="line274"></a>        foreach($argv as $av) {
+<a name="line275"></a>            switch($av) {
+<a name="line276"></a>                case 'quit':
+<a name="line277"></a>                case '-q':
+<a name="line278"></a>                    if($pid ==0) exit('pid file not found');
+<a name="line279"></a>                    posix_kill($pid, SIGTERM);
+<a name="line280"></a>                return true;
+<a name="line281"></a>                case '-r':
+<a name="line282"></a>                case 'restart':
+<a name="line283"></a>                    if($pid ==0) exit('pid file not found');
+<a name="line284"></a>                    posix_kill($pid , SIGUSR1);
+<a name="line285"></a>                return true;
+<a name="line286"></a>                case 'reload':
+<a name="line287"></a>                    if($pid == 0) exit('pid file not found');
+<a name="line288"></a>                    posix_kill($pid , SIGUSR2);        
+<a name="line289"></a>                case '-h':
+<a name="line290"></a>                case 'help':
+<a name="line291"></a>                    echo "Option: -q | quit     stop the web server\n";
+<a name="line292"></a>                    echo "        -r | restart  restart the web server\n";
+<a name="line293"></a>                    echo "        -h | help     display the message\n";
+<a name="line294"></a>                    echo "        -d            run webserver daemon\n";
+<a name="line295"></a>                return true;
+<a name="line296"></a>                default:
+<a name="line297"></a>                return false;
+<a name="line298"></a>            }
+<a name="line299"></a>        }
+<a name="line300"></a>    }
+<a name="line301"></a>    public function process_signal($signo) {
+<a name="line302"></a>        if($this->master_process == false) {
+<a name="line303"></a>            exit;
+<a name="line304"></a>        }
+<a name="line305"></a>        switch($signo) {
+<a name="line306"></a>            case SIGINT:
+<a name="line307"></a>            case SIGHUP:
+<a name="line308"></a>            case SIGTERM:
+<a name="line309"></a>                $this->worker_exit();
+<a name="line310"></a>                exit;
+<a name="line311"></a>            return;
+<a name="line312"></a>            case SIGUSR1:
+<a name="line313"></a>                $this->worker_exit();
+<a name="line314"></a>                $php_exc = getenv('_');
+<a name="line315"></a>                if($php_exc == $_SERVER['argv'][0]) {
+<a name="line316"></a>                    $php_exc = PHP_BINDIR.'/php';
+<a name="line317"></a>                }
+<a name="line318"></a>                popen("$php_exc {$_SERVER['argv'][0]} -d ");
+<a name="line319"></a>                exit;
+<a name="line320"></a>            return;
+<a name="line321"></a>            case SIGUSR2:
+<a name="line322"></a>                $this->scheduler->load_cfg();
+<a name="line323"></a>                $this->load_cfg();
+<a name="line324"></a>                $this->worker_exit();
+<a name="line325"></a>                $this->fork_worker_process(true);
+<a name="line326"></a>            return;
+<a name="line327"></a>            case SIGCHLD:
+<a name="line328"></a>                $pid = pcntl_waitpid(-1,$status);
+<a name="line329"></a>                foreach($this->worker_pool as $key => $worker) {
+<a name="line330"></a>                    if($worker['pid'] == $pid) {
+<a name="line331"></a>                        shmop_delete($worker['shmid']);
+<a name="line332"></a>                        unset($this->worker_pool[$key]);
+<a name="line333"></a>                        break;
+<a name="line334"></a>                    }
+<a name="line335"></a>                }
+<a name="line336"></a>                $this->run_new_worker_process($key);
+<a name="line337"></a>            return;
+<a name="line338"></a>        }
+<a name="line339"></a>    }
+<a name="line340"></a>    public function __destruct() {
+<a name="line341"></a>        unset($this);
+<a name="line342"></a>    }
+<a name="line343"></a>    private function get_shmop_key() {
+<a name="line344"></a>        $int_hash = 5831;
+<a name="line345"></a>        $str_key = md5(__FILE__.__METHOD__.posix_getpid());
+<a name="line346"></a>        for($i=0;$i<32;$i++) {
+<a name="line347"></a>            $int_hash = ((($int_hash <<5) + $int_hash) + ord($str_key[$i])) & 0x7fffffff;
+<a name="line348"></a>        }
+<a name="line349"></a>        return $int_hash;
+<a name="line350"></a>    }
+<a name="line351"></a>    private function check_system() {
+<a name="line352"></a>        if(strtoupper(substr(PHP_OS,0,3) === 'WIN')) {
+<a name="line353"></a>            throw new XException('XServer class not support windows');
+<a name="line354"></a>        }
+<a name="line355"></a>        if(PHP_SAPI != 'cli') {
+<a name="line356"></a>            throw new XException('XServer class only runing in php cli mode');
+<a name="line357"></a>        }
+<a name="line358"></a>    }
+<a name="line359"></a>    private function check_extension() {
+<a name="line360"></a>        dl_extension('pcntl', 'pcntl_fork');
+<a name="line361"></a>        dl_extension('proctitle','setproctitle');
+<a name="line362"></a>        dl_extension('posix','posix_getpid');
+<a name="line363"></a>        dl_extension('libevent','event_base_new');
+<a name="line364"></a>    }
+<a name="line365"></a>    private function setproctitle($name) {
+<a name="line366"></a>        setproctitle($name);
+<a name="line367"></a>    }
+<a name="line368"></a>    private function get_loacl_socket() {
+<a name="line369"></a>        return "{$this->protocol}://{$this->ip}:{$this->port}";
+<a name="line370"></a>    }
+<a name="line371"></a>    private function run_web() {
+<a name="line372"></a>        $local_socket = $this->get_loacl_socket();
+<a name="line373"></a>        $this->server = stream_socket_server($local_socket,$this->errno, $this->errstr);
+<a name="line374"></a>        if(!$this->server) throw new XException($this->errstr);
+<a name="line375"></a>        stream_set_blocking($this->server,0);
+<a name="line376"></a>        $this->fork_worker_process();
+<a name="line377"></a>    }
+<a name="line378"></a>    private function run_web_worker() {
+<a name="line379"></a>        $base_evt = event_base_new();
+<a name="line380"></a>        $evt = event_new();
+<a name="line381"></a>        event_set($evt, $this->server, EV_READ | EV_WRITE|EV_TIMEOUT | EV_PERSIST, 
+<a name="line382"></a>                array($this,'web_accept'), array($evt,$base_evt,$shmop_id));
+<a name="line383"></a>        event_base_set($evt,$base_evt);
+<a name="line384"></a>        event_add($evt);
+<a name="line385"></a>
+<a name="line386"></a>        return $base_evt;
+<a name="line387"></a>    }
+<a name="line388"></a>    private function worker_event_exit($signo, $flag, $arg) {
+<a name="line389"></a>        event_del($arg[1]);
+<a name="line390"></a>        event_base_loopexit($arg[0]);
+<a name="line391"></a>        exit;
+<a name="line392"></a>    }
+<a name="line393"></a>    private function worker_exit() {
+<a name="line394"></a>        foreach($this->worker_pool as $key =>$worker) {
+<a name="line395"></a>            posix_kill($worker['pid'], SIGTERM);
+<a name="line396"></a>            shmop_write($worker['shmid'],self::WP_EXIT,0);
+<a name="line397"></a>            pcntl_waitpid($worker['pid'],$status);
+<a name="line398"></a>            shmop_delete($worker['shmid']);
+<a name="line399"></a>            unset($this->worker_pool[$key]);
+<a name="line400"></a>        }
+<a name="line401"></a>        $this->__destruct();
+<a name="line402"></a>        exit;
+<a name="line403"></a>    }
+<a name="line404"></a>    private function fork_worker_process($restart_worker = false) {
+<a name="line405"></a>        for($i=1;$i<=$this->min_worker_num;$i++) {
+<a name="line406"></a>            $mws = stream_socket_pair(STREAM_PF_UNIX,STREAM_SOCK_STREAM,STREAM_IPPROTO_IP);
+<a name="line407"></a>            $pid = pcntl_fork();
+<a name="line408"></a>            if($pid == -1) throw new XException('fork accept worker process error');
+<a name="line409"></a>            if($pid >0) {
+<a name="line410"></a>                $this->worker_pool[$pid] = $mws[1];
+<a name="line411"></a>                fclose($mws[0]);
+<a name="line412"></a>                continue;
+<a name="line413"></a>            }
+<a name="line414"></a>            fclose($mws[1]);
+<a name="line415"></a>            $this->setproctitle('XServer:worker pool');
+<a name="line416"></a>            $this->master_worker_sock = $mws[0];
+<a name="line417"></a>            $this->web_worker_loop($mws[0]);
+<a name="line418"></a>            return;
+<a name="line419"></a>        }
+<a name="line420"></a>    }
+<a name="line421"></a>    private function run_new_worker_process($base_evt= null, $sig_evt = null) {
+<a name="line422"></a>        $mws = stream_socket_pair(STREAM_PF_UNIX,STREAM_SOCK_STREAM,STREAM_IPPROTO_IP);
+<a name="line423"></a>        $pid = pcntl_fork();
+<a name="line424"></a>        if($pid == -1) return -1;
+<a name="line425"></a>        if($pid >0) {
+<a name="line426"></a>            $this->worker_pool[$pid] = $mws[1];
+<a name="line427"></a>            fclose($mws[0]);
+<a name="line428"></a>            return;
+<a name="line429"></a>        }
+<a name="line430"></a>        gc_collect_cycles();
+<a name="line431"></a>        $this->setproctitle('XServer:worker pool');
+<a name="line432"></a>        fclose($mws[1]);
+<a name="line433"></a>        $this->web_worker_loop($mws[0]);
+<a name="line434"></a>    }
+<a name="line435"></a>
+<a name="line436"></a>    /**
+<a name="line437"></a>     * master_watch_event 
+<a name="line438"></a>     * 
+<a name="line439"></a>     * @param mixed $sock 
+<a name="line440"></a>     * @param mixed $flag 
+<a name="line441"></a>     * @param mixed $arg 
+<a name="line442"></a>     * @access private
+<a name="line443"></a>     * @return void
+<a name="line444"></a>     */
+<a name="line445"></a>    private function master_watch_event($sock, $flag, $arg) {
+<a name="line446"></a>        if(!empty($arg[0])) event_base_loopexit($arg[0]);
+<a name="line447"></a>        if(!empty($arg[1])) event_del($arg[1]);
+<a name="line448"></a>        return;
+<a name="line449"></a>    }
+<a name="line450"></a>    private function master_event_loopbreak($sock, $flag, $arg) {
+<a name="line451"></a>        $this->master_watch_event($sock,$flag,$arg);
+<a name="line452"></a>        $this->master_loopbreak = true;
+<a name="line453"></a>        $this->worker_exit();
+<a name="line454"></a>    }
+<a name="line455"></a>    private function add_sig_event($base_evt, $signo, $call_func) {
+<a name="line456"></a>        $sig_evt = event_new();
+<a name="line457"></a>        event_set($sig_evt, $signo , EV_SIGNAL, array($this,$call_func),array($base_evt,$sig_evt));
+<a name="line458"></a>        event_base_set($sig_evt, $base_evt);
+<a name="line459"></a>        event_add($sig_evt);
+<a name="line460"></a>        return $sig_evt;
+<a name="line461"></a>    }
+<a name="line462"></a>    private function master_loop() {
+<a name="line463"></a>        $busy_all = false;
+<a name="line464"></a>        $last_listen = 0;
+<a name="line465"></a>        $base_evt = event_base_new();
+<a name="line466"></a>        $evt = event_new();
+<a name="line467"></a>        event_set($evt, $this->server, EV_READ | EV_WRITE|EV_TIMEOUT | EV_PERSIST, 
+<a name="line468"></a>                array($this,'master_watch_event'), $base_evt);
+<a name="line469"></a>        event_base_set($evt,$base_evt);
+<a name="line470"></a>        event_add($evt);
+<a name="line471"></a>        
+<a name="line472"></a>        pcntl_signal_dispatch();
+<a name="line473"></a>        event_base_loop($base_evt, EVLOOP_ONCE);
+<a name="line474"></a>        pcntl_waitpid(-1,$status);
+<a name="line475"></a>        return;
+<a name="line476"></a>        while(true) {
+<a name="line477"></a>            if($this->master_loopbreak) break;
+<a name="line478"></a>            $listen = $wait = $first_sleep = 0;
+<a name="line479"></a>            foreach($this->worker_pool as $idx => $worker) {
+<a name="line480"></a>                $worker_stat = shmop_read($worker['shmid'],0,1);
+<a name="line481"></a>                switch($worker_stat) {
+<a name="line482"></a>                    case self::WP_LISTEN:
+<a name="line483"></a>                        $listen = $worker;
+<a name="line484"></a>                        $last_listen = $worker;
+<a name="line485"></a>                    break;
+<a name="line486"></a>                    case self::WP_SLEEP:
+<a name="line487"></a>                        $first_sleep = $worker;
+<a name="line488"></a>                    break;
+<a name="line489"></a>
+<a name="line490"></a>                    case self::WP_WAIT:
+<a name="line491"></a>                        $wait++;
+<a name="line492"></a>                    break;
+<a name="line493"></a>                    case self::WP_WORKER:
+<a name="line494"></a>                    if($busy_all && $first_sleep == 0 && $worker != $last_listen) {
+<a name="line495"></a>                        $first_sleep = $worker;
+<a name="line496"></a>                        $last_listen = $worker;
+<a name="line497"></a>                    }
+<a name="line498"></a>                    break;
+<a name="line499"></a>                }
+<a name="line500"></a>            }
+<a name="line501"></a>            if($wait == count($this->worker_pool)) continue;
+<a name="line502"></a>            if($listen !==0) {
+<a name="line503"></a>                continue;
+<a name="line504"></a>            }
+<a name="line505"></a>            if($listen === 0 && $first_sleep !== 0) {
+<a name="line506"></a>                shmop_write($first_sleep['shmid'],self::WP_LISTEN,0);
+<a name="line507"></a>                continue;
+<a name="line508"></a>            }
+<a name="line509"></a>            $idx++;
+<a name="line510"></a>            if($idx >= $this->max_worker_num) {
+<a name="line511"></a>                $busy_all = true;
+<a name="line512"></a>                continue;
+<a name="line513"></a>            }
+<a name="line514"></a>            $this->run_new_worker_process($idx, $base_evt,$sig_evt_list);
+<a name="line515"></a>            do {
+<a name="line516"></a>                pcntl_signal_dispatch();
+<a name="line517"></a>                $worker_stat = shmop_read($this->worker_pool[$idx]['shmid'],0,1);
+<a name="line518"></a>                if($worker_stat == self::WP_SLEEP) {
+<a name="line519"></a>                    shmop_write($this->worker_pool[$idx]['shmid'],self::WP_LISTEN,0);
+<a name="line520"></a>                    break;
+<a name="line521"></a>                }
+<a name="line522"></a>                usleep(1000);
+<a name="line523"></a>            } while(0);
+<a name="line524"></a>        }
+<a name="line525"></a>        pcntl_waitpid(-1,$status);
+<a name="line526"></a>    }
+<a name="line527"></a>    public function connect_abort($sock, $flag, $arg) {
+<a name="line528"></a>        if(is_array($arg)) {
+<a name="line529"></a>            event_del($arg[1]);
+<a name="line530"></a>        } else {
+<a name="line531"></a>            event_del($arg);
+<a name="line532"></a>        }
+<a name="line533"></a>        $this->connect_abort_status = true;
+<a name="line534"></a>    }
+<a name="line535"></a>    public function get_worker_id() {
+<a name="line536"></a>        return $this->worker_id;
+<a name="line537"></a>    }
+<a name="line538"></a>    private function web_worker_loop($mws) {
+<a name="line539"></a>        $this->master_process = false;
+<a name="line540"></a>        pcntl_signal(SIGTERM,SIG_DFL);
+<a name="line541"></a>        pcntl_signal(SIGINT, SIG_DFL);
+<a name="line542"></a>        pcntl_signal(SIGHUP, SIG_DFL);
+<a name="line543"></a>        pcntl_signal(SIGPIPE, array($this,'connect_abort'));
+<a name="line544"></a>        //pcntl_sigprocmask(SIG_UNBLOCK,array(SIGTERM,SIGINT,SIGHUP),$old);
+<a name="line545"></a>        fwrite($mws,self::WP_WAIT);
+<a name="line546"></a>        $base_evt = $this->run_web_worker();
+<a name="line547"></a>        $master_worker_base_evt = event_base_new();
+<a name="line548"></a>        $master_worker_evt = event_new();
+<a name="line549"></a>        event_set($master_worker_evt, $mws, EV_READ | EV_WRITE|EV_TIMEOUT | EV_PERSIST, 
+<a name="line550"></a>                array($this,'web_accept'), $master_worker_base_evt);
+<a name="line551"></a>        event_base_set($master_worker_evt,$master_worker_base_evt);
+<a name="line552"></a>        event_add($master_worker_evt);
+<a name="line553"></a>        event_base_loop($base_evt);
+<a name="line554"></a>    }
+<a name="line555"></a>    private function web_accept($sock, $flag, $arg) {
+<a name="line556"></a>        $this->clear_evn();
+<a name="line557"></a>        if($flag == EV_TIMEOUT) return;
+<a name="line558"></a>        if($this->connect_abort_status) {
+<a name="line559"></a>            $this->connect_abort_status = false;
+<a name="line560"></a>            return;
+<a name="line561"></a>        }
+<a name="line562"></a>        $connect = stream_socket_accept($this->server, $this->timeout, $client_info);
+<a name="line563"></a>        if($connect == false) return;
+<a name="line564"></a>        $this->connect_pool[$this->connect_idx] = $connect;
+<a name="line565"></a>        $_SERVER['REQUEST_TIME'] = time();
+<a name="line566"></a>        $_SERVER['SERVER_PORT'] = $this->port;
+<a name="line567"></a>        list($_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_PORT']) = explode(':',$client_info);
+<a name="line568"></a>        stream_set_blocking($connect,0);
+<a name="line569"></a>        if($this->connect_idx >= PHP_INT_MAX) {
+<a name="line570"></a>            $this->connect_idx = 0;
+<a name="line571"></a>        }
+<a name="line572"></a>        $this->web_read($connect);
+<a name="line573"></a>        unset($this->connect_pool[$this->connect_idx]);
+<a name="line574"></a>        $this->connect_idx++;
+<a name="line575"></a>    }
+<a name="line576"></a>    private function clear_evn() {
+<a name="line577"></a>        $this->request_body = '';
+<a name="line578"></a>        $this->header_buff = '';
+<a name="line579"></a>        $_ENV['__X_EXCEPTION_THROW__'] = false;
+<a name="line580"></a>        $_ENV['__X_OUT_BROWSER__'] = false;
+<a name="line581"></a>        $_ENV['__X_EXCEPTION_THROW_DISABEL__'] = false;
+<a name="line582"></a>        $_ENV['__X_FATAL_EXCEPTION__'] = false;
+<a name="line583"></a>        $this->request_static_file = false;
+<a name="line584"></a>        $this->request_static_file_type = false;
+<a name="line585"></a>        $this->request_static_file_state = false;
+<a name="line586"></a>        $this->user_headers = array();
+<a name="line587"></a>        $_SERVER['SERVER_ADDR'] = '';
+<a name="line588"></a>        $_SERVER['HTTP_HOST'] = '';
+<a name="line589"></a>        $_SERVER['REQUEST_URI'] = '';
+<a name="line590"></a>        $_SERVER['REQUEST_METHOD'] = '';
+<a name="line591"></a>        $_SERVER['REQUEST_TIME'] = '';
+<a name="line592"></a>        $_SERVER['HTTP_USER_AGENT'] = null;
+<a name="line593"></a>        unset($_SERVER['HTTP_REFERER'],$_SERVER['HTTP_CONNECTION'],
+<a name="line594"></a>              $_SERVER['HTTP_ACCEPT'],$_SERVER['HTTP_ACCEPT_CHARSET'],$_SERVER['HTTP_ACCEPT_ENCODING'],
+<a name="line595"></a>              $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+<a name="line596"></a>        if(!empty($this->content_type)) 
+<a name="line597"></a>            unset($this->content_type,$this->boundary);
+<a name="line598"></a>        if(isset($_SERVER['QUERY_STRING'])) unset($_SERVER['QUERY_STRING']);
+<a name="line599"></a>        $_POST = array();
+<a name="line600"></a>        $_FILES = array();
+<a name="line601"></a>        $_REQUEST = array();
+<a name="line602"></a>        $_GET = array();
+<a name="line603"></a>    }
+<a name="line604"></a>    public function exit_alert($e) {
+<a name="line605"></a>        $this->return_server_status(500);
+<a name="line606"></a>        $output_html = "<h1>{$this->response_status}</h1>";
+<a name="line607"></a>        $_ENV['__X_OUT_BROWSER__'] = true;
+<a name="line608"></a>        $output_html .= $e->getXDebugTraceAsString();
+<a name="line609"></a>        $response_header = $this->get_response_header();
+<a name="line610"></a>        $response_header .= $this->set_length(strlen($output_html));
+<a name="line611"></a>        $response_header .= "\r\n";
+<a name="line612"></a>        $out = $response_header . $output_html;
+<a name="line613"></a>        $stat = fwrite($_ENV['__X_REQUEST_CONNECT__'],$out);
+<a name="line614"></a>        fclose($_ENV['__X_REQUEST_CONNECT__']);
+<a name="line615"></a>        unset($_ENV['__X_REQUEST_CONNECT__']);
+<a name="line616"></a>    }
+<a name="line617"></a>    private function web_write($connect) {
+<a name="line618"></a>        if($this->request_static_file_state === false) {
+<a name="line619"></a>            $output_html = $errstr = '';
+<a name="line620"></a>            if($this->response_status_code == 200) {
+<a name="line621"></a>                $_ENV['__X_REQUEST_CONNECT__'] = $connect;
+<a name="line622"></a>                $_ENV['__X_SERVER_INSTANCE__'] = $this;
+<a name="line623"></a>                $_ENV['__X_RUN_APP_COMPLETE__'] = false;
+<a name="line624"></a>                $_ENV['__X_OUT_BROWSER__'] = true;
+<a name="line625"></a>                $this->scheduler->load_app();
+<a name="line626"></a>                if(!empty($this->scheduler->app_instance->headers)) {
+<a name="line627"></a>                    $this->user_headers = $this->scheduler->app_instance->headers;
+<a name="line628"></a>                }
+<a name="line629"></a>                $_ENV['__X_RUN_APP_COMPLETE__'] = true;
+<a name="line630"></a>                $_ENV['__X_OUT_BROWSER__'] = false;
+<a name="line631"></a>                if($_ENV['__X_FATAL_EXCEPTION__'] == true) {
+<a name="line632"></a>                    $output_html = '';
+<a name="line633"></a>                    $this->return_server_status('500');
+<a name="line634"></a>                    $output_html = $this->scheduler->get_html();
+<a name="line635"></a>                } else {
+<a name="line636"></a>                    $this->cookie_header = $this->get_setcookie_header();
+<a name="line637"></a>                    $output_html = $this->scheduler->get_html();
+<a name="line638"></a>                }
+<a name="line639"></a>            } else {
+<a name="line640"></a>                $output_html = "<h1>{$this->response_status}</h1>";
+<a name="line641"></a>            }
+<a name="line642"></a>            $output_html .= $errstr;
+<a name="line643"></a>            $response_header = $this->get_response_header();
+<a name="line644"></a>            $response_header .= $this->cookie_header;
+<a name="line645"></a>            $response_header .= $this->set_length(strlen($output_html));
+<a name="line646"></a>            $response_header .= "\r\n";
+<a name="line647"></a>            $out = $response_header . $output_html;
+<a name="line648"></a>            $stat = @stream_socket_sendto($connect,$out);
+<a name="line649"></a>            fclose($connect);
+<a name="line650"></a>        } else {
+<a name="line651"></a>            $f = false;
+<a name="line652"></a>            if($this->request_static_file_state === true) {
+<a name="line653"></a>                $f = fopen($this->request_static_file,'rb');
+<a name="line654"></a>                if($f === false) $this->return_server_status(403);
+<a name="line655"></a>            }
+<a name="line656"></a>            $response_header = $this->get_response_header();
+<a name="line657"></a>            if($f) {
+<a name="line658"></a>                $response_header .= $this->set_length(filesize($this->request_static_file));
+<a name="line659"></a>            }
+<a name="line660"></a>            $response_header .= "\r\n";
+<a name="line661"></a>            $read = $except = null;
+<a name="line662"></a>            $write =  array($connect);
+<a name="line663"></a>            $_ENV['__X_EXCEPTION_THROW_DISABEL__'] = true;
+<a name="line664"></a>            if(stream_select($read, $write, $except, 0) > 0) {
+<a name="line665"></a>                fwrite($connect, $response_header);
+<a name="line666"></a>                if($f) {
+<a name="line667"></a>                    while(!feof($f)) {
+<a name="line668"></a>                    if($this->connect_abort_status) break;
+<a name="line669"></a>                    $tmp_buff = fread($f,1024);
+<a name="line670"></a>                    if(stream_select($read, $write,$except, 0) === false) {
+<a name="line671"></a>                        break;
+<a name="line672"></a>                    }
+<a name="line673"></a>                    $re = @stream_socket_sendto($connect,$tmp_buff);
+<a name="line674"></a>                    if($re == -1) {
+<a name="line675"></a>                        $write_complete = false;
+<a name="line676"></a>                        break;
+<a name="line677"></a>                    }
+<a name="line678"></a>                    }
+<a name="line679"></a>                    fclose($f);
+<a name="line680"></a>                }
+<a name="line681"></a>            }
+<a name="line682"></a>
+<a name="line683"></a>            $_ENV['__X_EXCEPTION_THROW_DISABEL__'] = false;
+<a name="line684"></a>            fclose($connect);
+<a name="line685"></a>        }
+<a name="line686"></a>        if($this->open_log) {
+<a name="line687"></a>            $this->access_log(array('status'=>$this->response_status_code,                'date'=>date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']),
+<a name="line688"></a>                    'user_ip'=>$_SERVER['REMOTE_ADDR'],
+<a name="line689"></a>                    'uri'=>$_SERVER['REQUEST_URI'],
+<a name="line690"></a>                    'host'=>$_SERVER['HTTP_HOST'],
+<a name="line691"></a>                    'user_agent'=>$_SERVER['HTTP_USER_AGENT'],
+<a name="line692"></a>                    'method'=>$_SERVER['REQUEST_METHOD']
+<a name="line693"></a>                ));
+<a name="line694"></a>            }
+<a name="line695"></a>
+<a name="line696"></a>        unset($connect);
+<a name="line697"></a>        if(isset($this->upfile_tmp_list) && is_array($this->upfile_tmp_list)) {
+<a name="line698"></a>            foreach($this->upfile_tmp_list as $filename) {
+<a name="line699"></a>                file_exists($filename) && unlink($filename);
+<a name="line700"></a>            }
+<a name="line701"></a>            $this->upfile_tmp_list = array();
+<a name="line702"></a>        }
+<a name="line703"></a>        $this->clear_evn();
+<a name="line704"></a>    }
+<a name="line705"></a>    private function web_read($connect) {
+<a name="line706"></a>        $_SERVER['SERVER_ADDR'] = gethostbyname(gethostname());
+<a name="line707"></a>        $this->return_server_status('200');
+<a name="line708"></a>        $this->get_request_header($connect);
+<a name="line709"></a>        if($this->response_status_code == 200 && $_SERVER['REQUEST_METHOD'] == 'POST') {
+<a name="line710"></a>            $this->get_request_body($connect);
+<a name="line711"></a>        }
+<a name="line712"></a>        $_REQUEST = array_merge($_GET,$_POST,$_COOKIE);
+<a name="line713"></a>        $this->web_write($connect);
+<a name="line714"></a>    }
+<a name="line715"></a>    private function init_access_log($run_dir) {
+<a name="line716"></a>        $log_dir = "{$run_dir}/access_log";
+<a name="line717"></a>        if(!file_exists($log_dir)) {
+<a name="line718"></a>            mkdir($log_dir);
+<a name="line719"></a>        } elseif(!is_dir($log_dir)) {
+<a name="line720"></a>            throw new XException("unable create access log dir, {$log_dir} exists");
+<a name="line721"></a>        }
+<a name="line722"></a>        $log_file = "{$log_dir}/access_log_".date('Ymd');
+<a name="line723"></a>        $this->log_handle = fopen($log_file,'ab');
+<a name="line724"></a>        if($this->log_handle === false) throw new XException("create webserver access log 
+<a name="line725"></a>                file error, cannot open file {$log_file}");
+<a name="line726"></a>    }
+<a name="line727"></a>
+<a name="line728"></a>    /**
+<a name="line729"></a>     * log format :status date - Ip Method uri  USER-AGENT
+<a name="line730"></a>     */
+<a name="line731"></a>    private function access_log($access_log_array) {
+<a name="line732"></a>        if(false === is_resource($this->log_handle)) throw new XException('can not open webserver
+<a name="line733"></a>                access log file of resource handler');
+<a name="line734"></a>        $log = "{$access_log_array['status']} - {$access_log_array['date']} - "
+<a name="line735"></a>               ."{$access_log_array['user_ip']} - {$access_log_array['method']} - "
+<a name="line736"></a>               ." {$access_log_array['host']}"
+<a name="line737"></a>               ."{$access_log_array['uri']} -- {$access_log_array['user_agent']}\r\n";
+<a name="line738"></a>        @fwrite($this->log_handle,$log);
+<a name="line739"></a>    }
+<a name="line740"></a> }
+<a name="line741"></a></pre>
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xwebserver.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

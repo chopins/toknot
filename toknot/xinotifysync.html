@@ -1,0 +1,600 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Wed, 29 Aug 2012 07:49:30 +0000">
+
+<link rel="stylesheet" type="text/css" href="../../stylesheet.css">
+<link rel="start" href="../../overview-summary.html">
+
+<title>XInotifySync (ToKnot Documentation)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="../../toknot//package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../../toknot//package-tree.html">Tree</a></li>
+<li><a href="../../overview-files.html">Files</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../todo-list.html">Todo</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../../index.html" target="_top">Frames</a>
+<a href="../../toknot//xinotifysync.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">toknot\\XInotifySync</div>
+<a href="../../source/xinotifysync.php.html#line25" class="location">XInotifySync.php at line 25</a>
+
+<h1>Class XInotifySync</h1>
+
+<pre class="tree"><strong>XInotifySync</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public final  class <strong>XInotifySync</strong></p>
+
+<div class="comment" id="overview_description"><p>XInotifySync</p></div>
+
+<dl>
+<dt>Version:</dt>
+<dd>$id$</dd>
+<dt>Author:</dt>
+<dd>Chopins xiao <chopins.xiao@gmail.com></dd>
+</dl>
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#inotify_instance">$inotify_instance</a></p><p class="description">inotify_instance</p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#log_file_dir">$log_file_dir</a></p></td>
+</tr>
+<tr>
+<td class="type"> float</td>
+<td class="description"><p class="name"><a href="#max_sync_process_num">$max_sync_process_num</a></p><p class="description">max_sync_process_num
+max send file process</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#max_transporter">$max_transporter</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#pending_event">$pending_event</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#run_dir">$run_dir</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#ssh_ins">$ssh_ins</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#watch_descriptor">$watch_descriptor</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#watch_list_conf">$watch_list_conf</a></p></td>
+</tr>
+<tr>
+<td class="type">private  mixed</td>
+<td class="description"><p class="name"><a href="#watch_list_conf_wd">$watch_list_conf_wd</a></p></td>
+</tr>
+</table>
+
+<table id="summary_constructor">
+<tr><th colspan="2">Constructor Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#__construct()">__construct</a>(mixed watch_list_conf)</p></td>
+</tr>
+</table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#err()">err</a>(mixed msg)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#msg()">msg</a>(mixed msg)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#logs()">logs</a>(mixed msg)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#create_inotify_instance()">create_inotify_instance</a>()</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#watch()">watch</a>(mixed path, mixed ip, mixed port, mixed username, mixed password, mixed tpath)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#rm()">rm</a>(mixed wd)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#rm_dir_wd()">rm_dir_wd</a>(mixed path)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#rm_all_watch()">rm_all_watch</a>()</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#queue()">queue</a>()</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#get()">get</a>()</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#add_form_array()">add_form_array</a>(mixed file_list)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#file_transport_process_exit()">file_transport_process_exit</a>(mixed signo)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#sync_master_process_loop()">sync_master_process_loop</a>()</p><p class="description">sync_master_process_loop
+file sync master process</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#merge()">merge</a>(mixed file_info, mixed unit)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#transporter_pid()">transporter_pid</a>()</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#rm_transporter_pid()">rm_transporter_pid</a>()</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#transporter_file()">transporter_file</a>(mixed str, mixed change_list)</p><p class="description">sync_file
+file or directory transport opreate process</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#exec_sync_send_file()">exec_sync_send_file</a>(mixed watch_info)</p><p class="description">exec_sync_send_file
+create a file or directory sysnc of instance</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#send_all_sub_file()">send_all_sub_file</a>(mixed ssh_ins, mixed local_path, mixed target_path)</p><p class="description">send_all_sub_file
+send files and directories inside the local path</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#exec_sync_mv()">exec_sync_mv</a>(mixed move_form, mixed move_to)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#exec_sync_rm()">exec_sync_rm</a>(mixed delete)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#notify_file_list()">notify_file_list</a>(mixed watch_info, mixed change)</p><p class="description">notify_file_list
+send the change list info to sysnc process</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#add_form_file()">add_form_file</a>(mixed file)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#add_sub_dir()">add_sub_dir</a>(mixed wd)</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#reload_watch_list()">reload_watch_list</a>(mixed ev_info)</p></td>
+</tr>
+<tr>
+<td class="type">private  void</td>
+<td class="description"><p class="name"><a href="#watch_loop()">watch_loop</a>()</p></td>
+</tr>
+</table>
+
+<h2 id="detail_field">Field Detail</h2>
+<a href="../../source/xinotifysync.php.html#line32" class="location">XInotifySync.php at line 32</a>
+
+<h3 id="inotify_instance">inotify_instance</h3>
+<code class="signature">private  mixed <strong>$inotify_instance</strong> = null</code>
+<div class="details">
+<p>inotify_instance</p></div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line46" class="location">XInotifySync.php at line 46</a>
+
+<h3 id="log_file_dir">log_file_dir</h3>
+<code class="signature">private  mixed <strong>$log_file_dir</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line44" class="location">XInotifySync.php at line 44</a>
+
+<h3 id="max_sync_process_num">max_sync_process_num</h3>
+<code class="signature">public  float <strong>$max_sync_process_num</strong> = 5</code>
+<div class="details">
+<p>max_sync_process_num
+max send file process</p></div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line45" class="location">XInotifySync.php at line 45</a>
+
+<h3 id="max_transporter">max_transporter</h3>
+<code class="signature">public  mixed <strong>$max_transporter</strong> = 5</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line34" class="location">XInotifySync.php at line 34</a>
+
+<h3 id="pending_event">pending_event</h3>
+<code class="signature">private  mixed <strong>$pending_event</strong> = 0</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line48" class="location">XInotifySync.php at line 48</a>
+
+<h3 id="run_dir">run_dir</h3>
+<code class="signature">private  mixed <strong>$run_dir</strong> = '/tmp'</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line47" class="location">XInotifySync.php at line 47</a>
+
+<h3 id="ssh_ins">ssh_ins</h3>
+<code class="signature">private  mixed <strong>$ssh_ins</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line33" class="location">XInotifySync.php at line 33</a>
+
+<h3 id="watch_descriptor">watch_descriptor</h3>
+<code class="signature">private  mixed <strong>$watch_descriptor</strong> = array()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line49" class="location">XInotifySync.php at line 49</a>
+
+<h3 id="watch_list_conf">watch_list_conf</h3>
+<code class="signature">private  mixed <strong>$watch_list_conf</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line35" class="location">XInotifySync.php at line 35</a>
+
+<h3 id="watch_list_conf_wd">watch_list_conf_wd</h3>
+<code class="signature">private  mixed <strong>$watch_list_conf_wd</strong> = null</code>
+<div class="details">
+</div>
+
+<hr>
+
+<h2 id="detail_method">Constructor Detail</h2>
+<a href="../../source/xinotifysync.php.html#line51" class="location">XInotifySync.php at line 51</a>
+
+<h3 id="__construct()">__construct</h3>
+<code class="signature">public  void <strong>__construct</strong>(mixed watch_list_conf)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<h2 id="detail_method">Method Detail</h2>
+<a href="../../source/xinotifysync.php.html#line101" class="location">XInotifySync.php at line 101</a>
+
+<h3 id="err()">err</h3>
+<code class="signature">private  void <strong>err</strong>(mixed msg)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line105" class="location">XInotifySync.php at line 105</a>
+
+<h3 id="msg()">msg</h3>
+<code class="signature">private  void <strong>msg</strong>(mixed msg)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line110" class="location">XInotifySync.php at line 110</a>
+
+<h3 id="logs()">logs</h3>
+<code class="signature">private  void <strong>logs</strong>(mixed msg)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line118" class="location">XInotifySync.php at line 118</a>
+
+<h3 id="create_inotify_instance()">create_inotify_instance</h3>
+<code class="signature">private  void <strong>create_inotify_instance</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line121" class="location">XInotifySync.php at line 121</a>
+
+<h3 id="watch()">watch</h3>
+<code class="signature">public  void <strong>watch</strong>(mixed path, mixed ip, mixed port, mixed username, mixed password, mixed tpath)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line137" class="location">XInotifySync.php at line 137</a>
+
+<h3 id="rm()">rm</h3>
+<code class="signature">public  void <strong>rm</strong>(mixed wd)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line153" class="location">XInotifySync.php at line 153</a>
+
+<h3 id="rm_dir_wd()">rm_dir_wd</h3>
+<code class="signature">public  void <strong>rm_dir_wd</strong>(mixed path)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line162" class="location">XInotifySync.php at line 162</a>
+
+<h3 id="rm_all_watch()">rm_all_watch</h3>
+<code class="signature">public  void <strong>rm_all_watch</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line167" class="location">XInotifySync.php at line 167</a>
+
+<h3 id="queue()">queue</h3>
+<code class="signature">public  void <strong>queue</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line170" class="location">XInotifySync.php at line 170</a>
+
+<h3 id="get()">get</h3>
+<code class="signature">public  void <strong>get</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line173" class="location">XInotifySync.php at line 173</a>
+
+<h3 id="add_form_array()">add_form_array</h3>
+<code class="signature">public  void <strong>add_form_array</strong>(mixed file_list)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line184" class="location">XInotifySync.php at line 184</a>
+
+<h3 id="file_transport_process_exit()">file_transport_process_exit</h3>
+<code class="signature">public  void <strong>file_transport_process_exit</strong>(mixed signo)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line194" class="location">XInotifySync.php at line 194</a>
+
+<h3 id="sync_master_process_loop()">sync_master_process_loop</h3>
+<code class="signature">private  void <strong>sync_master_process_loop</strong>()</code>
+<div class="details">
+<p>sync_master_process_loop
+file sync master process</p></div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line234" class="location">XInotifySync.php at line 234</a>
+
+<h3 id="merge()">merge</h3>
+<code class="signature">private  void <strong>merge</strong>(mixed file_info, mixed unit)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line247" class="location">XInotifySync.php at line 247</a>
+
+<h3 id="transporter_pid()">transporter_pid</h3>
+<code class="signature">private  void <strong>transporter_pid</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line251" class="location">XInotifySync.php at line 251</a>
+
+<h3 id="rm_transporter_pid()">rm_transporter_pid</h3>
+<code class="signature">private  void <strong>rm_transporter_pid</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line263" class="location">XInotifySync.php at line 263</a>
+
+<h3 id="transporter_file()">transporter_file</h3>
+<code class="signature">private  void <strong>transporter_file</strong>(mixed str, mixed change_list)</code>
+<div class="details">
+<p>sync_file
+file or directory transport opreate process</p></div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line333" class="location">XInotifySync.php at line 333</a>
+
+<h3 id="exec_sync_send_file()">exec_sync_send_file</h3>
+<code class="signature">private  void <strong>exec_sync_send_file</strong>(mixed watch_info)</code>
+<div class="details">
+<p>exec_sync_send_file
+create a file or directory sysnc of instance</p></div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line366" class="location">XInotifySync.php at line 366</a>
+
+<h3 id="send_all_sub_file()">send_all_sub_file</h3>
+<code class="signature">private  void <strong>send_all_sub_file</strong>(mixed ssh_ins, mixed local_path, mixed target_path)</code>
+<div class="details">
+<p>send_all_sub_file
+send files and directories inside the local path</p></div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line380" class="location">XInotifySync.php at line 380</a>
+
+<h3 id="exec_sync_mv()">exec_sync_mv</h3>
+<code class="signature">private  void <strong>exec_sync_mv</strong>(mixed move_form, mixed move_to)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line407" class="location">XInotifySync.php at line 407</a>
+
+<h3 id="exec_sync_rm()">exec_sync_rm</h3>
+<code class="signature">private  void <strong>exec_sync_rm</strong>(mixed delete)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line442" class="location">XInotifySync.php at line 442</a>
+
+<h3 id="notify_file_list()">notify_file_list</h3>
+<code class="signature">private  void <strong>notify_file_list</strong>(mixed watch_info, mixed change)</code>
+<div class="details">
+<p>notify_file_list
+send the change list info to sysnc process</p></div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line456" class="location">XInotifySync.php at line 456</a>
+
+<h3 id="add_form_file()">add_form_file</h3>
+<code class="signature">public  void <strong>add_form_file</strong>(mixed file)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line460" class="location">XInotifySync.php at line 460</a>
+
+<h3 id="add_sub_dir()">add_sub_dir</h3>
+<code class="signature">private  void <strong>add_sub_dir</strong>(mixed wd)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line479" class="location">XInotifySync.php at line 479</a>
+
+<h3 id="reload_watch_list()">reload_watch_list</h3>
+<code class="signature">public  void <strong>reload_watch_list</strong>(mixed ev_info)</code>
+<div class="details">
+</div>
+
+<hr>
+
+<a href="../../source/xinotifysync.php.html#line487" class="location">XInotifySync.php at line 487</a>
+
+<h3 id="watch_loop()">watch_loop</h3>
+<code class="signature">private  void <strong>watch_loop</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="header">
+<h1>ToKnot</h1>
+<ul>
+<li><a href="../../overview-summary.html">Overview</a></li>
+<li><a href="../../toknot//package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../../toknot//package-tree.html">Tree</a></li>
+<li><a href="../../overview-files.html">Files</a></li>
+<li><a href="../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../todo-list.html">Todo</a></li>
+<li><a href="../../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../../index.html" target="_top">Frames</a>
+<a href="../../toknot//xinotifysync.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>
