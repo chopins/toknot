@@ -18,7 +18,6 @@ exists_frame();
  * XException 
  * 
  * @uses ErrorException
- * @package 
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */

@@ -139,7 +139,6 @@ class XMySQLConnect extends XObject {
 /**
  * XMySQLTable 
  * 
- * @package DataBase
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */

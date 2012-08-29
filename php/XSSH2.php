@@ -19,7 +19,6 @@ exists_frame();
 /**
  * XSSH2 
  * 
- * @package 
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */

@@ -17,7 +17,6 @@ exists_frame();
 /**
  * XKVDB 
  * 
- * @package 
  * @version $id$
  * @author Chopins xiao <chopins.xiao@gmail.com> 
  */
