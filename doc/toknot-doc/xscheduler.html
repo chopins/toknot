@@ -1,0 +1,257 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://phpdoctor.sourceforge.net/)">
+<meta name="when" content="Tue, 28 Aug 2012 17:22:47 +0800">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XScheduler (PHPDoctor)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../toknot-doc/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../toknot-doc/package-tree.html">Tree</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../toknot-doc/xscheduler.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">toknot-doc\XScheduler</div>
+<div class="location">/XScheduler.php at line 28</div>
+
+<h1>Class XScheduler</h1>
+
+<pre class="tree">Class:XScheduler - Superclass: XObject
+<a href="../toknot-doc/xobject.html">XObject</a><br>   &lfloor;&nbsp;<strong>XScheduler</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public final  class <strong>XScheduler</strong><br>extends <a href="../toknot-doc/xobject.html">XObject</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>XScheduler</p></div>
+
+<dl>
+<dt>Uses:</dt>
+<dd>XObject</dd>
+<dt>Version:</dt>
+<dd>$id$</dd>
+<dt>Copyright:</dt>
+<dd>2012 The Author</dd>
+<dt>Author:</dt>
+<dd>Chopins xiao <chopins.xiao@gmail.com></dd>
+<dt>License:</dt>
+<dd>http://opensource.org/licenses/bsd-license.php New BSD License</dd>
+</dl>
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type"> object</td>
+<td class="description"><p class="name"><a href="#app_instance">$app_instance</a></p><p class="description">app_instance</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#encodeing">$encodeing</a></p><p class="description">encodeing</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#php_dir_name">$php_dir_name</a></p><p class="description">php_dir_name</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#timezone">$timezone</a></p><p class="description">timezone</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#url_file_suffix">$url_file_suffix</a></p><p class="description">url_file_suffix</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#url_list_file">$url_list_file</a></p><p class="description">url_list_file</p></td>
+</tr>
+</table>
+
+<table id="summary_constr">
+<tr><th colspan="2">Constructor Summary</th></tr>
+<tr>
+<td class="description"><p class="name"><a href="#XScheduler()">XScheduler</a>()</p><p class="description">__construct</p></td>
+</tr>
+</table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#get_html()">get_html</a>()</p><p class="description">get html string of view class of user's application</p></td>
+</tr>
+<tr>
+<td class="type">protected  void</td>
+<td class="description"><p class="name"><a href="#get_ini()">get_ini</a>()</p><p class="description">get_ini</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#load_app()">load_app</a>()</p><p class="description">Load user application view class</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#set_time_zone()">set_time_zone</a>()</p><p class="description">set application timezone of the application</p></td>
+</tr>
+<tr>
+<td class="type">static  void</td>
+<td class="description"><p class="name"><a href="#singleton()">singleton</a>()</p><p class="description">singleton</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from toknot-doc\XObject</th></tr>
+<tr><td><a href="../toknot-doc/xobject.html#isChange()">isChange</a></td></tr></table>
+
+<h2 id="detail_field">Field Detail</h2>
+<div class="location">/XScheduler.php at line 35</div>
+<h3 id="app_instance">app_instance</h3>
+<code class="signature">public  object <strong>$app_instance</strong></code>
+<div class="details">
+<p>app_instance</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 70</div>
+<h3 id="encodeing">encodeing</h3>
+<code class="signature">public  string <strong>$encodeing</strong> = ''</code>
+<div class="details">
+<p>encodeing</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 84</div>
+<h3 id="php_dir_name">php_dir_name</h3>
+<code class="signature">public  mixed <strong>$php_dir_name</strong></code>
+<div class="details">
+<p>php_dir_name</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 77</div>
+<h3 id="timezone">timezone</h3>
+<code class="signature">public  mixed <strong>$timezone</strong></code>
+<div class="details">
+<p>timezone</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 91</div>
+<h3 id="url_file_suffix">url_file_suffix</h3>
+<code class="signature">public  mixed <strong>$url_file_suffix</strong></code>
+<div class="details">
+<p>url_file_suffix</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 98</div>
+<h3 id="url_list_file">url_list_file</h3>
+<code class="signature">public  mixed <strong>$url_list_file</strong></code>
+<div class="details">
+<p>url_list_file</p></div>
+
+<hr>
+
+<h2 id="detail_constr">Constructor Detail</h2>
+<div class="location">/XScheduler.php at line 135</div>
+<h3 id="XScheduler()">XScheduler</h3>
+<code class="signature">public <strong>XScheduler</strong>()</code>
+<div class="details">
+<p>__construct</p></div>
+
+<hr>
+
+<h2 id="detail_method">Method Detail</h2>
+<div class="location">/XScheduler.php at line 545</div>
+<h3 id="get_html()">get_html</h3>
+<code class="signature">public  void <strong>get_html</strong>()</code>
+<div class="details">
+<p>get html string of view class of user's application</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 115</div>
+<h3 id="get_ini()">get_ini</h3>
+<code class="signature">protected  void <strong>get_ini</strong>()</code>
+<div class="details">
+<p>get_ini</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 197</div>
+<h3 id="load_app()">load_app</h3>
+<code class="signature">public  void <strong>load_app</strong>()</code>
+<div class="details">
+<p>Load user application view class</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 564</div>
+<h3 id="set_time_zone()">set_time_zone</h3>
+<code class="signature">public  void <strong>set_time_zone</strong>()</code>
+<div class="details">
+<p>set application timezone of the application</p></div>
+
+<hr>
+
+<div class="location">/XScheduler.php at line 106</div>
+<h3 id="singleton()">singleton</h3>
+<code class="signature">public static  void <strong>singleton</strong>()</code>
+<div class="details">
+<p>singleton</p></div>
+
+<hr>
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../toknot-doc/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../toknot-doc/package-tree.html">Tree</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../toknot-doc/xscheduler.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

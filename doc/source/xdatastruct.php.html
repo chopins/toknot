@@ -1,0 +1,458 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 28 Aug 2012 09:17:47 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XDataStruct.php (PHPDoctor)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xdatastruct.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>XDataStruct.php</h1>
+<div class="comment" id="overview_description"><p>Toknot</p><p>XObject class, XArrayObject class, XArrayElementObject class, XStdClass class,</p><p>PHP version 5.3</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Toknot
+<a name="line4"></a> *
+<a name="line5"></a> * XObject class, XArrayObject class, XArrayElementObject class, XStdClass class,
+<a name="line6"></a> *
+<a name="line7"></a> * PHP version 5.3
+<a name="line8"></a> * 
+<a name="line9"></a> * @author chopins xiao <chopins.xiao@gmail.com>
+<a name="line10"></a> * @copyright  2012 The Authors
+<a name="line11"></a> * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line12"></a> * @link       http://blog.toknot.com
+<a name="line13"></a> * @since      File available since Release $id$
+<a name="line14"></a> */
+<a name="line15"></a>exists_frame();
+<a name="line16"></a>
+<a name="line17"></a>/**
+<a name="line18"></a> * XObject 
+<a name="line19"></a> * base single depth object class of XPHPFramework
+<a name="line20"></a> * 
+<a name="line21"></a> * @version $id$
+<a name="line22"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line23"></a> */
+<a name="line24"></a>class XObject {
+<a name="line25"></a>    /**
+<a name="line26"></a>     * whether object instance propertie change status
+<a name="line27"></a>     *
+<a name="line28"></a>     * @var bool
+<a name="line29"></a>     * @access private
+<a name="line30"></a>     */
+<a name="line31"></a>    private $propertieChange = false;
+<a name="line32"></a>
+<a name="line33"></a>    private static $instance = null;
+<a name="line34"></a>    /**
+<a name="line35"></a>     * singleton 
+<a name="line36"></a>     * 
+<a name="line37"></a>     * @param callable $funcname 
+<a name="line38"></a>     * @param mixed $params 
+<a name="line39"></a>     * @static
+<a name="line40"></a>     * @access public
+<a name="line41"></a>     * @return object
+<a name="line42"></a>     */
+<a name="line43"></a>    final protected static function __singleton($funcname = null, $params = null) {
+<a name="line44"></a>        $class_name = get_called_class();
+<a name="line45"></a>        if(self::$instance && self::$instance instanceof $class_name) {
+<a name="line46"></a>            return self::$instance;
+<a name="line47"></a>        }
+<a name="line48"></a>        self::$instance = new $class_name;
+<a name="line49"></a>        if($funcname) {
+<a name="line50"></a>            if(!is_array($params)) {
+<a name="line51"></a>                call_user_func($funcname,$params);
+<a name="line52"></a>            } else {
+<a name="line53"></a>                call_user_func_array($funcname,$params);
+<a name="line54"></a>            }
+<a name="line55"></a>        }
+<a name="line56"></a>        return self::$instance;
+<a name="line57"></a>    }
+<a name="line58"></a>
+<a name="line59"></a>    /**
+<a name="line60"></a>     * __set 
+<a name="line61"></a>     * that changed propertie status
+<a name="line62"></a>     * 
+<a name="line63"></a>     * @param mixed $propertie 
+<a name="line64"></a>     * @param mixed $value 
+<a name="line65"></a>     * @final
+<a name="line66"></a>     * @access public
+<a name="line67"></a>     * @return void
+<a name="line68"></a>     */
+<a name="line69"></a>    final public function __set($propertie, $value) {
+<a name="line70"></a>        $this->propertieChange = true;
+<a name="line71"></a>        $this->__xset__($propertie,$value);
+<a name="line72"></a>    }
+<a name="line73"></a>    public function __xset__($propertie, $value) {
+<a name="line74"></a>        $this->$propertie = $value;
+<a name="line75"></a>    }
+<a name="line76"></a>
+<a name="line77"></a>    /**
+<a name="line78"></a>     * isChange 
+<a name="line79"></a>     * check class propertie whether change default value or set new propertie and it value;
+<a name="line80"></a>     * 
+<a name="line81"></a>     * @final
+<a name="line82"></a>     * @access public
+<a name="line83"></a>     * @return void
+<a name="line84"></a>     */
+<a name="line85"></a>    final public function isChange() {
+<a name="line86"></a>        if($this->propertieChange) return true;
+<a name="line87"></a>        $ref = new ReflectionObject($this);
+<a name="line88"></a>        $list = $ref->getDefaultProperties();
+<a name="line89"></a>        $static_list = $ref->getStaticProperties();
+<a name="line90"></a>        foreach($list as $key=>$value) {
+<a name="line91"></a>            if(isset($static_list[$key])) {
+<a name="line92"></a>                if(self::$$key != $value) return true;
+<a name="line93"></a>            } else {
+<a name="line94"></a>                if($this->$key != $value) return true;
+<a name="line95"></a>            }
+<a name="line96"></a>        }
+<a name="line97"></a>        return false;
+<a name="line98"></a>    }
+<a name="line99"></a>}
+<a name="line100"></a>
+<a name="line101"></a>/**
+<a name="line102"></a> * XArrayElementObject 
+<a name="line103"></a> * XArrayObject element object class
+<a name="line104"></a> * 
+<a name="line105"></a> * @uses XObject
+<a name="line106"></a> * @version $id$
+<a name="line107"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line108"></a> */
+<a name="line109"></a>class XArrayElementObject  extends XObject{
+<a name="line110"></a>    /**
+<a name="line111"></a>     * save element value
+<a name="line112"></a>     *
+<a name="line113"></a>     * @var mixed
+<a name="line114"></a>     * @access public
+<a name="line115"></a>     */
+<a name="line116"></a>    public $value;
+<a name="line117"></a>    public $name;
+<a name="line118"></a>
+<a name="line119"></a>    public function __construct($value, $name = '') {
+<a name="line120"></a>        $this->value = $value;
+<a name="line121"></a>        $this->name = $name;
+<a name="line122"></a>    }
+<a name="line123"></a>    /**
+<a name="line124"></a>     * set 
+<a name="line125"></a>     * modify the storage value of specify key in XArrayObject
+<a name="line126"></a>     * 
+<a name="line127"></a>     * @param mixed $value 
+<a name="line128"></a>     * @access public
+<a name="line129"></a>     * @return void
+<a name="line130"></a>     */
+<a name="line131"></a>    public function set($value) {
+<a name="line132"></a>        if(is_array($value)) {
+<a name="line133"></a>            $this->name = new XArrayObject($value);
+<a name="line134"></a>        } else {
+<a name="line135"></a>            $this->name = $value;
+<a name="line136"></a>        }
+<a name="line137"></a>    }
+<a name="line138"></a>    public function __unset($name) {
+<a name="line139"></a>        if($name == 'name') unset($this);
+<a name="line140"></a>    }
+<a name="line141"></a>    public function __toString() {
+<a name="line142"></a>        return $this->value;
+<a name="line143"></a>    }
+<a name="line144"></a>}
+<a name="line145"></a>
+<a name="line146"></a>/**
+<a name="line147"></a> * XStdClass 
+<a name="line148"></a> * Toknot stdClass
+<a name="line149"></a> * 
+<a name="line150"></a> * @uses XObject
+<a name="line151"></a> * @version $id$
+<a name="line152"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line153"></a> */
+<a name="line154"></a>class XStdClass extends XObject {
+<a name="line155"></a>    public $value = null;
+<a name="line156"></a>    public function __construct($value = null) {
+<a name="line157"></a>        $this->value = $value;
+<a name="line158"></a>    }
+<a name="line159"></a>    final public function __xset__($name, $value) {
+<a name="line160"></a>        $this->$name = new XStdClass($value);
+<a name="line161"></a>    }
+<a name="line162"></a>    public function __toString() {
+<a name="line163"></a>        return $this->value;
+<a name="line164"></a>    }
+<a name="line165"></a>
+<a name="line166"></a>}
+<a name="line167"></a>
+<a name="line168"></a>
+<a name="line169"></a>/**
+<a name="line170"></a> * XArrayObject 
+<a name="line171"></a> * This class allows arrays to work as object;
+<a name="line172"></a> * 
+<a name="line173"></a> * @uses ArrayAccess
+<a name="line174"></a> * @uses Countable
+<a name="line175"></a> * @version $id$
+<a name="line176"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line177"></a> */
+<a name="line178"></a>class XArrayObject implements ArrayAccess,Countable {
+<a name="line179"></a>    protected $storage = null;
+<a name="line180"></a>    protected $elementObjectName = 'XArrayElementObject';
+<a name="line181"></a>    protected $storageType = 'ArrayObject';
+<a name="line182"></a>    protected $indexType = 'hex';
+<a name="line183"></a>    public function __construct($array) {
+<a name="line184"></a>        if($array instanceof $this->storageType) {
+<a name="line185"></a>            $this->storage = $array;
+<a name="line186"></a>            return;
+<a name="line187"></a>        } else {
+<a name="line188"></a>            $this->storage = $this->getStorageObject();
+<a name="line189"></a>        }
+<a name="line190"></a>        foreach($array as $key => $value) {
+<a name="line191"></a>            if(is_array($value)) {
+<a name="line192"></a>                $key = $this->getIndex($key);
+<a name="line193"></a>                $this->storage->offsetSet($key,new XArrayObject($value));
+<a name="line194"></a>            } else {
+<a name="line195"></a>                $this->setKeyValue($key,$value);
+<a name="line196"></a>            }
+<a name="line197"></a>        }
+<a name="line198"></a>    }
+<a name="line199"></a>    public function getStorageObject() {
+<a name="line200"></a>        $ref = new ReflectionClass($this->storageType);
+<a name="line201"></a>        return $ref->newInstance();
+<a name="line202"></a>    }
+<a name="line203"></a>    public function setElement($value, $sKey = '') {
+<a name="line204"></a>        $ref = new ReflectionClass($this->elementObjectName);
+<a name="line205"></a>        return $ref->newInstance($value,$sKey);
+<a name="line206"></a>    }
+<a name="line207"></a>    public function getIndex($str_key) {
+<a name="line208"></a>        $int_hash = 0;
+<a name="line209"></a>        $key_len = strlen($str_key);
+<a name="line210"></a>        for($i=0;$i<$key_len;$i++) {
+<a name="line211"></a>            $int_hash = ((($int_hash <<5) + $int_hash) + ord($str_key[$i])) % 5813;
+<a name="line212"></a>        }
+<a name="line213"></a>        return $this->indexType == 'hex'? dechex($int_hash) : $int_hash;
+<a name="line214"></a>    }
+<a name="line215"></a>    public function offsetExists($str_index) {
+<a name="line216"></a>        $index = $this->getIndex($str_index);
+<a name="line217"></a>        return $this->storage->offsetExists($index);
+<a name="line218"></a>    }
+<a name="line219"></a>    public function offsetGet($str_index) {
+<a name="line220"></a>        $index = $this->getIndex($str_index);
+<a name="line221"></a>        return $this->storage->offsetGet($index);
+<a name="line222"></a>    }
+<a name="line223"></a>    public function count() {
+<a name="line224"></a>        return $this->storage->count();
+<a name="line225"></a>    }
+<a name="line226"></a>    public function offsetUnset($sKey) {
+<a name="line227"></a>        $this->stroage->offsetUnset($int_key);
+<a name="line228"></a>    }
+<a name="line229"></a>    public function setKeyValue($sKey,$value) {
+<a name="line230"></a>        $key = $this->getIndex($sKey);
+<a name="line231"></a>        if(is_array($value)) {
+<a name="line232"></a>            $this->storage->offsetSet($key,new XArrayObject($value));
+<a name="line233"></a>        } else {
+<a name="line234"></a>            $this->storage->offsetSet($key, $this->setElement($value,$sKey));
+<a name="line235"></a>        }
+<a name="line236"></a>    }
+<a name="line237"></a>    public function isArray($key) {
+<a name="line238"></a>        if($this->offsetExists($key)) {
+<a name="line239"></a>            $keyValue = $this->offsetGet($key);
+<a name="line240"></a>            if(is_array($keyValue)) return true;
+<a name="line241"></a>            return $keyValue instanceof XArrayObject;
+<a name="line242"></a>        }
+<a name="line243"></a>        return false;
+<a name="line244"></a>    }
+<a name="line245"></a>    public function offsetSet($sKey, $value) {
+<a name="line246"></a>        $this->setKeyValue($sKey,$value);
+<a name="line247"></a>    }
+<a name="line248"></a>    public function __set($sKey, $value) {
+<a name="line249"></a>        $this->offsetSet($sKey,$value);
+<a name="line250"></a>    }
+<a name="line251"></a>    public function __get($sKey) {
+<a name="line252"></a>        if($this->offsetExists($sKey)) {
+<a name="line253"></a>            return $this->offsetGet($sKey);
+<a name="line254"></a>        }
+<a name="line255"></a>    }
+<a name="line256"></a>    public function __isset($sKey) {
+<a name="line257"></a>        return $this->offsetExists($sKey);
+<a name="line258"></a>    }
+<a name="line259"></a>    public function __unset($sKey) {
+<a name="line260"></a>        $this->offsetUnset($sKey);
+<a name="line261"></a>    }
+<a name="line262"></a>}
+<a name="line263"></a>
+<a name="line264"></a>/**
+<a name="line265"></a> * XTemplateObject 
+<a name="line266"></a> * the XTemplate class $T properties of proto
+<a name="line267"></a> * 
+<a name="line268"></a> * @uses XObject
+<a name="line269"></a> * @version $id$
+<a name="line270"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line271"></a> */
+<a name="line272"></a>class XTemplateObject extends XObject {
+<a name="line273"></a>    /**
+<a name="line274"></a>     * name 
+<a name="line275"></a>     * the template file name
+<a name="line276"></a>     * 
+<a name="line277"></a>     * @var mixed
+<a name="line278"></a>     * @access public
+<a name="line279"></a>     */
+<a name="line280"></a>    public $name = null;
+<a name="line281"></a>
+<a name="line282"></a>    /**
+<a name="line283"></a>     * type 
+<a name="line284"></a>     * the template filetype
+<a name="line285"></a>     * 
+<a name="line286"></a>     * @var mixed
+<a name="line287"></a>     * @access public
+<a name="line288"></a>     */
+<a name="line289"></a>    public $type = 'htm';
+<a name="line290"></a>
+<a name="line291"></a>    /**
+<a name="line292"></a>     * data_cache 
+<a name="line293"></a>     * only cache view data
+<a name="line294"></a>     * 
+<a name="line295"></a>     * @var mixed
+<a name="line296"></a>     * @access public
+<a name="line297"></a>     */
+<a name="line298"></a>    public $data_cache = false;
+<a name="line299"></a>
+<a name="line300"></a>    /**
+<a name="line301"></a>     * cache_time 
+<a name="line302"></a>     * the cache data or file expires seconds if open cache, and default 300 seconds
+<a name="line303"></a>     * 
+<a name="line304"></a>     * @var float
+<a name="line305"></a>     * @access public
+<a name="line306"></a>     */
+<a name="line307"></a>    public $cache_time = 300;
+<a name="line308"></a>
+<a name="line309"></a>    /**
+<a name="line310"></a>     * static_cache 
+<a name="line311"></a>     * save view-class output html to file if be set true
+<a name="line312"></a>     * 
+<a name="line313"></a>     * @var mixed
+<a name="line314"></a>     * @access public
+<a name="line315"></a>     */
+<a name="line316"></a>    public $static_cache = false;
+<a name="line317"></a>
+<a name="line318"></a>    /**
+<a name="line319"></a>     * TPL_INI 
+<a name="line320"></a>     * configuration for tpl
+<a name="line321"></a>     * 
+<a name="line322"></a>     * @var mixed
+<a name="line323"></a>     * @access public
+<a name="line324"></a>     */
+<a name="line325"></a>    public $TPL_INI;
+<a name="line326"></a>    private $cache_dir;
+<a name="line327"></a>    public $be_cache = false;
+<a name="line328"></a>    public function __construct($TPL_INI, $cache_dir) {
+<a name="line329"></a>        $this->TPL_INI = $TPL_INI;
+<a name="line330"></a>        $this->cache_dir = $cache_dir;
+<a name="line331"></a>    }
+<a name="line332"></a>    public function check_cache() {
+<a name="line333"></a>        $ins = XTemplate::singleton($this->TPL_INI);
+<a name="line334"></a>        $ins->set_cache_dir($this->cache_dir);
+<a name="line335"></a>        $this->be_cache = $ins->get_cache($this);
+<a name="line336"></a>    }
+<a name="line337"></a>}
+<a name="line338"></a>
+<a name="line339"></a>/**
+<a name="line340"></a> * XDBConf 
+<a name="line341"></a> * the Database config object proto
+<a name="line342"></a> * 
+<a name="line343"></a> * @uses XObject
+<a name="line344"></a> * @version $id$
+<a name="line345"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line346"></a> */
+<a name="line347"></a>class XDBConf extends XObject {
+<a name="line348"></a>
+<a name="line349"></a>    /**
+<a name="line350"></a>     * dbtype 
+<a name="line351"></a>     * set database type
+<a name="line352"></a>     * 
+<a name="line353"></a>     * @var mixed
+<a name="line354"></a>     * @access public
+<a name="line355"></a>     */
+<a name="line356"></a>    public $dbtype = null;
+<a name="line357"></a>
+<a name="line358"></a>    /**
+<a name="line359"></a>     * dbhost 
+<a name="line360"></a>     * set database connect host or open path
+<a name="line361"></a>     * 
+<a name="line362"></a>     * @var mixed
+<a name="line363"></a>     * @access public
+<a name="line364"></a>     */
+<a name="line365"></a>    public $dbhost = null;
+<a name="line366"></a>
+<a name="line367"></a>    /**
+<a name="line368"></a>     * dbuser 
+<a name="line369"></a>     * the database username
+<a name="line370"></a>     * 
+<a name="line371"></a>     * @var mixed
+<a name="line372"></a>     * @access public
+<a name="line373"></a>     */
+<a name="line374"></a>    public $dbuser = null;
+<a name="line375"></a>
+<a name="line376"></a>    /**
+<a name="line377"></a>     * dbpass 
+<a name="line378"></a>     * the database password of user
+<a name="line379"></a>     * 
+<a name="line380"></a>     * @var mixed
+<a name="line381"></a>     * @access public
+<a name="line382"></a>     */
+<a name="line383"></a>    public $dbpass = null;
+<a name="line384"></a>
+<a name="line385"></a>
+<a name="line386"></a>    /**
+<a name="line387"></a>     * dbport 
+<a name="line388"></a>     * if connect by network, set the connect port
+<a name="line389"></a>     * 
+<a name="line390"></a>     * @var mixed
+<a name="line391"></a>     * @access public
+<a name="line392"></a>     */
+<a name="line393"></a>    public $dbport = null;
+<a name="line394"></a>    public $pconnect = false;
+<a name="line395"></a>}
+<a name="line396"></a></pre>
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xdatastruct.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

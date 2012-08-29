@@ -1,0 +1,393 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 28 Aug 2012 09:17:47 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XDataModel.php (PHPDoctor)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xdatamodel.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>XDataModel.php</h1>
+<div class="comment" id="overview_description"><p>Toknot
+XDbm</p><p>PHP version 5.3</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Toknot
+<a name="line4"></a> * XDbm
+<a name="line5"></a> *
+<a name="line6"></a> * PHP version 5.3
+<a name="line7"></a> * 
+<a name="line8"></a> * @author chopins xiao <chopins.xiao@gmail.com>
+<a name="line9"></a> * @copyright  2012 The Authors
+<a name="line10"></a> * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line11"></a> * @link       http://blog.toknot.com
+<a name="line12"></a> * @since      File available since Release $id$
+<a name="line13"></a> */
+<a name="line14"></a>
+<a name="line15"></a>exists_frame();
+<a name="line16"></a>/**
+<a name="line17"></a> * XDbm 
+<a name="line18"></a> * This is data model class base class
+<a name="line19"></a> * 
+<a name="line20"></a> * @abstract
+<a name="line21"></a> * @version $id$
+<a name="line22"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line23"></a> */
+<a name="line24"></a>abstract class XDataModel extends XObject {
+<a name="line25"></a>    /**
+<a name="line26"></a>     * cache_file 
+<a name="line27"></a>     * 
+<a name="line28"></a>     * @var mixed
+<a name="line29"></a>     * @access public
+<a name="line30"></a>     */
+<a name="line31"></a>	public $cache_file = null;
+<a name="line32"></a>    /**
+<a name="line33"></a>     * text_data_dir 
+<a name="line34"></a>     * 
+<a name="line35"></a>     * @var mixed
+<a name="line36"></a>     * @access public
+<a name="line37"></a>     */
+<a name="line38"></a>    public $text_data_dir = null;
+<a name="line39"></a>    /**
+<a name="line40"></a>     * connect_pool 
+<a name="line41"></a>     * 
+<a name="line42"></a>     * @var array
+<a name="line43"></a>     * @access private
+<a name="line44"></a>     */
+<a name="line45"></a>    private $connect_pool = array();
+<a name="line46"></a>    /**
+<a name="line47"></a>     * _CFG 
+<a name="line48"></a>     * application of all configuration object 
+<a name="line49"></a>     *
+<a name="line50"></a>     * @var stdClass
+<a name="line51"></a>     * @access protected
+<a name="line52"></a>     */
+<a name="line53"></a>    protected $_CFG = null;
+<a name="line54"></a>
+<a name="line55"></a>    /**
+<a name="line56"></a>     * singleton 
+<a name="line57"></a>     * 
+<a name="line58"></a>     * @static
+<a name="line59"></a>     * @final
+<a name="line60"></a>     * @access public
+<a name="line61"></a>     * @return XDataModel
+<a name="line62"></a>     */
+<a name="line63"></a>    final public static function singleton() {
+<a name="line64"></a>        return parent::__singleton();
+<a name="line65"></a>    }
+<a name="line66"></a>    /**
+<a name="line67"></a>     * __construct 
+<a name="line68"></a>     * 
+<a name="line69"></a>     * @final
+<a name="line70"></a>     * @access protected
+<a name="line71"></a>     * @return void
+<a name="line72"></a>     */
+<a name="line73"></a>    final protected function __construct() {
+<a name="line74"></a>        $this->_CFG = XConfig::CFG();
+<a name="line75"></a>        $this->cache_file = __X_APP_DATA_DIR__."/{$this->_CFG->app->data_cache}/{$this->_CFG->app->cache_file}";
+<a name="line76"></a>        $this->db_data_path = __X_APP_DATA_DIR__."/{$this->_CFG->app->db_data}";
+<a name="line77"></a>        $this->text_data_dir = "{$this->db_data_path}/{$this->_CFG->text->data_dirname}";
+<a name="line78"></a>        $this->DB = new stdClass;
+<a name="line79"></a>        if(method_exists($this,'auto_conf')) {
+<a name="line80"></a>            $this->auto_conf();
+<a name="line81"></a>        }
+<a name="line82"></a>    }
+<a name="line83"></a>    /**
+<a name="line84"></a>     * DB 
+<a name="line85"></a>     * 
+<a name="line86"></a>     * @param mixed $table_name 
+<a name="line87"></a>     * @final
+<a name="line88"></a>     * @access protected
+<a name="line89"></a>     * @return void
+<a name="line90"></a>     */
+<a name="line91"></a>    final protected function DB($table_name) {
+<a name="line92"></a>        if($table_name instanceof XDBConf) {
+<a name="line93"></a>            return $this->connect_database($table_name);
+<a name="line94"></a>        }
+<a name="line95"></a>        if(isset($this->connect_pool[$table_name])) {
+<a name="line96"></a>            return $this->connect_pool[$table_name];
+<a name="line97"></a>        }
+<a name="line98"></a>        throw new XException("database connect instance of $table_name is not exists");
+<a name="line99"></a>    }
+<a name="line100"></a>
+<a name="line101"></a>    /**
+<a name="line102"></a>     * use_conf 
+<a name="line103"></a>     * use one config of item form application config file
+<a name="line104"></a>     * 
+<a name="line105"></a>     * @param string $key   the key is use database name 
+<a name="line106"></a>     * @param mixed $id     one kind of database has many group config and it one index 
+<a name="line107"></a>     * @final
+<a name="line108"></a>     * @access public
+<a name="line109"></a>     * @return XDBConf
+<a name="line110"></a>     */
+<a name="line111"></a>    final public function use_conf($key, $id) {
+<a name="line112"></a>        $conf_ins = new XDBConf();
+<a name="line113"></a>        switch(strtolower($key)) {
+<a name="line114"></a>            case 'mysql':
+<a name="line115"></a>                $conf_ins->dbtype = 'mysql';
+<a name="line116"></a>                $conf_ins->dbhost = $this->_CFG->$key->$id->host;
+<a name="line117"></a>                $conf_ins->dbuser = $this->_CFG->$key->$id->user;
+<a name="line118"></a>                $conf_ins->dbname = $this->_CFG->$key->$id->dbname;
+<a name="line119"></a>                $conf_ins->dbpass = $this->_CFG->$key->$id->password;
+<a name="line120"></a>                $conf_ins->dbport = $this->_CFG->$key->$id->port;
+<a name="line121"></a>                $conf_ins->pconnect = $this->_CFG->$key->$id->pconnect;
+<a name="line122"></a>            return $conf_ins;
+<a name="line123"></a>            case 'firebird':
+<a name="line124"></a>                $conf_ins->dbtype = 'firebird';
+<a name="line125"></a>                $path = $this->set_db_path($this->_CFG->db_firebird_dirname);
+<a name="line126"></a>                $conf_ins->dbhost = $path;
+<a name="line127"></a>                $conf_ins->dbname = $this->_CFG->$key->name;
+<a name="line128"></a>                return $conf_ins;
+<a name="line129"></a>            case 'txtdb':
+<a name="line130"></a>                $conf_ins->dbtype = 'txtdb';
+<a name="line131"></a>                $conf_ins->dbhost = $this->set_db_path($this->_CFG->$key->data_dirname);
+<a name="line132"></a>                $conf_ins->dbname = $this->_CFG->$key->$id->name;
+<a name="line133"></a>                if(isset($this->_CFG->$key->$id->block_size)) {
+<a name="line134"></a>                    $conf_ins->block_size = $this->_CFG->$key->$id->block_size;
+<a name="line135"></a>                }
+<a name="line136"></a>            return $conf_ins;
+<a name="line137"></a>            case 'txtkvdb':
+<a name="line138"></a>            break;
+<a name="line139"></a>        }
+<a name="line140"></a>    }
+<a name="line141"></a>
+<a name="line142"></a>    /**
+<a name="line143"></a>     * connect_database 
+<a name="line144"></a>     * use one XBDConf config instance connect one database
+<a name="line145"></a>     * 
+<a name="line146"></a>     * @param XDBConf $conf_ins 
+<a name="line147"></a>     * @final
+<a name="line148"></a>     * @access public
+<a name="line149"></a>     * @return void
+<a name="line150"></a>     */
+<a name="line151"></a>    final public function connect_database(XDBConf $conf_ins) {
+<a name="line152"></a>        $dbc = XDbConnect :: singleton();
+<a name="line153"></a>        $dbc->create_instance($conf_ins->dbtype);
+<a name="line154"></a>        $dbname = $conf_ins->dbname;
+<a name="line155"></a>        $this->connect_pool[$dbname] = $dbc->get_instance();
+<a name="line156"></a>        $this->select_db($conf_ins);
+<a name="line157"></a>    }
+<a name="line158"></a>
+<a name="line159"></a>    /**
+<a name="line160"></a>     * select_db 
+<a name="line161"></a>     * select one database
+<a name="line162"></a>     * 
+<a name="line163"></a>     * @param XDBConf $conf_ins 
+<a name="line164"></a>     * @final
+<a name="line165"></a>     * @access private
+<a name="line166"></a>     * @return void
+<a name="line167"></a>     */
+<a name="line168"></a>    final private function select_db(XDBConf $conf_ins) {
+<a name="line169"></a>        $dbname = $conf_ins->dbname;
+<a name="line170"></a>        switch(strtolower($conf_ins->dbtype)) {
+<a name="line171"></a>            case 'mysql':
+<a name="line172"></a>                $this->connect_pool[$dbname]->connect($conf_ins->host,$conf_ins->user,$conf_ins->pass);
+<a name="line173"></a>                $this->connect_pool[$dbname]->select_db($conf_ins->dbname);
+<a name="line174"></a>            case 'firebird':
+<a name="line175"></a>                $this->connect_pool[$dbname]->set_db_path($conf_ins->dbhost);
+<a name="line176"></a>                $this->connect_pool[$dbname]->connect($conf_ins->dbname);
+<a name="line177"></a>            case 'txtdb':
+<a name="line178"></a>                $this->connect_pool[$dbname]->set_db_dir($conf_ins->dbhost);
+<a name="line179"></a>                if(isset($conf_ins->block_size)) {
+<a name="line180"></a>                    $this->connect_pool[$dbname]->set_block_size($conf_ins->block_size);
+<a name="line181"></a>                }
+<a name="line182"></a>                $this->connect_pool[$dbname]->open($conf_ins->dbname);
+<a name="line183"></a>            break;
+<a name="line184"></a>        }
+<a name="line185"></a>    }
+<a name="line186"></a>
+<a name="line187"></a>    /**
+<a name="line188"></a>     * set_db_path 
+<a name="line189"></a>     * set the database data file save directory if it is local database
+<a name="line190"></a>     * 
+<a name="line191"></a>     * @param string $dbtype_path 
+<a name="line192"></a>     * @final
+<a name="line193"></a>     * @access public
+<a name="line194"></a>     * @return string
+<a name="line195"></a>     */
+<a name="line196"></a>    final public function set_db_path($dbtype_path) {
+<a name="line197"></a>        return $this->db_data_path.'/'.$dbtype_path;
+<a name="line198"></a>    }
+<a name="line199"></a>    /**
+<a name="line200"></a>     * write_text_data 
+<a name="line201"></a>     * 
+<a name="line202"></a>     * @param mixed $filename 
+<a name="line203"></a>     * @param mixed $data 
+<a name="line204"></a>     * @final
+<a name="line205"></a>     * @access public
+<a name="line206"></a>     * @return void
+<a name="line207"></a>     */
+<a name="line208"></a>    final public function write_text_data($filename, $data) {
+<a name="line209"></a>        if(!is_dir($this->text_data_dir) || !is_writable($this->text_data_dir)) {
+<a name="line210"></a>            return false;
+<a name="line211"></a>        }
+<a name="line212"></a>        $data = serialize($data);
+<a name="line213"></a>        return file_put_contents("{$this->text_data_dir}/{$filename}.dat",$data);
+<a name="line214"></a>    }
+<a name="line215"></a>    /**
+<a name="line216"></a>     * get_text_data 
+<a name="line217"></a>     * 
+<a name="line218"></a>     * @param mixed $filename 
+<a name="line219"></a>     * @final
+<a name="line220"></a>     * @access public
+<a name="line221"></a>     * @return void
+<a name="line222"></a>     */
+<a name="line223"></a>    final public function get_text_data($filename) {
+<a name="line224"></a>        $data_file = "{$this->text_data_dir}/{$filename}.dat";
+<a name="line225"></a>        if(!file_exists($data_file) || !is_readable($data_file)) {
+<a name="line226"></a>            return false;
+<a name="line227"></a>        }
+<a name="line228"></a>        $data = file_get_contents($data_file);
+<a name="line229"></a>        return unserialize($data);
+<a name="line230"></a>    }
+<a name="line231"></a>    /**
+<a name="line232"></a>     * rm_text_data 
+<a name="line233"></a>     * 
+<a name="line234"></a>     * @param mixed $filename 
+<a name="line235"></a>     * @final
+<a name="line236"></a>     * @access public
+<a name="line237"></a>     * @return void
+<a name="line238"></a>     */
+<a name="line239"></a>    final public function rm_text_data($filename) {
+<a name="line240"></a>        $data_file = "{$this->text_data_dir}/{$filename}.dat";
+<a name="line241"></a>        if(file_exists($data_file)) {
+<a name="line242"></a>            if(!is_writable($data_file)) return false;
+<a name="line243"></a>            @unlink($data_file);
+<a name="line244"></a>        }
+<a name="line245"></a>        return true;
+<a name="line246"></a>    }
+<a name="line247"></a>    /**
+<a name="line248"></a>     * page_count 
+<a name="line249"></a>     * 
+<a name="line250"></a>     * @access public
+<a name="line251"></a>     * @return void
+<a name="line252"></a>     */
+<a name="line253"></a>    public function page_count() {
+<a name="line254"></a>        $this->page_num = ceil($this->record_num/$this->limit);
+<a name="line255"></a>    }
+<a name="line256"></a>    /**
+<a name="line257"></a>     * get_page 
+<a name="line258"></a>     * 
+<a name="line259"></a>     * @access public
+<a name="line260"></a>     * @return void
+<a name="line261"></a>     */
+<a name="line262"></a>    public function get_page() {
+<a name="line263"></a>        if(isset($_GET['r'])) {
+<a name="line264"></a>            $r = (int) $_GET['r'];
+<a name="line265"></a>            if($r>0) $this->limit = $r;
+<a name="line266"></a>        }
+<a name="line267"></a>        if(isset($_GET['p'])) {
+<a name="line268"></a>            $page = (int) $_GET['p'] >=1 ? (int)$_GET['p']:1;
+<a name="line269"></a>            $this->current_page = $page;
+<a name="line270"></a>            $this->start = ($page -1) * $this->limit;
+<a name="line271"></a>        }
+<a name="line272"></a>    }
+<a name="line273"></a>    /**
+<a name="line274"></a>     * get_data_cache 
+<a name="line275"></a>     * 
+<a name="line276"></a>     * @param mixed $n 
+<a name="line277"></a>     * @access public
+<a name="line278"></a>     * @return mixed
+<a name="line279"></a>     */
+<a name="line280"></a>	public function get_data_cache($n) {
+<a name="line281"></a>        if(file_exists(__X_APP_ROOT__ . $this->cache_file)) {
+<a name="line282"></a>            $data = unserialize(file_get_contents(__X_APP_ROOT__ . $this->cache_file));
+<a name="line283"></a>            if($n == 'data_cache_update_flag') {
+<a name="line284"></a>                return empty($data['data_cache_update_flag']) ? false : $data['data_cache_update_flag'];
+<a name="line285"></a>            }
+<a name="line286"></a>            if(isset($data[$n])) {
+<a name="line287"></a>                if($data['data_cache_update_flag'][$n] == true) {
+<a name="line288"></a>                    return false;
+<a name="line289"></a>                }
+<a name="line290"></a>                return $data[$n];
+<a name="line291"></a>            } else {
+<a name="line292"></a>                return false;
+<a name="line293"></a>            }
+<a name="line294"></a>        } else {
+<a name="line295"></a>            return false;
+<a name="line296"></a>        }
+<a name="line297"></a>    }
+<a name="line298"></a>    /**
+<a name="line299"></a>     * update_data_cache 
+<a name="line300"></a>     * 
+<a name="line301"></a>     * @param mixed $n 
+<a name="line302"></a>     * @access public
+<a name="line303"></a>     * @return void
+<a name="line304"></a>     */
+<a name="line305"></a>    public function update_data_cache($n) {
+<a name="line306"></a>        $expire = $this->get_data_cache('data_cache_update_flag');
+<a name="line307"></a>        if($expire == false) $expire = array();
+<a name="line308"></a>        $expire[$n] = true;
+<a name="line309"></a>        $this->set_data_cache('data_cache_update_flag',$expire);
+<a name="line310"></a>    }
+<a name="line311"></a>    /**
+<a name="line312"></a>     * set_data_cache 
+<a name="line313"></a>     * 
+<a name="line314"></a>     * @param mixed $n 
+<a name="line315"></a>     * @param mixed $data 
+<a name="line316"></a>     * @access public
+<a name="line317"></a>     * @return void
+<a name="line318"></a>     */
+<a name="line319"></a>    public function set_data_cache($n,$data) {
+<a name="line320"></a>        if(file_exists(__X_APP_ROOT__ . $this->cache_file)) {
+<a name="line321"></a>            $cd = unserialize(file_get_contents(__X_APP_ROOT__ . $this->cache_file));
+<a name="line322"></a>            $cd[$n] = $data;
+<a name="line323"></a>            $cd['data_cache_update_flag'][$n] = false;
+<a name="line324"></a>            file_put_contents(__X_APP_ROOT__ . $this->cache_file, serialize($cd));
+<a name="line325"></a>        } else {
+<a name="line326"></a>            file_put_contents(__X_APP_ROOT__ . $this->cache_file, serialize(array($n=>$data,'data_cache_update_flag'=>array($n=>false))));
+<a name="line327"></a>        }
+<a name="line328"></a>    }
+<a name="line329"></a>}
+<a name="line330"></a></pre>
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xdatamodel.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

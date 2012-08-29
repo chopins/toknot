@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 28 Aug 2012 09:17:47 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XConfig.php (PHPDoctor)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xconfig.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>XConfig.php</h1>
+<div class="comment" id="overview_description"><p>Toknot</p><p>XConfig</p><p>PHP version 5.3</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Toknot
+<a name="line4"></a> *
+<a name="line5"></a> * XConfig
+<a name="line6"></a> *
+<a name="line7"></a> * PHP version 5.3
+<a name="line8"></a> * 
+<a name="line9"></a> * @author chopins xiao <chopins.xiao@gmail.com>
+<a name="line10"></a> * @copyright  2012 The Authors
+<a name="line11"></a> * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line12"></a> * @link       http://blog.toknot.com
+<a name="line13"></a> * @since      File available since Release $id$
+<a name="line14"></a> */
+<a name="line15"></a>
+<a name="line16"></a>/**
+<a name="line17"></a> * XConfig 
+<a name="line18"></a> * 
+<a name="line19"></a> * @version $id$
+<a name="line20"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line21"></a> */
+<a name="line22"></a>final class XConfig extends XObject {
+<a name="line23"></a>    private static $_CFG = null;
+<a name="line24"></a>    private static $_CFGOBJ = null;
+<a name="line25"></a>    protected function __construct() {
+<a name="line26"></a>        $this->load_cfg();
+<a name="line27"></a>    }
+<a name="line28"></a>    public static function singleton() {
+<a name="line29"></a>        return parent::__singleton();
+<a name="line30"></a>    }
+<a name="line31"></a>
+<a name="line32"></a>    /**
+<a name="line33"></a>     * parse_ini 
+<a name="line34"></a>     * 
+<a name="line35"></a>     * @param string $ini_file 
+<a name="line36"></a>     * @static
+<a name="line37"></a>     * @access public
+<a name="line38"></a>     * @return array
+<a name="line39"></a>     */
+<a name="line40"></a>    public static function parse_ini($ini_file) {
+<a name="line41"></a>        $o_ini = parse_ini_file($ini_file);
+<a name="line42"></a>        return self::detach($o_ini);
+<a name="line43"></a>    }
+<a name="line44"></a>
+<a name="line45"></a>    /**
+<a name="line46"></a>     * detach 
+<a name="line47"></a>     * 
+<a name="line48"></a>     * @param array $array 
+<a name="line49"></a>     * @static
+<a name="line50"></a>     * @access private
+<a name="line51"></a>     * @return array
+<a name="line52"></a>     */
+<a name="line53"></a>    private static function detach($array) {
+<a name="line54"></a>        $return_array = array();
+<a name="line55"></a>        foreach($array as $key => $var) {
+<a name="line56"></a>            if(is_array($var)) {
+<a name="line57"></a>                $return_array[$key] = self::detach($var);
+<a name="line58"></a>                continue;
+<a name="line59"></a>            } 
+<a name="line60"></a>            $sep_offset = strpos($key,'.');
+<a name="line61"></a>            if($sep_offset !== false) {
+<a name="line62"></a>                $key_arr = str_replace('.','"]["',$key);
+<a name="line63"></a>                eval("\$return_array[\"{$key_arr}\"]='{$var}';");
+<a name="line64"></a>            } else {
+<a name="line65"></a>                $return_array[$key] = $var;
+<a name="line66"></a>            }
+<a name="line67"></a>        }
+<a name="line68"></a>        return $return_array;
+<a name="line69"></a>    }
+<a name="line70"></a>
+<a name="line71"></a>    /**
+<a name="line72"></a>     * load configuration
+<a name="line73"></a>     * 
+<a name="line74"></a>     * @access public
+<a name="line75"></a>     * @return void
+<a name="line76"></a>     */
+<a name="line77"></a>    private function load_cfg() {
+<a name="line78"></a>        $o_ini = parse_ini_file(__X_FRAMEWORK_ROOT__ . '/toknot.def.ini');
+<a name="line79"></a>        $app_config = __X_APP_DATA_DIR__ .'/conf/'.__X_APP_USER_CONF_FILE_NAME__;
+<a name="line80"></a>        if(file_exists($app_config)) {
+<a name="line81"></a>            $user_config =  parse_ini_file($app_config);
+<a name="line82"></a>            $o_ini = array_replace_recursive($o_ini,$user_config);
+<a name="line83"></a>        }
+<a name="line84"></a>        self::$_CFG = self::detach($o_ini);
+<a name="line85"></a>    }
+<a name="line86"></a>    public static function CFG() {
+<a name="line87"></a>        $conf = self::singleton();
+<a name="line88"></a>        return $conf->get_cfg();
+<a name="line89"></a>    }
+<a name="line90"></a>    public function ini_var($name) {
+<a name="line91"></a>        if(isset(self::$_CFG[$name])) return self::$_CFG[$name];
+<a name="line92"></a>        return null;
+<a name="line93"></a>    }
+<a name="line94"></a>    public function get_cfg() {
+<a name="line95"></a>        if(is_object(self::$_CFGOBJ)) return self::$_CFGOBJ;
+<a name="line96"></a>        self::$_CFGOBJ =  array2object(self::$_CFG);
+<a name="line97"></a>        return self::$_CFGOBJ;
+<a name="line98"></a>    }
+<a name="line99"></a>    public function get_cfg_arr() {
+<a name="line100"></a>        return self::$_CFG;
+<a name="line101"></a>    }
+<a name="line102"></a>
+<a name="line103"></a>}
+<a name="line104"></a></pre>
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xconfig.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

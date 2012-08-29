@@ -1,0 +1,311 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://phpdoctor.sourceforge.net/)">
+<meta name="when" content="Tue, 28 Aug 2012 17:22:47 +0800">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XDataModel (PHPDoctor)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../toknot-doc/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../toknot-doc/package-tree.html">Tree</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../toknot-doc/xdatamodel.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">toknot-doc\XDataModel</div>
+<div class="location">/XDataModel.php at line 24</div>
+
+<h1>Class XDataModel</h1>
+
+<pre class="tree">Class:XDataModel - Superclass: XObject
+<a href="../toknot-doc/xobject.html">XObject</a><br>   &lfloor;&nbsp;<strong>XDataModel</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public abstract  class <strong>XDataModel</strong><br>extends <a href="../toknot-doc/xobject.html">XObject</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>XDbm 
+This is data model class base class</p></div>
+
+<dl>
+<dt>Version:</dt>
+<dd>$id$</dd>
+<dt>Author:</dt>
+<dd>Chopins xiao <chopins.xiao@gmail.com></dd>
+</dl>
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#cache_file">$cache_file</a></p><p class="description">cache_file</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#text_data_dir">$text_data_dir</a></p><p class="description">text_data_dir</p></td>
+</tr>
+</table>
+
+<table id="summary_constr">
+<tr><th colspan="2">Constructor Summary</th></tr>
+<tr>
+<td class="description"><p class="name"><a href="#XDataModel()">XDataModel</a>()</p><p class="description">__construct</p></td>
+</tr>
+</table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type">protected final  void</td>
+<td class="description"><p class="name"><a href="#DB()">DB</a>(mixed table_name)</p><p class="description">DB</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#connect_database()">connect_database</a>(<a href="../toknot-doc/xdbconf.html">XDBConf</a> conf_ins)</p><p class="description">connect_database 
+use one XBDConf config instance connect one database</p></td>
+</tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#get_data_cache()">get_data_cache</a>(mixed n)</p><p class="description">get_data_cache</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#get_page()">get_page</a>()</p><p class="description">get_page</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#get_text_data()">get_text_data</a>(mixed filename)</p><p class="description">get_text_data</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#page_count()">page_count</a>()</p><p class="description">page_count</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#rm_text_data()">rm_text_data</a>(mixed filename)</p><p class="description">rm_text_data</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#set_data_cache()">set_data_cache</a>(mixed n, mixed data)</p><p class="description">set_data_cache</p></td>
+</tr>
+<tr>
+<td class="type">final  string</td>
+<td class="description"><p class="name"><a href="#set_db_path()">set_db_path</a>(string dbtype_path)</p><p class="description">set_db_path 
+set the database data file save directory if it is local database</p></td>
+</tr>
+<tr>
+<td class="type">final static  <a href="../toknot-doc/xdatamodel.html">XDataModel</a></td>
+<td class="description"><p class="name"><a href="#singleton()">singleton</a>()</p><p class="description">singleton</p></td>
+</tr>
+<tr>
+<td class="type"> void</td>
+<td class="description"><p class="name"><a href="#update_data_cache()">update_data_cache</a>(mixed n)</p><p class="description">update_data_cache</p></td>
+</tr>
+<tr>
+<td class="type">final  <a href="../toknot-doc/xdbconf.html">XDBConf</a></td>
+<td class="description"><p class="name"><a href="#use_conf()">use_conf</a>(string key, mixed id)</p><p class="description">use_conf 
+use one config of item form application config file</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#write_text_data()">write_text_data</a>(mixed filename, mixed data)</p><p class="description">write_text_data</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from toknot-doc\XObject</th></tr>
+<tr><td><a href="../toknot-doc/xobject.html#isChange()">isChange</a></td></tr></table>
+
+<h2 id="detail_field">Field Detail</h2>
+<div class="location">/XDataModel.php at line 31</div>
+<h3 id="cache_file">cache_file</h3>
+<code class="signature">public  mixed <strong>$cache_file</strong> = null</code>
+<div class="details">
+<p>cache_file</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 38</div>
+<h3 id="text_data_dir">text_data_dir</h3>
+<code class="signature">public  mixed <strong>$text_data_dir</strong> = null</code>
+<div class="details">
+<p>text_data_dir</p></div>
+
+<hr>
+
+<h2 id="detail_constr">Constructor Detail</h2>
+<div class="location">/XDataModel.php at line 73</div>
+<h3 id="XDataModel()">XDataModel</h3>
+<code class="signature">public <strong>XDataModel</strong>()</code>
+<div class="details">
+<p>__construct</p></div>
+
+<hr>
+
+<h2 id="detail_method">Method Detail</h2>
+<div class="location">/XDataModel.php at line 91</div>
+<h3 id="DB()">DB</h3>
+<code class="signature">protected final  void <strong>DB</strong>(mixed table_name)</code>
+<div class="details">
+<p>DB</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 151</div>
+<h3 id="connect_database()">connect_database</h3>
+<code class="signature">public final  void <strong>connect_database</strong>(<a href="../toknot-doc/xdbconf.html">XDBConf</a> conf_ins)</code>
+<div class="details">
+<p>connect_database 
+use one XBDConf config instance connect one database</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 280</div>
+<h3 id="get_data_cache()">get_data_cache</h3>
+<code class="signature">public  mixed <strong>get_data_cache</strong>(mixed n)</code>
+<div class="details">
+<p>get_data_cache</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 262</div>
+<h3 id="get_page()">get_page</h3>
+<code class="signature">public  void <strong>get_page</strong>()</code>
+<div class="details">
+<p>get_page</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 223</div>
+<h3 id="get_text_data()">get_text_data</h3>
+<code class="signature">public final  void <strong>get_text_data</strong>(mixed filename)</code>
+<div class="details">
+<p>get_text_data</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 253</div>
+<h3 id="page_count()">page_count</h3>
+<code class="signature">public  void <strong>page_count</strong>()</code>
+<div class="details">
+<p>page_count</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 239</div>
+<h3 id="rm_text_data()">rm_text_data</h3>
+<code class="signature">public final  void <strong>rm_text_data</strong>(mixed filename)</code>
+<div class="details">
+<p>rm_text_data</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 319</div>
+<h3 id="set_data_cache()">set_data_cache</h3>
+<code class="signature">public  void <strong>set_data_cache</strong>(mixed n, mixed data)</code>
+<div class="details">
+<p>set_data_cache</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 196</div>
+<h3 id="set_db_path()">set_db_path</h3>
+<code class="signature">public final  string <strong>set_db_path</strong>(string dbtype_path)</code>
+<div class="details">
+<p>set_db_path 
+set the database data file save directory if it is local database</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 63</div>
+<h3 id="singleton()">singleton</h3>
+<code class="signature">public final static  <a href="../toknot-doc/xdatamodel.html">XDataModel</a> <strong>singleton</strong>()</code>
+<div class="details">
+<p>singleton</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 305</div>
+<h3 id="update_data_cache()">update_data_cache</h3>
+<code class="signature">public  void <strong>update_data_cache</strong>(mixed n)</code>
+<div class="details">
+<p>update_data_cache</p></div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 111</div>
+<h3 id="use_conf()">use_conf</h3>
+<code class="signature">public final  <a href="../toknot-doc/xdbconf.html">XDBConf</a> <strong>use_conf</strong>(string key, mixed id)</code>
+<div class="details">
+<p>use_conf 
+use one config of item form application config file</p><dl>
+<dt>Parameters:</dt>
+<dd>key - the key is use database name</dd>
+<dd>id - one kind of database has many group config and it one index</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/XDataModel.php at line 208</div>
+<h3 id="write_text_data()">write_text_data</h3>
+<code class="signature">public final  void <strong>write_text_data</strong>(mixed filename, mixed data)</code>
+<div class="details">
+<p>write_text_data</p></div>
+
+<hr>
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../toknot-doc/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../toknot-doc/package-tree.html">Tree</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../toknot-doc/xdatamodel.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

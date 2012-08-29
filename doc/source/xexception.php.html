@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://peej.github.com/phpdoctor/)">
+<meta name="when" content="Tue, 28 Aug 2012 09:17:47 +0000">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>XException.php (PHPDoctor)</title>
+
+</head>
+<body id="file" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xexception.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<h1>XException.php</h1>
+<div class="comment" id="overview_description"><p>Toknot</p><p>XException class</p><p>PHP version 5.3</p></div>
+
+<hr>
+
+<a name="line1"></a><pre><?php
+<a name="line2"></a>/**
+<a name="line3"></a> * Toknot
+<a name="line4"></a> *
+<a name="line5"></a> * XException class
+<a name="line6"></a> *
+<a name="line7"></a> * PHP version 5.3
+<a name="line8"></a> * 
+<a name="line9"></a> * @author chopins xiao <chopins.xiao@gmail.com>
+<a name="line10"></a> * @copyright  2012 The Authors
+<a name="line11"></a> * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+<a name="line12"></a> * @link       http://blog.toknot.com
+<a name="line13"></a> * @since      File available since Release $id$
+<a name="line14"></a> */
+<a name="line15"></a>
+<a name="line16"></a>exists_frame();
+<a name="line17"></a>/**
+<a name="line18"></a> * XException 
+<a name="line19"></a> * 
+<a name="line20"></a> * @uses ErrorException
+<a name="line21"></a> * @version $id$
+<a name="line22"></a> * @author Chopins xiao <chopins.xiao@gmail.com> 
+<a name="line23"></a> */
+<a name="line24"></a>class XException  extends ErrorException {
+<a name="line25"></a>    protected $code = 0;
+<a name="line26"></a>    protected $message = '';
+<a name="line27"></a>    protected $errfile = '';
+<a name="line28"></a>    protected $errline = '';
+<a name="line29"></a>    protected $error_handler_function_throw = false;
+<a name="line30"></a>    protected $is_exception = false;
+<a name="line31"></a>    protected $errcss = '<style>
+<a name="line32"></a>        .debug_area { border:1px #555555 solid;background-color:#EEEEEE;padding-left:10px;}
+<a name="line33"></a>        .message {color:#555555;font-size:20px;font-weight:bold;}
+<a name="line34"></a>        .call_file {color:#6A8295;}
+<a name="line35"></a>        .access {color:#336258;}
+<a name="line36"></a>        .trace_item{list-style-type:none;border-bottom:1px #8397B1 solid;padding:5px;color:#0F4C9E;}
+<a name="line37"></a>        .debug_args{background-color:#FAD5D2;font-size:12px;margin-right:10px;}
+<a name="line38"></a>        .debug-func{color:#176B4E;font-weight:normal;}
+<a name="line39"></a>        .debug_throw{color:#A9291F;}
+<a name="line40"></a>        .debug_process {color:#333;font-size:12px;}
+<a name="line41"></a>        </style>';
+<a name="line42"></a>    public function __construct($message, $code =0,$file= null,$line= null,$error_handler_function_throw=false) {
+<a name="line43"></a>        $this->error_handler_function_throw = $error_handler_function_throw;
+<a name="line44"></a>        $this->message = $message;
+<a name="line45"></a>        $this->errfile = empty($file) ? $this->getFile() : $file;
+<a name="line46"></a>        $this->errline = empty($line) ? $this->getLine() : $line;
+<a name="line47"></a>        $this->getErrorType($code);
+<a name="line48"></a>    }
+<a name="line49"></a>    public function getErrorType($code) {
+<a name="line50"></a>        $_ENV['__X_EXCEPTION_THROW__'] = true;
+<a name="line51"></a>        $_ENV['__X_FATAL_EXCEPTION__'] = true;
+<a name="line52"></a>        switch($code) {
+<a name="line53"></a>            case E_USER_ERROR:
+<a name="line54"></a>                $type = 'Fatal Error';
+<a name="line55"></a>            break;
+<a name="line56"></a>            case E_USER_WARNING:
+<a name="line57"></a>            case E_WARNING:
+<a name="line58"></a>                $type = 'Warning';
+<a name="line59"></a>                $_ENV['__X_FATAL_EXCEPTION__'] = false;
+<a name="line60"></a>                $this->is_exception = true;
+<a name="line61"></a>            break;
+<a name="line62"></a>            case E_USER_NOTICE:
+<a name="line63"></a>            case E_NOTICE:
+<a name="line64"></a>            case @E_STRICT:
+<a name="line65"></a>                $type = 'Notice';
+<a name="line66"></a>                $_ENV['__X_FATAL_EXCEPTION__'] = false;
+<a name="line67"></a>                $this->is_exception = true;
+<a name="line68"></a>            break;
+<a name="line69"></a>            case @E_RECOVERABLE_ERROR:
+<a name="line70"></a>                $type = 'Catchable';
+<a name="line71"></a>            break;
+<a name="line72"></a>            case E_COMPILE_ERROR:
+<a name="line73"></a>                $type = 'PHP Compile Error';
+<a name="line74"></a>            break;
+<a name="line75"></a>            case E_ERROR:
+<a name="line76"></a>                $type = 'PHP Fatal Error';
+<a name="line77"></a>            break;
+<a name="line78"></a>            case E_PARSE:
+<a name="line79"></a>                $type = 'PHP Parse Error';
+<a name="line80"></a>            break;
+<a name="line81"></a>            case E_CORE_ERROR:
+<a name="line82"></a>                $type = 'PHP Core Error';
+<a name="line83"></a>            break;
+<a name="line84"></a>            default:
+<a name="line85"></a>                $type = 'XException Error';
+<a name="line86"></a>                $this->is_exception = true;
+<a name="line87"></a>            break;
+<a name="line88"></a>        }
+<a name="line89"></a>        $this->define_framwork_error_mssage();
+<a name="line90"></a>        $this->message = "<b>$type : </b>" . $this->message;
+<a name="line91"></a>    }
+<a name="line92"></a>    public function define_framwork_error_mssage() {
+<a name="line93"></a>        if(preg_match('/(X::__)(set|get|isset)/',$this->message, $matches)) {
+<a name="line94"></a>           $this->message .= " use __x{$matches[2]}__() instead in your class";
+<a name="line95"></a>        }
+<a name="line96"></a>    }
+<a name="line97"></a>    public function getXDebugTraceAsString($traceArr = null) {
+<a name="line98"></a>        if($this->is_exception == false) return $this->message;
+<a name="line99"></a>        $str = '';
+<a name="line100"></a>        $str .='<div class="debug_area">';
+<a name="line101"></a>        $str .="<div ><span class='message'>{$this->message}</span>\n<ul>";
+<a name="line102"></a>        $str .="<div class='debug_throw'>Throw Exception in file {$this->errfile} line {$this->errline}</div>\n";
+<a name="line103"></a>        if(PHP_CLI && function_exists('posix_getpid')) {
+<a name="line104"></a>            $str .= 'Process ID:'.posix_getpid()."\n";
+<a name="line105"></a>        }
+<a name="line106"></a>        if(defined('__X_CALL_PAGE_FILE__')) {
+<a name="line107"></a>            $str .='<div ><span class="call_file">Call PHP File is '.__X_CALL_PAGE_FILE__."</span>\n";
+<a name="line108"></a>        }
+<a name="line109"></a>        if(defined('__X_URI__')) {
+<a name="line110"></a>            $str .='<div ><span class="access">Access URL address is '.$_SERVER['REQUEST_METHOD'].' http://'.$_SERVER['HTTP_HOST'].__X_URI__."</span>\n";
+<a name="line111"></a>        }
+<a name="line112"></a>        //if(PHP_CLI) $str .= 'Process ID is '.posix_getpid()."\n";
+<a name="line113"></a>        if(empty($traceArr)) {
+<a name="line114"></a>            $str .= $this->earch($this->getTrace());
+<a name="line115"></a>        } else {
+<a name="line116"></a>            $str .= $this->earch($traceArr);
+<a name="line117"></a>        }
+<a name="line118"></a>        $str .='</ul></div>';
+<a name="line119"></a>        if(__X_SHOW_ERROR__) {
+<a name="line120"></a>            $__X_RUN_TIME__ = microtime(true) - __X_RUN_START_TIME__;
+<a name="line121"></a>            $str .= "<div class='debug_process'>Processed:{$__X_RUN_TIME__} second</div></div>";
+<a name="line122"></a>            if(isset($_ENV['__X_AJAX_REQUEST__']) && $_ENV['__X_AJAX_REQUEST__']) {
+<a name="line123"></a>                return strip_tags($str);
+<a name="line124"></a>            } elseif(PHP_SAPI == 'cli' && isset($_ENV['__X_OUT_BROWSER__'])
+<a name="line125"></a>                                       && $_ENV['__X_OUT_BROWSER__'] ==false) {
+<a name="line126"></a>                return strip_tags($str);
+<a name="line127"></a>            } else {
+<a name="line128"></a>                $str = $this->errcss . $str;
+<a name="line129"></a>                return $str;
+<a name="line130"></a>            }
+<a name="line131"></a>        }
+<a name="line132"></a>        if(__X_SHOW_ERROR__ === null) {
+<a name="line133"></a>            not_found();
+<a name="line134"></a>        }
+<a name="line135"></a>        $str = strip_tags($str);
+<a name="line136"></a>        $str = '----------------------------'.date('Y-m-d H:i:s')."------------------------\n$str";
+<a name="line137"></a>        $str .= isset($GLOBALS['_CFG']) ? $GLOBALS['_CFG']->exception_seg_line."\n"
+<a name="line138"></a>                : "===========================================================================\n";
+<a name="line139"></a>        file_put_contents(__X_APP_PHP_ERROR_LOG__,$str,FILE_APPEND);
+<a name="line140"></a>        not_found();
+<a name="line141"></a>        return false;
+<a name="line142"></a>    }
+<a name="line143"></a>    public function __toString() {
+<a name="line144"></a>        return $this->getXDebugTraceAsString();
+<a name="line145"></a>    }
+<a name="line146"></a>    public function earch($traceArr) {
+<a name="line147"></a>        $str = '';
+<a name="line148"></a>        foreach($traceArr as $key => $value) {
+<a name="line149"></a>            if(isset($value['function']) && $value['function'] == 'error2debug') continue;
+<a name="line150"></a>            $str .= "<li class='trace_item'>#{$key} " .$this->getInfoStr($value) ."</li>\n";
+<a name="line151"></a>        }
+<a name="line152"></a>        return $str;
+<a name="line153"></a>    }
+<a name="line154"></a>    public function getInfoStr($arr) {
+<a name="line155"></a>        $par = $str = '';
+<a name="line156"></a>        
+<a name="line157"></a>        if(!empty($arr['args'])) {
+<a name="line158"></a>            foreach($arr['args'] as $key=>$value) {
+<a name="line159"></a>                $par .= '<span class="debug_args">';
+<a name="line160"></a>                if(is_array($value)) {
+<a name="line161"></a>                    $info = print_r($value,true);
+<a name="line162"></a>                    $par .= '<span title="'.$info.'">Array</span>';
+<a name="line163"></a>                }elseif(is_object($value)) {
+<a name="line164"></a>                    $par .= 'Object <span title="'.print_r($value,true).'">'.get_class($value).'</span>';
+<a name="line165"></a>                } else {
+<a name="line166"></a>                    if(is_string($value)) {
+<a name="line167"></a>                        if(PHP_CLI == false) {
+<a name="line168"></a>                            $value = '<span title="'.$value.'">'. substr($value,0,32). '</span>';
+<a name="line169"></a>                        }
+<a name="line170"></a>                    }
+<a name="line171"></a>                    $par .= "'$value'";
+<a name="line172"></a>                }
+<a name="line173"></a>                $par .= '</span>';
+<a name="line174"></a>                $par .= ',';
+<a name="line175"></a>            }
+<a name="line176"></a>            $par = substr($par,0,-1);
+<a name="line177"></a>        }
+<a name="line178"></a>        $par .='<b class="debug-func">)</b>';
+<a name="line179"></a>        $msg = "<b class='debug-func'>";
+<a name="line180"></a>        if(isset($arr['class'])) {
+<a name="line181"></a>            $class_reflection_info = new ReflectionClass($arr['class']);
+<a name="line182"></a>            $merge_class_info = $class_reflection_info->getDefaultProperties();
+<a name="line183"></a>            if(isset($merge_class_info['_xclass_merge_class_info'])) {
+<a name="line184"></a>                if(isset($arr['function'])) {
+<a name="line185"></a>                    foreach($merge_class_info['_xclass_merge_class_info'] as $merge_class_name) {
+<a name="line186"></a>                        if(empty($merge_class_name)) continue;
+<a name="line187"></a>                        $tref = new ReflectionClass($merge_class_name);
+<a name="line188"></a>                        if($tref->hasMethod($arr['function'])) {
+<a name="line189"></a>                            $msg .= "[merge from class] ";
+<a name="line190"></a>                            $arr['class'] = $merge_class_name;
+<a name="line191"></a>                            $arr['line'] = $tref->getMethod($arr['function'])->getStartLine();
+<a name="line192"></a>                            $arr['file'] = $tref->getFileName();
+<a name="line193"></a>                            break;
+<a name="line194"></a>                        }
+<a name="line195"></a>                    }
+<a name="line196"></a>                }
+<a name="line197"></a>            } else if(isset($arr['file']) && isset($arr['line']) && $arr['file'] != $class_reflection_info->getFileName()) {
+<a name="line198"></a>                $file_name = basename($arr['file'],'.php');
+<a name="line199"></a>                if(class_exists($file_name, false)) {
+<a name="line200"></a>                    $file_reflection_info = new ReflectionClass($file_name);
+<a name="line201"></a>                    $merge_class_info = $file_reflection_info->getDefaultProperties();
+<a name="line202"></a>                    if(!empty($merge_class_info['_xclass_merge_class_info'])) {
+<a name="line203"></a>                        foreach($file_reflection_info->getMethods() as $mref) {
+<a name="line204"></a>                            if($arr['line'] > $mref->getStartLine() && $arr['line']<$mref->getEndLine()) {
+<a name="line205"></a>                                foreach($merge_class_info['_xclass_merge_class_info'] as $merge_class_name) {
+<a name="line206"></a>                                    if(empty($merge_class_name)) continue;
+<a name="line207"></a>                                    $__tmp_ref = new ReflectionClass($merge_class_name);
+<a name="line208"></a>                                    if($__tmp_ref->hasMethod($mref->getName())) {
+<a name="line209"></a>                                        $msg .= '[instance of] ';
+<a name="line210"></a>                                        $call_line = file_line($arr['file'],$arr['line']);
+<a name="line211"></a>                                        $arr['file'] = $__tmp_ref->getFileName();
+<a name="line212"></a>                                        $arr['line'] = file_str_line($arr['file'],$call_line);
+<a name="line213"></a>                                        break;
+<a name="line214"></a>                                    }
+<a name="line215"></a>                                }
+<a name="line216"></a>                                break;
+<a name="line217"></a>                            }
+<a name="line218"></a>                        }
+<a name="line219"></a>                    }
+<a name="line220"></a>                } 
+<a name="line221"></a>            } 
+<a name="line222"></a>            $msg .= $arr['class'];
+<a name="line223"></a>        }
+<a name="line224"></a>        $msg .= isset($arr['type']) ? $arr['type'] :'';
+<a name="line225"></a>        if($arr['function'] == 'unknown') $arr['function'] = 'Main';
+<a name="line226"></a>        $msg .= isset($arr['function'])? $arr['function'] .'(': '';
+<a name="line227"></a>        $msg .= '</b> ';
+<a name="line228"></a>        if(isset($arr['file'])) {
+<a name="line229"></a>            $str =  " in {$arr['file']} line {$arr['line']};";
+<a name="line230"></a>        }
+<a name="line231"></a>        return $msg. $par . $str;
+<a name="line232"></a>    }
+<a name="line233"></a>}
+<a name="line234"></a></pre>
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li>Package</li><li>Class</li><li>Tree</li><li><a href="../overview-files.html">Files</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../todo-list.html">Todo</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../source/xexception.php.html" target="_top">No frames</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>

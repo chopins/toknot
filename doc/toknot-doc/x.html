@@ -1,0 +1,433 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+
+<meta name="generator" content="PHPDoctor 2RC4 (http://phpdoctor.sourceforge.net/)">
+<meta name="when" content="Tue, 28 Aug 2012 17:22:47 +0800">
+
+<link rel="stylesheet" type="text/css" href="../stylesheet.css">
+<link rel="start" href="../overview-summary.html">
+
+<title>X (PHPDoctor)</title>
+
+</head>
+<body id="definition" onload="parent.document.title=document.title;">
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../toknot-doc/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../toknot-doc/package-tree.html">Tree</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../toknot-doc/x.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<div class="qualifiedName">toknot-doc\X</div>
+<div class="location">/X.php at line 26</div>
+
+<h1>Class X</h1>
+
+<pre class="tree">Class:X - Superclass: XObject
+<a href="../toknot-doc/xobject.html">XObject</a><br>   &lfloor;&nbsp;<strong>X</strong><br /></pre>
+
+<hr>
+
+<p class="signature">public abstract  class <strong>X</strong><br>extends <a href="../toknot-doc/xobject.html">XObject</a>
+
+</p>
+
+<div class="comment" id="overview_description"><p>X 
+Base class for user classes, Provides web request and runtime data storage structure
+and database administration class instance, template class instance</p></div>
+
+<dl>
+<dt>Version:</dt>
+<dd>$id$</dd>
+<dt>Author:</dt>
+<dd>Chopins xiao <chopins.xiao@gmail.com></dd>
+</dl>
+<hr>
+
+<table id="summary_field">
+<tr><th colspan="2">Field Summary</th></tr>
+<tr>
+<td class="type"> mixed</td>
+<td class="description"><p class="name"><a href="#stop_run">$stop_run</a></p></td>
+</tr>
+</table>
+
+<table id="summary_method">
+<tr><th colspan="2">Method Summary</th></tr>
+<tr>
+<td class="type">protected final  void</td>
+<td class="description"><p class="name"><a href="#CV()">CV</a>(string view, string func)</p><p class="description">call other view class or it is method</p></td>
+</tr>
+<tr>
+<td class="type">protected final  Object</td>
+<td class="description"><p class="name"><a href="#LM()">LM</a>(string model_name)</p><p class="description">do call model class</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#array2XML()">array2XML</a>(array array)</p><p class="description">convert array to XML document</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#call_init()">call_init</a>()</p><p class="description">construct base data that main init X class properties value
+and common tpl data</p></td>
+</tr>
+<tr>
+<td class="type"> string</td>
+<td class="description"><p class="name"><a href="#check_file_type()">check_file_type</a>(string file)</p><p class="description">check file mime type, and save the file mime type to</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#exitJSArray()">exitJSArray</a>(string var_name, array array)</p><p class="description">exit script and print javascript of one variables defined by array</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#exitJSON()">exitJSON</a>(int status, string message, array data)</p><p class="description">exit script and print ajax format text</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#exitXML()">exitXML</a>(mixed status, mixed message, mixed data)</p><p class="description">exit script and print XML document text</p></td>
+</tr>
+<tr>
+<td class="type">final  array</td>
+<td class="description"><p class="name"><a href="#getErrorLog()">getErrorLog</a>(string date)</p><p class="description">get error log by one day that logs save your data directory, the log contains php error
+and exception info</p></td>
+</tr>
+<tr>
+<td class="type">final  string</td>
+<td class="description"><p class="name"><a href="#getJS()">getJS</a>()</p><p class="description">get all defined javascript variables and return javascript within HTML text</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#getJSONTpl()">getJSONTpl</a>()</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#get_display_html()">get_display_html</a>()</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#get_options()">get_options</a>(mixed view_class, string method_name)</p><p class="description">if request method is OPTIONS, the method will be call , and respones URI support HTTP method list</p></td>
+</tr>
+<tr>
+<td class="type">protected final  array</td>
+<td class="description"><p class="name"><a href="#loadRuntimeConfig()">loadRuntimeConfig</a>()</p><p class="description">load your site configuration data</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#run()">run</a>(string method_name)</p><p class="description">call user class method and instantiated libtemplate</p></td>
+</tr>
+<tr>
+<td class="type">protected final  void</td>
+<td class="description"><p class="name"><a href="#saveAllRuntimeConfig()">saveAllRuntimeConfig</a>(array runtime_config)</p><p class="description">user array save your site config by key/value storage to file</p></td>
+</tr>
+<tr>
+<td class="type">protected final  void</td>
+<td class="description"><p class="name"><a href="#saveRuntimeConfig()">saveRuntimeConfig</a>(string key, string value)</p><p class="description">save one configuration by key and value</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#setJSVar()">setJSVar</a>(string var_name, mixed value)</p><p class="description">defined javascript variables</p></td>
+</tr>
+<tr>
+<td class="type">final static  void</td>
+<td class="description"><p class="name"><a href="#singleton()">singleton</a>()</p></td>
+</tr>
+<tr>
+<td class="type">final  void</td>
+<td class="description"><p class="name"><a href="#xExit()">xExit</a>(mixed str)</p><p class="description">user application exec exit operation instend exit() of php</p></td>
+</tr>
+<tr>
+<td class="type">protected final  void</td>
+<td class="description"><p class="name"><a href="#xHeader()">xHeader</a>(mixed header)</p><p class="description">set HTTP header of item</p></td>
+</tr>
+</table>
+
+<table class="inherit">
+<tr><th colspan="2">Methods inherited from toknot-doc\XObject</th></tr>
+<tr><td><a href="../toknot-doc/xobject.html#isChange()">isChange</a></td></tr></table>
+
+<h2 id="detail_field">Field Detail</h2>
+<div class="location">/X.php at line 119</div>
+<h3 id="stop_run">stop_run</h3>
+<code class="signature">public  mixed <strong>$stop_run</strong> = false</code>
+<div class="details">
+</div>
+
+<hr>
+
+<h2 id="detail_method">Method Detail</h2>
+<div class="location">/X.php at line 219</div>
+<h3 id="CV()">CV</h3>
+<code class="signature">protected final  void <strong>CV</strong>(string view, string func)</code>
+<div class="details">
+<p>call other view class or it is method</p><dl>
+<dt>Parameters:</dt>
+<dd>view - the view class name , it has 'G','P' .. etc that is prefix character of request method</dd>
+<dd></dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 189</div>
+<h3 id="LM()">LM</h3>
+<code class="signature">protected final  Object <strong>LM</strong>(string model_name)</code>
+<div class="details">
+<p>do call model class</p><dl>
+<dt>Parameters:</dt>
+<dd>model_name - call model class name, could use directory</dd>
+<dt>Returns:</dt>
+<dd>the model class instance</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 402</div>
+<h3 id="array2XML()">array2XML</h3>
+<code class="signature">public final  void <strong>array2XML</strong>(array array)</code>
+<div class="details">
+<p>convert array to XML document</p></div>
+
+<hr>
+
+<div class="location">/X.php at line 130</div>
+<h3 id="call_init()">call_init</h3>
+<code class="signature">public final  void <strong>call_init</strong>()</code>
+<div class="details">
+<p>construct base data that main init X class properties value
+and common tpl data</p></div>
+
+<hr>
+
+<div class="location">/X.php at line 346</div>
+<h3 id="check_file_type()">check_file_type</h3>
+<code class="signature">public  string <strong>check_file_type</strong>(string file)</code>
+<div class="details">
+<p>check file mime type, and save the file mime type to</p><dl>
+<dt>Parameters:</dt>
+<dd>file - needle check file name that contains the file absolute path</dd>
+<dt>Returns:</dt>
+<dd>the file mime type</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 419</div>
+<h3 id="exitJSArray()">exitJSArray</h3>
+<code class="signature">public final  void <strong>exitJSArray</strong>(string var_name, array array)</code>
+<div class="details">
+<p>exit script and print javascript of one variables defined by array</p><dl>
+<dt>Parameters:</dt>
+<dd>var_name - the variables name</dd>
+<dd>array - the variables value that is array</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 363</div>
+<h3 id="exitJSON()">exitJSON</h3>
+<code class="signature">public final  void <strong>exitJSON</strong>(int status, string message, array data)</code>
+<div class="details">
+<p>exit script and print ajax format text</p><dl>
+<dt>Parameters:</dt>
+<dd>status - this response result status code</dd>
+<dd>message - this response result description</dd>
+<dd>data - this response return result data</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 381</div>
+<h3 id="exitXML()">exitXML</h3>
+<code class="signature">public final  void <strong>exitXML</strong>(mixed status, mixed message, mixed data)</code>
+<div class="details">
+<p>exit script and print XML document text</p></div>
+
+<hr>
+
+<div class="location">/X.php at line 325</div>
+<h3 id="getErrorLog()">getErrorLog</h3>
+<code class="signature">public final  array <strong>getErrorLog</strong>(string date)</code>
+<div class="details">
+<p>get error log by one day that logs save your data directory, the log contains php error
+and exception info</p><dl>
+<dt>Parameters:</dt>
+<dd>date - date of get log one day</dd>
+<dt>Returns:</dt>
+<dd>return one array, one element is a error trace_item</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 456</div>
+<h3 id="getJS()">getJS</h3>
+<code class="signature">public final  string <strong>getJS</strong>()</code>
+<div class="details">
+<p>get all defined javascript variables and return javascript within HTML text</p><dl>
+<dt>Returns:</dt>
+<dd>HTML text format of javascript text</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 308</div>
+<h3 id="getJSONTpl()">getJSONTpl</h3>
+<code class="signature">public final  void <strong>getJSONTpl</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 311</div>
+<h3 id="get_display_html()">get_display_html</h3>
+<code class="signature">public final  void <strong>get_display_html</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 152</div>
+<h3 id="get_options()">get_options</h3>
+<code class="signature">public final  void <strong>get_options</strong>(mixed view_class, string method_name)</code>
+<div class="details">
+<p>if request method is OPTIONS, the method will be call , and respones URI support HTTP method list</p></div>
+
+<hr>
+
+<div class="location">/X.php at line 250</div>
+<h3 id="loadRuntimeConfig()">loadRuntimeConfig</h3>
+<code class="signature">protected final  array <strong>loadRuntimeConfig</strong>()</code>
+<div class="details">
+<p>load your site configuration data</p><dl>
+<dt>Returns:</dt>
+<dd>return all configuration</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 277</div>
+<h3 id="run()">run</h3>
+<code class="signature">public final  void <strong>run</strong>(string method_name)</code>
+<div class="details">
+<p>call user class method and instantiated libtemplate</p><dl>
+<dt>Parameters:</dt>
+<dd>method_name - user class method name</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 239</div>
+<h3 id="saveAllRuntimeConfig()">saveAllRuntimeConfig</h3>
+<code class="signature">protected final  void <strong>saveAllRuntimeConfig</strong>(array runtime_config)</code>
+<div class="details">
+<p>user array save your site config by key/value storage to file</p><dl>
+<dt>Parameters:</dt>
+<dd>runtime_config - your site configuration</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 266</div>
+<h3 id="saveRuntimeConfig()">saveRuntimeConfig</h3>
+<code class="signature">protected final  void <strong>saveRuntimeConfig</strong>(string key, string value)</code>
+<div class="details">
+<p>save one configuration by key and value</p><dl>
+<dt>Parameters:</dt>
+<dd>key - key name of one config</dd>
+<dd>value - the one config value</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 431</div>
+<h3 id="setJSVar()">setJSVar</h3>
+<code class="signature">public final  void <strong>setJSVar</strong>(string var_name, mixed value)</code>
+<div class="details">
+<p>defined javascript variables</p><dl>
+<dt>Parameters:</dt>
+<dd>var_name - the javascript variables name</dd>
+<dd>value - the javascript variables value</dd>
+</dl>
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 121</div>
+<h3 id="singleton()">singleton</h3>
+<code class="signature">public final static  void <strong>singleton</strong>()</code>
+<div class="details">
+</div>
+
+<hr>
+
+<div class="location">/X.php at line 442</div>
+<h3 id="xExit()">xExit</h3>
+<code class="signature">public final  void <strong>xExit</strong>(mixed str)</code>
+<div class="details">
+<p>user application exec exit operation instend exit() of php</p></div>
+
+<hr>
+
+<div class="location">/X.php at line 173</div>
+<h3 id="xHeader()">xHeader</h3>
+<code class="signature">protected final  void <strong>xHeader</strong>(mixed header)</code>
+<div class="details">
+<p>set HTTP header of item</p></div>
+
+<hr>
+
+<div class="header">
+<h1>PHPDoctor</h1>
+<ul>
+<li><a href="../overview-summary.html">Overview</a></li>
+<li><a href="../toknot-doc/package-summary.html">Namespace</a></li>
+<li class="active">Class</li>
+<li><a href="../toknot-doc/package-tree.html">Tree</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
+<li><a href="../index-all.html">Index</a></li>
+</ul>
+</div>
+
+<div class="small_links">
+<a href="../index.html" target="_top">Frames</a>
+<a href="../toknot-doc/x.html" target="_top">No frames</a>
+</div>
+<div class="small_links">
+Summary: <a href="#summary_field">Field</a> | <a href="#summary_method">Method</a> | <a href="#summary_constr">Constr</a>
+Detail: <a href="#detail_field">Field</a> | <a href="#detail_method">Method</a> | <a href="#summary_constr">Constr</a>
+</div>
+<hr>
+
+<p id="footer">This document was generated by <a href="http://peej.github.com/phpdoctor/">PHPDoctor: The PHP Documentation Creator</a></p>
+
+</body>
+
+</html>
