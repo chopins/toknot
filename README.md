@@ -1,4 +1,7 @@
 #Usage
+##Documentation  
+http://chopins.github.com/toknot/  
+
 ##Initialization Your Application  
   Please run like : `php XCreateApp.php /directory-path/application`  in CLI  
   Will create below directory or file inside provided path:
