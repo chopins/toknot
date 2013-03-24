@@ -22,41 +22,23 @@
 #define PHP_PTHREADS_H
 #define PHP_PTHREADS_VERSION "0.0.1"
 
-#include <sys/syscall.h>
-#define pthread_gettid() syscall(__NR_gettid)
+#include "TSRM.h"
 
 extern zend_module_entry pthreads_module_entry;
 #define phpext_pthreads_ptr &pthreads_module_entry
 
-#ifdef PHP_WIN32
-#	define PHP_PTHREADS_API __declspec(dllexport)
-#elif defined(__GNUC__) && __GNUC__ >= 4
-#	define PHP_PTHREADS_API __attribute__ ((visibility("default")))
-#else
-#	define PHP_PTHREADS_API
-#endif
-
-#ifdef ZTS
-#include "TSRM.h"
-#endif
-
 PHP_MINIT_FUNCTION(pthreads);
 PHP_MSHUTDOWN_FUNCTION(pthreads);
-PHP_RINIT_FUNCTION(pthreads);
-PHP_RSHUTDOWN_FUNCTION(pthreads);
 PHP_MINFO_FUNCTION(pthreads);
 
-PHP_FUNCTION(confirm_pthreads_compiled);	/* For testing, remove later. */
-
-/* 
-  	Declare any global variables you may need between the BEGIN
-	and END macros here:     
+PHP_FUNCTION(pthread_gettid);
+PHP_FUNCTION(pthread_create);
+PHP_FUNCTION(pthread_exit);
+PHP_FUNCTION(pthread_join);
 
 ZEND_BEGIN_MODULE_GLOBALS(pthreads)
-	long  global_value;
-	char *global_string;
-ZEND_END_MODULE_GLOBALS(pthreads)
-*/
+	int last_error;
+ZEND_END_MODULE_GLOBALS(pcntl)
 
 /* In every utility function you add that needs to use variables 
    in php_pthreads_globals, call TSRMLS_FETCH(); after declaring other 
