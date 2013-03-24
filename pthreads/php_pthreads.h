@@ -20,6 +20,10 @@
 
 #ifndef PHP_PTHREADS_H
 #define PHP_PTHREADS_H
+#define PHP_PTHREADS_VERSION "0.0.1"
+
+#include <sys/syscall.h>
+#define pthread_gettid() syscall(__NR_gettid)
 
 extern zend_module_entry pthreads_module_entry;
 #define phpext_pthreads_ptr &pthreads_module_entry

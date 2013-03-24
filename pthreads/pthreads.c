@@ -26,6 +26,7 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_pthreads.h"
+#include <pthreads.h>
 
 /* If you declare any globals in php_pthreads.h uncomment this:
 ZEND_DECLARE_MODULE_GLOBALS(pthreads)
@@ -39,7 +40,10 @@ static int le_pthreads;
  * Every user visible function must have an entry in pthreads_functions[].
  */
 const zend_function_entry pthreads_functions[] = {
-	PHP_FE(confirm_pthreads_compiled,	NULL)		/* For testing, remove later. */
+	PHP_FE(pthread_gettid,	NULL)
+	PHP_FE(pthread_create,	NULL)
+	PHP_FE(pthread_exit,	NULL)
+	PHP_FE(pthread_join,	NULL)
 	PHP_FE_END	/* Must be the last line in pthreads_functions[] */
 };
 /* }}} */
@@ -68,34 +72,11 @@ zend_module_entry pthreads_module_entry = {
 ZEND_GET_MODULE(pthreads)
 #endif
 
-/* {{{ PHP_INI
- */
-/* Remove comments and fill if you need to have entries in php.ini
-PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("pthreads.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_pthreads_globals, pthreads_globals)
-    STD_PHP_INI_ENTRY("pthreads.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_pthreads_globals, pthreads_globals)
-PHP_INI_END()
-*/
-/* }}} */
-
-/* {{{ php_pthreads_init_globals
- */
-/* Uncomment this function if you have INI entries
-static void php_pthreads_init_globals(zend_pthreads_globals *pthreads_globals)
-{
-	pthreads_globals->global_value = 0;
-	pthreads_globals->global_string = NULL;
-}
-*/
-/* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION
  */
 PHP_MINIT_FUNCTION(pthreads)
 {
-	/* If you have INI entries, uncomment these lines 
-	REGISTER_INI_ENTRIES();
-	*/
 	return SUCCESS;
 }
 /* }}} */
@@ -104,30 +85,11 @@ PHP_MINIT_FUNCTION(pthreads)
  */
 PHP_MSHUTDOWN_FUNCTION(pthreads)
 {
-	/* uncomment this line if you have INI entries
-	UNREGISTER_INI_ENTRIES();
-	*/
 	return SUCCESS;
 }
 /* }}} */
 
-/* Remove if there's nothing to do at request start */
-/* {{{ PHP_RINIT_FUNCTION
- */
-PHP_RINIT_FUNCTION(pthreads)
-{
-	return SUCCESS;
-}
-/* }}} */
 
-/* Remove if there's nothing to do at request end */
-/* {{{ PHP_RSHUTDOWN_FUNCTION
- */
-PHP_RSHUTDOWN_FUNCTION(pthreads)
-{
-	return SUCCESS;
-}
-/* }}} */
 
 /* {{{ PHP_MINFO_FUNCTION
  */
@@ -143,40 +105,44 @@ PHP_MINFO_FUNCTION(pthreads)
 }
 /* }}} */
 
-
-/* Remove the following function when you have succesfully modified config.m4
-   so that your module can be compiled into PHP, it exists only for testing
-   purposes. */
-
-/* Every user-visible function in PHP should document itself in the source */
-/* {{{ proto string confirm_pthreads_compiled(string arg)
-   Return a string to confirm that the module is compiled in */
-PHP_FUNCTION(confirm_pthreads_compiled)
-{
-	char *arg = NULL;
-	int arg_len, len;
-	char *strg;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &arg, &arg_len) == FAILURE) {
-		return;
-	}
-
-	len = spprintf(&strg, 0, "Congratulations! You have successfully modified ext/%.78s/config.m4. Module %.78s is now compiled into PHP.", "pthreads", arg);
-	RETURN_STRINGL(strg, len, 0);
+void thread_test(void) {
+    printf("this is a pthread.%d \n", tid);
 }
-/* }}} */
-/* The previous line is meant for vim and emacs, so it can correctly fold and 
-   unfold functions in source code. See the corresponding marks just before 
-   function definition, where the functions purpose is also documented. Please 
-   follow this convention for the convenience of others editing your code.
-*/
 
 
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */
+PHP_FUNCTION(pthread_gettid) 
+{
+	int tid;
+	tid = pthread_gettid();
+	RETURN_LONG(tid);
+}
+
+PHP_FUNCTION(pthread_create)
+{
+	zval *z_tid;
+	pthread_t id;
+	int ret;
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z", &z_status) == FAILURE)
+		return;
+
+	convert_to_long_ex(&z_tid);
+	id = Z_LVAL_P(z_tid);
+
+    ret = pthread_create(&id, NULL, (void *) thread_test ,NULL);
+
+	Z_LVAL_P(z_tid) = id;
+
+	RETURN_LONG(ret);
+}
+PHP_FUNCTION(pthread_exit)
+{
+	pthread_exit(0);
+}
+
+PHP_FUNCTION(pthread_join)
+{
+	long id;
+	if(zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &id) == FAILURE)
+		return;
+	pthread_join((pthread_t) id);
+}
