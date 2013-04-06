@@ -55,17 +55,29 @@ final class Process {
 
     public function checkEnvironment() {
         if (!function_exists('pcntl_fork')) {
-            throw new DependExtensionException();
+            try {
+                dl('pcntl.so');
+            } catch (StandardException $e) {
+                echo $e;
+            }
         }
         if (!function_exists('posix_setuid')) {
-            throw new DependExtensionException();
+            try {
+                dl('posix.so');
+            } catch (StandardException $e) {
+                echo $e;
+            }
         }
         if (!function_exists('setproctitle')) {
-            throw new DependExtensionException();
+            try {
+                dl('proctitle.so');
+            } catch (StandardException $e) {
+                echo $e;
+            }
         }
     }
 
-    public function setWorkDirectory(string $directory) {
+    public function setWorkDirectory($directory) {
         $directory = realpath($directory);
         if (!is_readable($directory)) {
             throw new FileIOException();
@@ -80,7 +92,7 @@ final class Process {
      * @return boolean
      * @throws ProcessException
      */
-    public function setWorkUser(string $user, string $group) {
+    public function setWorkUser($user, $group) {
         if (!preg_match('/^[a-zA-Z][a-zA-Z\d]*/', $user)) {
             return false;
         }
@@ -92,7 +104,7 @@ final class Process {
         if (empty($group_info)) {
             throw new ProcessException();
         }
-        if (!in_array($user, $group_info['member'])) {
+        if (!in_array($user, $group_info['members'])) {
             throw new ProcessException();
         }
         if (!posix_setegid($group_info['gid'])) {
@@ -107,10 +119,12 @@ final class Process {
     public function getChildProcessList() {
         return $this->processPool;
     }
+
     public function setChildFrontWork($callback, $param = null) {
         $this->createChildFrontCallback = $callback;
         $this->createChildFrontCallbackParam = $param;
     }
+
     public function delChildFrontWork() {
         $this->createChildFrontCallback = null;
         $this->createChildFrontCallbackParam = null;
@@ -124,18 +138,14 @@ final class Process {
      * @return void
      * @throws ProcessException
      */
-    public function createChildProcess(int $num, $callback) {
+    public function createChildProcess($num, $callback) {
         $parentPid = posix_getpid();
-        $argc = func_num_args();
-        if ($argc > 2) {
-            $argv = func_get_args();
-            array_shift($argv);
-            array_shift($argv);
-        }
+        $argv = func_get_args();
+        array_shift($argv);
+        array_shift($argv);
         for ($i = 0; $i < $num; $i++) {
-            if($this->createChildFrontCallback !== null) {
-                $forkFrontCallbackReturn = call_user_func_array($this->createChildFrontCallback, 
-                        $this->createChildFrontCallbackParam);
+            if ($this->createChildFrontCallback !== null) {
+                $forkFrontCallbackReturn = call_user_func_array($this->createChildFrontCallback, $this->createChildFrontCallbackParam);
                 array_unshift($argv, $forkFrontCallbackReturn);
             }
             $pid = pcntl_fork();
@@ -149,11 +159,12 @@ final class Process {
                         call_user_func_array($callback, $argv);
                     } catch (StandardException $e) {
                         $exitStatus = self::CALLFUNC_ERR;
+                        echo $e;
                     }
                 } else {
                     $exitStatus = self::NOT_CALLABLE;
                 }
-                posix_kill($parent, SIGCHLD);
+                posix_kill($parentPid, SIGCHLD);
                 exit($exitStatus);
             } else {
                 throw new ProcessException();
@@ -202,7 +213,7 @@ final class Process {
      * @param resource $sock
      * @return mixed
      */
-    public function IPCRead(resource $sock) {
+    public function IPCRead($sock) {
         $buffer = '';
         $flag = 0;
         while (true) {
@@ -226,7 +237,7 @@ final class Process {
      * @param mixed $message
      * @return bool 
      */
-    public function IPCWrite(resource $sock, $message) {
+    public function IPCWrite($sock, $message) {
         $messageString = serialize($message);
         $dataLength = strlen($messageString);
         $writeNum = ceil($this->pipMaxDataSize / $dataLength);
@@ -276,4 +287,5 @@ final class Process {
     }
 
 }
+
 ?>

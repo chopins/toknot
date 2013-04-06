@@ -13,6 +13,11 @@ namespace Toknot\Process\Exception;
 use Toknot\Exception\StandardException;
 
 class ProcessException extends StandardException {
-    
+
+    public function __construct() {
+        parent::__construct('Process Opreate Exception');
+    }
+
 }
+
 ?>

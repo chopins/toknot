@@ -1,0 +1,8 @@
+----------------------------2013-04-07 03:13:30------------------------
+XException Error : Miss Depend PHP Extension
+Throw Exception in file /home/chopin/NetBeansProjects/ToknotV2/Toknot/Process/Process.php line 61
+#0 Toknot\Process\Process->checkEnvironment( ) in /home/chopin/NetBeansProjects/ToknotV2/Toknot/Process/Process.php line 33;
+#1 Toknot\Process\Process->__construct( ) in /home/chopin/NetBeansProjects/ToknotV2/Toknot/Http/FastCGIServer.php line 48;
+#2 Toknot\Http\FastCGIServer->__construct( ) in /home/chopin/NetBeansProjects/ToknotV2/Toknot/Control/Application.php line 49;
+#3 Toknot\Control\Application->runCGIServer( 'testRouter') in /home/chopin/NetBeansProjects/ToknotV2/test.php line 7;
+===========================================================================

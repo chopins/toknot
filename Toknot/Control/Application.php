@@ -12,33 +12,51 @@ namespace Toknot\Control;
 
 include_once dirname(__FILE__) . '/StandardAutoloader.php';
 
-use Toknot\Control\StandardAutoLoader;
+use Toknot\Control\StandardAutoloader;
+use Toknot\Exception\StandardException;
+use \Toknot\Http\FastCGIServer;
 
 class Application {
 
     public $RUN_START_TIME = 0;
     private $standardAutoLoader = null;
 
-    public function __construct($argc, $argv) {
-        $this->iniEnv();
+    public function __construct($argc = null, $argv = null) {
+        $this->iniEnv($argc, $argv);
         $this->registerAutoLoader($argc, $argv);
-        $this->run();
     }
 
     private function iniEnv($argc, $argv) {
         $this->RUN_START_TIME = microtime(true);
-        if (PHP_SAPI == 'cli' && !isset($_SERVER['argv'])) {
+        define('PHP_CLI', PHP_SAPI == 'cli');
+        if (PHP_CLI && !isset($_SERVER['argv'])) {
             $_SERVER['argc'] = $argc;
             $_SERVER['argv'] = $argv;
         }
-        defined('__TK_EXCEPTION_LEVEL__') || define('__TK_EXCEPTION_LEVEL__', 2);
-        defined('__TK_NO_WEB_SERVER__') || define('__TK_NO_WEB_SERVER__', false);
-        defined('__TK_DAEMON_LOOP_FILE__') || define('__TK_DAEMON_LOOP_FILE__', false);
+        set_error_handler(array($this,'errorReportHandler'));
         clearstatcache();
     }
+    public function errorReportHandler() {
+        $argv = func_get_args();
+        StandardException::errorReportHandler($argv);
+    }
 
-    public function run() {
-        \Toknot\Control\Router::singleton();
+    public function runUserRouter($callback) {
+        $argv = func_get_args();
+        array_shift($argv);
+        call_user_func_array($callback, $argv);
+    }
+
+    public function runDefaultRouter() {
+        Router::singleton();
+    }
+
+    public function runCGIServer($callback) {
+        try {
+            return new FastCGIServer();
+        } catch (StandardException $e) {
+            echo $e;
+        }
     }
 
     public function addAppPath($path) {

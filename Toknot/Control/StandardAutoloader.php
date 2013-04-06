@@ -25,15 +25,15 @@ class StandardAutoloader {
     private function transformClassNameToFilename($class, $dir) {
         $directoryLast = strlen($dir) - 1;
         $nsPath = str_replace(self::NS_SEPARATOR, DIRECTORY_SEPARATOR, $class);
-        if(($this->dir[$directoryLast] == DIRECTORY_SEPARATOR && 
+        if(($dir[$directoryLast] == DIRECTORY_SEPARATOR && 
                 $nsPath[0] != DIRECTORY_SEPARATOR) || 
-                ($this->dir[$directoryLast] != DIRECTORY_SEPARATOR &&
+                ($dir[$directoryLast] != DIRECTORY_SEPARATOR &&
                 $nsPath[0] == DIRECTORY_SEPARATOR)) {
-            return $this->dir. $nsPath . '.php';
+            return $dir. $nsPath . '.php';
         }
-        if($this->dir[$directoryLast] != DIRECTORY_SEPARATOR &&
+        if($dir[$directoryLast] != DIRECTORY_SEPARATOR &&
                 $nsPath[0] != DIRECTORY_SEPARATOR) {
-            return $this->dir . DIRECTORY_SEPARATOR . $nsPath . '.php';
+            return $dir . DIRECTORY_SEPARATOR . $nsPath . '.php';
         }
     }
 
@@ -42,7 +42,7 @@ class StandardAutoloader {
             $filename = $this->transformClassNameToFilename($class, $dir);
             $resolvedName = stream_resolve_include_path($filename);
             if($resolvedName !== false) {
-                return include_once $filename;
+                require_once $resolvedName;
             }
         }
         return false;

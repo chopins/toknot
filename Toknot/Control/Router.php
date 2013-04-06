@@ -6,7 +6,7 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
-namespace Toknot\Contorl;
+namespace Toknot\Control;
 
 use Toknot\Di\Object;
 use Toknot\Contorl\Exception\PHPVersionException;
@@ -123,7 +123,7 @@ final class Router extends Object {
             throw new PHPVersionException();
         }
 
-        define('PHP_CLI',PHP_SAPI =='cli');
+        
 
         if(PHP_CLI == false) define('__X_WEB_ROOT__',dirname($_SERVER['SCRIPT_FILENAME']));
         defined('__X_APP_ROOT__') || define('__X_APP_ROOT__',__X_WEB_ROOT__);

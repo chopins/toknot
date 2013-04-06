@@ -10,6 +10,7 @@
 namespace Toknot\Exception;
 
 use \ErrorException;
+use \ReflectionClass;
 
 class StandardException  extends ErrorException {
     protected $code = 0;
@@ -36,6 +37,10 @@ class StandardException  extends ErrorException {
         $this->errline = empty($line) ? $this->getLine() : $line;
         $this->getErrorType($code);
     }
+    static public function errorReportHandler($argv) {
+        throw new StandardException($argv[1], $argv[0], $argv[2],$argv[3]);
+    }
+
     public function getErrorType($code) {
         $_ENV['__X_EXCEPTION_THROW__'] = true;
         $_ENV['__X_FATAL_EXCEPTION__'] = true;
@@ -72,7 +77,7 @@ class StandardException  extends ErrorException {
                 $type = 'PHP Core Error';
             break;
             default:
-                $type = 'XException Error';
+                $type = __CLASS__;
                 $this->is_exception = true;
             break;
         }
@@ -106,29 +111,30 @@ class StandardException  extends ErrorException {
             $str .= $this->earch($traceArr);
         }
         $str .='</ul></div>';
-        if(__X_SHOW_ERROR__) {
-            $__X_RUN_TIME__ = microtime(true) - __X_RUN_START_TIME__;
-            $str .= "<div class='debug_process'>Processed:{$__X_RUN_TIME__} second</div></div>";
-            if(isset($_ENV['__X_AJAX_REQUEST__']) && $_ENV['__X_AJAX_REQUEST__']) {
-                return strip_tags($str);
-            } elseif(PHP_SAPI == 'cli' && isset($_ENV['__X_OUT_BROWSER__'])
-                                       && $_ENV['__X_OUT_BROWSER__'] ==false) {
-                return strip_tags($str);
-            } else {
-                $str = $this->errcss . $str;
-                return $str;
-            }
-        }
-        if(__X_SHOW_ERROR__ === null) {
-            not_found();
-        }
-        $str = strip_tags($str);
-        $str = '----------------------------'.date('Y-m-d H:i:s')."------------------------\n$str";
-        $str .= isset($GLOBALS['_CFG']) ? $GLOBALS['_CFG']->exception_seg_line."\n"
-                : "===========================================================================\n";
-        file_put_contents(__X_APP_PHP_ERROR_LOG__,$str,FILE_APPEND);
-        not_found();
-        return false;
+        return strip_tags($str);
+//        if(__X_SHOW_ERROR__) {
+//            $__X_RUN_TIME__ = microtime(true) - __X_RUN_START_TIME__;
+//            $str .= "<div class='debug_process'>Processed:{$__X_RUN_TIME__} second</div></div>";
+//            if(isset($_ENV['__X_AJAX_REQUEST__']) && $_ENV['__X_AJAX_REQUEST__']) {
+//                return strip_tags($str);
+//            } elseif(PHP_SAPI == 'cli' && isset($_ENV['__X_OUT_BROWSER__'])
+//                                       && $_ENV['__X_OUT_BROWSER__'] ==false) {
+//                return strip_tags($str);
+//            } else {
+//                $str = $this->errcss . $str;
+//                return $str;
+//            }
+//        }
+//        if(__X_SHOW_ERROR__ === null) {
+//            not_found();
+//        }
+//        $str = strip_tags($str);
+//        $str = '----------------------------'.date('Y-m-d H:i:s')."------------------------\n$str";
+//        $str .= isset($GLOBALS['_CFG']) ? $GLOBALS['_CFG']->exception_seg_line."\n"
+//                : "===========================================================================\n";
+//        file_put_contents(__X_APP_PHP_ERROR_LOG__,$str,FILE_APPEND);
+//        not_found();
+//        return false;
     }
     public function __toString() {
         return $this->getXDebugTraceAsString();

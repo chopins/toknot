@@ -9,10 +9,15 @@
  */
 
 namespace Toknot\Process\Eception;
+
 use Toknot\Exception\StandardException;
 
 class PipException extends StandardException {
-    
+
+    public function __construct() {
+        parent::__construct('Socket Opreate Exception');
+    }
+
 }
 
 ?>

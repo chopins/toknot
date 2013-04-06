@@ -10,16 +10,17 @@
 
 namespace Toknot\Http;
 
-use Toknot\Http\HTTPResponse;
+use Toknot\Http\HttpResponse;
 use Toknot\Process\Process;
 
-final class FastCGIServer extends HTTPResponse {
+final class FastCGIServer extends HttpResponse {
 
     private $process = null;
     private $port = '9900';
     private $localsock = 'tcp://127.0.0.1';
     private $workUser = 'nobody';
     private $workGroup = 'nobody';
+    private $workCurrentUser = false;
     private $socketFileDescriptor = null;
     private $workProcessPool = array();
     private $requestBackend = array();
@@ -49,7 +50,8 @@ final class FastCGIServer extends HTTPResponse {
     }
 
     public function registerApplicationRouter($callback) {
-        $argv = array_shift(func_get_args());
+        $argv = func_get_args();
+        array_shift($argv);
         array_push($this->applicationRouter, array('func' => $callback,
             'argv' => $argv));
         return key($this->applicationRouter);
@@ -61,7 +63,7 @@ final class FastCGIServer extends HTTPResponse {
         }
     }
 
-    public function setListenPort(int $port) {
+    public function setListenPort($port) {
         $this->port = $port;
     }
 
@@ -72,6 +74,10 @@ final class FastCGIServer extends HTTPResponse {
     public function setWorkUser($user, $group) {
         $this->workUser = $user;
         $this->workGroup = $group;
+    }
+
+    public function setWorkOnCurrentUser() {
+        $this->workCurrentUser = true;
     }
 
     public function setWorkDirectory($directory) {
@@ -86,17 +92,17 @@ final class FastCGIServer extends HTTPResponse {
         return array($this->socketErrno, $this->socketErrstr);
     }
 
-    public function setStartWorkNum(int $num) {
+    public function setStartWorkNum($num) {
         $this->startWorkNum = $num;
     }
 
-    public function setMaxWorkNum(int $num) {
+    public function setMaxWorkNum($num) {
         $this->maxWorkNum = $num;
     }
 
     private function bindLocalListenPort() {
         $this->socketFileDescriptor = stream_socket_server($this->localsock, $this->socketErrno, $this->socketErrstr, STREAM_SERVER_LISTEN);
-        stream_set_blocking($this->server, 0);
+        stream_set_blocking($this->socketFileDescriptor, 0);
     }
 
     public function startServer() {
@@ -111,13 +117,14 @@ final class FastCGIServer extends HTTPResponse {
     }
 
     public function CGIWorkProcess() {
-        $this->process->setWorkUser($this->workUser, $this->workGroup);
+        if (!$this->workCurrentUser)
+            $this->process->setWorkUser($this->workUser, $this->workGroup);
         fclose($this->IPCSock[0]);
-        $read = array($this->socketFileDescriptor, $this->IPCSock[1]);
-        $write = array($this->socketFileDescriptor);
-        $except = null;
         while (true) {
-            $chgNum = stream_select($read, $write, $except, 10);
+            $read = array($this->socketFileDescriptor, $this->IPCSock[1]);
+            $write = array($this->socketFileDescriptor);
+            $except = array($this->IPCSock[1]);
+            $chgNum = stream_select($read, $write, $except, 0, 200000);
             if ($chgNum > 0) {
                 foreach ($read as $r) {
                     if ($r == $this->socketFileDescriptor) {
@@ -193,7 +200,7 @@ final class FastCGIServer extends HTTPResponse {
     private function CGIMasterProcess() {
         fclose($this->IPCSock[1]);
         $read = array($this->IPCSock[0]);
-        $write = array($this->IPCSock[1]);
+        $write = array($this->IPCSock[0]);
         $except = null;
         $this->getWorkerList();
         $delayTime = 0;
@@ -228,6 +235,7 @@ final class FastCGIServer extends HTTPResponse {
                 continue;
             }
         }
+        pcntl_wait($status);
     }
 
     private function CGIServerExit() {
