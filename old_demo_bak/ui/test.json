@@ -1,5 +1,0 @@
-{form action=url method=post class=form}
-{hidden value=hidden name=name}
-{text label=text value=test name=test}
-{submit label=submit value=test name=test}
-{/form}

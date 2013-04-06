@@ -1,3 +1,0 @@
-=Javascript 代码位置=
-Javascript 框架代码为 js/x.js
-最新版本的JS代码位于 demo/ui/js/x.js
