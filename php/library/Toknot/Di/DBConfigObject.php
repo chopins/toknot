@@ -14,49 +14,59 @@ use Toknot\Di\Object;
 class DBConfigObject extends Object {
 
     /**
-     * dbtype 
+     * dbType 
      * set database type
      * 
-     * @var mixed
+     * @var string
      * @access public
      */
-    public $dbtype = null;
+    public $dbType = null;
 
     /**
-     * dbhost 
+     * dbHost 
      * set database connect host or open path
      * 
-     * @var mixed
+     * @var string
      * @access public
      */
-    public $dbhost = null;
+    public $dbHost = null;
 
     /**
-     * dbuser 
+     * dbUser 
      * the database username
      * 
-     * @var mixed
+     * @var string
      * @access public
      */
-    public $dbuser = null;
+    public $dbUser = null;
 
     /**
-     * dbpass 
+     * dbPass 
      * the database password of user
      * 
-     * @var mixed
+     * @var string
      * @access public
      */
-    public $dbpass = null;
+    public $dbPass = null;
 
 
     /**
-     * dbport 
+     * dbPort 
      * if connect by network, set the connect port
      * 
-     * @var mixed
+     * @var string
      * @access public
      */
-    public $dbport = null;
-    public $pconnect = false;
+    public $dbPort = null;
+    
+    /**
+     * pConnect
+     * persistent connect config
+     *
+     * @var bool 
+     * @access public
+     */
+    public $pConnect = false;
+    
+    public $protocol = 'tcp';
 }

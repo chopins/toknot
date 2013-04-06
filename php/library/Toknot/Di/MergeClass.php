@@ -24,7 +24,7 @@ class MergeCLass {
         $this->propertie = new SplObjectStorage();
         $this->ref_list = new SplObjectStorage();
     }
-    public function get_defined_expression($fs,$ref) {
+    public function getDefinedExpression($fs,$ref) {
         if(!is_object($ref)) throw new XException('Only support reflection function or method instance');
         $start = $ref->getStartLine();
         $end = $ref->getEndLine();
@@ -52,7 +52,7 @@ class MergeCLass {
         $v = ($ref->isProtected() ? 'protected function ':'public function ').$v."\n";
         return $v;
     }
-    private function get_member(ReflectionClass $refObj,$filter_private=true) {
+    private function getMember(ReflectionClass $refObj,$filter_private=true) {
         if($filter_private) {
             $methodList = $refObj->getMethods(ReflectionMethod::IS_PUBLIC ^ ReflectionMethod::IS_PROTECTED);
         } else {
@@ -91,10 +91,10 @@ class MergeCLass {
             $this->class_list[] = $classname;
         }
     }
-    private function cache_file() {
+    private function cacheFile() {
         return __X_APP_DATA_DIR__."/{$this->cfg->data_php_cache}/{$this->class_id}.php";
     }
-    public function merge_class() {
+    public function mergeClass() {
         if(!$this->class_id) throw new XException('muset before add class'); 
         if(file_exists($this->cache_file())) {
             $create_cache_time = filemtime($this->cache_file());
@@ -121,7 +121,7 @@ class MergeCLass {
         include_once($this->cache_file());
         return new $this->class_id;
     }
-    public function add_class(ReflectionClass $refObj, $filter_private = true) {
+    public function addClass(ReflectionClass $refObj, $filter_private = true) {
         if($refObj instanceof ReflectionClass) {
             $file_name = $refObj->getfilename();
             $classname = $refObj->getName();

@@ -17,7 +17,7 @@ class StandardClass extends Object {
     public function __construct($value = null) {
         $this->value = $value;
     }
-    final public function __xset__($name, $value) {
+    final public function setPropertie($name, $value) {
         $this->$name = new XStdClass($value);
     }
     public function __toString() {

@@ -9,15 +9,26 @@
 
 namespace Toknot\Di;
 
-class Object {
+abstract class Object implements \Iterator{
+    
+    private $interatorArray = array();
+
     /**
+     * propertieChange
      * whether object instance propertie change status
      *
      * @var bool
      * @access private
      */
     private $propertieChange = false;
-
+    
+    /**
+     * instance
+     * Object instance
+     * 
+     * @var object
+     * @access private 
+     */
     private static $instance = null;
     /**
      * singleton 
@@ -58,7 +69,15 @@ class Object {
         $this->propertieChange = true;
         $this->__xset__($propertie,$value);
     }
-    public function __xset__($propertie, $value) {
+    
+    /**
+     * 
+     * @param type $propertie
+     * @param type $value
+     * @access public
+     * @return void 
+     */
+    public function setPropertie($propertie, $value) {
         $this->$propertie = $value;
     }
 
@@ -74,15 +93,40 @@ class Object {
         if($this->propertieChange) return true;
         $ref = new ReflectionObject($this);
         $list = $ref->getDefaultProperties();
-        $static_list = $ref->getStaticProperties();
+        $staticList = $ref->getStaticProperties();
         foreach($list as $key=>$value) {
-            if(isset($static_list[$key])) {
+            if(isset($staticList[$key])) {
                 if(self::$$key != $value) return true;
             } else {
                 if($this->$key != $value) return true;
             }
         }
         return false;
+    }
+    
+    public function rewind() {
+        $ref = new ReflectionObject($this);
+        $propertiesList = $ref->getProperties();
+        $methodList = $ref->getMethods();
+        $constantsList = $ref->getConstants();
+        $this->interatorArray = array_merge($constantsList,$propertiesList,$methodList);
+        reset($this->interatorArray);
+    }
+    
+    public function current() {
+        return current($this->interatorArray);
+    }
+    
+    public function key() {
+        return key($this->interatorArray);
+    }
+    
+    public function next() {
+        return next($this->interatorArray);
+    }
+    public function valid() {
+        $key = $this->key();
+        return isset($this->interatorArray[$key]);
     }
 }
 

@@ -10,6 +10,7 @@
 namespace Toknot\Di;
 
 use Toknot\Di\Object;
+use Toknot\View\Renderer;
 
 class TemplateObject extends Object {
     /**
@@ -37,7 +38,7 @@ class TemplateObject extends Object {
      * @var mixed
      * @access public
      */
-    public $data_cache = false;
+    public $dataCache = false;
 
     /**
      * cache_time 
@@ -46,7 +47,7 @@ class TemplateObject extends Object {
      * @var float
      * @access public
      */
-    public $cache_time = 300;
+    public $cacheTime = 300;
 
     /**
      * static_cache 
@@ -55,7 +56,7 @@ class TemplateObject extends Object {
      * @var mixed
      * @access public
      */
-    public $static_cache = false;
+    public $staticCache = false;
 
     /**
      * TPL_INI 
