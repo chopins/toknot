@@ -51,7 +51,7 @@ class Application {
         Router::singleton();
     }
 
-    public function runCGIServer($callback) {
+    public function runCGIServer() {
         try {
             return new FastCGIServer();
         } catch (StandardException $e) {

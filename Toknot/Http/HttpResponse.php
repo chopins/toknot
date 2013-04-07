@@ -543,7 +543,7 @@ class HttpResponse {
      * @access private
      * @return void
      */
-    private function getResponseHeader() {
+    protected function getResponseHeader() {
         if (!empty($this->userHeaders)) {
             foreach ($this->userHeaders as $header) {
                 $field = explode(':', $header);

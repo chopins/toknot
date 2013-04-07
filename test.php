@@ -9,11 +9,16 @@ $cgi->registerApplicationRouter('testRouter');
 $cgi->setWorkOnCurrentUser();
 $cgi->startServer();
 
+/**
+ * 
+ * @param mixed $expression
+ */
 function debugPrint($expression) {
     $arr= debug_backtrace(TRUE);
     $filename = basename($arr[0]['file']);
     $expression = print_r($expression, true);
-    print("$filename:{$arr[0]['line']}:{$expression}\n");
+    $pid = posix_getpid();
+    print("$pid:$filename:{$arr[0]['line']}:{$expression}\n");
 }
 
 function testRouter() {

@@ -19,6 +19,7 @@ class StandardException  extends ErrorException {
     protected $errline = '';
     protected $error_handler_function_throw = false;
     protected $is_exception = false;
+    protected $exceptionMessage = null;
     protected $errcss = '<style>
         .debug_area {border:1px #555555 solid;background-color:#EEEEEE;padding-left:10px;}
         .message {color:#555555;font-size:20px;font-weight:bold;}
@@ -30,9 +31,13 @@ class StandardException  extends ErrorException {
         .debug_throw{color:#A9291F;}
         .debug_process {color:#333;font-size:12px;}
         </style>';
-    public function __construct($message, $code =0,$file= null,$line= null,$error_handler_function_throw=false) {
+    public function __construct($message = '', $code =0,$file= null,$line= null,$error_handler_function_throw=false) {
         $this->error_handler_function_throw = $error_handler_function_throw;
-        $this->message = $message;
+        if($this->exceptionMessage) {
+            $this->message = $this->exceptionMessage;
+        } else {
+            $this->message = $message;
+        }
         $this->errfile = empty($file) ? $this->getFile() : $file;
         $this->errline = empty($line) ? $this->getLine() : $line;
         $this->getErrorType($code);

@@ -8,12 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Process\Eception;
+namespace Toknot\Http\TransportsException;
 
 use Toknot\Exception\StandardException;
 
-class PipException extends StandardException {
-    protected $exceptionMessage = 'Socket Opreate Exception';
+class TransportsException extends StandardException{
+       protected $exceptionMessage = 'Socket Transports Un-support'; 
 }
 
 ?>

@@ -28,13 +28,16 @@ final class Process {
     private $maxLogNum = 50;
     private $createChildFrontCallback = null;
     private $createChildFrontCallbackParam = null;
+    private $shmopKey = null;
+    private $shmopId = 0;
+    private $processKeyInPool = 0;
 
     public function __construct() {
         $this->checkEnvironment();
     }
 
     /**
-     * 
+     *
      * @param int $size
      */
     public function setPipWindow(int $size) {
@@ -42,11 +45,15 @@ final class Process {
     }
 
     /**
-     * 
+     *
      * @return int
      */
     public function getPipWindow() {
         return $this->pipMaxDataSize;
+    }
+
+    public function getProcessInPoolKey() {
+        return $this->processKeyInPool;
     }
 
     public function getChildProcessExitStatus() {
@@ -68,12 +75,62 @@ final class Process {
                 echo $e;
             }
         }
+    }
+
+    public function setProcessTitle($title) {
         if (!function_exists('setproctitle')) {
             try {
                 dl('proctitle.so');
             } catch (StandardException $e) {
                 echo $e;
             }
+        }
+        setproctitle($title);
+    }
+
+    public function enableProcessLock() {
+        if (!function_exists('shmop_open')) {
+            try {
+                dl('shmop.so');
+            } catch (StandardException $e) {
+                echo $e;
+            }
+        }
+        $size = strlen(count($this->processPool)) + 1;
+        $t = microtime();
+        $this->shmopKey = ftok(__FILE__, 't');
+        $this->shmopId = shmop_open($this->shmopKey, "c", 0777, $size);
+    }
+
+    public function processLock() {
+        if ($this->shmopId == 0)
+            return false;
+        $current = shmop_read($this->shmopId, 0, 1);
+        $Locker = substr($current, 1);
+        $lockStat = substr($current, 0, 1);
+        if ($lockStat == 1 && $Locker == $this->processKeyInPool)
+            return true;
+        if ($lockStat == 0) {
+            $re = shmop_write($this->shmopId, "1{$this->processKeyInPool}", 0);
+            return $re ? true : false;
+        } else {
+            return false;
+        }
+    }
+
+    public function processUnLock() {
+        if ($this->shmopId == 0)
+            return false;
+        $current = shmop_read($this->shmopId, 0, 1);
+        $Locker = substr($current, 1);
+        $lockStat = substr($current, 0, 1);
+        if ($lockStat == 0)
+            return true;
+        if ($lockStat == 1 && $Locker == $this->processKeyInPool) {
+            $re = shmop_write($this->shmopId, "0{$this->processKeyInPool}", 0);
+            return $re ? true : false;
+        } else {
+            return false;
         }
     }
 
@@ -86,7 +143,7 @@ final class Process {
     }
 
     /**
-     * 
+     *
      * @param string $user
      * @param string $group
      * @return boolean
@@ -120,18 +177,18 @@ final class Process {
         return $this->processPool;
     }
 
-    public function setChildFrontWork($callback, $param = null) {
+    public function setCreateChildFrontCallback($callback, $param = array()) {
         $this->createChildFrontCallback = $callback;
         $this->createChildFrontCallbackParam = $param;
     }
 
-    public function delChildFrontWork() {
+    public function delCreateChildFrontCallback() {
         $this->createChildFrontCallback = null;
         $this->createChildFrontCallbackParam = null;
     }
 
     /**
-     * 
+     *
      * @param int $num
      * @param callable $callback
      * @param mixed  Zero or more parameters to be passed to the callback
@@ -143,20 +200,27 @@ final class Process {
         $argv = func_get_args();
         array_shift($argv);
         array_shift($argv);
+        
         for ($i = 0; $i < $num; $i++) {
+            $callBackArgv = array();
             if ($this->createChildFrontCallback !== null) {
                 $forkFrontCallbackReturn = call_user_func_array($this->createChildFrontCallback, $this->createChildFrontCallbackParam);
-                array_unshift($argv, $forkFrontCallbackReturn);
+                $callBackArgv = array_merge(array($forkFrontCallbackReturn) + $argv);
+                
+            } else {
+                $callBackArgv = $argv;
             }
+            
             $pid = pcntl_fork();
             if ($pid > 0) {
-                $this->processPool[$pid] = $argv;
+                $this->processPool[$pid] = $callBackArgv;
                 continue;
             } else if ($pid == 0) {
                 $exitStatus = self::SUC_EXIT;
-                if (is_callable($callback)) {
+                $this->processKeyInPool = count($this->processPool);
+                if (is_callable($callback, true)) {
                     try {
-                        call_user_func_array($callback, $argv);
+                        call_user_func_array($callback, $callBackArgv);
                     } catch (StandardException $e) {
                         $exitStatus = self::CALLFUNC_ERR;
                         echo $e;
@@ -164,8 +228,9 @@ final class Process {
                 } else {
                     $exitStatus = self::NOT_CALLABLE;
                 }
+                
                 posix_kill($parentPid, SIGCHLD);
-                exit($exitStatus);
+                throw new ProcessException();
             } else {
                 throw new ProcessException();
             }
@@ -173,7 +238,7 @@ final class Process {
     }
 
     public function registerChlidProcessSignalHandler() {
-        pcntl_signal(SIGCHLD, array($this, 'chlidSignalHandler'));
+        pcntl_signal(SIGCHLD, array($this, 'childSignalHandler'));
     }
 
     private function childSignalHandler($signal) {
@@ -197,7 +262,7 @@ final class Process {
     }
 
     /**
-     * 
+     *
      * @return array
      * @throws PipEception
      */
@@ -209,7 +274,7 @@ final class Process {
     }
 
     /**
-     * 
+     *
      * @param resource $sock
      * @return mixed
      */
@@ -232,15 +297,15 @@ final class Process {
     }
 
     /**
-     * 
+     *
      * @param resource $sock
      * @param mixed $message
-     * @return bool 
+     * @return bool
      */
     public function IPCWrite($sock, $message) {
         $messageString = serialize($message);
         $dataLength = strlen($messageString);
-        $writeNum = ceil($this->pipMaxDataSize / $dataLength);
+        $writeNum = ceil($dataLength / $this->pipMaxDataSize);
         $windowLength = strlen($this->pipMaxDataSize);
         if ($writeNum > 1) {
             $dataChunkArray = str_split($messageString, $this->pipMaxDataSize);
@@ -255,7 +320,7 @@ final class Process {
             }
         } else {
             $dataLengthPart = sprintf("%-{$windowLength}s", $dataLength);
-            $writeData = "{$dataLengthPart}0{$chunkString}";
+            $writeData = "{$dataLengthPart}0{$messageString}";
             $len = strlen($writeData);
             fwrite($sock, $writeData, $len);
         }
