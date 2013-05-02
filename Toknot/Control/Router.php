@@ -186,7 +186,7 @@ final class Router extends Object {
         try {
             $this->load_application_class_file();
         } catch(XException $e) {
-            $this->exception_string = $e->getXDebugTraceAsString();
+            $this->exception_string = $e->getDebugTraceAsString();
             gc_collect_cycles();
             return;
         }

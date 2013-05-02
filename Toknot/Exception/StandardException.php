@@ -17,22 +17,20 @@ class StandardException  extends ErrorException {
     protected $message = '';
     protected $errfile = '';
     protected $errline = '';
-    protected $error_handler_function_throw = false;
-    protected $is_exception = false;
+    protected $isException = false;
     protected $exceptionMessage = null;
     protected $errcss = '<style>
-        .debug_area {border:1px #555555 solid;background-color:#EEEEEE;padding-left:10px;}
-        .message {color:#555555;font-size:20px;font-weight:bold;}
-        .call_file {color:#6A8295;}
-        .access {color:#336258;}
-        .trace_item{list-style-type:none;border-bottom:1px #8397B1 solid;padding:5px;color:#0F4C9E;}
-        .debug_args{background-color:#FAD5D2;font-size:12px;margin-right:10px;}
-        .debug-func{color:#176B4E;font-weight:normal;}
-        .debug_throw{color:#A9291F;}
-        .debug_process {color:#333;font-size:12px;}
-        </style>';
-    public function __construct($message = '', $code =0,$file= null,$line= null,$error_handler_function_throw=false) {
-        $this->error_handler_function_throw = $error_handler_function_throw;
+                        .ToKnotDebugArea {border:1px #555555 solid;background-color:#EEEEEE;padding-left:10px;}
+                        .ToKnotMessage {color:#555555;font-size:20px;font-weight:bold;}
+                        .ToKnotCallFile {color:#6A8295;}
+                        .ToKnotAccess {color:#336258;}
+                        .ToKnotTraceItem{list-style-type:none;border-bottom:1px #8397B1 solid;padding:5px;color:#0F4C9E;}
+                        .ToKnotDebugArgs{background-color:#FAD5D2;font-size:12px;margin-right:10px;}
+                        .ToKnotDebugFunc{color:#176B4E;font-weight:normal;}
+                        .ToKnotDebugThrow{color:#A9291F;}
+                        .ToKnotDebugProcess {color:#333;font-size:12px;}
+                        </style>';
+    public function __construct($message = '', $code =0,$file= null,$line= null) {
         if($this->exceptionMessage) {
             $this->message = $this->exceptionMessage;
         } else {
@@ -46,9 +44,8 @@ class StandardException  extends ErrorException {
         throw new StandardException($argv[1], $argv[0], $argv[2],$argv[3]);
     }
 
+
     public function getErrorType($code) {
-        $_ENV['__X_EXCEPTION_THROW__'] = true;
-        $_ENV['__X_FATAL_EXCEPTION__'] = true;
         switch($code) {
             case E_USER_ERROR:
                 $type = 'Fatal Error';
@@ -56,15 +53,13 @@ class StandardException  extends ErrorException {
             case E_USER_WARNING:
             case E_WARNING:
                 $type = 'Warning';
-                $_ENV['__X_FATAL_EXCEPTION__'] = false;
-                $this->is_exception = true;
+                $this->isException = true;
             break;
             case E_USER_NOTICE:
             case E_NOTICE:
             case @E_STRICT:
                 $type = 'Notice';
-                $_ENV['__X_FATAL_EXCEPTION__'] = false;
-                $this->is_exception = true;
+                $this->isException = true;
             break;
             case @E_RECOVERABLE_ERROR:
                 $type = 'Catchable';
@@ -83,19 +78,14 @@ class StandardException  extends ErrorException {
             break;
             default:
                 $type = __CLASS__;
-                $this->is_exception = true;
+                $this->isException = true;
             break;
         }
-        $this->define_framwork_error_mssage();
         $this->message = "<b>$type : </b>" . $this->message;
     }
-    public function define_framwork_error_mssage() {
-        if(preg_match('/(X::__)(set|get|isset)/',$this->message, $matches)) {
-           $this->message .= " use __x{$matches[2]}__() instead in your class";
-        }
-    }
-    public function getXDebugTraceAsString($traceArr = null) {
-        if($this->is_exception == false) return $this->message;
+
+    public function getDebugTraceAsString($traceArr = null) {
+        if($this->isException == false) return $this->message;
         $str = '';
         $str .='<div class="debug_area">';
         $str .="<div ><span class='message'>{$this->message}</span>\n<ul>";
@@ -142,7 +132,7 @@ class StandardException  extends ErrorException {
 //        return false;
     }
     public function __toString() {
-        return $this->getXDebugTraceAsString();
+        return $this->getDebugTraceAsString();
     }
     public function earch($traceArr) {
         $str = '';

@@ -310,10 +310,10 @@ final class FastCGIServer extends HttpResponse {
                         $lock = $this->process->processLock();
                         if ($lock === false) {
                             usleep (100000);
-                            continue;
+                            break;
                         }
                         $this->CGIWorkerProcessIPCWrite(self::WORKER_ACCPT);
-                        $this->requestBacklog[] = stream_socket_accept($r, 5);
+                        $this->requestBacklog[] = @stream_socket_accept($r, 5);
                         $this->process->processUnLock();
                         $this->CGIAccept();
                     } else if ($r == $this->IPCSock) {
@@ -353,8 +353,7 @@ final class FastCGIServer extends HttpResponse {
             $keepAliveTime = 5;
             $delay = 1;
             while (!feof($conn)) {
-                echo fread($conn, 1024);
-                sleep(1);
+                debugPrint(fread($conn, 1024));
                 $delay++;
                 if($delay >- $keepAliveTime) {
                     break;
@@ -422,9 +421,11 @@ final class FastCGIServer extends HttpResponse {
         $delayTime = 0;
         $idleNum = count($this->workProcessPool);
         while (true) {
-            $read = $write = $except = $this->workProcessSockList;
+            $write = $except = array();
+            $read = $this->workProcessSockList;
             $chgNum = stream_select($read, $write, $except, 0, 200000);
             if ($chgNum > 0) {
+                debugPrint($read);
                 foreach ($read as $r) {
                     $workerStatus = $this->process->IPCRead($r);
                     if (is_array($workerStatus)) {
