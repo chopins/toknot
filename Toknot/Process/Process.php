@@ -30,6 +30,12 @@ final class Process {
     private $createChildFrontCallbackParam = null;
     private $shmopKey = null;
     private $shmopId = 0;
+    
+    /**
+     * process number in pool
+     * 
+     * @var int
+     */
     private $processKeyInPool = 0;
 
     public function __construct() {
@@ -64,14 +70,14 @@ final class Process {
         if (!function_exists('pcntl_fork')) {
             try {
                 dl('pcntl.so');
-            } catch (StandardException $e) {
+            } catch (DependExtensionException $e) {
                 echo $e;
             }
         }
         if (!function_exists('posix_setuid')) {
             try {
                 dl('posix.so');
-            } catch (StandardException $e) {
+            } catch (DependExtensionException $e) {
                 echo $e;
             }
         }
@@ -97,18 +103,17 @@ final class Process {
             }
         }
         $size = strlen(count($this->processPool)) + 1;
-        $t = microtime();
         $this->shmopKey = ftok(__FILE__, 't');
-        $this->shmopId = shmop_open($this->shmopKey, "c", 0777, $size);
+        $this->shmopId = shmop_open($this->shmopKey, "c", 0644, $size);
     }
 
     public function processLock() {
         if ($this->shmopId == 0)
             return false;
         $current = shmop_read($this->shmopId, 0, 1);
-        $Locker = substr($current, 1);
+        $locker = substr($current, 1);
         $lockStat = substr($current, 0, 1);
-        if ($lockStat == 1 && $Locker == $this->processKeyInPool)
+        if ($lockStat == 1 && $locker == $this->processKeyInPool)
             return true;
         if ($lockStat == 0) {
             $re = shmop_write($this->shmopId, "1{$this->processKeyInPool}", 0);
@@ -274,7 +279,8 @@ final class Process {
     }
 
     /**
-     *
+     * Inter-Process Message read
+     * 
      * @param resource $sock
      * @return mixed
      */
@@ -297,6 +303,7 @@ final class Process {
     }
 
     /**
+     * Inter-Process Message write
      *
      * @param resource $sock
      * @param mixed $message
@@ -326,17 +333,22 @@ final class Process {
         }
         return true;
     }
-
+    
+    /**
+     * create one daemon process
+     * 
+     * @throws ProcessException
+     */
     public function daemon() {
-        $fockPid = pcntlFork();
-        if ($fockPid == -1)
+        $oneForkPid = pcntl_fork();
+        if ($oneForkPid == -1)
             throw new ProcessException('fork #1 Error');
-        if ($fockPid > 0)
+        if ($oneForkPid > 0)
             exit(0);
-        $fockPid = pcntl_fork();
-        if ($fockPid == -1)
+        $secForkPid = pcntl_fork();
+        if ($secForkPid == -1)
             throw new ProcessException('fork #2 ERROR');
-        if ($fockPid > 0)
+        if ($secForkPid > 0)
             die;
         chdir('/');
         umask('0');
