@@ -28,9 +28,11 @@ final class Process {
     private $maxLogNum = 50;
     private $createChildFrontCallback = null;
     private $createChildFrontCallbackParam = null;
-    private $shmopKey = null;
-    private $shmopId = 0;
-    
+    private $mutex = null;
+    private $mutexId = 0;
+    private $useFileLock = false;
+    private $lockFileHanlde = null;
+    private $enableProcessMutex = false;
     /**
      * process number in pool
      * 
@@ -66,7 +68,7 @@ final class Process {
         return $this->childProcessExitStatus;
     }
 
-    public function checkEnvironment() {
+    private function checkEnvironment() {
         if (!function_exists('pcntl_fork')) {
             try {
                 dl('pcntl.so');
@@ -95,48 +97,58 @@ final class Process {
     }
 
     public function enableProcessLock() {
-        if (!function_exists('shmop_open')) {
+        $this->enableProcessMutex = true;
+        if (!function_exists('sem_acquire')) { 
             try {
-                dl('shmop.so');
+                dl('sysvsem.so');
             } catch (StandardException $e) {
-                echo $e;
+                $this->useFileLock = true;
             }
         }
-        $size = strlen(count($this->processPool)) + 1;
-        $this->shmopKey = ftok(__FILE__, 't');
-        $this->shmopId = shmop_open($this->shmopKey, "c", 0644, $size);
+        if($this->useFileLock == false) {
+            if(!function_exists('shmop_open')) {
+                try {
+                    dl('shmop.so');
+                } catch (StandardException $e) {
+                    $this->useFileLock = true;
+                }
+            }
+        }
+        if ($this->useFileLock) {
+            $this->lockFileHanlde = tmpfile();
+        } else {
+            $size = strlen(count($this->processPool)) + 1;
+            $key = ftok(__FILE__, 't');
+            $this->mutexId = sem_get($key, 1);
+            $this->mutex = shmop_open($key, 'c', 0644, $size);
+            shmop_write($this->mutex,0,0);
+        }
     }
 
     public function processLock() {
-        if ($this->shmopId == 0)
+        if (!$this->enableProcessMutex)
             return false;
-        $current = shmop_read($this->shmopId, 0, 1);
-        $locker = substr($current, 1);
-        $lockStat = substr($current, 0, 1);
-        if ($lockStat == 1 && $locker == $this->processKeyInPool)
-            return true;
-        if ($lockStat == 0) {
-            $re = shmop_write($this->shmopId, "1{$this->processKeyInPool}", 0);
-            return $re ? true : false;
-        } else {
+        if ($this->useFileLock) {
+            return flock($this->lockFileHanlde, LOCK_EX|LOCK_NB);
+        }
+        sem_acquire($this->mutexId);
+        $locker = shmop_read($this->mutex, 0, shmop_size($this->mutex));
+        if($locker[0] != 0 && $locker != $this->processKeyInPool) {
+            sem_release($this->mutexId);
             return false;
         }
+        shmop_write($this->mutex, $this->processKeyInPool, 0);
+        sem_release($this->mutexId);
+        return true;
     }
 
     public function processUnLock() {
-        if ($this->shmopId == 0)
+        if(!$this->enableProcessMutex)
             return false;
-        $current = shmop_read($this->shmopId, 0, 1);
-        $Locker = substr($current, 1);
-        $lockStat = substr($current, 0, 1);
-        if ($lockStat == 0)
-            return true;
-        if ($lockStat == 1 && $Locker == $this->processKeyInPool) {
-            $re = shmop_write($this->shmopId, "0{$this->processKeyInPool}", 0);
-            return $re ? true : false;
-        } else {
-            return false;
+        if($this->useFileLock) {
+            return flock($this->lockFileHanlde, LOCK_UN);
         }
+        shmop_write($this->mutex, 0, 0);
     }
 
     public function setWorkDirectory($directory) {
@@ -205,17 +217,16 @@ final class Process {
         $argv = func_get_args();
         array_shift($argv);
         array_shift($argv);
-        
+
         for ($i = 0; $i < $num; $i++) {
             $callBackArgv = array();
             if ($this->createChildFrontCallback !== null) {
                 $forkFrontCallbackReturn = call_user_func_array($this->createChildFrontCallback, $this->createChildFrontCallbackParam);
                 $callBackArgv = array_merge(array($forkFrontCallbackReturn) + $argv);
-                
             } else {
                 $callBackArgv = $argv;
             }
-            
+
             $pid = pcntl_fork();
             if ($pid > 0) {
                 $this->processPool[$pid] = $callBackArgv;
@@ -233,7 +244,7 @@ final class Process {
                 } else {
                     $exitStatus = self::NOT_CALLABLE;
                 }
-                
+
                 posix_kill($parentPid, SIGCHLD);
                 throw new ProcessException();
             } else {
@@ -333,7 +344,7 @@ final class Process {
         }
         return true;
     }
-    
+
     /**
      * create one daemon process
      * 
