@@ -133,6 +133,14 @@ final class FastCGIServer extends HttpResponse {
      * @var array 
      */
     private $applicationRouter = array();
+
+    /**
+     * IDLE Process counter
+     *
+     * @var int 
+     */
+    private $idleNum = 0;
+    private $delayTime = 5;
     private $enableEvIo = true;
     static private $selfInstance = null;
 
@@ -301,19 +309,18 @@ final class FastCGIServer extends HttpResponse {
         foreach ($read as $r) {
             if ($r == $this->socketFileDescriptor) {
                 $lock = $this->process->processLock();
-                debugPrint($lock);
                 if ($lock === false) {
-                    if($this->enableEvIo) {
-                        \Ev::stop(\Ev::BREAK_ALL);
+                    if ($this->enableEvIo) {
+                       // \Ev::stop(\Ev::BREAK_ALL);
                     }
-                    debugPrint('pass');
-                    return;
+                    return false;
                 }
-                $this->CGIAccept();
+                return $this->CGIAccept();
             } else if ($r == $this->IPCSock) {
                 $this->CGIWorkerProcessIPCRead();
             }
         }
+        return true;
     }
 
     private function CGIWorkProcess($argv) {
@@ -322,22 +329,23 @@ final class FastCGIServer extends HttpResponse {
         $this->IPCSock = $argv[1];
         fclose($argv[0]);
         unset($argv);
+        if ($this->enableEvIo) {
+            $evloop = new \EvLoop(\Ev::recommendedBackends());
+        }
         while (true) {
-            debugPrint('while');
             $read = array($this->socketFileDescriptor, $this->IPCSock);
             $write = array();
             $except = array();
             if ($this->enableEvIo) {
-                $evloop = new \EvLoop();
-                $evloop->io($this->socketFileDescriptor, \Ev::READ, function($w,$e) use($read, $evloop) {
+                $evloop->io($this->socketFileDescriptor, \Ev::READ, function($w) use($read, $evloop) {
+                            //$evloop->invokePending();
+                            $this->CGIWorkLoopCallBack($read);
                             //$w->stop();
                             //$evloop->stop(\Ev::BREAK_ALL);
-                            debugPrint("=============$e=======");
-                            $evloop->invokePending();
-                            $this->CGIWorkLoopCallBack($read);
+                            return true;
                         });
                 $evloop->run();
-                unset($evloop);
+                //gc_collect_cycles();
             } else {
                 $chgNum = stream_select($read, $write, $except, 0, 200000);
                 if ($chgNum > 0) {
@@ -369,7 +377,6 @@ final class FastCGIServer extends HttpResponse {
     }
 
     private function CGIAccept() {
-        debugPrint('accept');
         $this->CGIWorkerProcessIPCWrite(self::WORKER_ACCPT);
         $this->requestBacklog[] = @stream_socket_accept($this->socketFileDescriptor, 5);
         $this->process->processUnLock();
@@ -378,7 +385,6 @@ final class FastCGIServer extends HttpResponse {
             $keepAliveTime = 5;
             $delay = 1;
             while (!feof($conn)) {
-                debugPrint(fread($conn, 1024));
                 $delay++;
                 if ($delay > - $keepAliveTime) {
                     break;
@@ -389,13 +395,14 @@ final class FastCGIServer extends HttpResponse {
             $header = $this->responseStatus;
             $header .= "Connection: close\r\n\r\n";
             $header .= 'hello world';
-            debugPrint($header);
             fwrite($conn, $header);
             fclose($conn);
             $this->CGIWorkerProcessIPCWrite(self::WORKER_IDLE);
             unset($this->requestBacklog[$i]);
             //$this->callApplicationRouter();
+            debugPrint('request complete');
         }
+        return true;
     }
 
     private function callApplicationRouter() {
@@ -442,9 +449,10 @@ final class FastCGIServer extends HttpResponse {
                 fclose($pinfo[0][1]);
             }
         }
+        $this->currentProcessNum = count($this->workProcessPool);
     }
 
-    private function CGIMasterProcessLoopCallBack($read, $delayTime, $idleNum) {
+    private function CGIMasterProcessLoopCallBack($read) {
         foreach ($read as $r) {
             $workerStatus = $this->process->IPCRead($r);
             if (is_array($workerStatus)) {
@@ -456,50 +464,56 @@ final class FastCGIServer extends HttpResponse {
                         $this->currentProcessNum--;
                         break;
                     case self::WORKER_IDLE:
-                        $idleNum++;
+                        $this->idleNum++;
                         break;
                     case self::WORKER_ACCPT:
-                        $idleNum--;
+                        $this->idleNum--;
                         break;
                     default :
                         break;
                 }
                 $this->workProcessPool[$workerStatus[0]] = $workerStatus[1];
-                if ($idleNum <= 0 && $this->currentProcessNum + 1 <= $this->maxWorkNum) {
+                debugPrint($this->currentProcessNum);
+                if ($this->idleNum <= 0 && $this->currentProcessNum + 1 <= $this->maxWorkNum) {
                     $this->process->createChildProcess(1, array($this, 'CGIWorkProcessCallbackProxy'));
                     $this->getWorkerList();
-                    $idleNum++;
+                    $this->idleNum++;
                 }
             }
             if ($this->masterExit) {
-                $delayTime++;
+                $this->delayTime++;
                 $this->CGIServerExit();
                 continue;
             }
         }
+        return true;
     }
 
     private function CGIMasterProcess() {
+        $this->delayTime = 0;
         $this->getWorkerList();
-        $delayTime = 0;
-        $idleNum = count($this->workProcessPool);
+        $this->idleNum = count($this->workProcessPool);
+        if ($this->enableEvIo) {
+            $evloop = new \EvLoop(\Ev::recommendedBackends());
+        }
         while (true) {
             $write = $except = array();
             $read = $this->workProcessSockList;
             if ($this->enableEvIo) {
-                $evloop = new \EvLoop();
                 foreach ($this->workProcessSockList as $sock) {
-                    $evloop->io($sock, \Ev::READ, function ($w) use($evloop, $read, $delayTime, $idleNum) {
+                    $evloop->io($sock, \Ev::READ, function ($w) use($evloop, $read) {
+                                $this->CGIMasterProcessLoopCallBack($read);
+                                //$w->stop();
                                 //$evloop->stop(\Ev::BREAK_ALL);
-                                $this->CGIMasterProcessLoopCallBack($read, $delayTime, $idleNum);
+                                return true;
                             });
                 }
                 $evloop->run();
-                unset($evloop);
+                //gc_collect_cycles();
             } else {
                 $chgNum = stream_select($read, $write, $except, 0, 2000000);
                 if ($chgNum > 0) {
-                    $this->CGIMasterProcessLoopCallBack($read, $delayTime, $idleNum);
+                    $this->CGIMasterProcessLoopCallBack($read);
                 }
             }
         }
@@ -511,7 +525,7 @@ final class FastCGIServer extends HttpResponse {
             $this->process->IPCWrite($pinfo['socket'], self::CMD_QUIT);
         }
         pcntl_sigtimedwait(SIGCHLD, $siginfo, 1);
-        if ($delayTime > 5) {
+        if ($this->delayTime > 5) {
             $this->process->registerChlidProcessSignalHandler();
             foreach ($this->workProcessPool as $pid => $pinfo) {
                 posix_kill($pid, SIGKILL);
@@ -521,7 +535,7 @@ final class FastCGIServer extends HttpResponse {
         if ($this->currentProcessNum <= 0 ||
                 count($this->process->getChildProcessList()) <= 0) {
             fclose($this->socketFileDescriptor);
-            exit(0);
+            // exit(0);
         }
     }
 

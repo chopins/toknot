@@ -95,7 +95,12 @@ final class Process {
         }
         setproctitle($title);
     }
-
+    
+    /**
+     * whether enable use process of metex lock
+     * 
+     * @return int if return 1 use file lock, otherwise use shmop
+     */
     public function enableProcessLock() {
         $this->enableProcessMutex = true;
         if (!function_exists('sem_acquire')) { 
@@ -116,12 +121,14 @@ final class Process {
         }
         if ($this->useFileLock) {
             $this->lockFileHanlde = tmpfile();
+            return 1;
         } else {
             $size = strlen(count($this->processPool)) + 1;
             $key = ftok(__FILE__, 't');
             $this->mutexId = sem_get($key, 1);
             $this->mutex = shmop_open($key, 'c', 0644, $size);
             shmop_write($this->mutex,0,0);
+            return 2;
         }
     }
 
@@ -233,7 +240,7 @@ final class Process {
                 continue;
             } else if ($pid == 0) {
                 $exitStatus = self::SUC_EXIT;
-                $this->processKeyInPool = count($this->processPool);
+                $this->processKeyInPool = count($this->processPool) + 1;
                 if (is_callable($callback, true)) {
                     try {
                         call_user_func_array($callback, $callBackArgv);
@@ -373,7 +380,14 @@ final class Process {
         if ($subPid > 0)
             exit(0);
     }
-
+    public function __destruct() {
+        if($this->useFileLock) {
+            fclose($this->lockFileHanlde);
+        } else {
+            shmop_delete($this->mutex);
+            sem_remove($this->mutexId);
+        }
+    }
 }
 
 ?>
