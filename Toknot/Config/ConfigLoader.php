@@ -67,9 +67,9 @@ final class ConfigLoader extends Object {
      * @return void
      */
     private function loadCfg($file) {
-        $oIni = parse_ini_file(dirname(__FILE__). '/toknot.def.ini');
+        $oIni = parse_ini_file(dirname(__FILE__). '/default.ini');
         if(file_exists($file)) {
-            $userConfig =  parse_ini_file($appConfig);
+            $userConfig =  parse_ini_file($file);
             $oIni = array_replace_recursive($oIni,$userConfig);
         }
         self::$_CFG = self::detach($oIni);

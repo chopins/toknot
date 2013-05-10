@@ -344,7 +344,7 @@ class HttpResponse {
                             break;
                         case 'COOKIE':
                             $_SERVER['HTTP_COOKIE'] = $field_value;
-                            get_cookie();
+                            self::parseRequestCookieFromEnvVariable();
                             break;
                         case 'CONTENT-TYPE':
                             $field_value = strtolower($field_value);
@@ -622,9 +622,9 @@ class HttpResponse {
      * @access private
      * @return void
      */
-    private function getSetcookieHeader() {
+    private function getSetCookieHeader() {
         $header = '';
-        $cookie_arr = $this->scheduler->app_instance->R->C->get_cookie_array();
+        $cookie_arr = $this->scheduler->appInstance->R->C->get_cookie_array();
         if (empty($cookie_arr)) {
             return '';
         }
@@ -635,6 +635,143 @@ class HttpResponse {
             $header = "Set-Cookie:{$header}\r\n";
         }
         return $header;
+    }
+
+    static public function importPostData() {
+        $http_body = file_get_contents('php://input','r');
+        if(!empty($http_body)) {
+            $content_type = getenv('HTTP_CONTENT_TYPE');
+            if($content_type == 'application/x-www-form-urlencoded') {
+                if($this->encoding != $this->utf8) 
+                    $http_body = mb_convert_encoding($http_body, $this->utf8,$this->encoding);
+                parse_str($http_body,$_POST);
+            } else {
+                $content_len = getenv('HTTP_CONTENT_LENGTH');
+                $c_field = trim(strtok($content_type,';'));
+                $upload_max_filesize = conv_human_byte(ini_get('upload_max_filesize'));
+                while($c_field !== false) {
+                    switch($c_field) {
+                    case 'multipart/form-data':
+                        $c_field = trim(strtok('='));
+                    break;
+                    case 'boundary':
+                        if(($c_field = strtok(';')) === false) {
+                            $boundary = '--'.trim($c_field);
+                        } else {
+                            $lt = explode('=',$content_type);
+                            $boundary = '--'. trim(array_pop($lt));
+                        }
+                        $c_field = strtok(';');
+                    break;
+                    default:
+                        $c_field = strtok('=');
+                    break;
+                    }
+                }
+                if(empty($boundary)) return;
+                $part_arr = explode($boundary,$http_body);
+                $body_end = false;
+                foreach($part_arr as $part) {
+                    if(empty($part)) continue;
+                    if(trim($part) == '--') {
+                        $body_end = true;
+                        break;
+                    }
+                    $content_arr = explode("\r\n\r\n",$part,2);
+                    $content_data = rtrim($content_arr[1]);
+                    $content_field = trim(strtolower(strtok($content_arr[0],':')));
+                    while(false !== $content_field) {
+                        switch($content_field) {
+                            case 'content-disposition':
+                                $content_field = strtok(';');
+                                $content_field = trim(strtok('='));
+                            break;
+                            case 'name':
+                                $name = strtok('"');
+                                if($name == 'MAX_FILE_SIZE') $form_max_size = $content_data;
+                                $content_field = trim(ltrim(strtok('='),';'));
+                                if($content_field === false) $content_field = trim(strtok(':'));
+                                else $content_field = trim($content_field);
+                            break;
+                            case 'filename':
+                                $filename = strtok('"');
+                                $content_field = strtok(':');
+                                if($content_field === false) $content_field = trim(strtok(':'));
+                                else $content_field = strtolower(trim($content_field));
+                            break;
+                            case 'content-type':
+                                $file_type = trim(strtok("\r\n"));
+                                $content_field = strtok(':');
+                            break;
+                            default:
+                                $content_field = strtok(';');
+                                $content_field = strtok('=');
+                            break;
+                        }
+                    }
+                    if(isset($name) && isset($filename) && $filename !== false) {
+                        $upfile_tmp_dir = isset($this->cfg->server->upfileTmpDir) ? 
+                                            $this->cfg->server->upfileTmpDir:sys_get_temp_dir();
+                        $tmp = tempnam($upfile_tmp_dir,'tmp_XPF_');
+                        $file_len = strlen($content_data);
+                        if($file_len > $upload_max_filesize) {
+                            $errno = UPLOAD_ERR_INI_SIZE;
+                        } else if($file_len == 0) {
+                            $errno = UPLOAD_ERR_NO_FILE;
+                        } else if(isset($form_max_size) && $form_max_size < $file_len) {
+                            $errno = UPLOAD_ERR_FORM_SIZE;
+                        } else if(empty($upfile_tmp_dir) || !is_dir($upfile_tmp_dir)) {
+                            $errno = UPLOAD_ERR_NO_TMP_DIR;
+                        } else if($body_end == false) {
+                            $errno = UPLOAD_ERR_PARTIAL;
+                        } else {
+                            $errno = UPLOAD_ERR_OK;
+                        }
+                        if($errno == UPLOAD_ERR_OK) {
+                            $fp = file_put_contents($tmp,$content_data);
+                            if($fp === false) $errno = UPLOAD_ERR_CANT_WRITE;
+                        }
+                        if(substr($name,-1,2) == '[]') {
+                            $_FILES[$name]['name'][] = $filename;
+                            $_FILES[$name]['type'][] = $file_type;
+                            $_FILES[$name]['size'][] = $file_len;
+                            $_FILES[$name]['tmp_name'][] = $tmp;
+                            $_FILES[$name]['error'][] = $errno;
+                        } else {
+                            $_FILES[$name]['name'] = $filename;
+                            $_FILES[$name]['type'] = $file_type;
+                            $_FILES[$name]['size'] = $file_len;
+                            $_FILES[$name]['tmp_name'] = $tmp;
+                            $_FILES[$name]['error'] = $errno;
+                        }
+                    } elseif(isset($name)) {
+                        if($this->encoding != $this->utf8) {
+                            $name = mb_convert_encoding($name, $this->utf8,$this->encoding);
+                            $content_data = mb_convert_encoding($content_data, $this->utf8,$this->encoding);
+                        }
+                        if(substr($name,-1,2) == '[]') {
+                            $_POST[$name][] = $content_data;
+                        } else {
+                            $_POST[$name] = $content_data;
+                        } 
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * set $_COOKIE from $_SERVER or environment variable
+     */
+    static public function parseRequestCookieFromEnvVariable() {
+        $cookieString = empty($_SERVER['HTTP_COOKIE']) ? getenv('HTTP_COOKIE') : $_SERVER['HTTP_COOKIE'];
+        if ($cookieString) {
+            $cookieName = trim(strtok($cookieString, '='));
+            while($cookieName) {
+                $_COOKIE[$cookieName] = trim(strtok(';'));
+                $cookieName = strtok('=');
+            }
+        }
     }
 
 }

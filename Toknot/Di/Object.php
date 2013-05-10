@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Toknot (http://toknot.com)
  *
@@ -9,8 +10,8 @@
 
 namespace Toknot\Di;
 
-abstract class Object implements \Iterator{
-    
+abstract class Object implements \Iterator {
+
     /**
      *
      * @var array
@@ -26,7 +27,7 @@ abstract class Object implements \Iterator{
      * @access private
      */
     private $propertieChange = false;
-    
+
     /**
      * instance
      * Object instance
@@ -35,34 +36,33 @@ abstract class Object implements \Iterator{
      * @access private 
      */
     private static $instance = null;
+    
     /**
      * singleton 
      * 
-     * @param callable $funcname 
-     * @param mixed $params 
+     * @param callable $funcname  options
+     * @param mixed $params options, callable $funcname param or more
      * @static
      * @access public
      * @return object
      */
-    final protected static function __singleton($funcname = null, $params = null) {
-        $class_name = get_called_class();
-        if(self::$instance && self::$instance instanceof $class_name) {
+    final protected static function __singleton() {
+        $className = get_called_class();
+        if (is_object(self::$instance) && self::$instance instanceof $className) {
             return self::$instance;
         }
-        self::$instance = new $class_name;
-        if($funcname) {
-            if(!is_array($params)) {
-                call_user_func($funcname,$params);
-            } else {
-                call_user_func_array($funcname,$params);
-            }
+        self::$instance = new $className;
+        $arg_num = func_num_args();
+        if ($arg_num > 0) {
+            $args = func_get_args();
+            call_user_func_array($args[0], array_shift($args));
         }
         return self::$instance;
     }
 
     /**
      * __set 
-     * that changed propertie status
+     * set propertie value and save changed status
      * 
      * @param mixed $propertie 
      * @param mixed $value 
@@ -72,17 +72,17 @@ abstract class Object implements \Iterator{
      */
     final public function __set($propertie, $value) {
         $this->propertieChange = true;
-        $this->__xset__($propertie,$value);
+        $this->setPropertie($propertie, $value);
     }
-    
+
     /**
      * 
-     * @param type $propertie
-     * @param type $value
+     * @param string $propertie
+     * @param mixed $value
      * @access public
      * @return void 
      */
-    public function setPropertie($propertie, $value) {
+    protected function setPropertie($propertie, $value) {
         $this->$propertie = $value;
     }
 
@@ -92,46 +92,52 @@ abstract class Object implements \Iterator{
      * 
      * @final
      * @access public
-     * @return void
+     * @return boolean
      */
     final public function isChange() {
-        if($this->propertieChange) return true;
+        if ($this->propertieChange)
+            return true;
         $ref = new ReflectionObject($this);
         $list = $ref->getDefaultProperties();
         $staticList = $ref->getStaticProperties();
-        foreach($list as $key=>$value) {
-            if(isset($staticList[$key])) {
-                if(self::$$key != $value) return true;
+        foreach ($list as $key => $value) {
+            if (isset($staticList[$key])) {
+                if (self::$$key != $value)
+                    return true;
             } else {
-                if($this->$key != $value) return true;
+                if ($this->$key != $value)
+                    return true;
             }
         }
         return false;
     }
-    
+
     public function rewind() {
         $ref = new ReflectionObject($this);
         $propertiesList = $ref->getProperties();
         $methodList = $ref->getMethods();
         $constantsList = $ref->getConstants();
-        $this->interatorArray = array_merge($constantsList,$propertiesList,$methodList);
+        $this->interatorArray = array_merge($constantsList, $propertiesList, $methodList);
         reset($this->interatorArray);
     }
-    
+
     public function current() {
         return current($this->interatorArray);
     }
-    
+
     public function key() {
         return key($this->interatorArray);
     }
-    
+
     public function next() {
         return next($this->interatorArray);
     }
+
     public function valid() {
         $key = $this->key();
         return isset($this->interatorArray[$key]);
     }
+    
+
 }
 
