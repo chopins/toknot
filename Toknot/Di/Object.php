@@ -10,14 +10,14 @@
 
 namespace Toknot\Di;
 
-abstract class Object implements \Iterator {
+abstract class Object implements \Iterator, \Countable {
 
     /**
      *
      * @var array
-     * @access private
+     * @access protected
      */
-    private $interatorArray = array();
+    protected $interatorArray = array();
 
     /**
      * propertieChange
@@ -36,7 +36,7 @@ abstract class Object implements \Iterator {
      * @access private 
      */
     private static $instance = null;
-    
+
     /**
      * singleton 
      * 
@@ -115,9 +115,8 @@ abstract class Object implements \Iterator {
     public function rewind() {
         $ref = new ReflectionObject($this);
         $propertiesList = $ref->getProperties();
-        $methodList = $ref->getMethods();
         $constantsList = $ref->getConstants();
-        $this->interatorArray = array_merge($constantsList, $propertiesList, $methodList);
+        $this->interatorArray = array_merge($constantsList, $propertiesList);
         reset($this->interatorArray);
     }
 
@@ -130,14 +129,16 @@ abstract class Object implements \Iterator {
     }
 
     public function next() {
-        return next($this->interatorArray);
+        next($this->interatorArray);
     }
 
     public function valid() {
         $key = $this->key();
         return isset($this->interatorArray[$key]);
     }
+    public function count() {
+        return count($this->interatorArray);
+    }
     
-
 }
 

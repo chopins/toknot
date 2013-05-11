@@ -19,6 +19,7 @@ final class Router extends Object implements RouterInterface {
     private $routerMode = 0;
     private $routerNameSpace = '';
     private $spacePath = '\\';
+    private $routerPath = '';
 
     /**
      * singleton 
@@ -39,14 +40,22 @@ final class Router extends Object implements RouterInterface {
         }
     }
 
+    public function routerPath($path) {
+        $this->routerPath = $path;
+    }
+
     public function invoke() {
         $method = $this->getRequestMethod();
-        $invokeClass = "{$this->routerNameSpace}{$this->spacePath}";
-        $invokeClassReflection = new \ReflectionClass($invokeClass);
+        $invokeClass = "{$this->routerNameSpace}\View\\{$this->spacePath}";
+        try {
+            $invokeClassReflection = new \ReflectionClass($invokeClass);
+        } catch (BadMethodCallException $e) {
+            
+        }
         if ($invokeClassReflection->hasMethod($method)) {
-            $invokeObject = $invokeClassReflection->newInstance();
             $context = AppContext::singleton();
-            $invokeObject->$method($context);
+            $invokeObject = $invokeClassReflection->newInstance($context);
+            $invokeObject->$method();
         } else {
             throw new \Toknot\Exception\StandardException('Not Support Method');
         }

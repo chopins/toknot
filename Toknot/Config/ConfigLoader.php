@@ -17,8 +17,8 @@ final class ConfigLoader extends Object {
     protected function __construct($file) {
         $this->loadCfg($file);
     }
-    public static function singleton() {
-        return parent::__singleton();
+    public static function singleton($file) {
+        return parent::__singleton($file);
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Toknot (http://toknot.com)
  *
@@ -6,12 +7,9 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
+use Toknot\Control\Application;
 
-namespace Toknot\Control\Exception;
+require_once dirname(dirname(__DIR__)).'/Toknot/Control/Application.php';
 
-use Toknot\Exception\StandardException;
-class PHPVersionException extends StandardException {
-    protected $exceptionMessage = 'only support php version or 5.3 or lastest';
-}
-
-?>
+$app = new Application;
+$app->run('\Shop',__DIR__);

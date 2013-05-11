@@ -15,7 +15,8 @@ include_once dirname(__FILE__) . '/StandardAutoloader.php';
 use Toknot\Control\StandardAutoloader;
 use Toknot\Exception\StandardException;
 use Toknot\Contorl\Exception\PHPVersionException;
-
+use Toknot\Exception\BadNamespaceException;
+use Toknot\Exception\BadClassCallException;
 
 class Application {
 
@@ -32,9 +33,11 @@ class Application {
             $_SERVER['argc'] = $argc;
             $_SERVER['argv'] = $argv;
         }
+        
         if(version_compare(PHP_VERSION,'5.3.0') < 0) {
             throw new PHPVersionException();
         }
+        
         set_error_handler(array($this, 'errorReportHandler'));
         clearstatcache();
         
@@ -49,6 +52,7 @@ class Application {
      */
     private function checkSuperglobals() {
         $variables_order = strtoupper(ini_get('variables_order'));
+        
         if (strpos($variables_order, 'S') === false) {
             $_SERVER['_'] = getenv('_');
             $_SERVER['REQUEST_URI'] = getenv('REQUEST_URI');
@@ -61,32 +65,44 @@ class Application {
             $_SERVER['SERVER_NAME'] = getenv('SERVER_NAME');
             $_SERVER['QUERY_STRING'] = getenv('QUERY_STRING');
         }
+        
         if(!isset($_SERVER['REQUEST_TIME_FLOAT'])) {
             $_SERVER['REQUEST_TIME_FLOAT'] = microtime(true);
         }
+        
         if (strpos($variables_order, 'G') === false) {
             parse_str($_SERVER['QUERY_STRING'], $_GET);
         }
+        
     }
 
-    public function run($appNameSpace) {
+    public function run($appNameSpace, $appPath) {
         $root = substr($appNameSpace, 0,1);
+        
         if($root != '\\') {
-            throw new StandardException('Namespace Error');
+            throw new BadNamespaceException($appNameSpace);
         }
-        $routerReflection = new \ReflectionClass($this->routerName);
+        try {
+            $routerReflection = new \ReflectionClass($this->routerName);
+        } catch (ReflectionException $e) {
+            throw new BadClassCallException($this->routerName);
+        }
         if($routerReflection->implementsInterface('RouterInterface') === false) {
-            throw new StandardException();
+            throw new StandardException('user Router Class not support');
         }
+        
         if($routerReflection->hasMethod('singleton')) {
             $routerName = $this->routerName;
             $router = $routerName :: singletion();
         } else {
             $router = new $this->routerName;
         }
+        
         $args = func_get_args();
+        $this->addAppPath($appPath);
         $router->runtimeArgs(array_shift($args));
         $router->routerSpace($appNameSpace);
+        $router->routerPath($appPath);
         $router->routerRule();
         $router->invoke();
     }
@@ -102,12 +118,12 @@ class Application {
     public function setUserRouter($routerName) {
         $root = substr($routerName, 0,1);
         if($root != '\\') {
-            throw new StandardException('Namespace Error');
+            throw new BadNamespaceException($routerName);
         }
         $this->routerName = $routerName;
     }
 
-    public function addAppPath($path) {
+    private function addAppPath($path) {
         $this->standardAutoLoader->addPath($path);
     }
 

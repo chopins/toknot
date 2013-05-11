@@ -31,6 +31,8 @@ interface RouterInterface {
      */
     public function routerSpace($appspace);
     
+    public function routerPath($path);
+
     /**
      * set router runtime all args or configure
      */

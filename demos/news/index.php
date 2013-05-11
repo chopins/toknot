@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Toknot (http://toknot.com)
  *
@@ -7,11 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Control\Exception;
+use Toknot\Control\Application;
 
-use Toknot\Exception\StandardException;
-class PHPVersionException extends StandardException {
-    protected $exceptionMessage = 'only support php version or 5.3 or lastest';
-}
+require_once dirname(dirname(__DIR__)).'/Toknot/Control/Application.php';
 
-?>
+$app = new Application;
+$app->run('\news',__DIR__);

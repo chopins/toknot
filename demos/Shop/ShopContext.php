@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Toknot (http://toknot.com)
  *
@@ -6,12 +7,13 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
+namespace Shop;
 
-namespace Toknot\Control\Exception;
-
-use Toknot\Exception\StandardException;
-class PHPVersionException extends StandardException {
-    protected $exceptionMessage = 'only support php version or 5.3 or lastest';
+class ShopContext {
+    
+    protected $toknot;
+    
+    public function __construct($toknot) {
+        $this->toknot = $toknot;
+    }
 }
-
-?>
