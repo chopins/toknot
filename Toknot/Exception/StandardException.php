@@ -13,6 +13,9 @@ namespace Toknot\Exception;
 use \ErrorException;
 use \ReflectionClass;
 
+/**
+ * Toknot Statndrad Exception
+ */
 class StandardException extends ErrorException {
 
     protected $code = 0;
@@ -88,22 +91,27 @@ class StandardException extends ErrorException {
     }
 
     public function getDebugTraceAsString($traceArr = null) {
+        
         if ($this->isException == false)
             return $this->message;
-        $str = '';
+        $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type"><pre>';
         $str .='<div class="ToknotDebugArea">';
         $str .="<div ><span class='ToknotMessage'>{$this->message}</span>\n<ul>";
         $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div>\n";
-        if (PHP_CLI && function_exists('posix_getpid')) {
+        if (PHP_SAPI == 'cli' && function_exists('posix_getpid')) {
             $str .= 'Process ID:' . posix_getpid() . "\n";
         }
         if (empty($traceArr)) {
-            $str .= $this->earch($this->getTrace());
+            //$str .= $this->earch($this->getTrace());
         } else {
-            $str .= $this->earch($traceArr);
+            //$str .= $this->earch($traceArr);
         }
         $str .='</ul></div>';
-        return strip_tags($str);
+        if(PHP_SAPI == 'cli') {
+            return strip_tags($str);
+        } else {
+            return $str;
+        }
     }
 
     public function __toString() {
@@ -125,7 +133,6 @@ class StandardException extends ErrorException {
 
     public function getInfoStr($arr) {
         $par = $str = '';
-
         if (!empty($arr['args'])) {
             foreach ($arr['args'] as $key => $value) {
                 $par .= '<span class="ToknotDebugSrgs">';

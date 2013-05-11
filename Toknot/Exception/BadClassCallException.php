@@ -14,8 +14,8 @@ use Toknot\Exception\StandardException;
 class BadClassCallException extends StandardException {
     protected $exceptionMessage = 'Bad Class Call (%s)';
     public function __construct($class) {
-        $message = sprintf($this->exceptionMessage, $class);
-        parent::__construct($message);
+        $this->exceptionMessage = sprintf($this->exceptionMessage, $class);
+        parent::__construct($this->exceptionMessage);
     }
 
 }

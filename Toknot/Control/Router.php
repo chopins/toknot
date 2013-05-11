@@ -12,15 +12,40 @@ namespace Toknot\Control;
 
 use Toknot\Di\Object;
 use Toknot\Control\RouterInterface;
+use Toknot\Exception\StandardException;
+use Toknot\Exception\BadClassCallException;
 use Toknot\Control\AppContext;
 
-final class Router extends Object implements RouterInterface {
+class Router extends Object implements RouterInterface {
 
+    /**
+     * router mode, default 0 is PATH mode, 1 is GET query mode and use $_GET['r']
+     * to is invoke class, the property set by {@see Application::run} 
+     * be invoke with passed of 4th parameter, Toknot default router of runtimeArgs method
+     * will set be passed of first parameter
+     * 
+     * @var integer 
+     * @access private
+     */
     private $routerMode = 0;
+
+    /**
+     * router class of root namespace , usual it is application root namespace
+     *
+     * @var string 
+     * @access private
+     */
     private $routerNameSpace = '';
+
+    /**
+     * visit URI to application namespace route
+     *
+     * @var string
+     * @access private 
+     */
     private $spacePath = '\\';
     private $routerPath = '';
-
+    private $defaultClass = '\Index';
     /**
      * singleton 
      * 
@@ -34,33 +59,45 @@ final class Router extends Object implements RouterInterface {
 
     public function routerRule() {
         if ($this->routerMode == 1) {
-            $this->spacePath = '\\' . str_replace('.', '\\', $_GET['r']);
+            if(empty($_GET['r'])) {
+                $this->spacePath = $this->defaultClass;
+            } else {
+                $this->spacePath = '\\' . str_replace('.', '\\', $_GET['r']);
+            }
         } else {
-            $this->spacePath = '\\' . str_replace('/', '\\', $_SERVER['REQUEST_URI']);
+            $this->spacePath = str_replace('/', '\\', $_SERVER['REQUEST_URI']);
+            $this->spacePath = $this->spacePath == '\\' ? $this->defaultClass : $this->spacePath;
         }
     }
 
     public function routerPath($path) {
         $this->routerPath = $path;
     }
-
-    public function invoke() {
-        $method = $this->getRequestMethod();
-        $invokeClass = "{$this->routerNameSpace}\View\\{$this->spacePath}";
-        try {
-            $invokeClassReflection = new \ReflectionClass($invokeClass);
-        } catch (BadMethodCallException $e) {
-            
-        }
-        if ($invokeClassReflection->hasMethod($method)) {
-            $context = AppContext::singleton();
-            $invokeObject = $invokeClassReflection->newInstance($context);
-            $invokeObject->$method();
-        } else {
-            throw new \Toknot\Exception\StandardException('Not Support Method');
-        }
+    public function defaultInvoke($defaultClass) {
+        $this->defaultClass = $defaultClass;
     }
 
+    public function invoke(AppContext $appContext) {
+        $method = $this->getRequestMethod();
+        $invokeClass = "{$this->routerNameSpace}\View{$this->spacePath}";
+        if (!class_exists($invokeClass, true)) {
+            throw new BadClassCallException($invokeClass);
+        }
+        $invokeClassReflection = new \ReflectionClass($invokeClass);
+        if ($invokeClassReflection->hasMethod($method)) {
+            $invokeObject = $invokeClassReflection->newInstance($appContext);
+            $invokeObject->$method();
+        } else {
+            throw new StandardException('Not Support Request Method');
+        }
+    }
+    
+    /**
+     * implements {@see Toknot\Control\RouterInterface} of method , the method only 
+     * set toknot defualt router of run mode {@see Toknot\Control\Router::$routerMode}
+     * 
+     * @param type $mode    router of run mode be passed by Application::run of 4th parameter
+     */
     public function runtimeArgs($mode = 0) {
         $this->routerMode = $mode;
     }
@@ -84,17 +121,6 @@ final class Router extends Object implements RouterInterface {
      */
     public function __construct() {
         
-    }
-
-    /**
-     * set router mode and current only support GET query and PATH mode
-     * 
-     * @param integer $mode  router mode ,set 1 use GET query mode, default is 0 that PATH mode
-     */
-    public function setRouterMode($mode = 0) {
-        if ($mode == 1) {
-            $this->routerMode = 1;
-        }
     }
 
 }

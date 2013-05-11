@@ -7,17 +7,13 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
-namespace Shop;
 
-class ShopContext {
-    
-    protected $toknot;
-    
-    public function __construct($toknot) {
-        $this->toknot = $toknot;
-        $this->loadConfigure();
-    }
-    public function loadConfigure() {
-        
+namespace Shop\View;
+
+use Shop\ShopContext;
+
+class Index extends ShopContext {
+    public function GET() {
+        echo 'hello word';
     }
 }

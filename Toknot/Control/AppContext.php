@@ -12,16 +12,20 @@ namespace Toknot\Control;
 use Toknot\Di\Object;
 use Toknot\Di\VisiterObject;
 use Toknot\View\Renderer;
-use Toknot\Di\TemplateDataObject;
+use Toknot\Di\DataObject;
 use Toknot\Config\ConfigLoader;
 
 class AppContext extends Object{
     public $visiter = null;
     public $view = null;
     public $D = null;
+    public static function singleton() {
+        return parent::__singleton();
+    } 
+
     public function __construct() {
         $this->visiter = new VisiterObject();
-        $this->D = new TemplateDataObject();
+        $this->D = new DataObject();
     }
     public function loadConfigure($ini) {
         return ConfigLoader::CFG($ini);

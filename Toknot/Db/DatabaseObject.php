@@ -8,6 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 namespace Toknot\Di;
+use Toknot\Di\Object;
 
 class DatabaseObject extends Object {
     public $dsn = null;
