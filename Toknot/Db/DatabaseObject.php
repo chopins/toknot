@@ -8,15 +8,27 @@
  * @link       https://github.com/chopins/toknot
  */
 namespace Toknot\Di;
-use Toknot\Di\Object;
+use Toknot\Db\DbCRUD;
 
-class DatabaseObject extends Object {
-    public $dsn = null;
-    public $user = null;
-    public $password = null;
-    public $connectInstance = null;
+class DatabaseObject extends DbCRUD {
+    protected $dsn = null;
+    protected $user = null;
+    protected $password = null;
+    protected $connectInstance = null;
     public function setPropertie($propertie, $value) {
+        if(isset($this->$propertie)) return;
         $this->$propertie = new DbTableObject($propertie, $value);
     }
-    
+    public function __get($propertie) {
+        if(isset($this->$propertie)) {
+            return $this->$propertie;
+        }
+    }
+
+    public function create() {
+        
+    }
+    public function getDSN() {
+        return $this->dsn;
+    }
 }

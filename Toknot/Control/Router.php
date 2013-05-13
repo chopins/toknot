@@ -65,6 +65,9 @@ class Router extends Object implements RouterInterface {
                 $this->spacePath = '\\' . str_replace('.', '\\', $_GET['r']);
             }
         } else {
+            if(PHP_SAPI == 'cli') {
+                $_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
+            }
             $this->spacePath = str_replace('/', '\\', $_SERVER['REQUEST_URI']);
             $this->spacePath = $this->spacePath == '\\' ? $this->defaultClass : $this->spacePath;
         }
@@ -88,7 +91,7 @@ class Router extends Object implements RouterInterface {
             $invokeObject = $invokeClassReflection->newInstance($appContext);
             $invokeObject->$method();
         } else {
-            throw new StandardException('Not Support Request Method');
+            throw new StandardException("Not Support Request Method ($method)");
         }
     }
     
@@ -101,14 +104,28 @@ class Router extends Object implements RouterInterface {
     public function runtimeArgs($mode = 0) {
         $this->routerMode = $mode;
     }
-
+    
+    /**
+     * implements {@see Toknot\Control\RouterInterface} of method, the method set Application
+     * of top namespace 
+     * 
+     * @param string $appspace
+     */
     public function routerSpace($appspace) {
         $this->routerNameSpace = $appspace;
     }
-
+    
+    /**
+     * get HTTP request use method
+     * 
+     * @return string
+     */
     private function getRequestMethod() {
         if (empty($_SERVER['REQUEST_METHOD'])) {
             $_SERVER['REQUEST_METHOD'] = getenv('REQUEST_METHOD');
+        }
+        if(empty($_SERVER['REQUEST_METHOD'])) {
+            $_SERVER['REQUEST_METHOD'] = 'CLI';
         }
         return strtoupper($_SERVER['REQUEST_METHOD']);
     }

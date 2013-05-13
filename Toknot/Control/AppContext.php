@@ -25,7 +25,6 @@ class AppContext extends Object{
 
     public function __construct() {
         $this->visiter = new VisiterObject();
-        $this->D = new DataObject();
     }
     public function loadConfigure($ini) {
         return ConfigLoader::CFG($ini);

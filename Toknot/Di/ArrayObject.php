@@ -10,7 +10,7 @@
 
 namespace Toknot\Di;
 
-use Toknot\DataObject;
+use Toknot\Di\DataObject;
 use \ArrayAccess;
 use \Serializable;
 

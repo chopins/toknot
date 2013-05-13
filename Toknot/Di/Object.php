@@ -13,6 +13,7 @@ namespace Toknot\Di;
 abstract class Object implements \Iterator, \Countable {
 
     /**
+     * For iterator of propertie list
      *
      * @var array
      * @access protected
@@ -20,7 +21,6 @@ abstract class Object implements \Iterator, \Countable {
     protected $interatorArray = array();
 
     /**
-     * propertieChange
      * whether object instance propertie change status
      *
      * @var bool
@@ -29,8 +29,7 @@ abstract class Object implements \Iterator, \Countable {
     private $propertieChange = false;
 
     /**
-     * instance
-     * Object instance
+     * Object instance of the child class
      * 
      * @var object
      * @access private 
@@ -38,10 +37,9 @@ abstract class Object implements \Iterator, \Countable {
     private static $instance = null;
 
     /**
-     * singleton 
+     * provide singleton pattern for Object child class
      * 
-     * @param callable $funcname  options
-     * @param mixed $params options, callable $funcname param or more
+     * @param mixed $_ options,  instance of  for construct parameters
      * @static
      * @access public
      * @return object
@@ -51,18 +49,23 @@ abstract class Object implements \Iterator, \Countable {
         if (is_object(self::$instance) && self::$instance instanceof $className) {
             return self::$instance;
         }
-        self::$instance = new $className;
-        $arg_num = func_num_args();
-        if ($arg_num > 0) {
+        if (func_num_args() > 0) {
             $args = func_get_args();
-            call_user_func_array($args[0], array_shift($args));
+            $argsString = implode('\'', $args);
+            eval("self::\$instance = new {$className}('{$argsString}');");
+        } else {
+            self::$instance = new $className;
         }
         return self::$instance;
     }
 
+    final protected static function newInstance() {
+        return new static;
+    }
+
     /**
      * __set 
-     * set propertie value and save changed status
+     * set propertie value and save changed status and baned child cover __set method
      * 
      * @param mixed $propertie 
      * @param mixed $value 
@@ -136,9 +139,10 @@ abstract class Object implements \Iterator, \Countable {
         $key = $this->key();
         return isset($this->interatorArray[$key]);
     }
+
     public function count() {
         return count($this->interatorArray);
     }
-    
+
 }
 

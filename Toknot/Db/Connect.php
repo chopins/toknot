@@ -12,8 +12,9 @@ namespace Toknot\Db;
 
 use Toknot\Db\Exception\DatabaseConnectException;
 use PDOException;
+use Toknot\Di\Object;
 
-class Connect {
+class Connect extends Object{
 
     private $dsn = null;
     private $username = null;
@@ -48,6 +49,7 @@ class Connect {
         }
     }
     private function connectMySQL() {
+        
     }
     private function connectSQLite() {
         

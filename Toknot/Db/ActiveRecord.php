@@ -13,11 +13,23 @@ namespace Toknot\Db;
 use Toknot\Di\Object;
 use Toknot\Di\DatabaseObject;
 use Toknot\Db\Connect;
+use Toknot\Config\ConfigObject;
 
-class ActiveRecord {
-    public function connect($config) {
-        $connectObject = new DatabaseObject;
-        $connect = new Connect($connectObject, $config);
-        return $connectObject;
+class ActiveRecord extends Object {
+    private $dbObject = null;
+    public function __construct($config) {
+        $this->dbObject = new DatabaseObject;
+        $this->config($config);
+    }
+
+    public function connect() {
+        new Connect($this->dbObject);
+        return clone $this->dbObject;
+    }
+    public function config(ConfigObject $config) {
+        $this->dbObject->dsn = $config->dsn;
+        $this->dbObject->username = $config->username;
+        $this->dbObject->password = $config->password;
+        $this->dbObject->driverOptions = $config->dirverOptions;
     }
 }

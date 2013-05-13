@@ -19,6 +19,17 @@ use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
 use Toknot\Control\AppContext;
 
+/**
+ * Toknot main class and run framework
+ * 
+ * <code>
+ * use Toknot\Control\Application;
+ * require_once '/path/Toknot/Control/Application.php';
+ * $app = new Application;
+ * $app->run('\AppTopNamespace', '/path/AppPath');
+ * </code>
+ * 
+ */
 class Application {
     
     /**
@@ -45,6 +56,29 @@ class Application {
      * The construct parameters only receive PHP in CLI mode passed  argv and argc 
      * parameters and save there to $_SERVER via iniEnv method
      * 
+     * <code>
+     * use Toknot\Control\Application;
+     * 
+     * require_once '/path/Toknot/Control/Application.php';
+     * 
+     * $app = new Application;
+     * </code>
+     * 
+     * if PHP on CLI mode, and use below  code on command line:
+     * <code>
+     * php App.php option1 option2
+     * </code>
+     * in php script like below:
+     * <code>
+     * $app = new Application($argv, $argc);
+     * 
+     * function printArg() {
+     *      var_dump($_SERVER['argc'][0]); // print option1
+     *      var_dump($_SERVER['argc'][1]); // print option2
+     *      var_dump($_SERVER['argc']); //print number of args
+     * }
+     * </code>
+     * 
      * @param array $argv Array of arguments passed to script
      * @param integer $argc The number of  passed to script
      */
@@ -59,7 +93,7 @@ class Application {
      * @param type $argv    Array of arguments passed to script
      * @param type $argc    The number of  passed to script
      * @throws PHPVersionException  Toknot current support php of version on 5.3
-     *                               or lastest, otherwise throw the Exception
+     *                               or higher, otherwise throw the Exception
      * @return void
      */
     private function iniEnv($argv, $argc) {
@@ -115,7 +149,47 @@ class Application {
      * Run application, the method will invoke router with implements interface of 
      * {@link Toknot\Control\RouterInterface} of all method, Toknot Freamework default
      * invoke class under application of View Dicetory, scan file path is under $appPath 
-     * parameter set path, 
+     * parameter set path(like: /path/appPath/View). The class be invoke by toknot of router 
+     * invoke method with passed instance of Toknot 
+     * {@see \Toknot\Control\AppContext}, you can receive the object of instance when class construct
+     * 
+     * Usual use toknot of router, run framework like below:
+     * <code>
+     * use Toknot\Control\Application;
+     *
+     * require_once './Toknot/Control/Application.php';
+     *
+     * $app = new Application;
+     * $app->run('\AppTopNamespace', '/path/AppPath');
+     * </code>
+     * 
+     * if use application of router ,use {@see \Toknot\Control\Application::setUserRouter} define,
+     * run framework like below:
+     * <code>
+     * use Toknot\Control\Application;
+     *
+     * require_once './Toknot/Control/Application.php';
+     *
+     * $app = new Application;
+     * 
+     * //set self router with TopNamespace
+     * $app->setUserRouter('\AppTopNamespace\Router');
+     * 
+     * $app->run('\AppTopNamespace', '/path/AppPath');
+     * </code>
+     * 
+     * define your websiet index page of root when router of toknot,
+     * like this:
+     * <code>
+     * use Toknot\Control\Application;
+     *
+     * require_once './Toknot/Control/Application.php';
+     *
+     * $app = new Application;
+     * 
+     * //set index page without TopNamespace and ViewNamespace
+     * $app->run('\AppTopNamespace', '/path/AppPath', '\Index');
+     * </code>
      * 
      * @param string $appNameSpace  Application of Namespace with top without full namespace
      * @param string $appPath   Application of directory with full path, and not is view layer full path

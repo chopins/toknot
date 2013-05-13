@@ -13,14 +13,10 @@ namespace Toknot\Di;
 class DataObject extends Object {
 
     private $value = '';
-    private $propertieClassName = 'DataObject';
+    private $propertieClassName = null;
 
     public function __construct($value = null, $propertieClass = null) {
-        if (is_null($propertieClass)) {
-            $this->propertieClassName = get_called_class();
-        } else {
-            $this->propertieClassName = $propertieClass;
-        }
+        $this->propertieClassName = $propertieClass;
         if (is_array($value)) {
             $this->importPropertie($value);
         } else {
@@ -32,10 +28,22 @@ class DataObject extends Object {
             $this->$key = $value;
         }
     }
+    
+    /**
+     * Object class baned declare __set method for child class and provide setPropertie method
+     * instead，and set propertie is object instance of propertieClassName 
+     * 
+     * @param string $propertie
+     * @param mixed $value
+     */
     public function setPropertie($propertie, $value) {
         if (preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $propertie)) {
-            $propertieClassName = $this->propertieClassName;
-            $this->$propertie = new $propertieClassName($value);
+            if(is_null($this->propertieClassName)) {
+                $this->propertie = new self;
+            } else {
+                $propertieClassName = $this->propertieClassName;
+                $this->$propertie = new $propertieClassName($value);
+            }
             $this->interatorArray[] = $propertie;
         } else {
             $this->interatorArray[$propertie] = $value;

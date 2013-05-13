@@ -9,16 +9,11 @@
  */
 
 namespace Toknot\Db;
+use Toknot\Di\Object;
 
-
-abstract class DbCRUD {
-    private $opretaeKeys = array('INSERT', 'CREATE','UPDATE','SELECT','DELETE','JOIN');
+abstract class DbCRUD extends Object{
     public function create() {
-        $class = get_called_class();
-        $opreateKey = 'INSERT';
-        switch ($class) {
-            
-        }
+        
     }
 
     public function read();

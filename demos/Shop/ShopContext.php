@@ -12,12 +12,11 @@ namespace Shop;
 class ShopContext {
     
     protected $toknot;
-    
+
     public function __construct($toknot) {
         $this->toknot = $toknot;
-        $this->loadConfigure();
     }
-    public function loadConfigure() {
-        
+    public function CLI() {
+        $this->GET();
     }
 }
