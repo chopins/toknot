@@ -60,7 +60,7 @@ class ActiveQuery {
     }
 
     public static function transformDsn($dsn) {
-        $config = new ConfigData;
+        $config = new ConfigObject;
         $str = strtok($dsn, ':');
         $config->type = $str;
         while ($str) {
