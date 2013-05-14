@@ -17,7 +17,8 @@ class DbTableObject extends DbCRUD {
     private $tableName;
     public $primaryName = null;
     private $dbObject = null;
-    private static $columnList = array();
+    public $alias = null;
+    private $columnList = array();
     private $columnValueList = array();
     public $logical = ActiveQuery::LOGICAL_AND;
     public function __construct($tableName, DatabaseObject &$databaseObject) {
@@ -28,7 +29,7 @@ class DbTableObject extends DbCRUD {
     }
 
     public function setPropertie($name, $value) {
-        if(in_array($name, self::$columnList)) {
+        if(in_array($name, $this->$columnList)) {
             $this->columnValueList[$name] = $value;
         }
     }
@@ -45,7 +46,7 @@ class DbTableObject extends DbCRUD {
             if(strtolower($field['Key']) == 'pri') {
                 $this->primaryName = $field['Field'];
             }
-            self::$columnList[] = $field['Field'];
+            $this->$columnList[] = $field['Field'];
         }
     }
     public function query($sql) {
@@ -54,4 +55,5 @@ class DbTableObject extends DbCRUD {
     public function findByPK($pkValue, $condition) {
         
     }
+
 }

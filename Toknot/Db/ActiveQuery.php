@@ -7,11 +7,14 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
+
 namespace Toknot\Db;
+
 use Toknot\Config\ConfigData;
 
 class ActiveQuery {
-    const ORDER_ASC= 'ASC';
+
+    const ORDER_ASC = 'ASC';
     const ORDER_DESC = 'DESC';
     const READ = 'SELECT';
     const UPDATE = 'UPDATE';
@@ -27,43 +30,70 @@ class ActiveQuery {
     const GREATER_THAN = '>';
     const LESS_OR_EQUAL = '<=';
     const GREATER_OR_EQUAL = '>=';
-    
-    public static function select() {
-        
+    const SHOW_TABLES = 'SHOW TABLES';
+
+    public static function select($field, $tableName) {
+        return "SELECT $field FROM $tableName";
+    }
+
+    public static function update($tableName) {
+        return "UPDATE $tableName SET";
+    }
+
+    public static function delete($tableName) {
+        return "DETELE FROM $tableName";
+    }
+
+    public static function leftJoin($tableName, $alias) {
+        return " LEFT JOIN $tableName AS $alias";
+    }
+
+    public static function on($key1, $key2) {
+        return " ON $key1=$key2";
+    }
+
+    public static function alias($name, $alias) {
+        return " $name AS $alias";
     }
 
     public static function transformDsn($dsn) {
         $config = new ConfigData;
         $str = strtok($dsn, ':');
         $config->type = $str;
-        while($str) {
+        while ($str) {
             $str = strtok('=');
             $this->$str = strtok(';');
         }
         return $config;
     }
-    public static function showTableList() {
-        return 'SHOW TABLES';
+
+    public static function showColumnList($tableName) {
+        return "SHOW COLUMNS FROM $tableName";
     }
-    public static function showColumnList() {
-        return 'SHOW COLUMNS FROM';
-    }
-    public static function updateColumn() {
-        return 'UPDATE %s SET %s=%s WHERE %s=%s LIMIT 1';
-    }
-    public static function limit($start, $limit=null) {
-        if($limit === null ) {
-            return "LIMIT {$start}";
+
+    public static function limit($start, $limit = null) {
+        if ($limit === null) {
+            return " LIMIT {$start}";
         } else {
             $limit = (int) $limit;
-            return "LIMIT {$start},{$limit}";
+            return " LIMIT {$start},{$limit}";
         }
     }
-    public static function order($order) {
-        if($order == self::ASC) {
-            return 'ORDER BY %s ASC';
+
+    public static function order($order, $field) {
+        if ($order == self::ASC) {
+            return " ORDER BY $field ASC";
         } else {
-            return 'ORDER BY %s DESC';
+            return " ORDER BY $field DESC";
         }
     }
+
+    public static function where($sql = 1) {
+        return " WHERE $sql";
+    }
+
+    public static function bindTableAlias($alias, $columnList) {
+        return ' '.$alias . '.' . implode(", $alias.", $columnList);
+    }
+
 }

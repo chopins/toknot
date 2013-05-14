@@ -35,7 +35,9 @@ class Index extends ShopContext {
         
         //From product table and productCat get hot is 5 of latest product info list
         $joinTmpTable = $shopDatabase->tableJOIN($shopDatabase->product, $shopDatabase->productCat);
-        $joinTmpTable->tableON($shopDatabase->product->catId, $shopDatabase->productCat->catid);
+        $joinTmpTable->product->alias = 'p';
+        $joinTmpTable->productCat->alias = 'c';
+        $joinTmpTable->tableON($joinTmpTable->product->catId, $joinTmpTable->productCat->catid);
         $joinTmpTable->product->host = 5;
         $joinTmpTable->readLatest(10);
 

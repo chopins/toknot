@@ -47,6 +47,8 @@ abstract class DbCRUD extends Object {
     public function readLatest($start =0, $limit = null) {
         $sql = ActiveQuery::order(ActiveQuery::ORDER_DESC);
         $sql .= ActiveQuery::limit($start, $limit);
+        $sql = ActiveQuery::select() . $sql;
+        $this->readAll($sql);
     }
 
 }

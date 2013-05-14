@@ -10,7 +10,7 @@
 
 namespace Toknot\Db;
 
-use Toknot\Db\Exception\DatabaseConnectException;
+use Toknot\Db\Exception\DatabaseException;
 use \PDOException;
 use Toknot\Di\Object;
 use Toknot\Db\Dirver\MySQL;
@@ -25,14 +25,20 @@ class Connect extends Object {
     private $driverOptions = null;
     private static $supportDriver = array();
     private $connectInstance = null;
+
     public function __construct(DatabaseObject &$connectObject) {
         $this->dsn = $connectObject->dsn;
         $this->username = $connectObject->username;
         $this->password = $connectObject->password;
         $this->driverOptions = $connectObject->dirverOptions;
-        $this->connectDatabase();
-        $connectObject->setConnectInstance($this);
+        try {
+            $this->connectDatabase();
+            $connectObject->setConnectInstance($this);
+        } catch (DatabaseException $e) {
+            echo $e;
+        }
     }
+
     public function getConnectInstance() {
         return $this->connectInstance;
     }
@@ -42,7 +48,7 @@ class Connect extends Object {
             try {
                 $this->connectInstance = new PDO($this->dsn, $this->username, $this->password, $this->driverOptions);
             } catch (PDOException $pdoe) {
-                throw new DatabaseConnectException($pdoe->getMessage());
+                throw new DatabaseException($pdoe->getMessage(), $pdoe->getCode());
             }
         } else {
             $databaseType = strtolower(strtok($this->dsn, ':'));
@@ -56,15 +62,16 @@ class Connect extends Object {
                     if (in_array($databaseType, self::$supportDriver)) {
                         $this->connectInstance = $this->importDriver();
                     } else {
-                        throw new DatabaseConnectException('Not Support Database');
+                        throw new DatabaseException('Not Support Database', 0);
                     }
                     break;
             }
         }
     }
+
     private function importDriver() {
         $classList = array_keys(self::$supportDriver);
-        return new $classList($this->dsn,$this->username,$this->password,$this->driverOptions);
+        return new $classList($this->dsn, $this->username, $this->password, $this->driverOptions);
     }
 
     private function scanDriver() {
