@@ -14,6 +14,7 @@ use Toknot\Db\DbCRUD;
 use Toknot\Db\ActiveQuery;
 use Toknot\Db\DatabaseObject;
 use \InvalidArgumentException;
+use Toknot\Db\Exception\DatabaseException;
 
 class DbTableObject extends DbCRUD {
 
@@ -23,7 +24,7 @@ class DbTableObject extends DbCRUD {
     public $alias = null;
     private $columnList = array();
     private $columnValueList = array();
-    public $where = '1';
+    public $where = 1;
     public $logical = ActiveQuery::LOGICAL_AND;
 
     public function __construct($tableName, DatabaseObject &$databaseObject) {
@@ -61,6 +62,9 @@ class DbTableObject extends DbCRUD {
         $this->read($sql);
     }
     public function findByWhere($params= array(), $start =0, $limit = null) {
+        if($this->where === 1) {
+            throw new DatabaseException("Must first set {$this->tableName}->where");
+        }
         $field = ActiveQuery::field($this->columnList);
         $sql = ActiveQuery::select($this->tableName,$field);
         $sql .= $this->where . ActiveQuery::limit($start, $limit);

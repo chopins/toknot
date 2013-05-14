@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Di;
+namespace Toknot\Db;
 
 use Toknot\Db\DbCRUD;
 use \ReflectionClass;

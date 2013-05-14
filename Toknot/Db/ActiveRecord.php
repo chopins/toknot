@@ -11,15 +11,14 @@
 namespace Toknot\Db;
 
 use Toknot\Di\Object;
-use Toknot\Di\DatabaseObject;
+use Toknot\Db\DatabaseObject;
 use Toknot\Db\Connect;
 use Toknot\Config\ConfigObject;
 
 class ActiveRecord extends Object {
     private $dbObject = null;
-    public function __construct($config) {
+    public function __construct() {
         $this->dbObject = new DatabaseObject;
-        $this->config($config);
     }
 
     public function connect() {
