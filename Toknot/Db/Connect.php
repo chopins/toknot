@@ -13,8 +13,8 @@ namespace Toknot\Db;
 use Toknot\Db\Exception\DatabaseException;
 use \PDOException;
 use Toknot\Di\Object;
-use Toknot\Db\Dirver\MySQL;
-use Toknot\Db\Dirver\SQLite;
+use Toknot\Db\Driver\MySQL;
+use Toknot\Db\Driver\SQLite;
 use \PDO;
 
 class Connect extends Object {
@@ -25,7 +25,12 @@ class Connect extends Object {
     private $driverOptions = null;
     private static $supportDriver = array();
     private $connectInstance = null;
-
+    
+    /**
+     * create Database connect and bind to DatabaseObject instance
+     * 
+     * @param \Toknot\Db\DatabaseObject $connectObject
+     */
     public function __construct(DatabaseObject &$connectObject) {
         $this->dsn = $connectObject->dsn;
         $this->username = $connectObject->username;

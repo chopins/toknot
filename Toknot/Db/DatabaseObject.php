@@ -24,27 +24,48 @@ class DatabaseObject extends DbCRUD {
     protected $user = null;
     protected $password = null;
     private static $tableList = array();
+    protected $driverOptions = null;
     protected function __construct() {
+        
     }
+
     public static function singleton() {
         return parent::__singleton();
     }
+
+    public function setDSN($dsn) {
+        $this->dsn = $dsn;
+    }
+
+    public function setUsername($username) {
+        $this->username = $username;
+    }
+
+    public function setPassword($password) {
+        $this->password = $password;
+    }
+    public function setDriverOptions($driverOptions) {
+        $this->driverOptions = $driverOptions;
+    }
+
     public function setConnectInstance(Connect $connect) {
         $this->connectInstance = $connect->getConnectInstance();
         self::$tableList = $connect->showTableList();
     }
+
     public function showTableList() {
         $sql = ActiveQuery::showTableList();
         return $this->readALL($sql);
     }
 
     protected function setPropertie($propertie, $value) {
+        
     }
 
     public function __get($propertie) {
         if (isset($this->$propertie)) {
             return $this->$propertie;
-        } elseif(in_array($propertie, self::$tableList)) {
+        } elseif (in_array($propertie, self::$tableList)) {
             return new DbTableObject($propertie, $this);
         }
     }
@@ -64,7 +85,9 @@ class DatabaseObject extends DbCRUD {
         $ref = new ReflectionClass('Toknot\Db\DbTableJoinObject');
         return $ref->newInstanceArgs($argv);
     }
+
     public function findAllBySQL($sql, $params = array()) {
         return $this->readAll($sql, $params);
     }
+
 }

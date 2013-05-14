@@ -11,10 +11,14 @@ namespace Shop;
 
 class ShopContext {
     
-    protected $toknot;
-
-    public function __construct($toknot) {
-        $this->toknot = $toknot;
+    protected $AppContext;
+    protected $CFG;
+    protected $AppPath;
+    public function __construct($AppContext) {
+        $this->AppContext = $AppContext;
+        $this->AppContext->getActiveRecord();
+        $this->AppPath = __DIR__;
+        $this->CFG = $this->AppContext->loadConfigure($this->AppPath.'/Config/config.ini');
     }
     public function CLI() {
         $this->GET();

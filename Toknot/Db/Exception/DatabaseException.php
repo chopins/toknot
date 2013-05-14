@@ -15,7 +15,7 @@ use Toknot\Exception\StandardException;
 class DatabaseException extends StandardException {
     protected $exceptionMessage = 'Database Failed : %s (%s)';
     public function __construct($message, $code) {
-        $message = sprintf($this->exceptionMessage,$message, $code);
+        $this->exceptionMessage = sprintf($this->exceptionMessage,$message, $code);
         parent::__construct($message);
     }
 }

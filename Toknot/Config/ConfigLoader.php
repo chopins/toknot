@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Toknot (http://toknot.com)
  *
@@ -10,17 +11,25 @@
 namespace Toknot\Config;
 
 use Toknot\Di\Object;
-use Toknot\Config\ConfigObject;
+use Toknot\Di\ArrayObject;
 
 final class ConfigLoader extends Object {
+
     private static $_CFG = null;
-    protected function __construct($file) {
-        $this->loadCfg($file);
-        $this->_CFG = new ConfigObject();
+
+    protected function __construct() {
+        $file = __DIR__ . '/default.ini';
+        self::$_CFG = new ArrayObject;
+        self::loadCfg($file);
     }
-    public static function singleton($file) {
-        return parent::__singleton($file);
+
+    public static function singleton() {
+        return parent::__singleton();
     }
+    public static function CFG() {
+        return self::$_CFG;
+    }
+
     /**
      * detach 
      * 
@@ -29,8 +38,8 @@ final class ConfigLoader extends Object {
      * @access private
      * @return array
      */
-    private function detach($array) {
-        return new ConfigObject($array);
+    private static function detach(array $array) {
+        return new ArrayObject($array);
     }
 
     /**
@@ -39,15 +48,14 @@ final class ConfigLoader extends Object {
      * @access public
      * @return void
      */
-    private function loadCfg($file) {
-        $defaultConfig = parse_ini_file(__DIR__. '/default.ini');
-        if(file_exists($file)) {
-            $userConfig =  parse_ini_file($file, true);
-            $defaultConfig = array_replace_recursive($defaultConfig,$userConfig);
+    public static function loadCfg($file) {
+        if (file_exists($file)) {
+            $userConfig = parse_ini_file($file, true);
+            $userConfig = self::detach($userConfig);
+            self::$_CFG->replace_recursive($userConfig);
         }
-        self::$_CFG = $this->detach($defaultConfig);
-        var_dump(self::$_CFG);
+        return self::$_CFG;
     }
-    
+
 }
 

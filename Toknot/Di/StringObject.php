@@ -11,18 +11,20 @@
 namespace Toknot\Di;
 
 use Toknot\Di\Object;
-use \ReflectionFunction;
 use \BadMethodCallException;
 use \ReflectionExtension;
 use \ArrayAccess;
+use Toknot\Di\ArrayObject;
 
 class StringObject extends Object implements ArrayAccess {
 
     protected $interatorArray = '';
     private $walkIndex = 0;
+    private static $supportStringMethodList = array();
 
-    public function __construct($string) {
+    public function __construct($string = '') {
         $this->interatorArray = $string;
+        self::$supportStringMethodList = self::supportStringMethod();
     }
 
     public static function hasMethod($name) {
@@ -54,27 +56,15 @@ class StringObject extends Object implements ArrayAccess {
     }
 
     public function __call($stringFunction, $arguments) {
-        if (!function_exists($stringFunction)) {
+        if (!in_array($stringFunction, self::$supportStringMethodList))
             throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
-        }
-        $stringFunctionReflection = new ReflectionFunction($stringFunction);
-        if ($stringFunctionReflection->getExtensionName() != 'standard') {
-            throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
-        }
-        if ($stringFunctionReflection->getNumberOfRequiredParameters() < 1) {
-            throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
-        }
-        $parameters = $stringFunctionReflection->getParameters();
-        if ($parameters[0]->name != 'str' && strpos($stringFunction, 'str') !== 0 && $parameters[0]->name != 'string') {
-            throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
-        }
-        if ($parameters[0]->isPassedByReference()) {
-            throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
-        }
+
         array_unshift($arguments, $this->interatorArray);
-        $str = $stringFunctionReflection->invokeArgs($arguments);
+        $str = call_user_func_array($stringFunction, $arguments);
         if (is_string($str)) {
             return new StringObject($str);
+        } elseif(is_array($str)) {
+            return new ArrayObject($str);
         } else {
             return $str;
         }

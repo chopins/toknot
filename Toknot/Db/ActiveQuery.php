@@ -10,7 +10,7 @@
 
 namespace Toknot\Db;
 
-use Toknot\Config\ConfigData;
+use Toknot\Di\ArrayObject;
 
 class ActiveQuery {
 
@@ -60,12 +60,12 @@ class ActiveQuery {
     }
 
     public static function transformDsn($dsn) {
-        $config = new ConfigObject;
+        $config = new ArrayObject;
         $str = strtok($dsn, ':');
         $config->type = $str;
         while ($str) {
             $str = strtok('=');
-            $this->$str = strtok(';');
+            $config->$str = strtok(';');
         }
         return $config;
     }

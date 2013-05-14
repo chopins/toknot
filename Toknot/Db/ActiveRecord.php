@@ -13,22 +13,22 @@ namespace Toknot\Db;
 use Toknot\Di\Object;
 use Toknot\Db\DatabaseObject;
 use Toknot\Db\Connect;
-use Toknot\Config\ConfigObject;
+use Toknot\Di\ArrayObject;
 
 class ActiveRecord extends Object {
     private $dbObject = null;
     public function __construct() {
-        $this->dbObject = new DatabaseObject;
+        $this->dbObject = DatabaseObject::singleton();
     }
 
     public function connect() {
         new Connect($this->dbObject);
         return clone $this->dbObject;
     }
-    public function config(ConfigObject $config) {
-        $this->dbObject->dsn = $config->dsn;
-        $this->dbObject->username = $config->username;
-        $this->dbObject->password = $config->password;
-        $this->dbObject->driverOptions = $config->dirverOptions;
+    public function config(ArrayObject $config) {
+        $this->dbObject->setDSN($config->dsn);
+        $this->dbObject->setUsername($config->username);
+        $this->dbObject->setPassword($config->password);
+        $this->dbObject->setDriverOptions($config->dirverOptions);
     }
 }

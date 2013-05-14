@@ -143,6 +143,5 @@ abstract class Object implements \Iterator, \Countable {
     public function count() {
         return count($this->interatorArray);
     }
-
 }
 

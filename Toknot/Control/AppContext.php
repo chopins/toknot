@@ -10,25 +10,29 @@
 
 namespace Toknot\Control;
 use Toknot\Di\Object;
-use Toknot\Di\VisiterObject;
 use Toknot\View\Renderer;
-use Toknot\Di\DataObject;
 use Toknot\Config\ConfigLoader;
+use Toknot\Db\ActiveRecord;
 
 class AppContext extends Object{
     public $visiter = null;
     public $view = null;
     public $D = null;
+    public $AR = null;
     public static function singleton() {
         return parent::__singleton();
     } 
 
     public function __construct() {
-        $this->visiter = new VisiterObject();
+        ConfigLoader::singleton();
     }
     public function loadConfigure($ini) {
-        return ConfigLoader::CFG($ini);
+        return ConfigLoader::loadCFG($ini);
     }
+    public function getActiveRecord() {
+        $this->AR = new ActiveRecord();
+    }
+
     public function display($tplName) {
         $this->view = Renderer::singleton();
         $this->view->import($this->D);
