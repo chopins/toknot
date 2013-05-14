@@ -14,6 +14,7 @@ use Toknot\Db\ActiveQuery;
 
 abstract class DbCRUD extends Object {
     protected $connectInstance = null;
+    public $where = 1;
     public function create($sql,$params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
         $pdo->execute($params);
@@ -21,6 +22,9 @@ abstract class DbCRUD extends Object {
     }
     
     public function read($sql, $params = array()) {
+        if(stripos($sql, 'LIMIT') === false) {
+            $sql .= ' LIMIT 1';
+        }
         $pdo = $this->connectInstance->prepare($sql);
         $pdo->execute($params);
         return $pdo->fetch(PDO::FETCH_ASSOC);
@@ -45,9 +49,11 @@ abstract class DbCRUD extends Object {
     }
 
     public function readLatest($start =0, $limit = null) {
-        $sql = ActiveQuery::order(ActiveQuery::ORDER_DESC);
+        $sql = $this->where;
+        $sql .= ActiveQuery::order(ActiveQuery::ORDER_DESC);
         $sql .= ActiveQuery::limit($start, $limit);
-        $sql = ActiveQuery::select() . $sql;
+        $field = ActiveQuery::field($this->columnList);
+        $sql = ActiveQuery::select($this->tableName, $field) . $sql;
         $this->readAll($sql);
     }
 

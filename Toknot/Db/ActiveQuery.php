@@ -32,8 +32,11 @@ class ActiveQuery {
     const GREATER_OR_EQUAL = '>=';
     const SHOW_TABLES = 'SHOW TABLES';
 
-    public static function select($field, $tableName) {
+    public static function select($tableName, $field = '*') {
         return "SELECT $field FROM $tableName";
+    }
+    public static function field($array) {
+        return implode(',', $array);
     }
 
     public static function update($tableName) {

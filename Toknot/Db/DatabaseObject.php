@@ -64,7 +64,7 @@ class DatabaseObject extends DbCRUD {
         $ref = new ReflectionClass('Toknot\Db\DbTableJoinObject');
         return $ref->newInstanceArgs($argv);
     }
-    public function findAllBySQL($sql) {
-        
+    public function findAllBySQL($sql, $params = array()) {
+        return $this->readAll($sql, $params);
     }
 }

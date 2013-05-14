@@ -63,7 +63,7 @@ class DbTableJoinObject extends DbCRUD{
             $field = ActiveQuery::bindTableAlias($this->interatorArray[$i]->alias, 
                                          $this->interatorArray[$i]->columnList);
         }
-        $select = ActiveQuery::select($field, $this->firstTable->tableName) . ' AS ' . $this->firstTable->alias;
+        $select = ActiveQuery::select($this->firstTable->tableName, $field) . ' AS ' . $this->firstTable->alias;
         return $select . $sql . ActiveQuery::where($this->where);
     }
     public function readLatest($start = 0, $limit = null) {
