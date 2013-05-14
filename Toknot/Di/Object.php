@@ -86,7 +86,7 @@ abstract class Object implements \Iterator, \Countable {
      * @return void 
      */
     protected function setPropertie($propertie, $value) {
-        $this->$propertie = $value;
+        //$this->$propertie = $value;
     }
 
     /**

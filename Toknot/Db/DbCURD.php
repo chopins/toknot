@@ -10,15 +10,27 @@
 
 namespace Toknot\Db;
 use Toknot\Di\Object;
+use Toknot\Db\ActiveQuery;
 
-abstract class DbCRUD extends Object{
-    public function create() {
-        
+abstract class DbCRUD extends Object {
+    protected $connectInstance = null;
+    public function create($sql) {
+        $this->connectInstance->query($sql);
     }
 
-    public function read();
+    public function read($sql) {
+        return $this->connectInstance->query($sql);
+    }
+    public function readAll($sql) {
+    }
 
     public function update();
 
     public function delete();
+
+    public function readLatest($start =0, $limit = null) {
+        $sql = ActiveQuery::order(ActiveQuery::ORDER_DESC);
+        $sql .= ActiveQuery::limit($start, $limit);
+    }
+
 }

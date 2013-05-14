@@ -8,21 +8,20 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Di;
+namespace Toknot\Db;
 
-use Toknot\Di\Object;
+use Toknot\Db\DbCRUD;
+use Toknot\Db\DbTableObject;
 
-class DbTableColumn extends Object {
+class DbTableColumn extends DbCRUD {
     private $columnName = null;
-    private $currentValue = null;
-    private $newValue = null;
-    public function __construct($columnName, $value) {
+    private $tableObject = null;
+    public function __construct($columnName, DbTableObject &$tableObject) {
         $this->columnName = $columnName;
-        $this->currentValue = $value;
+        $this->tableObject = $tableObject;
+        $this->connectInstance = $tableObject->connectInstance;
     }
-    public function setNew($value) {
-        $this->newValue = $value;
-    }
+  
     public function getCurrent() {
         return $this->currentValue;
     }

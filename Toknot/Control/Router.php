@@ -15,6 +15,7 @@ use Toknot\Control\RouterInterface;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
 use Toknot\Control\AppContext;
+use \ReflectionClass;
 
 class Router extends Object implements RouterInterface {
 
@@ -56,7 +57,11 @@ class Router extends Object implements RouterInterface {
     public static function singleton() {
         return parent::__singleton();
     }
-
+    
+    /**
+     * Set Controler info that under application, if CLI mode, will set request method is CLI
+     * 
+     */
     public function routerRule() {
         if ($this->routerMode == 1) {
             if(empty($_GET['r'])) {
@@ -79,14 +84,21 @@ class Router extends Object implements RouterInterface {
     public function defaultInvoke($defaultClass) {
         $this->defaultClass = $defaultClass;
     }
-
+    /**
+     * Invoke Application Controller, the method will call application of Controller what is
+     * $this->routerNameSpace\Controller{$this->spacePath}, and router action by request method
+     * 
+     * @param \Toknot\Control\AppContext $appContext
+     * @throws BadClassCallException
+     * @throws StandardException
+     */
     public function invoke(AppContext $appContext) {
         $method = $this->getRequestMethod();
-        $invokeClass = "{$this->routerNameSpace}\View{$this->spacePath}";
+        $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}";
         if (!class_exists($invokeClass, true)) {
             throw new BadClassCallException($invokeClass);
         }
-        $invokeClassReflection = new \ReflectionClass($invokeClass);
+        $invokeClassReflection = new ReflectionClass($invokeClass);
         if ($invokeClassReflection->hasMethod($method)) {
             $invokeObject = $invokeClassReflection->newInstance($appContext);
             $invokeObject->$method();

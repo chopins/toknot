@@ -18,6 +18,7 @@ use Toknot\Contorl\Exception\PHPVersionException;
 use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
 use Toknot\Control\AppContext;
+use \ReflectionClass;
 
 /**
  * Toknot main class and run framework
@@ -148,8 +149,8 @@ class Application {
     /**
      * Run application, the method will invoke router with implements interface of 
      * {@link Toknot\Control\RouterInterface} of all method, Toknot Freamework default
-     * invoke class under application of View Dicetory, scan file path is under $appPath 
-     * parameter set path(like: /path/appPath/View). The class be invoke by toknot of router 
+     * invoke class under application of Controller Dicetory, scan file path is under $appPath 
+     * parameter set path(like: /path/appPath/Controller). The class be invoke by toknot of router 
      * invoke method with passed instance of Toknot 
      * {@see \Toknot\Control\AppContext}, you can receive the object of instance when class construct
      * 
@@ -187,17 +188,17 @@ class Application {
      *
      * $app = new Application;
      * 
-     * //set index page without TopNamespace and ViewNamespace
+     * //set index page without TopNamespace and ControllerNamespace
      * $app->run('\AppTopNamespace', '/path/AppPath', '\Index');
      * </code>
      * 
      * @param string $appNameSpace  Application of Namespace with top without full namespace
-     * @param string $appPath   Application of directory with full path, and not is view layer full path
+     * @param string $appPath   Application of directory with full path, and not is Controller layer full path
      * @param string $defaultInvoke  The parameter of default invoke class for router when no request uri,
      *                                if it is not set,will throw BadClassCallException when user request site root 
      *                                and no query,The class name of default with not full namespace
      *                                class name can not contain application top namespace and
-     *                                view layer namespace
+     *                                Controller layer namespace
      * @param mixed $_   Variable list of router need of paramers on runtime 
      * @throws BadNamespaceException
      * @throws BadClassCallException
@@ -212,7 +213,7 @@ class Application {
             if (!class_exists($this->routerName, true)) {
                 throw new BadClassCallException($this->routerName);
             }
-            $routerReflection = new \ReflectionClass($this->routerName);
+            $routerReflection = new ReflectionClass($this->routerName);
             if (!$routerReflection->implementsInterface('Toknot\Control\RouterInterface')) {
                 throw new StandardException('Router not support');
             }
