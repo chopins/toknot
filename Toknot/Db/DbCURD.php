@@ -14,19 +14,35 @@ use Toknot\Db\ActiveQuery;
 
 abstract class DbCRUD extends Object {
     protected $connectInstance = null;
-    public function create($sql) {
-        $this->connectInstance->query($sql);
+    public function create($sql,$params = array()) {
+        $pdo = $this->connectInstance->prepare($sql);
+        $pdo->execute($params);
+        return $pdo->lastInsertId();
+    }
+    
+    public function read($sql, $params = array()) {
+        $pdo = $this->connectInstance->prepare($sql);
+        $pdo->execute($params);
+        return $pdo->fetch(PDO::FETCH_ASSOC);
+    }
+    public function readAll($sql, $params = array()) {
+        $pdo = $this->connectInstance->prepare($sql);
+        $pdo->execute($params);
+        return $pdo->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function read($sql) {
-        return $this->connectInstance->query($sql);
-    }
-    public function readAll($sql) {
+
+    public function update($sql, $params = array()) {
+        $pdo = $this->connectInstance->prepare($sql);
+        $pdo->execute($params);
+        return $pdo->rowCount();
     }
 
-    public function update();
-
-    public function delete();
+    public function delete($sql, $params= array()) {
+        $pdo = $this->connectInstance->prepare($sql);
+        $pdo->execute($params);
+        return $pdo->rowCount();
+    }
 
     public function readLatest($start =0, $limit = null) {
         $sql = ActiveQuery::order(ActiveQuery::ORDER_DESC);

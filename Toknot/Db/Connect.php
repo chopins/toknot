@@ -79,9 +79,6 @@ class Connect extends Object {
     }
 
     private function connectMySQL() {
-        if (class_exists('MySQLi')) {
-            return new MySQLi();
-        }
         return new MySQL($this->dsn, $this->username, $this->password, $this->driverOptions);
     }
 

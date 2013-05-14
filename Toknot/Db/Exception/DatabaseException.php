@@ -12,10 +12,10 @@ namespace Toknot\Db\Exception;
 
 use Toknot\Exception\StandardException;
 
-class DatabaseConnectException extends StandardException {
-    protected $exceptionMessage = 'Database Connect Failed : %s';
-    public function __construct($message) {
-        $message = sprintf($this->exceptionMessage,$message);
+class DatabaseException extends StandardException {
+    protected $exceptionMessage = 'Database Failed : %s (%s)';
+    public function __construct($message, $code) {
+        $message = sprintf($this->exceptionMessage,$message, $code);
         parent::__construct($message);
     }
 }
