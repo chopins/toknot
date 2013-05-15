@@ -16,7 +16,7 @@ use Toknot\Di\Object;
 use Toknot\Db\Driver\MySQL;
 use Toknot\Db\Driver\SQLite;
 use \PDO;
-use Toknot\Di\ArrayObject;
+use Toknot\Di\StringObject;
 
 class Connect extends Object {
 

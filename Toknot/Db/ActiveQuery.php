@@ -31,10 +31,10 @@ class ActiveQuery {
     const LESS_OR_EQUAL = '<=';
     const GREATER_OR_EQUAL = '>=';
     const SHOW_TABLES = 'SHOW TABLES';
-    const FETCH_ASSOC = 2;
-    const FETCH_NUM = 3;
-    const FETCH_BOTH = 4;
-    const FETCH_OBJ = 5;
+    const FETCH_ASSOC = 'ASSOC';
+    const FETCH_NUM = 'NUM';
+    const FETCH_BOTH = 'BOTH';
+    const FETCH_OBJ = 'OBJ';
     public static function select($tableName, $field = '*') {
         return "SELECT $field FROM $tableName";
     }
