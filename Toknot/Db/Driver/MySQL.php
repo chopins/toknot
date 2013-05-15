@@ -20,6 +20,7 @@ class MySQL {
     private $query = null;
     private $numRow = 0;
     private $useMySQLi = false;
+    private $mysqliStmt = null;
 
     public function __construct($dsn, $username, $password, $driverOption = array(0)) {
         $dbinfo = ActiveQuery::transformDsn($dsn);
@@ -66,11 +67,12 @@ class MySQL {
     public function beginTransaction() {
         $this->exec('START TRANSACTION');
     }
+
     public function autocommit($mode) {
         if ($this->useMySQLi) {
             return $this->autocommit($mode);
         }
-        $mode = (int)$mode;
+        $mode = (int) $mode;
         return $this->exec("SET AUTOCOMMIT = $mode");
     }
 
@@ -97,6 +99,9 @@ class MySQL {
     }
 
     public function prepare($sql) {
+        if ($this->useMySQLi) {
+            $this->mysqliStmt = self::$link->prepare($sql);
+        }
         $this->sql = $sql;
         return $this;
     }
@@ -110,25 +115,29 @@ class MySQL {
     }
 
     public function execute($params) {
-        foreach ($params as &$v) {
-            $v = addslashes($v);
-            $v = "'$v'";
-        }
-        $sql = preg_replace('/[^\'^".]?[.^\'^"]/', $params, $this->sql);
         if ($this->useMySQLi) {
-            $this->query = self::$link->query($sql);
-            if (!$this->query) {
+            $c = count($params);
+            $type = sprintf("%'s{$c}s", 's');
+            array_unshift($params, $type);
+            call_user_func_array(array($this->useMySQLi,'bind_param'), $params);
+            $es = $this->mysqliStmt->execute();
+            if (!$es) {
                 throw new DatabaseException(self::$link->error, self::$link->errno);
             }
+            $this->query = $this->mysqliStmt->get_result();
             $this->sql = null;
             $this->numRow = $this->query->num_rows;
             return;
         }
+        foreach ($params as &$v) {
+            $v = addslashes($v);
+            $v = "'$v'";
+        }
+        $sql = str_replace('?', $params, $this->sql);
         $this->query = mysql_query($sql, self::$link);
         if (!$this->query) {
             throw new DatabaseException(mysql_error(self::$link), mysql_errno(self::$link));
         }
-        $this->sql = null;
         $this->numRow = mysql_num_rows($this->query);
     }
 
@@ -165,6 +174,9 @@ class MySQL {
 
     public function free() {
         if ($this->useMySQLi) {
+            if (!is_null($this->mysqliStmt)) {
+                return $this->mysqliStmt->free_result();
+            }
             return $this->query->free();
         }
         return ysql_free_result($this->query);
@@ -172,6 +184,9 @@ class MySQL {
 
     public function rowCount() {
         if ($this->useMySQLi) {
+            if (!is_null($this->mysqliStmt)) {
+                return $this->mysqliStmt->affected_rows;
+            }
             return self::$link->affected_rows;
         }
         return mysql_affected_rows(self::$link);
@@ -179,6 +194,9 @@ class MySQL {
 
     public function lastInsertId() {
         if ($this->useMySQLi) {
+            if (!is_null($this->mysqliStmt)) {
+                return $this->mysqliStmt->insert_id;
+            }
             return self::$link->insert_id;
         }
         return mysql_insert_id(self::$link);
