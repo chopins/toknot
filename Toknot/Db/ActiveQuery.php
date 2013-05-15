@@ -42,6 +42,13 @@ class ActiveQuery {
     public static function update($tableName) {
         return "UPDATE $tableName SET";
     }
+    public static function set($field) {
+        $setList = array();
+        foreach ($field as $key=>$val) {
+            $setList = "$key='" . addslashes($val) ."'";
+        }
+        return ' ' . implode(',', $setList);
+    }
 
     public static function delete($tableName) {
         return "DETELE FROM $tableName";
@@ -98,5 +105,12 @@ class ActiveQuery {
     public static function bindTableAlias($alias, $columnList) {
         return ' '.$alias . '.' . implode(", $alias.", $columnList);
     }
-
+    public static function insert($tableName, $field) {
+        $field = implode(',', keys($field));
+        foreach($field as &$v) {
+            $v = addslashes($v);
+        }
+        $values = "'" . implode("','", $field) . "'";
+        return "INSERT INTO $tableName ($field) VALUES($values)";
+    }
 }

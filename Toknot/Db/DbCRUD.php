@@ -15,6 +15,8 @@ use Toknot\Db\ActiveQuery;
 abstract class DbCRUD extends Object {
     protected $connectInstance = null;
     public $where = 1;
+    public $order = null;
+    public $orderBy = null;
     public function create($sql,$params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
         $pdo->execute($params);
@@ -49,12 +51,12 @@ abstract class DbCRUD extends Object {
     }
 
     public function readLatest($start =0, $limit = null) {
-        $sql = $this->where;
+        $sql = ActiveQuery::where($this->where);
         $sql .= ActiveQuery::order(ActiveQuery::ORDER_DESC);
         $sql .= ActiveQuery::limit($start, $limit);
         $field = ActiveQuery::field($this->columnList);
         $sql = ActiveQuery::select($this->tableName, $field) . $sql;
         $this->readAll($sql);
     }
-
+ 
 }
