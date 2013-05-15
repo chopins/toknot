@@ -15,10 +15,7 @@ use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
 
 class AppContext extends Object{
-    public $visiter = null;
-    public $view = null;
     public $D = null;
-    public $AR = null;
     public static function singleton() {
         return parent::__singleton();
     } 
@@ -30,7 +27,10 @@ class AppContext extends Object{
         return ConfigLoader::loadCFG($ini);
     }
     public function getActiveRecord() {
-        $this->AR = new ActiveRecord();
+        return ActiveRecord::singleton();
+    }
+    public function getView() {
+        return null;
     }
 
     public function display($tplName) {

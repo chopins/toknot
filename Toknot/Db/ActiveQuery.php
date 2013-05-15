@@ -31,11 +31,14 @@ class ActiveQuery {
     const LESS_OR_EQUAL = '<=';
     const GREATER_OR_EQUAL = '>=';
     const SHOW_TABLES = 'SHOW TABLES';
-
+    const FETCH_ASSOC = 2;
+    const FETCH_NUM = 3;
+    const FETCH_BOTH = 4;
+    const FETCH_OBJ = 5;
     public static function select($tableName, $field = '*') {
         return "SELECT $field FROM $tableName";
     }
-    public static function field($array) {
+    public static function field(array $array) {
         return implode(',', $array);
     }
 
@@ -80,6 +83,12 @@ class ActiveQuery {
     public static function showColumnList($tableName) {
         return "SHOW COLUMNS FROM $tableName";
     }
+    public static function showTableList($database = null) {
+        if($database == null) {
+            return "SHOW TABLES";
+        }
+        return "SHOW TABLES FROM $database";
+    }
 
     public static function limit($start, $limit = null) {
         if ($limit === null) {
@@ -91,7 +100,7 @@ class ActiveQuery {
     }
 
     public static function order($order, $field) {
-        if ($order == self::ASC) {
+        if ($order == self::ORDER_ASC) {
             return " ORDER BY $field ASC";
         } else {
             return " ORDER BY $field DESC";

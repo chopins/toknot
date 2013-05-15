@@ -14,21 +14,47 @@ use Toknot\Di\Object;
 use Toknot\Db\DatabaseObject;
 use Toknot\Db\Connect;
 use Toknot\Di\ArrayObject;
+use Toknot\Db\Exception\DatabaseConfigException;
 
 class ActiveRecord extends Object {
+
     private $dbObject = null;
-    public function __construct() {
+
+    protected function __construct() {
         $this->dbObject = DatabaseObject::singleton();
     }
-
+    public static function singleton() {
+       return parent::__singleton();
+    }
     public function connect() {
         new Connect($this->dbObject);
         return clone $this->dbObject;
     }
+
     public function config(ArrayObject $config) {
-        $this->dbObject->setDSN($config->dsn);
-        $this->dbObject->setUsername($config->username);
-        $this->dbObject->setPassword($config->password);
-        $this->dbObject->setDriverOptions($config->dirverOptions);
+        if (isset($config->dsn)) {
+            $this->dbObject->setDSN($config->dsn);
+        } else {
+            throw new DatabaseConfigException('dsn');
+        }
+        if (isset($config->username)) {
+            $this->dbObject->setUsername($config->username);
+        } else {
+            throw new DatabaseConfigException('username');
+        }
+        if (isset($config->password)) {
+            $this->dbObject->setPassword($config->password);
+        } else {
+            throw new DatabaseConfigException('password');
+        }
+        if (isset($config->dirverOptions)) {
+            $this->dbObject->setDriverOptions($config->dirverOptions);
+        } else {
+            throw new DatabaseConfigException('dirverOptions');
+        }
+        if (isset($config->prefix)) {
+            $this->dbObject->setTablePrefix($config->prefix);
+        }
     }
+
 }

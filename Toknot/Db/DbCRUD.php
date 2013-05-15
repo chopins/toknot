@@ -17,6 +17,7 @@ abstract class DbCRUD extends Object {
     public $where = 1;
     public $order = null;
     public $orderBy = null;
+    public $fetchStyle = ActiveQuery::FETCH_ASSOC;
     public function create($sql,$params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
         $pdo->execute($params);
@@ -29,12 +30,12 @@ abstract class DbCRUD extends Object {
         }
         $pdo = $this->connectInstance->prepare($sql);
         $pdo->execute($params);
-        return $pdo->fetch(PDO::FETCH_ASSOC);
+        return $pdo->fetch($this->fetchStyle);
     }
     public function readAll($sql, $params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
         $pdo->execute($params);
-        return $pdo->fetchAll(PDO::FETCH_ASSOC);
+        return $pdo->fetchAll($this->fetchStyle);
     }
 
 
@@ -49,14 +50,4 @@ abstract class DbCRUD extends Object {
         $pdo->execute($params);
         return $pdo->rowCount();
     }
-
-    public function readLatest($start =0, $limit = null) {
-        $sql = ActiveQuery::where($this->where);
-        $sql .= ActiveQuery::order(ActiveQuery::ORDER_DESC);
-        $sql .= ActiveQuery::limit($start, $limit);
-        $field = ActiveQuery::field($this->columnList);
-        $sql = ActiveQuery::select($this->tableName, $field) . $sql;
-        $this->readAll($sql);
-    }
- 
 }

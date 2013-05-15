@@ -94,19 +94,19 @@ class StandardException extends ErrorException {
         
         if ($this->isException == false)
             return $this->message;
-        $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type"><pre>';
+        $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type">';
         $str .='<div class="ToknotDebugArea">';
         $str .="<div ><span class='ToknotMessage'>{$this->message}</span>\n<ul>";
-        $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div>\n";
+        $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div>\n<pre>";
         if (PHP_SAPI == 'cli' && function_exists('posix_getpid')) {
             $str .= 'Process ID:' . posix_getpid() . "\n";
         }
         if (empty($traceArr)) {
-            //$str .= $this->earch($this->getTrace());
+            $str .= $this->getTraceAsString();
         } else {
-            //$str .= $this->earch($traceArr);
+            $str .= $this->earch($traceArr);
         }
-        $str .='</ul></div>';
+        $str .='</pre></ul></div>';
         if(PHP_SAPI == 'cli') {
             return strip_tags($str);
         } else {

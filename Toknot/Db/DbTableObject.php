@@ -15,8 +15,9 @@ use Toknot\Db\ActiveQuery;
 use Toknot\Db\DatabaseObject;
 use \InvalidArgumentException;
 use Toknot\Db\Exception\DatabaseException;
+use Toknot\Db\DbTableColumn;
 
-class DbTableObject extends DbCRUD {
+final class DbTableObject extends DbCRUD {
 
     private $tableName;
     private $primaryName = null;
@@ -39,6 +40,8 @@ class DbTableObject extends DbCRUD {
     public function setPropertie($name, $value) {
         if (in_array($name, $this->columnList)) {
             $this->columnValueList[$name] = $value;
+        } else {
+            throw new DatabaseException("Table $this->tableName not exists Column {$name}");
         }
     }
 
@@ -46,11 +49,19 @@ class DbTableObject extends DbCRUD {
         if (isset($this->$name)) {
             return $this->$name;
         }
+        if(in_array($name, $this->columnList)) {
+            if(!isset($this->interatorArray[$name])) {
+                $this->interatorArray[$name] = new DbTableColumn($name,$this);
+            }
+            return $this->interatorArray[$name];
+        }
     }
-
+    
+    /**
+     * Get table column list and set DbTableObject::$columnList
+     */
     public function showColumnList() {
-        $sql = ActiveQuery::showColumnList();
-        $sql .= $this->tableName;
+        $sql = ActiveQuery::showColumnList($this->tableName);
         $list = $this->readAll($sql);
         foreach ($list as $field) {
             if (strtolower($field['Key']) == 'pri') {
@@ -58,6 +69,7 @@ class DbTableObject extends DbCRUD {
             }
             $this->columnList[] = $field['Field'];
         }
+        return $this->columnList;
     }
 
     /**
@@ -77,14 +89,15 @@ class DbTableObject extends DbCRUD {
      */
     public function save() {
         if (empty($this->columnValueList)) {
-            throw new DatabaseException("You must first set table column value");
+            throw new DatabaseException("You must first set {$this->tableName}::\$columnValueList for column value");
         }
         $sql = ActiveQuery::insert($this->tableName, $this->columnValueList);
+        $this->columnValueList = array();
         return $this->create($sql);
     }
 
     /**
-     * Execute Update opreater by where statement, the where statement set by DbTableObject of where
+     * Execute Update opreater by where statement, the where statement set by DbTableObject of $where
      * property before invoke, 
      * 
      * <code>
@@ -102,16 +115,20 @@ class DbTableObject extends DbCRUD {
      */
     public function updateByWhere(array $params = array()) {
         if ($this->where === 1) {
-            throw new DatabaseException("Must first set {$this->tableName}->where");
+            throw new DatabaseException("Must first set {$this->tableName}::\$where");
+        }
+        if(empty($this->columnValueList)) {
+            throw new DatabaseException("Must first set {$this->tableName}::\$columnValueList for update column");
         }
         $sql = ActiveQuery::update($this->tableName);
         $sql .= ActiveQuery::set($this->columnValueList);
+        $this->columnValueList = array();
         $sql .= ActiveQuery::where($this->where);
         return $this->update($sql, $params);
     }
 
     /**
-     * Execute Delete opreater by where statement, the where statement set by DbTableObject of where
+     * Execute Delete opreater by where statement, the where statement set by DbTableObject of $where
      * property before invoke
      * 
      * <code>
@@ -135,7 +152,7 @@ class DbTableObject extends DbCRUD {
     }
 
     /**
-     * Execute SELECT/READ opreater by where statement, the where tatement set by DbTableObject of where
+     * Execute SELECT/READ opreater by where statement, the where tatement set by DbTableObject of $where
      * property before invoke
      * 
      * <code>
@@ -164,7 +181,7 @@ class DbTableObject extends DbCRUD {
     }
 
     /**
-     * Execute SELECT/READ opreate by primary key of the table, and not use where property
+     * Execute SELECT/READ opreate by primary key of the table, and not use $where property
      * 
      * default query use like below:
      * <code>
@@ -185,7 +202,7 @@ class DbTableObject extends DbCRUD {
      * @param string $pkValue the primary key value which is opreater of comparison 
      * @param int $start Options
      * @param int $limit Options
-     * @param type $condition Options of default is {@see ActiveQuery::EQUAL} The value use set 
+     * @param type $condition Options of default is {@see ActiveQuery::EQUAL} The value use the
      *                         {@see ActiveQuery::EQUAL}{@see ActiveQuery::LESS_OR_EQUAL},
      *                         {@see ActiveQuery::LESS_THAN},{@see ActiveQuery::GREATER_OR_EQUAL},
      *                         {@see ActiveQuery::GREATER_THAN}
@@ -210,6 +227,43 @@ class DbTableObject extends DbCRUD {
             default :
                 throw new InvalidArgumentException('Condition must be ActiveQuery defined opreater of comparison');
         }
+    }
+    
+    /**
+     * Find result by above context set column value, must first set column value
+     * 
+     * <code>
+     * $ar = new ActiveRecord();
+     * $db = $ar->connect();
+     * $db->tableName->name = 'newName';
+     * 
+     * $db->tableName->findByAttr(10); // get name equal newName result of 10 rows
+     * </code>
+     * 
+     * @param type $start
+     * @param type $limit options of parameter for query limit
+     * @param type $logical  options, the parameter of logical relationship in select where statement parameters
+     *                        The value use the {@see ActiveQuery::LOGICAL_AND} or {@see ActiveQuery::LOCGICAL_OR}
+     * @return mixed
+     * @throws DatabaseException  if not set where property throw out
+     * @throws InvalidArgumentException  if logical parameter set error
+     */
+    public function findByAttr($start,$limit = null,$logical = ActiveQuery::LOGICAL_AND) {
+        if(empty($this->columnValueList)) {
+            throw new DatabaseException("Must first set {$this->tableName}::\$columnValueList for update column");
+        }
+        if($logical != ActiveQuery::LOGICAL_AND && $logical != ActiveQuery::LOGICAL_OR) {
+            throw new InvalidArgumentException('must be ActiveQuery::LOGICAL_AND or ActiveQuery::LOGICAL_OR');
+        }
+        $field = ActiveQuery::field($this->columnList);
+        $sql = ActiveQuery::select($this->tableName, $field);
+        foreach($this->columnValueList as $key=>$var) {
+            $var = addslashes($var);
+            $where[] = " $key='$var' ";
+        }
+        $sql .= ActiveQuery::where(implode($logical, $where));
+        $sql .= ActiveQuery::limit($start, $limit);
+        return $this->readAll($sql);
     }
 
 }

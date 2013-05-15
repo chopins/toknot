@@ -17,14 +17,17 @@ use Toknot\Db\DbTableJoinObject;
 use \InvalidArgumentException;
 use Toknot\Db\Connect;
 use Toknot\Db\ActiveQuery;
+use Toknot\Db\Exception\DatabaseException;
 
-class DatabaseObject extends DbCRUD {
+final class DatabaseObject extends DbCRUD {
 
     protected $dsn = null;
-    protected $user = null;
+    protected $username = null;
     protected $password = null;
     private static $tableList = array();
     protected $driverOptions = null;
+    protected $tablePrefix = '';
+
     protected function __construct() {
         
     }
@@ -37,6 +40,10 @@ class DatabaseObject extends DbCRUD {
         $this->dsn = $dsn;
     }
 
+    public function setTablePrefix($prefix) {
+        $this->tablePrefix = $prefix;
+    }
+
     public function setUsername($username) {
         $this->username = $username;
     }
@@ -44,29 +51,46 @@ class DatabaseObject extends DbCRUD {
     public function setPassword($password) {
         $this->password = $password;
     }
+
     public function setDriverOptions($driverOptions) {
         $this->driverOptions = $driverOptions;
     }
 
     public function setConnectInstance(Connect $connect) {
         $this->connectInstance = $connect->getConnectInstance();
-        self::$tableList = $connect->showTableList();
+        self::$tableList = $this->showTableList();
     }
 
+    /**
+     * get table list of the database
+     * 
+     * @return array table list
+     */
     public function showTableList() {
         $sql = ActiveQuery::showTableList();
-        return $this->readALL($sql);
+        $result = $this->readALL($sql);
+        $tableList = array();
+        foreach ($result as $tableInfo) {
+            $tableList[] = array_shift($tableInfo);
+        }
+        return $tableList;
     }
 
-    protected function setPropertie($propertie, $value) {
-        
+    protected function setPropertie($name, $value) {
+        $class = __CLASS__;
+        throw new DatabaseException("undefined property $class::$name", 0);
     }
 
     public function __get($propertie) {
         if (isset($this->$propertie)) {
             return $this->$propertie;
-        } elseif (in_array($propertie, self::$tableList)) {
-            return new DbTableObject($propertie, $this);
+        } elseif (in_array($this->tablePrefix . $propertie, self::$tableList)) {
+            if (!isset($this->interatorArray[$propertie])) {
+                $this->interatorArray[$propertie] = new DbTableObject($propertie, $this);
+            }
+            return $this->interatorArray[$propertie];
+        } else {
+            throw new DatabaseException("Table {$this->tablePrefix}{$propertie} not exists");
         }
     }
 
@@ -74,6 +98,15 @@ class DatabaseObject extends DbCRUD {
         return $this->dsn;
     }
 
+    /**
+     * left join some tables for prepared query
+     * 
+     * @param \Toknot\Db\DbTableObject $table1
+     * @param \Toknot\Db\DbTableObject $table2
+     * @param \Toknot\Db\DbTableObject $_ 
+     * @return DbTableJoinObject    return an instance of DbTableJoinObject
+     * @throws InvalidArgumentException
+     */
     public function tableJOIN(DbTableObject $table1, DbTableObject $table2) {
         $argv = func_get_args();
         $argc = func_num_args();
@@ -84,10 +117,6 @@ class DatabaseObject extends DbCRUD {
         }
         $ref = new ReflectionClass('Toknot\Db\DbTableJoinObject');
         return $ref->newInstanceArgs($argv);
-    }
-
-    public function findAllBySQL($sql, $params = array()) {
-        return $this->readAll($sql, $params);
     }
 
 }

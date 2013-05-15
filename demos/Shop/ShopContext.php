@@ -14,9 +14,10 @@ class ShopContext {
     protected $AppContext;
     protected $CFG;
     protected $AppPath;
+    protected $AR;
     public function __construct($AppContext) {
         $this->AppContext = $AppContext;
-        $this->AppContext->getActiveRecord();
+        $this->AR = $this->AppContext->getActiveRecord();
         $this->AppPath = __DIR__;
         $this->CFG = $this->AppContext->loadConfigure($this->AppPath.'/Config/config.ini');
     }
