@@ -32,7 +32,7 @@ final class DbTableObject extends DbCRUD {
         $this->tableName = $tableName;
         $this->dbObject = $databaseObject;
         $this->connectInstance = $databaseObject->connectInstance;
-        $this->dbDriverType = $databaseObject->dbDriverType;
+        $this->dbINSType = $databaseObject->dbINSType;
 
         $this->showColumnList();
         $this->order = ActiveQuery::ORDER_DESC;
@@ -41,7 +41,8 @@ final class DbTableObject extends DbCRUD {
 
     public function setPropertie($name, $value) {
         if (in_array($name, $this->columnList)) {
-            $this->columnValueList[$name] = $value;
+            $this->columnValueList[$name] = new DbTableColumn($name, $this);
+            $this->columnValueList[$name]->value = $value;
         } else {
             throw new DatabaseException("Table $this->tableName not exists Column {$name}");
         }
@@ -51,22 +52,37 @@ final class DbTableObject extends DbCRUD {
         if (isset($this->$name)) {
             return $this->$name;
         }
-        if(in_array($name, $this->columnList)) {
-            if(!isset($this->interatorArray[$name])) {
-                $this->interatorArray[$name] = new DbTableColumn($name,$this);
+        if (in_array($name, $this->columnList)) {
+            if (!isset($this->interatorArray[$name])) {
+                $this->interatorArray[$name] = new DbTableColumn($name, $this);
             }
             return $this->interatorArray[$name];
         }
+        if (!isset($this->columnValueList[$name])) {
+            $this->columnValueList[$name] = new DbTableColumn($name, $this);
+        }
+        return $this->columnValueList[$name];
     }
-    
+
+    public function showSetColumnList() {
+        return $this->columnValueList;
+    }
+
     /**
      * Get table column list and set DbTableObject::$columnList
      */
     public function showColumnList() {
         $sql = ActiveQuery::showColumnList($this->tableName);
         $list = $this->readAll($sql);
+        if (empty($list)) {
+            return false;
+        }
+        if (ActiveQuery::getDbDriverType() == ActiveQuery::DRIVER_SQLITE) {
+            $this->columnList = ActiveQuery::parseSQLiteColumn($list[0]['sql']);
+            return $this->columnList;
+        }
         foreach ($list as $field) {
-            if (strtolower($field['Key']) == 'pri') {
+            if (isset($field['Key']) && strtolower($field['Key']) == 'pri') {
                 $this->primaryName = $field['Field'];
             }
             $this->columnList[] = $field['Field'];
@@ -119,7 +135,7 @@ final class DbTableObject extends DbCRUD {
         if ($this->where === 1) {
             throw new DatabaseException("Must first set {$this->tableName}::\$where");
         }
-        if(empty($this->columnValueList)) {
+        if (empty($this->columnValueList)) {
             throw new DatabaseException("Must first set {$this->tableName}::\$columnValueList for update column");
         }
         $sql = ActiveQuery::update($this->tableName);
@@ -230,7 +246,7 @@ final class DbTableObject extends DbCRUD {
                 throw new InvalidArgumentException('Condition must be ActiveQuery defined opreater of comparison');
         }
     }
-    
+
     /**
      * Find result by above context set column value, must first set column value
      * 
@@ -250,16 +266,16 @@ final class DbTableObject extends DbCRUD {
      * @throws DatabaseException  if not set where property throw out
      * @throws InvalidArgumentException  if logical parameter set error
      */
-    public function findByAttr($start,$limit = null,$logical = ActiveQuery::LOGICAL_AND) {
-        if(empty($this->columnValueList)) {
+    public function findByAttr($start, $limit = null, $logical = ActiveQuery::LOGICAL_AND) {
+        if (empty($this->columnValueList)) {
             throw new DatabaseException("Must first set {$this->tableName}::\$columnValueList for update column");
         }
-        if($logical != ActiveQuery::LOGICAL_AND && $logical != ActiveQuery::LOGICAL_OR) {
+        if ($logical != ActiveQuery::LOGICAL_AND && $logical != ActiveQuery::LOGICAL_OR) {
             throw new InvalidArgumentException('must be ActiveQuery::LOGICAL_AND or ActiveQuery::LOGICAL_OR');
         }
         $field = ActiveQuery::field($this->columnList);
         $sql = ActiveQuery::select($this->tableName, $field);
-        foreach($this->columnValueList as $key=>$var) {
+        foreach ($this->columnValueList as $key => $var) {
             $var = addslashes($var);
             $where[] = " $key='$var' ";
         }

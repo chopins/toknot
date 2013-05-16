@@ -36,7 +36,7 @@ final class DbTableJoinObject extends DbCRUD {
             $this->interatorArray[$tableObject->tableName] = $tableObject;
         }
         $this->connectInstance = $table1->connectInstance;
-        $this->dbDriverType = $table1->dbDriverType;
+        $this->dbINSType = $table1->dbINSType;
     }
 
     public function __get($name) {
@@ -117,6 +117,7 @@ final class DbTableJoinObject extends DbCRUD {
         $sql = $this->bulidSQL();
         $sql .= ActiveQuery::order($this->order, $this->orderBy);
         $sql .= ActiveQuery::limit($start, $limit);
+        var_dump($sql);
         $this->readAll($sql);
     }
 

@@ -27,11 +27,14 @@ final class DatabaseObject extends DbCRUD {
     private static $tableList = array();
     protected $driverOptions = null;
     protected $tablePrefix = '';
+    protected $tableValueList = array();
+
     protected function __construct() {
         
     }
-    public function setDbDriverType($type) {
-        $this->dbDriverType = $type;
+
+    public function setDbINSType($type) {
+        $this->dbINSType = $type;
     }
 
     public static function singleton() {
@@ -75,6 +78,7 @@ final class DatabaseObject extends DbCRUD {
         foreach ($result as $tableInfo) {
             $tableList[] = array_shift($tableInfo);
         }
+        var_dump($tableList);
         return $tableList;
     }
 
@@ -91,8 +95,11 @@ final class DatabaseObject extends DbCRUD {
                 $this->interatorArray[$propertie] = new DbTableObject($propertie, $this);
             }
             return $this->interatorArray[$propertie];
+        } elseif (isset($this->tableValueList[$propertie])) {
+            return $this->tableValueList[$propertie];
         } else {
-            throw new DatabaseException("Table {$this->tablePrefix}{$propertie} not exists");
+            $this->tableValueList[$propertie] = new DbTableObject($propertie, $this);
+            return $this->tableValueList[$propertie];
         }
     }
 
@@ -119,6 +126,15 @@ final class DatabaseObject extends DbCRUD {
         }
         $ref = new ReflectionClass('Toknot\Db\DbTableJoinObject');
         return $ref->newInstanceArgs($argv);
+    }
+
+    public function createTable() {
+        foreach ($this->tableValueList as $tableName => $table) {
+            $sql = ActiveQuery::createTable($tableName);
+            $sql .= ActiveQuery::setColumn($table);
+            var_dump($sql);
+            $this->create($sql);
+        }
     }
 
 }

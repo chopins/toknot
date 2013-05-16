@@ -11,6 +11,7 @@
 namespace Toknot\Db;
 
 use Toknot\Di\ArrayObject;
+use Toknot\Di\DbTableObject;
 
 class ActiveQuery {
 
@@ -35,9 +36,72 @@ class ActiveQuery {
     const FETCH_NUM = 'NUM';
     const FETCH_BOTH = 'BOTH';
     const FETCH_OBJ = 'OBJ';
+    const DRIVER_MYSQL = 'mysql';
+    const DRIVER_SQLITE = 'sqlite';
+
+    private static $dbDriverType = self::DRIVER_MYSQL;
+
+    public static function setDbDriverType($type) {
+        self::$dbDriverType = $type;
+    }
+    public static function getDbDriverType() {
+        return self::$dbDriverType;
+    }
+    public static function parseSQLiteColumn($sql) {
+        $feildInfo = strtok($sql, '(');
+        $feildInfo = strtok(')');
+        $columnList = array();
+        $columnList[] = strtok($feildInfo, ' ');
+        $pro  = strtok(',');
+        while($pro) {
+           $feild = strtok(' ');
+           if(!$feild) {
+               break;
+           }
+           $columnList[] = $feild;
+           $pro  = strtok(',');
+        }
+        return $columnList;
+    }
+
+    public static function createTable($tableName) {
+        return "CREATE TABLE $tableName";
+    }
+
+    public static function setColumn($table) {
+        $columnList = $table->showSetColumnList();
+        $sqlList = array();
+        foreach ($columnList as $columnName => $column) {
+            $sqlList[$columnName] = " $columnName {$column->type}";
+            if($column->length >0) {
+                $sqlList[$columnName] .= "($column->length)";
+            }
+            var_dump($column->isPK);
+            if ($column->isPK) {
+                $sqlList[$columnName] .= ' primary key';
+            }
+            if ($column->autoIncrement) {
+                $sqlList[$columnName] .= ' autoincrement';
+            }
+        }
+        return '('. implode(',', $sqlList) . ')';
+    }
+
     public static function select($tableName, $field = '*') {
         return "SELECT $field FROM $tableName";
     }
+
+    public static function bindParams($params, $sql) {
+        if (empty($params)) {
+            return $sql;
+        }
+        foreach ($params as &$v) {
+            $v = addslashes($v);
+            $v = "'$v'";
+        }
+        return str_replace('?', $params, $sql);
+    }
+
     public static function field(array $array) {
         return implode(',', $array);
     }
@@ -45,10 +109,11 @@ class ActiveQuery {
     public static function update($tableName) {
         return "UPDATE $tableName SET";
     }
+
     public static function set($field) {
         $setList = array();
-        foreach ($field as $key=>$val) {
-            $setList = "$key='" . addslashes($val) ."'";
+        foreach ($field as $key => $val) {
+            $setList = "$key='" . addslashes($val) . "'";
         }
         return ' ' . implode(',', $setList);
     }
@@ -81,10 +146,17 @@ class ActiveQuery {
     }
 
     public static function showColumnList($tableName) {
+        if(self::$dbDriverType == self::DRIVER_SQLITE) {
+            return "SELECT * FROM sqlite_master WHERE type='table' AND name='$tableName'";
+        }
         return "SHOW COLUMNS FROM $tableName";
     }
+
     public static function showTableList($database = null) {
-        if($database == null) {
+        if (self::$dbDriverType == self::DRIVER_SQLITE) {
+            return "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name";
+        }
+        if ($database == null) {
             return "SHOW TABLES";
         }
         return "SHOW TABLES FROM $database";
@@ -112,14 +184,16 @@ class ActiveQuery {
     }
 
     public static function bindTableAlias($alias, $columnList) {
-        return ' '.$alias . '.' . implode(", $alias.", $columnList);
+        return ' ' . $alias . '.' . implode(", $alias.", $columnList);
     }
+
     public static function insert($tableName, $field) {
         $field = implode(',', keys($field));
-        foreach($field as &$v) {
+        foreach ($field as &$v) {
             $v = addslashes($v);
         }
         $values = "'" . implode("','", $field) . "'";
         return "INSERT INTO $tableName ($field) VALUES($values)";
     }
+
 }

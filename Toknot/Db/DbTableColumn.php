@@ -18,6 +18,11 @@ class DbTableColumn extends Object{
     private $columnName = null;
     private $tableObject = null;
     public $alias = null;
+    public $type = null;
+    public $length = 0;
+    public $isPK = false;
+    public $autoIncrement = false;
+    public $value = '';
     public function __construct($columnName, DbTableObject &$tableObject) {
         $this->columnName = $columnName;
         $this->tableObject = $tableObject;
@@ -30,6 +35,7 @@ class DbTableColumn extends Object{
     }
 
     public function __toString() {
-        return $this->columnName;
+        $this->value = (string) $this->value;
+        return $this->value;
     }
 }

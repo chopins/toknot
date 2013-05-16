@@ -21,9 +21,21 @@ class Index extends ShopContext {
         //create database connect and return one DatabaseObject instance
         //one database is a instace
         $shopDatabase = $this->AR->connect();
-
+        $shopDatabase->product->hot->type = 'integer';
+        $shopDatabase->product->isdel->type ='integer';
+        $shopDatabase->product->id->type = 'integer';
+        $shopDatabase->product->id->isPK = true;
+        $shopDatabase->product->id->autoIncrement = true;
+        
+        $shopDatabase->productCat->isdel->type ='integer';
+        
+        $shopDatabase->productCat->id->type = 'integer';
+        $shopDatabase->productCat->id->isPK = true;
+        
+        $shopDatabase->productCat->id->autoIncrement = true;
+        $shopDatabase->createTable();
         //From product table get latest product with 50 number and is host and is not del
-        $shopDatabase->product->hot = '5\s"';
+        $shopDatabase->product->hot = '5';
         $shopDatabase->product->isdel = 0;
         $hotProductList = $shopDatabase->product->findByAttr(50);
 

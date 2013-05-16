@@ -13,6 +13,7 @@ namespace Toknot\Db;
 use Toknot\Di\Object;
 use Toknot\Db\ActiveQuery;
 use Toknot\Db\Connect;
+use Toknot\Db\Exception\DatabaseException;
 
 abstract class DbCRUD extends Object {
 
@@ -22,17 +23,27 @@ abstract class DbCRUD extends Object {
     public $orderBy = null;
     public $fetchStyle = ActiveQuery::FETCH_ASSOC;
     protected $dbDriverType = 0;
+    protected $dbINSType = 0;
     private function getDbDriverFetchStyle() {
-        if($this->dbDriverType == Connect::DB_INS_DRIVER) {
+        if ($this->dbINSType == Connect::DB_INS_DRIVER) {
             return $this->fetchStyle;
-        } elseif($this->dbDriverType == Connect::DB_INS_PDO) {
-            return constant('PDO::FETCH_'.$this->fetchStyle);
+        } elseif ($this->dbINSType == Connect::DB_INS_PDO) {
+            return constant('PDO::FETCH_' . $this->fetchStyle);
         }
     }
 
     public function create($sql, $params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
-        $pdo->execute($params);
+        if ($pdo) {
+            $pdo->execute($params);
+        } else {
+            $sql = ActiveQuery::bindParams($params, $sql);
+            $pdo = $this->connectInstance->query($sql);
+            if(!$pdo) {
+                throw new DatabaseException($this->connectInstance->errorInfo(),
+                                            $this->connectInstance->errorCode());
+            }
+        }
         return $pdo->lastInsertId();
     }
 
@@ -41,25 +52,61 @@ abstract class DbCRUD extends Object {
             $sql .= ' LIMIT 1';
         }
         $pdo = $this->connectInstance->prepare($sql);
-        $pdo->execute($params);
+        if ($pdo) {
+            $pdo->execute($params);
+        } else {
+            $sql = ActiveQuery::bindParams($params, $sql);
+            $pdo = $this->connectInstance->query($sql);
+            if(!$pdo) {
+                throw new DatabaseException($this->connectInstance->errorInfo(),
+                                            $this->connectInstance->errorCode());
+            }
+        }
         return $pdo->fetch($this->getDbDriverFetchStyle());
     }
 
     public function readAll($sql, $params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
-        $pdo->execute($params);
+        if ($pdo) {
+            $pdo->execute($params);
+        } else {
+            $sql = ActiveQuery::bindParams($params, $sql);
+            $pdo = $this->connectInstance->query($sql);
+            if(!$pdo) {
+                throw new DatabaseException($this->connectInstance->errorInfo(),
+                                            $this->connectInstance->errorCode());
+            }
+        }
         return $pdo->fetchAll($this->getDbDriverFetchStyle());
     }
 
     public function update($sql, $params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
-        $pdo->execute($params);
+        if ($pdo) {
+            $pdo->execute($params);
+        } else {
+            $sql = ActiveQuery::bindParams($params, $sql);
+            $pdo = $this->connectInstance->query($sql);
+            if(!$pdo) {
+                throw new DatabaseException($this->connectInstance->errorInfo(),
+                                            $this->connectInstance->errorCode());
+            }
+        }
         return $pdo->rowCount();
     }
 
     public function delete($sql, $params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
-        $pdo->execute($params);
+        if ($pdo) {
+            $pdo->execute($params);
+        } else {
+            $sql = ActiveQuery::bindParams($params, $sql);
+            $pdo = $this->connectInstance->query($sql);
+            if(!$pdo) {
+                throw new DatabaseException($this->connectInstance->errorInfo(),
+                                            $this->connectInstance->errorCode());
+            }
+        }
         return $pdo->rowCount();
     }
 

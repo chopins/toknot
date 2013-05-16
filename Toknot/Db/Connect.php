@@ -17,6 +17,7 @@ use Toknot\Db\Driver\MySQL;
 use Toknot\Db\Driver\SQLite;
 use \PDO;
 use Toknot\Di\StringObject;
+use Toknot\Db\ActiveQuery;
 
 class Connect extends Object {
 
@@ -26,10 +27,11 @@ class Connect extends Object {
     private $driverOptions = null;
     private static $supportDriver = array();
     private $connectInstance = null;
-    private $dbDriverType = null;
-    
+    private $dbINSType = null;
+
     const DB_INS_PDO = 1;
     const DB_INS_DRIVER = 2;
+
     /**
      * create Database connect and bind to DatabaseObject instance
      * 
@@ -39,17 +41,18 @@ class Connect extends Object {
         $this->dsn = $connectObject->dsn;
         $this->username = $connectObject->username;
         $this->password = $connectObject->password;
-        if($connectObject->driverOptions instanceof StringObject) {
+        if ($connectObject->driverOptions instanceof StringObject) {
             $this->driverOptions = array($connectObject->driverOptions);
         }
         try {
             $this->connectDatabase();
             $connectObject->setConnectInstance($this);
-            $connectObject->setDbDriverType($this->dbDriverType);
+            $connectObject->setDbINSType($this->dbINSType);
         } catch (DatabaseException $e) {
             echo $e;
         }
     }
+
     public function getDbDriverType() {
         return $this->dbDriverType;
     }
@@ -59,20 +62,22 @@ class Connect extends Object {
     }
 
     private function connectDatabase() {
+        $databaseType = strtolower(strtok($this->dsn, ':'));
         if (class_exists('PDO')) {
             try {
                 $this->connectInstance = new PDO($this->dsn, $this->username, $this->password, $this->driverOptions);
             } catch (PDOException $pdoe) {
                 throw new DatabaseException($pdoe->getMessage(), $pdoe->getCode());
             }
-            $this->dbDriverType = self::DB_INS_PDO;
+            $this->dbINSType = self::DB_INS_PDO;
         } else {
-            $databaseType = strtolower(strtok($this->dsn, ':'));
             switch ($databaseType) {
                 case 'mysql':
                     $this->connectInstance = $this->connectMySQL();
+                    break;
                 case 'sqlite':
                     $this->connectInstance = $this->connectSQLite();
+                    break;
                 default :
                     $this->scanDriver();
                     if (in_array($databaseType, self::$supportDriver)) {
@@ -82,8 +87,9 @@ class Connect extends Object {
                     }
                     break;
             }
-            $this->dbDriverType = self::DB_INS_DRIVER;
+            $this->dbINSType = self::DB_INS_DRIVER;
         }
+        ActiveQuery::setDbDriverType(constant('\Toknot\Db\ActiveQuery::DRIVER_' . strtoupper($databaseType)));
     }
 
     private function importDriver() {
@@ -109,4 +115,5 @@ class Connect extends Object {
     private function connectSQLite() {
         return new SQLite($this->dsn, $this->driverOptions);
     }
+
 }

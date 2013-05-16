@@ -14,6 +14,8 @@ use Toknot\Exception\StandardException;
 
 class DatabaseException extends StandardException {
     public function __construct($message, $code =0) {
+        $message = print_r($message, true);
+        $code = print_r($code, true);
         $message = "Database Failed : $message ($code)";
         parent::__construct($message);
     }

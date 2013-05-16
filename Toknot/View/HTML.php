@@ -9,38 +9,49 @@
  */
 
 namespace Toknot\View;
-use Toknot\Di\Object;
-use \DOMDocument;
+
+use Toknot\View\View;
 use Toknot\Exception\StandardException;
 
-class HTML extends Object{
+class HTML extends View {
+
     private $htmlDOM = null;
     private $head = array();
     private $title = null;
     public $scanPath = '';
     public $defautlSuffix = 'html';
+
     public static function singleton() {
         return parent::__singleton();
     }
+
     protected function __construct() {
-        if(!class_exists('DOMDocument')) {
-            throw new StandardException('Need DOMDocument extension');
-        }
+        
     }
 
     public function loop($id, $data, $callable) {
         $loopNode = $this->htmlDOM->getElementById($id);
     }
 
+    public function loadHTMLFile($file) {
+        $html = file_get_contents($file);
+        $tag = strtok($html, '<');
+        var_dump($tag);
+        while ($tag) {
+            $tag = strtok($html, '>');
+            var_dump($tag);
+        }
+    }
+
     public function newPage($page) {
-        $file ="{$this->scanPath}/{$page}.{$this->defautlSuffix}";
-        $this->htmlDOM = new DOMDocument();
-        $this->htmlDOM->loadHTMLFile($file);
+        $file = "{$this->scanPath}/{$page}.{$this->defautlSuffix}";
+        $this->loadHTMLFile($file);
     }
 
     public function display() {
         
     }
+
     public function title($title) {
         $this->title = $title;
     }
@@ -48,6 +59,7 @@ class HTML extends Object{
     public function newMeta($string) {
         $this->head[] = "<meta $string />";
     }
+
 }
 
 ?>

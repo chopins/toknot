@@ -48,7 +48,7 @@ class MySQL {
             return;
         }
         if (isset($dbinfo->port)) {
-            $host .= ":{$this->port}";
+            $host .= ":{$dbinfo->port}";
         }
         if ($driverOption[0] == 1) {
             self::$link = mysql_pconnect($host, $username, $password);
@@ -129,11 +129,7 @@ class MySQL {
             $this->numRow = $this->query->num_rows;
             return;
         }
-        foreach ($params as &$v) {
-            $v = addslashes($v);
-            $v = "'$v'";
-        }
-        $sql = str_replace('?', $params, $this->sql);
+        $sql = ActiveQuery::bindParams($params, $this->sql);
         $this->query = mysql_query($sql, self::$link);
         if (!$this->query) {
             throw new DatabaseException(mysql_error(self::$link), mysql_errno(self::$link));
