@@ -18,7 +18,12 @@ use \RuntimeException;
 use \InvalidArgumentException;
 
 class ArrayObject extends Object implements ArrayAccess, Serializable {
-
+    
+    /**
+     * transfrom array type to ArrayObject type of object
+     * 
+     * @param array $value Option
+     */
     public function __construct(array $value = array()) {
         $this->importPropertie($value);
     }

@@ -37,15 +37,20 @@ class Index extends ShopContext {
         $joinTmpTable->productCat->alias = 'c';
         $joinTmpTable->tableON($joinTmpTable->product->id, $joinTmpTable->productCat->id);
         $joinTmpTable->find(10);
-
-        $page = new \Toknot\View\Html();
-        $pageHead = new \Toknot\View\Head();
-        $page->append($pageHead);
-        $pageBody = new \Toknot\View\Body();
-        $page->append($pageBody);
-        $table = new \Toknot\View\TableList($hotProductList);
-        $pageBody->append($table);
-        $this->toknot->display($page);
+        
+        /*
+         * <html>
+         * <head>
+         * </head>
+         * <body>
+         * </body>
+         * </html>
+         */
+        $this->view->newPage('index');
+        $meta = $this->view->newMeta('http-equiv="content-type" content="text/html; charset=UTF-8"');
+        $title = $this->view->title('test');
+        
+        $this->view->display();
     }
 
 }

@@ -7,13 +7,11 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
-namespace Shop\Controller\User;
-use Shop\ShopContext;
-class Login extends ShopContext {
-    public function GET() {
-        
-    }
-    public function POST() {
-        ;
+namespace Toknot\View;
+use Toknot\Di\Object;
+
+class XML extends Object {
+    public static function singleton() {
+        parent::__singleton();
     }
 }

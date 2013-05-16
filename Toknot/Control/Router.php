@@ -16,6 +16,8 @@ use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
 use Toknot\Control\AppContext;
 use \ReflectionClass;
+use Toknot\Control\StandardAutoloader;
+use Toknot\Di\ArrayObject;
 
 class Router extends Object implements RouterInterface {
 
@@ -45,8 +47,45 @@ class Router extends Object implements RouterInterface {
      * @access private 
      */
     private $spacePath = '\\';
+
+    /**
+     * the application path
+     *
+     * @var string
+     * @access private
+     */
     private $routerPath = '';
+
+    /**
+     * like webserver set index.html, if set null will return 404 when no debug and develop will throw 
+     * {@see BadClassCallException} exception
+     *
+     * @var string
+     * @access private
+     */
     private $defaultClass = '\Index';
+
+    /**
+     * Alow namespace max level under Controller, only on Router::ROUTER_PATH in effect
+     * if set 0 will no limit
+     *
+     * @var int 
+     * @access private
+     */
+    private $routerDepth = 1;
+    private $suffixPart = array();
+
+    /**
+     * use URI of path controller invoke application controller of class
+     */
+
+    const ROUTER_PATH = 1;
+
+    /**
+     * use requset query of $_GET['c'] parameter controller invoke application controller of class
+     */
+    const ROUTER_GET_QUERY = 2;
+
     /**
      * singleton 
      * 
@@ -57,33 +96,61 @@ class Router extends Object implements RouterInterface {
     public static function singleton() {
         return parent::__singleton();
     }
-    
+
     /**
      * Set Controler info that under application, if CLI mode, will set request method is CLI
      * 
      */
     public function routerRule() {
-        if ($this->routerMode == 1) {
-            if(empty($_GET['r'])) {
+        if ($this->routerMode == self::ROUTER_GET_QUERY) {
+            if (empty($_GET['c'])) {
                 $this->spacePath = $this->defaultClass;
             } else {
-                $this->spacePath = '\\' . str_replace('.', '\\', $_GET['r']);
+                $this->spacePath = '\\' . str_replace('.', '\\', $_GET['c']);
             }
         } else {
-            if(PHP_SAPI == 'cli') {
+            if (PHP_SAPI == 'cli') {
                 $_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
             }
-            $this->spacePath = str_replace('/', '\\', $_SERVER['REQUEST_URI']);
-            $this->spacePath = $this->spacePath == '\\' ? $this->defaultClass : $this->spacePath;
+            if (($pos = strpos($_SERVER['REQUEST_URI'], '?')) !== false) {
+                $urlPath = substr($_SERVER['REQUEST_URI'], 0, $pos);
+            } else {
+                $urlPath = $_SERVER['REQUEST_URI'];
+            }
+            $spacePath = str_replace('/', StandardAutoloader::NS_SEPARATOR, $urlPath);
+            $spacePath = $spacePath == StandardAutoloader::NS_SEPARATOR ? $this->defaultClass : $spacePath;
+            if ($this->routerDepth > 0) {
+                $name = strtok($spacePath, StandardAutoloader::NS_SEPARATOR);
+                $this->spacePath = '';
+                $depth = 0;
+                while ($name) {
+                    if ($depth <= $this->routerDepth) {
+                        $this->spacePath .= StandardAutoloader::NS_SEPARATOR . ucfirst($name);
+                    } else {
+                        $this->suffixPart[] = $name;
+                    }
+                    $name = strtok(StandardAutoloader::NS_SEPARATOR);
+                    $depth++;
+                }
+            } else {
+                $this->spacePath = $spacePath;
+            }
         }
     }
 
+    /**
+     * set application path, implements RouterInterface
+     * 
+     * @param string $path
+     */
     public function routerPath($path) {
         $this->routerPath = $path;
     }
+
     public function defaultInvoke($defaultClass) {
         $this->defaultClass = $defaultClass;
     }
+
     /**
      * Invoke Application Controller, the method will call application of Controller what is
      * $this->routerNameSpace\Controller{$this->spacePath}, and router action by request method
@@ -96,27 +163,39 @@ class Router extends Object implements RouterInterface {
         $method = $this->getRequestMethod();
         $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}";
         if (!class_exists($invokeClass, true)) {
-            throw new BadClassCallException($invokeClass);
+            $dir = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
+            if (is_dir($dir) && $this->defaultClass != null) {
+                $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}\{$this->defaultClass}";
+                if (!class_exists($invokeClass, true)) {
+                    throw new BadClassCallException($invokeClass);
+                }
+            } else {
+                throw new BadClassCallException($invokeClass);
+            }
         }
         $invokeClassReflection = new ReflectionClass($invokeClass);
         if ($invokeClassReflection->hasMethod($method)) {
+            $appContext->setURIOutRouterPath($this->suffixPart);
             $invokeObject = $invokeClassReflection->newInstance($appContext);
             $invokeObject->$method();
         } else {
             throw new StandardException("Not Support Request Method ($method)");
         }
     }
-    
+
     /**
-     * implements {@see Toknot\Control\RouterInterface} of method , the method only 
-     * set toknot defualt router of run mode {@see Toknot\Control\Router::$routerMode}
+     * implements {@see Toknot\Control\RouterInterface} of method , the method
+     * set toknot defualt router of run mode {@see Toknot\Control\Router::$routerMode} and
+     * set the controller max level namespace which on PATH mode in effect
      * 
-     * @param type $mode    router of run mode be passed by Application::run of 4th parameter
+     * @param int $mode  router of run mode be passed by Application::run of 4th parameter
+     * @param int $name  the under controller of namespace max level, if set 0 will not limit
      */
-    public function runtimeArgs($mode = 0) {
+    public function runtimeArgs($mode = self::ROUTER_PATH, $routeDepth = 1) {
         $this->routerMode = $mode;
+        $this->routerDepth = $routeDepth;
     }
-    
+
     /**
      * implements {@see Toknot\Control\RouterInterface} of method, the method set Application
      * of top namespace 
@@ -126,7 +205,7 @@ class Router extends Object implements RouterInterface {
     public function routerSpace($appspace) {
         $this->routerNameSpace = $appspace;
     }
-    
+
     /**
      * get HTTP request use method
      * 
@@ -136,7 +215,7 @@ class Router extends Object implements RouterInterface {
         if (empty($_SERVER['REQUEST_METHOD'])) {
             $_SERVER['REQUEST_METHOD'] = getenv('REQUEST_METHOD');
         }
-        if(empty($_SERVER['REQUEST_METHOD'])) {
+        if (empty($_SERVER['REQUEST_METHOD'])) {
             $_SERVER['REQUEST_METHOD'] = 'CLI';
         }
         return strtoupper($_SERVER['REQUEST_METHOD']);

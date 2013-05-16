@@ -199,7 +199,10 @@ class Application {
      *                                and no query,The class name of default with not full namespace
      *                                class name can not contain application top namespace and
      *                                Controller layer namespace
-     * @param mixed $_   Variable list of router need of paramers on runtime 
+     * @param mixed $_   Variable list of router need of paramers on runtime, the toknot default router support
+     *                    2 parameters:
+     *                    $routerMode  use set {@see Router::ROUTER_PATH} or {@see Router::ROUTER_GET_QUERY}
+     *                    $routerDepth it is controller max namespace level
      * @throws BadNamespaceException
      * @throws BadClassCallException
      * @throws StandardException

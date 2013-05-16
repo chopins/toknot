@@ -7,7 +7,7 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
-namespace Shop\View\User;
+namespace Shop\Controller\User;
 use Shop\ShopContext;
 
 class Register extends ShopContext {

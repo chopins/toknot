@@ -13,12 +13,21 @@ use Toknot\Di\Object;
 use Toknot\View\Renderer;
 use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
+use Toknot\View\HTML;
+use Toknot\View\XML;
 
-class AppContext extends Object{
+final class AppContext extends Object{
     public $D = null;
+    protected $uriOutRouterPath = null;
     public static function singleton() {
         return parent::__singleton();
     } 
+    public function setURIOutRouterPath($part) {
+        $this->uriOutRouterPath = $part;
+    }
+    public function getUriOutRouterPath() {
+        return $this->uriOutRouterPath;
+    }
 
     public function __construct() {
         ConfigLoader::singleton();
@@ -29,13 +38,30 @@ class AppContext extends Object{
     public function getActiveRecord() {
         return ActiveRecord::singleton();
     }
-    public function getView() {
-        return null;
+    public function newTemplateView() {
+        return Renderer::singleton();
+    }
+
+    public function newHTMLView() {
+        return HTML::singleton();
+    }
+    public function newXMLView() {
+        return XML::singleton();
+    }
+    public function newJSONView() {
+        
+    }
+
+    public function newPictureView() {
+        
     }
 
     public function display($tplName) {
         $this->view = Renderer::singleton();
         $this->view->import($this->D);
         $this->view->display($tplName);
+    }
+    public function getParam() {
+        
     }
 }

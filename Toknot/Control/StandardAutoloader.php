@@ -27,7 +27,7 @@ class StandardAutoloader {
         $this->directory[] = $path;
     }
 
-    private function transformClassNameToFilename($class, $dir) {
+    public static function transformClassNameToFilename($class, $dir) {
         $topNamespace = strtok($class, self::NS_SEPARATOR);
         $lastPath = basename($dir);
         if ($topNamespace != $lastPath)
@@ -39,7 +39,7 @@ class StandardAutoloader {
 
     public function autoload($class) {
         foreach ($this->directory as $dir) {
-            $filename = $this->transformClassNameToFilename($class, $dir);
+            $filename = self::transformClassNameToFilename($class, $dir);
             if (!$filename)
                 continue;
             $resolvedName = stream_resolve_include_path($filename);
