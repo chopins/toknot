@@ -10,7 +10,13 @@
 
 namespace Toknot\Di;
 
-abstract class Object implements \Iterator, \Countable {
+use \ReflectionObject;
+use \ReflectionMethod;
+use \ReflectionProperty;
+use \Iterator;
+use \Countable;
+
+abstract class Object implements Iterator, Countable {
 
     /**
      * For iterator of propertie list
@@ -115,6 +121,25 @@ abstract class Object implements \Iterator, \Countable {
         return false;
     }
 
+    final public function getDocComment($method = null) {
+        if (is_null($method)) {
+            $ref = new ReflectionObject($this);
+            return $ref->getDocComment();
+        } else {
+            try {
+                $mRef = new ReflectionMethod($this, $method);
+                return $mRef->getDocComment();
+            } catch (ReflectionException $e) {
+                try {
+                    $pRef = new ReflectionProperty($this, $method);
+                    return $pRef->getDocComment();
+                } catch (ReflectionException $e) {
+                    return false;
+                }
+            }
+        }
+    }
+
     public function rewind() {
         $ref = new ReflectionObject($this);
         $propertiesList = $ref->getProperties();
@@ -143,5 +168,6 @@ abstract class Object implements \Iterator, \Countable {
     public function count() {
         return count($this->interatorArray);
     }
+
 }
 

@@ -32,6 +32,8 @@ final class DbTableObject extends DbCRUD {
         $this->tableName = $tableName;
         $this->dbObject = $databaseObject;
         $this->connectInstance = $databaseObject->connectInstance;
+        $this->dbDriverType = $databaseObject->dbDriverType;
+
         $this->showColumnList();
         $this->order = ActiveQuery::ORDER_DESC;
         $this->orderBy = $this->primaryName;

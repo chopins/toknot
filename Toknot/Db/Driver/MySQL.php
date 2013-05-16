@@ -142,8 +142,7 @@ class MySQL {
     }
 
     public function fetch($fetchStyle = null) {
-        $const = get_defined_constants();
-        $fetchStyle = $const["MYSQLI_{$fetchStyle}"];
+        $fetchStyle = constant("MYSQLI_{$fetchStyle}");
         if ($this->useMySQLi) {
             return $this->query->fetch_array($fetchStyle);
         }
@@ -158,8 +157,7 @@ class MySQL {
 
     public function fetchAll($fetchStyle = null) {
         if ($this->useMySQLi && $fetchStyle != ActiveQuery::FETCH_OBJ) {
-            $const = get_defined_constants();
-            $fetchStyle = $const["MYSQLI_{$fetchStyle}"];
+            $fetchStyle = constant("MYSQLI_{$fetchStyle}");
             return $this->query->fetch_all($fetchStyle);
         }
         $return = array();

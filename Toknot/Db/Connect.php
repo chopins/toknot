@@ -26,7 +26,10 @@ class Connect extends Object {
     private $driverOptions = null;
     private static $supportDriver = array();
     private $connectInstance = null;
+    private $dbDriverType = null;
     
+    const DB_INS_PDO = 1;
+    const DB_INS_DRIVER = 2;
     /**
      * create Database connect and bind to DatabaseObject instance
      * 
@@ -42,9 +45,13 @@ class Connect extends Object {
         try {
             $this->connectDatabase();
             $connectObject->setConnectInstance($this);
+            $connectObject->setDbDriverType($this->dbDriverType);
         } catch (DatabaseException $e) {
             echo $e;
         }
+    }
+    public function getDbDriverType() {
+        return $this->dbDriverType;
     }
 
     public function getConnectInstance() {
@@ -58,6 +65,7 @@ class Connect extends Object {
             } catch (PDOException $pdoe) {
                 throw new DatabaseException($pdoe->getMessage(), $pdoe->getCode());
             }
+            $this->dbDriverType = self::DB_INS_PDO;
         } else {
             $databaseType = strtolower(strtok($this->dsn, ':'));
             switch ($databaseType) {
@@ -74,6 +82,7 @@ class Connect extends Object {
                     }
                     break;
             }
+            $this->dbDriverType = self::DB_INS_DRIVER;
         }
     }
 

@@ -27,9 +27,11 @@ final class DatabaseObject extends DbCRUD {
     private static $tableList = array();
     protected $driverOptions = null;
     protected $tablePrefix = '';
-
     protected function __construct() {
         
+    }
+    public function setDbDriverType($type) {
+        $this->dbDriverType = $type;
     }
 
     public static function singleton() {

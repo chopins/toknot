@@ -36,6 +36,7 @@ final class DbTableJoinObject extends DbCRUD {
             $this->interatorArray[$tableObject->tableName] = $tableObject;
         }
         $this->connectInstance = $table1->connectInstance;
+        $this->dbDriverType = $table1->dbDriverType;
     }
 
     public function __get($name) {
@@ -85,8 +86,7 @@ final class DbTableJoinObject extends DbCRUD {
         foreach ($this->preJONSQLs as $key => $tableSQL) {
             $sql .= $tableSQL;
             $sql .= $this->preONSQLs[$i];
-            $field = ActiveQuery::bindTableAlias($this->interatorArray[$key]->alias, 
-                                         $this->interatorArray[$key]->columnList);
+            $field = ActiveQuery::bindTableAlias($this->interatorArray[$key]->alias, $this->interatorArray[$key]->columnList);
             $i++;
         }
         $select = ActiveQuery::select($this->firstTable->tableName, $field) . ' AS ' . $this->firstTable->alias;
