@@ -131,7 +131,6 @@ final class DatabaseObject extends DbCRUD {
         foreach ($this->tableValueList as $tableName => $table) {
             $sql = ActiveQuery::createTable($tableName);
             $sql .= ActiveQuery::setColumn($table);
-            var_dump($sql);
             $this->create($sql);
         }
     }
