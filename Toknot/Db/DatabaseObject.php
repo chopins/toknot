@@ -78,7 +78,6 @@ final class DatabaseObject extends DbCRUD {
         foreach ($result as $tableInfo) {
             $tableList[] = array_shift($tableInfo);
         }
-        var_dump($tableList);
         return $tableList;
     }
 

@@ -172,6 +172,9 @@ class ActiveQuery {
     }
 
     public static function order($order, $field) {
+        if($field == NULL) {
+            return '';
+        }
         if ($order == self::ORDER_ASC) {
             return " ORDER BY $field ASC";
         } else {

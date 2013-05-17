@@ -11,10 +11,10 @@
 namespace Toknot\Db;
 
 use Toknot\Db\DbTableObject;
-use Toknot\Di\Object;
+use Toknot\Di\StringObject;
 use Toknot\Exception\StandardException;
 
-class DbTableColumn extends Object{
+class DbTableColumn extends StringObject{
     private $columnName = null;
     private $tableObject = null;
     public $alias = null;
@@ -26,6 +26,7 @@ class DbTableColumn extends Object{
     public function __construct($columnName, DbTableObject &$tableObject) {
         $this->columnName = $columnName;
         $this->tableObject = $tableObject;
+        parent::__construct($columnName);
     }
     public function __get($name) {
         if(isset($this->$name)) {

@@ -11,6 +11,8 @@
 namespace Toknot\Db;
 
 use Toknot\Db\DbCRUD;
+use Toknot\Db\ActiveQuery;
+use Toknot\Db\Exception\DatabaseException;
 use \InvalidArgumentException;
 
 final class DbTableJoinObject extends DbCRUD {
@@ -28,6 +30,9 @@ final class DbTableJoinObject extends DbCRUD {
      * @throws InvalidArgumentException
      */
     public function __construct(DbTableObject $table1, DbTableObject $table2) {
+        if(ActiveQuery::getDbDriverType() == ActiveQuery::DRIVER_SQLITE) {
+            throw new DatabaseException('Unsupport mult-table query for sqlite, you must write SQL by self');
+        }
         $tableList = func_get_args();
         foreach ($tableList as $tableObject) {
             if (!$tableObject instanceof DbTableObject) {
@@ -60,13 +65,15 @@ final class DbTableJoinObject extends DbCRUD {
         if ($argc % 2 != 0) {
             throw new InvalidArgumentException('Must be pairs');
         }
+        
         $tableNum = count($this->interatorArray) - 1;
         if ($tableNum != $argc / 2) {
             throw new InvalidArgumentException('Args number invalid');
         }
+        
         for ($i = 0; $i < $argc; $i = $i + 2) {
-            $f1 = "{$keyList[$i]->tableObject->alias}.{$keyList[$i]}";
-            $f2 = "{$keyList[$i + 1]->tableObject->alias}.{$keyList[$i + 1]}";
+            $f1 = "{$keyList[$i]->tableObject->alias}.{$keyList[$i]->columnName}";
+            $f2 = "{$keyList[$i + 1]->tableObject->alias}.{$keyList[$i + 1]->columnName}";
             $this->preONSQLs[] = ActiveQuery::on($f1, $f2);
         }
     }
@@ -79,14 +86,14 @@ final class DbTableJoinObject extends DbCRUD {
     }
 
     protected function bulidSQL() {
-        $partNum = count($this->preJONSQLs);
         $sql = '';
         $select = ActiveQuery::bindTableAlias($this->firstTable->alias, $this->firstTable->columnList);
         $i = 0;
         foreach ($this->preJONSQLs as $key => $tableSQL) {
             $sql .= $tableSQL;
             $sql .= $this->preONSQLs[$i];
-            $field = ActiveQuery::bindTableAlias($this->interatorArray[$key]->alias, $this->interatorArray[$key]->columnList);
+            $field = ActiveQuery::bindTableAlias($this->interatorArray[$key]->alias, 
+                                        $this->interatorArray[$key]->columnList);
             $i++;
         }
         $select = ActiveQuery::select($this->firstTable->tableName, $field) . ' AS ' . $this->firstTable->alias;
@@ -117,7 +124,6 @@ final class DbTableJoinObject extends DbCRUD {
         $sql = $this->bulidSQL();
         $sql .= ActiveQuery::order($this->order, $this->orderBy);
         $sql .= ActiveQuery::limit($start, $limit);
-        var_dump($sql);
         $this->readAll($sql);
     }
 

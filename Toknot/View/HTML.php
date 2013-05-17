@@ -37,6 +37,7 @@ class HTML extends View {
         $html = file_get_contents($file);
         $tag = strtok($html, '<');
         var_dump($tag);
+        return;
         while ($tag) {
             $tag = strtok($html, '>');
             var_dump($tag);

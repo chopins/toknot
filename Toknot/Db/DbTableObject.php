@@ -233,7 +233,7 @@ final class DbTableObject extends DbCRUD {
         $sql .= ActiveQuery::where("{$this->primaryName} {$condition} ?");
         switch ($condition) {
             case ActiveQuery::EQUAL:
-                return $this->read($sql, array($pkValue));
+                return $this->readOne($sql, array($pkValue));
                 break;
             case ActiveQuery::LESS_OR_EQUAL:
             case ActiveQuery::LESS_THAN:

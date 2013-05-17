@@ -33,9 +33,14 @@ abstract class DbCRUD extends Object {
     }
 
     public function create($sql, $params = array()) {
+        $isInsert = strpos($sql, 'INSERT');
         $pdo = $this->connectInstance->prepare($sql);
         if ($pdo) {
-            $pdo->execute($params);
+            $r = $pdo->execute($params);
+            if(!$r) {
+                throw new DatabaseException($pdo->errorInfo(),
+                                            $pdo->errorCode());
+            }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
@@ -44,16 +49,27 @@ abstract class DbCRUD extends Object {
                                             $this->connectInstance->errorCode());
             }
         }
-        return $pdo->lastInsertId();
+        if($isInsert) {
+            return $pdo->lastInsertId();
+        } else {
+            return $pdo->rowCount();
+        }
+    }
+    public function exec($sql) {
+        return $this->connectInstance->query($sql);
     }
 
-    public function read($sql, $params = array()) {
+    public function readOne($sql, $params = array()) {
         if (stripos($sql, 'LIMIT') === false) {
             $sql .= ' LIMIT 1';
         }
         $pdo = $this->connectInstance->prepare($sql);
         if ($pdo) {
-            $pdo->execute($params);
+            $r = $pdo->execute($params);
+            if(!$r) {
+                throw new DatabaseException($pdo->errorInfo(),
+                                            $pdo->errorCode());
+            }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
@@ -68,7 +84,11 @@ abstract class DbCRUD extends Object {
     public function readAll($sql, $params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
         if ($pdo) {
-            $pdo->execute($params);
+            $r = $pdo->execute($params);
+            if(!$r) {
+                throw new DatabaseException($pdo->errorInfo(),
+                                            $pdo->errorCode());
+            }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
@@ -83,7 +103,11 @@ abstract class DbCRUD extends Object {
     public function update($sql, $params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
         if ($pdo) {
-            $pdo->execute($params);
+            $r  = $pdo->execute($params);
+            if(!$r) {
+                throw new DatabaseException($pdo->errorInfo(),
+                                           $pdo->errorCode());
+            }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
@@ -98,7 +122,11 @@ abstract class DbCRUD extends Object {
     public function delete($sql, $params = array()) {
         $pdo = $this->connectInstance->prepare($sql);
         if ($pdo) {
-            $pdo->execute($params);
+            $r = $pdo->execute($params);
+            if(!$r) {
+                throw new DatabaseException($pdo->errorInfo(),
+                                            $$pdo->errorCode());
+            }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
