@@ -23,8 +23,9 @@ class ShopContext {
         $this->AR = $this->AppContext->getActiveRecord();
         $this->AppPath = __DIR__;
         $this->CFG = $this->AppContext->loadConfigure($this->AppPath . '/Config/config.ini');
-        $this->view = $this->AppContext->newHTMLView();
-        $this->view->scanPath = __DIR__.'/View';
+        $this->view = $this->AppContext->newTemplateView();
+        $this->view->scanPath = __DIR__. '/View';
+        $this->view->cachePath = __DIR__ . '/Data/View';
     }
 
     public function CLI() {

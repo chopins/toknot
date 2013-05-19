@@ -12,6 +12,7 @@ namespace Toknot\View;
 
 use Toknot\View\View;
 use Toknot\Exception\StandardException;
+use \DOMComment;
 
 class HTML extends View {
 
@@ -26,22 +27,26 @@ class HTML extends View {
     }
 
     protected function __construct() {
-        
+        if (!class_exists('DOMDocument')) {
+            throw new StandardException('Requires DOM extension');
+        }
+        $this->htmlDOM = new DOMDocument();
+        libxml_use_internal_errors(true);
     }
 
     public function loop($id, $data, $callable) {
         $loopNode = $this->htmlDOM->getElementById($id);
+        foreach ($data as $key => $value) {
+            $line = $loopNode->getLineNo();
+            $html = '<li>
+            <a href = "https://github.com/chopins/toknot/blob/master/js-document.md">About</a>
+            </li>';
+        }
     }
 
     public function loadHTMLFile($file) {
-        $html = file_get_contents($file);
-        $tag = strtok($html, '<');
-        var_dump($tag);
-        return;
-        while ($tag) {
-            $tag = strtok($html, '>');
-            var_dump($tag);
-        }
+        $this->loadHTMLFile($file);
+        libxml_clear_errors();
     }
 
     public function newPage($page) {
@@ -54,11 +59,11 @@ class HTML extends View {
     }
 
     public function title($title) {
-        $this->title = $title;
+        $titleNode = $this->htmlDOM->getElementsByTagName('title')->item[0]->getLineNo();
     }
 
     public function newMeta($string) {
-        $this->head[] = "<meta $string />";
+        
     }
 
 }

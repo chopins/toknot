@@ -11,7 +11,11 @@ namespace Shop\Controller\User;
 use Shop\ShopContext;
 class Login extends ShopContext {
     public function GET() {
+        $this->view->newPage('index');
+        $meta = $this->view->newMeta('http-equiv="content-type" content="text/html; charset=UTF-8"');
+        $title = $this->view->title('test');
         
+        $this->view->display();
     }
     public function POST() {
         ;
