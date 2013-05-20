@@ -159,7 +159,7 @@ class Application {
      * invoke class under application of Controller Dicetory, scan file path is under $appPath 
      * parameter set path(like: /path/appPath/Controller). The class be invoke by toknot of router 
      * invoke method with passed instance of Toknot 
-     * {@see \Toknot\Control\AppContext}, you can receive the object of instance when class construct
+     * {@see \Toknot\Control\FMAI}, you can receive the object of instance when class construct
      * 
      * Usual use toknot of router, run framework like below:
      * <code>
@@ -208,7 +208,8 @@ class Application {
      *                                Controller layer namespace
      * @param mixed $_   Variable list of router need of paramers on runtime, the toknot default router support
      *                    2 parameters:
-     *                    $routerMode  use set {@see Router::ROUTER_PATH} or {@see Router::ROUTER_GET_QUERY}
+     *                    $routerMode  use set {@see Toknot\Control\Router::ROUTER_PATH} or 
+     *                                  {@see Toknot\Control\Router::ROUTER_GET_QUERY}
      *                    $routerDepth it is controller max namespace level
      * @throws BadNamespaceException
      * @throws BadClassCallException

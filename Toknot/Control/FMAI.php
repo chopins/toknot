@@ -130,7 +130,7 @@ final class FMAI extends Object {
     /**
      * Instance of {@see Toknot\Db\ActiveRecord}
      * 
-     * @return Toknot\Db\ActiveRecourd
+     * @return Toknot\Db\ActiveRecord
      */
     public function getActiveRecord() {
         return ActiveRecord::singleton();
