@@ -45,6 +45,16 @@ final class FMAI extends Object {
     protected function __construct() {
         ConfigLoader::singleton();
     }
+    
+    /**
+     * @param string $uri
+     */
+    public function setURIOutRouterPath($uri) {
+        $this->uriOutRouterPath = $uri;
+    }
+    public function getURIOutRouterPath() {
+        return $this->uriOutRouterPath;
+    }
 
     /**
      * Load configure file
@@ -99,7 +109,7 @@ final class FMAI extends Object {
      * </code>
      */
     public function enableHTMLCache() {
-        
+
         ViewCache::$enableCache = true;
         ViewCache::setRenderer($this->newTemplateView());
         ViewCache::registerDisplayHandle('outPutHTMLCache');

@@ -91,7 +91,7 @@ class StandardException extends ErrorException {
     }
 
     public function getDebugTraceAsString($traceArr = null) {
-        
+
         if ($this->isException == false)
             return $this->message;
         $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type">';
@@ -107,7 +107,7 @@ class StandardException extends ErrorException {
             $str .= $this->earch($traceArr);
         }
         $str .='</pre></ul></div>';
-        if(PHP_SAPI == 'cli') {
+        if (PHP_SAPI == 'cli') {
             return strip_tags($str);
         } else {
             return $str;
@@ -115,10 +115,12 @@ class StandardException extends ErrorException {
     }
 
     public function __toString() {
-        return $this->getDebugTraceAsString();
-    }
-    public function debugPrintMessage() {
-        
+        if (DEVELOPMENT) {
+            return $this->getDebugTraceAsString();
+        } else {
+            header('500 Internal Server Error');
+            return '500 Internal Server Error';
+        }
     }
 
     public function earch($traceArr) {

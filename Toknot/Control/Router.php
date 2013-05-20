@@ -167,10 +167,20 @@ class Router extends Object implements RouterInterface {
             if (is_dir($dir) && $this->defaultClass != null) {
                 $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}\{$this->defaultClass}";
                 if (!class_exists($invokeClass, true)) {
-                    throw new BadClassCallException($invokeClass);
+                    if (DEVELOPMENT) {
+                        throw new BadClassCallException($invokeClass);
+                    } else {
+                        header('404 Not Found');
+                        die('404 Not Found');
+                    }
                 }
             } else {
-                throw new BadClassCallException($invokeClass);
+                if (DEVELOPMENT) {
+                    throw new BadClassCallException($invokeClass);
+                } else {
+                    header('404 Not Found');
+                    die('404 Not Found');
+                }
             }
         }
         $invokeClassReflection = new ReflectionClass($invokeClass);
@@ -184,7 +194,12 @@ class Router extends Object implements RouterInterface {
                 $invokeObject->$method();
             }
         } else {
-            throw new StandardException("Not Support Request Method ($method)");
+            if (DEVELOPMENT) {
+                throw new StandardException("Not Support Request Method ($method)");
+            } else {
+                header('405 Method Not Allowed');
+                die('405 Method Not Allowed');
+            }
         }
     }
 

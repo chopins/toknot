@@ -10,7 +10,7 @@
 
 namespace Toknot\Control;
 
-include_once dirname(__FILE__) . '/StandardAutoloader.php';
+include_once __DIR__ . '/StandardAutoloader.php';
 
 use Toknot\Control\StandardAutoloader;
 use Toknot\Exception\StandardException;
@@ -55,7 +55,9 @@ class Application {
 
     /**
      * The construct parameters only receive PHP in CLI mode passed  argv and argc 
-     * parameters and save there to $_SERVER via iniEnv method
+     * parameters and save there to $_SERVER via iniEnv method, the method has define
+     * one constant of name {@see DEVELOPMENT} which is set true (default value) will show Exception
+     * message, is false only return 500 Internal Server Error status code
      * 
      * <code>
      * use Toknot\Control\Application;
@@ -84,6 +86,11 @@ class Application {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
+        
+        //define Application status, DEVELOPMENT is true will show Exeption
+        if(!defined('DEVELOPMENT')) {
+            define('DEVELOPMENT', true);
+        }
         $this->iniEnv($argv, $argc);
         $this->registerAutoLoader();
     }
