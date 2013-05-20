@@ -4,7 +4,7 @@
 The project is php of web fast development of MVC framework
 
 ##LICENSE
-    see [LICENSE](https://github.com/chopins/toknot/blob/master/LICENSE)
+see [LICENSE](https://github.com/chopins/toknot/blob/master/LICENSE)
 
 ##DIRECTORY STRUCTURE
     Toknot/             framework sources code
