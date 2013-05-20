@@ -18,7 +18,7 @@ your application of `index.php`:
     $app->run('\Shop',dirname(__DIR__));
 ```
 then, configure your nginx conf file of server section like below:
-    
+```conf  
     server {
         listen 80;
         server_name localhost;
@@ -38,7 +38,7 @@ then, configure your nginx conf file of server section like below:
             include        fastcgi_params;
         }
     }
-   
+```   
 ##Create Application
 * creare application controller
 
