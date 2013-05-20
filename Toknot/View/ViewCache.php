@@ -18,15 +18,16 @@ class ViewCache extends Object {
     private static $cacheFile = '';
     private static $renderer = null;
     private static $displayMethod = 'display';
+    public static $enableCache = false;
 
     public static function registerDisplayHandle($method) {
         self::$displayMethod = $method;
     }
 
     public static function outPutCache() {
-        call_user_func(array(self::$renderer,  self::$displayMethod), self::$cacheFile);
+        self::$cacheEffective = call_user_func(array(self::$renderer,  self::$displayMethod), self::$cacheFile);
     }
-    public static function setRenderer($object) {
+    public static function setRenderer(& $object) {
         self::$renderer = $object;
     }
 

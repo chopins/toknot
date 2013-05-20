@@ -26,11 +26,10 @@ class ShopBase {
         
         $this->FMAI->enableHTMLCache();
         
-        $this->view = $this->FMAI->newTemplateView();
-        
-        $this->view->scanPath = __DIR__ . '/View';
-        $this->view->cachePath = __DIR__ . '/Data/View';
-        $this->view->fileExtension = 'html';
+        $view = $this->FMAI->newTemplateView();
+        $view->scanPath = __DIR__ . '/View';
+        $view->cachePath = __DIR__ . '/Data/View';
+        $view->fileExtension = 'html';
     }
 
     public function CLI() {

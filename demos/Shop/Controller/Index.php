@@ -53,8 +53,7 @@ class Index extends ShopBase {
         $joinTmpTable->tableON($joinTmpTable->product->id, $joinTmpTable->productCat->id);
         $joinTmpTable->find(10);
 
-        
-        $this->view->display('index');
+        $this->FMAI->display('index');
     }
 
 }

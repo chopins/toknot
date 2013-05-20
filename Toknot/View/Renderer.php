@@ -19,7 +19,7 @@ class Renderer extends Object {
 
     private $varList = null;
     private $tplName = '';
-    
+
     /**
      * Set template file extension name
      * 
@@ -27,7 +27,7 @@ class Renderer extends Object {
      * @access public
      */
     public $fileExtension = 'htm';
-    
+
     /**
      * Set template file path, usual the path is Application of View layer path
      *
@@ -35,7 +35,7 @@ class Renderer extends Object {
      * @access public
      */
     public $scanPath = '';
-    
+
     /**
      * Set template file be transfrom to php file save path, usual the path is Application of Data View path
      *
@@ -45,14 +45,14 @@ class Renderer extends Object {
     public $cachePath = '';
     private $transfromFile = '';
     private $htmlCacheFile = '';
-    
+
     /**
      * Set whether enable HTML static cache, if set true is enable and must set Renderer::$htmlCachePath
      *
      * @var boolean
      */
     public $enableHTMLCache = false;
-    
+
     /**
      * set HTML static cache save path when enable HTML cache
      *
@@ -60,7 +60,7 @@ class Renderer extends Object {
      * @access public
      */
     public $htmlCachePath = null;
-    
+
     /**
      * set output HTML static cache of threshold time, if one REQUEST query is same and 
      * twice request time of interval less the value, will output exists HTML file
@@ -69,7 +69,7 @@ class Renderer extends Object {
      * @access public
      */
     public $outCacheThreshold = 2;
-    
+
     protected function __construct() {
         ;
     }
@@ -78,8 +78,26 @@ class Renderer extends Object {
         return parent::__singleton();
     }
 
+    /**
+     * import variable of template
+     * 
+     * @param array $vars
+     */
     public function importVars($vars) {
         $this->varList = new ArrayObject($vars);
+    }
+
+    public function outPutHTMLCache($tplName) {
+        $key = md5($_SERVER['QUERY_STRING']);
+        $this->htmlCacheFile = $this->htmlCachePath . '/' . $tplName . '.' . $key . '.html';
+        if (file_exists($this->htmlCacheFile)) {
+            $mtime = filemtime($this->htmlCacheFile);
+            if ($mtime + $this->outCacheThreshold <= time()) {
+                include_once $this->htmlCacheFile;
+                return true;
+            }
+        }
+        return false;
     }
 
     public function display($tplName) {
@@ -87,28 +105,28 @@ class Renderer extends Object {
         if (!file_exists($this->tplName)) {
             throw new StandardException("{$this->tplName} not exists");
         }
-        
+
         //HTML cache control
         if ($this->enableHTMLCache && $this->htmlCachePath != null) {
             $key = md5($_SERVER['QUERY_STRING']);
-            $this->htmlCacheFile = $this->htmlCachePath . '/' . $tplName . '.' .$key. '.html';
-            if(file_exists($this->htmlCacheFile)) {
+            $this->htmlCacheFile = $this->htmlCachePath . '/' . $tplName . '.' . $key . '.html';
+            if (file_exists($this->htmlCacheFile)) {
                 $mtime = filemtime($this->htmlCacheFile);
-                if($mtime + $this->outCacheThreshold <= time()) {
+                if ($mtime + $this->outCacheThreshold <= time()) {
                     return include_once $this->htmlCacheFile;
                 }
             }
             ob_start();
         }
-        
+
         $this->transfromFile = $this->cachePath . '/' . $tplName . '.php';
         if (!file_exists($this->transfromFile) ||
                 filemtime($this->transfromFile) < filemtime($this->tplName)) {
             $this->transfromToPHP();
         }
-        
+
         include_once $this->transfromFile;
-        
+
         //HTML Cache write
         if ($this->enableHTMLCache && $this->htmlCachePath != null) {
             $html = ob_get_contents();
@@ -164,14 +182,15 @@ class Renderer extends Object {
                     $matches[2] = str_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$this->varList->$1', $matches[2]);
                     return "<?php if(function_exists({$matches[1]})){ echo {$matches[1]}({$matches[2]});} ?>";
                 }, $content);
-        
+
         //clean the whitespace from beginning and end of line and html comment
-        $content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m','', $content);
-        
+        $content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
+
         FileObject::saveContent($this->transfromFile, $content);
     }
 
-    public function importFile($file) {
+    private function importFile($file) {
         $this->display($file);
     }
+
 }

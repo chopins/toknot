@@ -177,10 +177,12 @@ class Router extends Object implements RouterInterface {
         if ($invokeClassReflection->hasMethod($method)) {
             $FMAI->setURIOutRouterPath($this->suffixPart);
             $invokeObject = $invokeClassReflection->newInstance($FMAI);
-            if($method == 'GET' && ViewCache::$cacheEffective) {
-                return ViewCache::outPutCache();
+            if ($method == 'GET' && ViewCache::$enableCache) {
+                ViewCache::outPutCache();
             }
-            $invokeObject->$method();
+            if (ViewCache::$cacheEffective == false) {
+                $invokeObject->$method();
+            }
         } else {
             throw new StandardException("Not Support Request Method ($method)");
         }
