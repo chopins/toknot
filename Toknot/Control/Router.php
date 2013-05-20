@@ -23,7 +23,7 @@ class Router extends Object implements RouterInterface {
 
     /**
      * router mode, default 0 is PATH mode, 1 is GET query mode and use $_GET['r']
-     * to is invoke class, the property set by {@see Application::run} 
+     * to is invoke class, the property set by {@see Toknot\Control\Application::run} 
      * be invoke with passed of 4th parameter, Toknot default router of runtimeArgs method
      * will set be passed of first parameter
      * 
@@ -208,7 +208,7 @@ class Router extends Object implements RouterInterface {
      * set toknot defualt router of run mode {@see Toknot\Control\Router::$routerMode} and
      * set the controller max level namespace which on PATH mode in effect
      * 
-     * @param int $mode  router of run mode be passed by Application::run of 4th parameter
+     * @param int $mode  router of run mode be passed by {@see Toknot\Control\Application::run()} of 4th parameter
      * @param int $name  the under controller of namespace max level, if set 0 will not limit
      */
     public function runtimeArgs($mode = self::ROUTER_PATH, $routeDepth = 1) {

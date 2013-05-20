@@ -23,8 +23,8 @@ use Toknot\View\ViewCache;
 final class FMAI extends Object {
 
     /**
-     * The propertie is set variable of \Toknot\View\Renderer use template, because 
-     * {@see \Toknot\View\Renderer::$varList} use ArrayObject, so available to Application 
+     * The propertie is set variable of {@see Toknot\View\Renderer} use template, because 
+     * {@see Toknot\View\Renderer::$varList} use ArrayObject, so available to Application 
      * one Array of set way instead ArrayObject
      *
      * @var array 
@@ -69,7 +69,7 @@ final class FMAI extends Object {
     /**
      * enable HTML cache opreate, the cache will use Toknot\View\Renderer class provided of cache opreate
      * {@see Toknot\View\Renderer::dispaly} when twice request interval time less one threshold could output
-     * the first save html file, so {@see ViewCache::registerDisplayHandle} register what is 
+     * the first save html file, so {@see Toknot\View\ViewCache::registerDisplayHandle} register what is 
      * {@see Toknot\View\Renderer::dispaly}
      * 
      * <code>
@@ -119,7 +119,7 @@ final class FMAI extends Object {
     /**
      * set cache file be use when View class output cache, if use {@see Toknot\View\Renderer}
      * accomplish View layer page renderer class and will here is set template file name like use 
-     * {@see FMAI::display()}
+     * {@see Toknot\Control\FMAI::display()}
      * 
      * @param string $file
      */
@@ -128,18 +128,18 @@ final class FMAI extends Object {
     }
 
     /**
-     * Instance of \Toknot\Db\ActiveRecord
+     * Instance of {@see Toknot\Db\ActiveRecord}
      * 
-     * @return \Toknot\Db\ActiveRecourd
+     * @return Toknot\Db\ActiveRecourd
      */
     public function getActiveRecord() {
         return ActiveRecord::singleton();
     }
 
     /**
-     * Instance of \Toknot\View\Renderer
+     * Instance of {@see Toknot\View\Renderer}
      * 
-     * @return \Toknot\View\Renderer
+     * @return Toknot\View\Renderer
      */
     public function newTemplateView() {
         return Renderer::singleton();
@@ -158,10 +158,10 @@ final class FMAI extends Object {
     }
 
     /**
-     * Use {@see \Toknot\View\Renderer} output HTML 
+     * Use {@see Toknot\View\Renderer} output HTML 
      * 
      * @param string $tplName  The template file name which without extension name 
-     *                          and without {@see Renderer::scanPath} set path
+     *                          and without {@see Toknot\View\Renderer::$scanPath} set path
      */
     public function display($tplName) {
         $view = Renderer::singleton();
