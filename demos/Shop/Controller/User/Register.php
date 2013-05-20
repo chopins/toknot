@@ -8,9 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 namespace Shop\Controller\User;
-use Shop\ShopContext;
+use Shop\ShopBase;
 
-class Register extends ShopContext {
+class Register extends ShopBase {
     public function GET($appContext) {
         $appContext->D->hashkey = '11222';
         $appContext->display('register');

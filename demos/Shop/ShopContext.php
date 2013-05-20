@@ -10,22 +10,27 @@
 
 namespace Shop;
 
-class ShopContext {
+class ShopBase {
 
-    protected $AppContext;
+    protected $FMAI;
     protected $CFG;
     protected $AppPath;
     protected $AR;
     protected $view;
 
-    public function __construct($AppContext) {
-        $this->AppContext = $AppContext;
-        $this->AR = $this->AppContext->getActiveRecord();
+    public function __construct($FMAI) {
+        $this->FMAI = $FMAI;
+        $this->AR = $this->FMAI->getActiveRecord();
         $this->AppPath = __DIR__;
-        $this->CFG = $this->AppContext->loadConfigure($this->AppPath . '/Config/config.ini');
-        $this->view = $this->AppContext->newTemplateView();
-        $this->view->scanPath = __DIR__. '/View';
+        $this->CFG = $this->FMAI->loadConfigure($this->AppPath . '/Config/config.ini');
+        
+        $this->FMAI->enableHTMLCache();
+        
+        $this->view = $this->FMAI->newTemplateView();
+        
+        $this->view->scanPath = __DIR__ . '/View';
         $this->view->cachePath = __DIR__ . '/Data/View';
+        $this->view->fileExtension = 'html';
     }
 
     public function CLI() {

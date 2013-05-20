@@ -8,8 +8,8 @@
  * @link       https://github.com/chopins/toknot
  */
 namespace Shop\Controller\User;
-use Shop\ShopContext;
-class Login extends ShopContext {
+use Shop\ShopBase;
+class Login extends ShopBase {
     public function GET() {
         $this->view->newPage('index');
         $meta = $this->view->newMeta('http-equiv="content-type" content="text/html; charset=UTF-8"');

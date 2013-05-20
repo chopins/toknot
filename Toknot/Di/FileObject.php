@@ -80,6 +80,17 @@ class FileObject extends Object {
         }
         return new SplFileObject($this->path, $mode);
     }
+    public static function saveContent($file,$data) {
+        $path = dirname($file);
+        if(!is_dir(dirname($path))) {
+            $r = mkdir($path, 0777, true);
+            if(!$r) {
+                throw new FileIOException("$file write fail or $path is not directory");
+            } 
+        }
+        file_put_contents($file, $data);
+        return new static($file);
+    }
 
     public function rewind() {
         $dir = dir($this->path);

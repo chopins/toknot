@@ -10,12 +10,15 @@
 
 namespace Shop\Controller;
 
-use Shop\ShopContext;
+use Shop\ShopBase;
 
-class Index extends ShopContext {
+class Index extends ShopBase {
+    public function __construct($FMAI) {
+        parent::__construct($FMAI);
+        $FMAI->setCacheFile('index');
+    }
 
     public function GET() {
-        echo 'hello word';
         //create ActiveRecord
         $this->AR->config($this->CFG->Database);
         //create database connect and return one DatabaseObject instance
@@ -49,20 +52,9 @@ class Index extends ShopContext {
         $joinTmpTable->productCat->alias = 'c';
         $joinTmpTable->tableON($joinTmpTable->product->id, $joinTmpTable->productCat->id);
         $joinTmpTable->find(10);
+
         
-        /*
-         * <html>
-         * <head>
-         * </head>
-         * <body>
-         * </body>
-         * </html>
-         */
-        $this->view->newPage('index');
-        $meta = $this->view->newMeta('http-equiv="content-type" content="text/html; charset=UTF-8"');
-        $title = $this->view->title('test');
-        
-        $this->view->display();
+        $this->view->display('index');
     }
 
 }

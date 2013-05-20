@@ -14,10 +14,10 @@ use Toknot\Di\Object;
 use Toknot\Control\RouterInterface;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
-use Toknot\Control\AppContext;
+use Toknot\Control\FMAI;
 use \ReflectionClass;
 use Toknot\Control\StandardAutoloader;
-use Toknot\Di\ArrayObject;
+use Toknot\View\ViewCache;
 
 class Router extends Object implements RouterInterface {
 
@@ -155,11 +155,11 @@ class Router extends Object implements RouterInterface {
      * Invoke Application Controller, the method will call application of Controller what is
      * $this->routerNameSpace\Controller{$this->spacePath}, and router action by request method
      * 
-     * @param \Toknot\Control\AppContext $appContext
+     * @param \Toknot\Control\FMAI $appContext
      * @throws BadClassCallException
      * @throws StandardException
      */
-    public function invoke(AppContext $appContext) {
+    public function invoke(FMAI $FMAI) {
         $method = $this->getRequestMethod();
         $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}";
         if (!class_exists($invokeClass, true)) {
@@ -175,8 +175,11 @@ class Router extends Object implements RouterInterface {
         }
         $invokeClassReflection = new ReflectionClass($invokeClass);
         if ($invokeClassReflection->hasMethod($method)) {
-            $appContext->setURIOutRouterPath($this->suffixPart);
-            $invokeObject = $invokeClassReflection->newInstance($appContext);
+            $FMAI->setURIOutRouterPath($this->suffixPart);
+            $invokeObject = $invokeClassReflection->newInstance($FMAI);
+            if($method == 'GET' && ViewCache::$cacheEffective) {
+                return ViewCache::outPutCache();
+            }
             $invokeObject->$method();
         } else {
             throw new StandardException("Not Support Request Method ($method)");

@@ -17,7 +17,7 @@ use Toknot\Exception\StandardException;
 use Toknot\Contorl\Exception\PHPVersionException;
 use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
-use Toknot\Control\AppContext;
+use Toknot\Control\FMAI;
 use \ReflectionClass;
 
 /**
@@ -229,7 +229,7 @@ class Application {
 
             $args = func_get_args();
             $this->addAppPath($appPath);
-            $context = AppContext::singleton($appPath);
+            $context = FMAI::singleton($appPath);
             call_user_func_array(array($router,'runtimeArgs'), array_slice($args,2));
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);

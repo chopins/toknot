@@ -9,22 +9,30 @@
  */
 
 namespace Toknot\Control;
+
 use Toknot\Di\Object;
 use Toknot\View\Renderer;
 use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
-use Toknot\View\HTML;
 use Toknot\View\XML;
+use Toknot\View\ViewCache;
 
-final class AppContext extends Object{
+/**
+ * Framework Module Access Interfaces
+ */
+final class FMAI extends Object {
+
     public $D = null;
     protected $uriOutRouterPath = null;
+
     public static function singleton() {
         return parent::__singleton();
-    } 
+    }
+
     public function setURIOutRouterPath($part) {
         $this->uriOutRouterPath = $part;
     }
+
     public function getUriOutRouterPath() {
         return $this->uriOutRouterPath;
     }
@@ -32,22 +40,31 @@ final class AppContext extends Object{
     public function __construct() {
         ConfigLoader::singleton();
     }
+
     public function loadConfigure($ini) {
         return ConfigLoader::loadCFG($ini);
     }
+    public function enableHTMLCache() {
+        ViewCache::$cacheEffective = true;
+        ViewCache::setRenderer($this->newTemplateView());
+        ViewCache::registerDisplayHandle('display');
+    }
+    public function setCacheFile($file) {
+        ViewCache::setCacheFile($file);
+    }
+
     public function getActiveRecord() {
         return ActiveRecord::singleton();
     }
+
     public function newTemplateView() {
         return Renderer::singleton();
     }
 
-    public function newHTMLView() {
-        return HTML::singleton();
-    }
     public function newXMLView() {
         return XML::singleton();
     }
+
     public function newJSONView() {
         
     }
@@ -61,7 +78,9 @@ final class AppContext extends Object{
         $this->view->import($this->D);
         $this->view->display($tplName);
     }
+
     public function getParam() {
         
     }
+
 }

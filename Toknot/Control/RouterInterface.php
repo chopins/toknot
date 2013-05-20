@@ -8,7 +8,7 @@
  */
 
 namespace Toknot\Control;
-use Toknot\Control\AppContext;
+use Toknot\Control\FMAI;
 
 /**
  * Router interface, allow appliection set self router 
@@ -24,10 +24,10 @@ interface RouterInterface {
      * invoke application object or method
      * 
      * @access public
-     * @param AppContext $appContext  AppContext instance
-     * @see AppContext
+     * @param FMAI $appContext  AppContext instance
+     * @see FMAI
      */
-    public function invoke(AppContext $appContext);
+    public function invoke(FMAI $appContext);
     
     /**
      * Add application top namespace
