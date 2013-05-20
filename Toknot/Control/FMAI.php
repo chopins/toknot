@@ -111,7 +111,8 @@ final class FMAI extends Object {
     public function enableHTMLCache() {
 
         ViewCache::$enableCache = true;
-        ViewCache::setRenderer($this->newTemplateView());
+        $view = $this->newTemplateView();
+        ViewCache::setRenderer($view);
         ViewCache::registerDisplayHandle('outPutHTMLCache');
     }
 
@@ -164,7 +165,7 @@ final class FMAI extends Object {
      */
     public function display($tplName) {
         $view = Renderer::singleton();
-        $view->import($this->D);
+        $view->importVars($this->D);
         $view->display($tplName);
     }
 
