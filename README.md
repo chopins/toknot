@@ -49,8 +49,8 @@ server {
         fastcgi_pass   127.0.0.1:9000;
         fastcgi_index  index.php;
 
-        #set applcation index.php file(a single entry point file) for nginx SCRIPT_FILENAME support PATH access mode
-        #otherwise only use GET query mode
+        #set applcation index.php file(a single entry point file) for nginx SCRIPT_FILENAME 
+        #support PATH access mode, otherwise only use GET query mode
         fastcgi_param  SCRIPT_FILENAME $appPath/WebRoot/index.php;
         include        fastcgi_params;
     }
