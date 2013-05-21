@@ -17,7 +17,6 @@ see (http://toknot.com/toknot/)
           Di/           framework of object
           Exception/    
           Http/         Http opreate
-          Image/        Image opreate
           Process/      Process manage
           Tool/         
           View/         view layer
