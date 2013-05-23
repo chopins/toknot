@@ -10,12 +10,10 @@
 namespace Shop\Controller\User;
 use Shop\ShopBase;
 class Login extends ShopBase {
+    public $perms = 0777;
     public function GET() {
-        $this->view->newPage('index');
-        $meta = $this->view->newMeta('http-equiv="content-type" content="text/html; charset=UTF-8"');
-        $title = $this->view->title('test');
-        
-        $this->view->display();
+        $currentUser = new CurrentUser('username');
+        $currentUser->info();
     }
     public function POST() {
         ;

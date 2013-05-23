@@ -17,7 +17,8 @@ class ShopBase {
     protected $AppPath;
     protected $AR;
     protected $view;
-
+    protected $prems;
+    protected $classGroup;
     public function __construct($FMAI) {
         $this->FMAI = $FMAI;
         $this->AR = $this->FMAI->getActiveRecord();
@@ -30,6 +31,7 @@ class ShopBase {
         $view->scanPath = __DIR__ . '/View';
         $view->cachePath = __DIR__ . '/Data/View';
         $view->fileExtension = 'html';
+        $FMAI->checkAccess($this->perms,$this->classGroup);
     }
 
     public function CLI() {

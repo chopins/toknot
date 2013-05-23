@@ -11,6 +11,7 @@ namespace Shop\Controller\User;
 use Shop\ShopBase;
 
 class Register extends ShopBase {
+    public $perms = 0777;
     public function GET($appContext) {
         $appContext->D->hashkey = '11222';
         $appContext->display('register');

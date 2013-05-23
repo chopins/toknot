@@ -13,6 +13,7 @@ namespace Shop\Controller;
 use Shop\ShopBase;
 
 class Index extends ShopBase {
+    public $perms = 0777;
     public function __construct($FMAI) {
         parent::__construct($FMAI);
         $FMAI->setCacheFile('index');
