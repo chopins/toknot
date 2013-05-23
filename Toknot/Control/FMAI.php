@@ -30,7 +30,15 @@ final class FMAI extends Object {
      * @var array 
      */
     public $D = array();
-    protected $uriOutRouterPath = null;
+    
+    public $requestMethod = 'GET';
+    
+    /**
+     * In path mode, URI path without router controller path
+     *
+     * @var array
+     */
+    protected $uriOutRouterPath = array();
 
     public static function singleton() {
         return parent::__singleton();
@@ -168,9 +176,15 @@ final class FMAI extends Object {
         $view->importVars($this->D);
         $view->display($tplName);
     }
-
-    public function getParam() {
-        
+    
+    /**
+     * Get parameter of passed by URI and with out router path
+     * 
+     * @param integer $index
+     * @return string
+     */
+    public function getParam($index) {
+        return $this->uriOutRouterPath[$index];
     }
 
 }

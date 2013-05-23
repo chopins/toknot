@@ -186,6 +186,7 @@ class Router extends Object implements RouterInterface {
         $invokeClassReflection = new ReflectionClass($invokeClass);
         if ($invokeClassReflection->hasMethod($method)) {
             $FMAI->setURIOutRouterPath($this->suffixPart);
+            $FMAI->requestMethod = $method;
             $invokeObject = $invokeClassReflection->newInstance($FMAI);
             if ($method == 'GET' && ViewCache::$enableCache) {
                 ViewCache::outPutCache();
