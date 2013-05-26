@@ -24,6 +24,11 @@ use \ReflectionClass;
  * Toknot main class and run framework
  * 
  * <code>
+ * //if development, define the constant set true, otherwise set false
+ * //Note the constant default set true
+ * define('DEVELOPMENT', true); 
+ * 
+ * 
  * use Toknot\Control\Application;
  * require_once '/path/Toknot/Control/Application.php';
  * $app = new Application;

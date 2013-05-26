@@ -97,7 +97,7 @@ final class DatabaseObject extends DbCRUD {
         } elseif (isset($this->tableValueList[$propertie])) {
             return $this->tableValueList[$propertie];
         } else {
-            $this->tableValueList[$propertie] = new DbTableObject($propertie, $this);
+            $this->tableValueList[$propertie] = new DbTableObject($propertie, $this, true);
             return $this->tableValueList[$propertie];
         }
     }
@@ -128,6 +128,9 @@ final class DatabaseObject extends DbCRUD {
     }
 
     public function createTable() {
+        if(ActiveQuery::getDbDriverType() != ActiveQuery::DRIVER_SQLITE) {
+            throw new DatabaseException('ToKnot only provide create table on SQLite');
+        }
         foreach ($this->tableValueList as $tableName => $table) {
             $sql = ActiveQuery::createTable($tableName);
             $sql .= ActiveQuery::setColumn($table);

@@ -16,6 +16,8 @@ use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
 use Toknot\View\XML;
 use Toknot\View\ViewCache;
+use Toknot\User\ClassUserControl;
+use Toknot\User\CurrentUser;
 
 /**
  * Framework Module Access Interfaces
@@ -186,5 +188,10 @@ final class FMAI extends Object {
     public function getParam($index) {
         return $this->uriOutRouterPath[$index];
     }
-
+    public function checkAccess(ClassUserControl $obj) {
+        
+    }
+    public function setCurrentUser($id) {
+        return new CurrentUser($id);
+    }
 }

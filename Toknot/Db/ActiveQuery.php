@@ -65,10 +65,13 @@ class ActiveQuery {
     }
 
     public static function createTable($tableName) {
+        if(self::$dbDriverType == self::DRIVER_MYSQL) {
+            return "CREATE TABLE IF NOT EXISTS `$tableName`";
+        }
         return "CREATE TABLE $tableName";
     }
 
-    public static function setColumn($table) {
+    public static function setColumn(&$table) {
         $columnList = $table->showSetColumnList();
         $sqlList = array();
         foreach ($columnList as $columnName => $column) {
@@ -76,7 +79,6 @@ class ActiveQuery {
             if($column->length >0) {
                 $sqlList[$columnName] .= "($column->length)";
             }
-            var_dump($column->isPK);
             if ($column->isPK) {
                 $sqlList[$columnName] .= ' primary key';
             }

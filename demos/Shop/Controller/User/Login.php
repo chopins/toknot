@@ -9,10 +9,11 @@
  */
 namespace Shop\Controller\User;
 use Shop\ShopBase;
+
 class Login extends ShopBase {
     public $perms = 0777;
     public function GET() {
-        $currentUser = new CurrentUser('username');
+        $currentUser = $this->FMAI ->getCurrentUser('username');
         $currentUser->info();
     }
     public function POST() {

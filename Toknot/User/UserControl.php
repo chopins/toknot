@@ -8,15 +8,16 @@
  * @link       https://github.com/chopins/toknot
  */
 namespace Toknot\User;
+use Toknot\Di\Object;
 
-abstract class UserControl {
+abstract class UserControl extends Object {
     
     /**
      * user's account of name
      *
      * @var string
      */
-    protected $userName = '';
+    protected $userName = 'nobody';
     
     /**
      * ID of username
@@ -33,16 +34,9 @@ abstract class UserControl {
     protected $password = '';
     
     /**
-     * group of user
-     *
-     * @var string 
-     */
-    protected $groupName = '';
-    
-    /**
      * ID of group
      *
-     * @var integer
+     * @var mixed  May be array or string
      */
     protected $gid = '';
     
@@ -51,25 +45,54 @@ abstract class UserControl {
      *
      * @var boolean
      */
-    protected $login = true;
+    protected $allUserLogin = true;
     
     /**
      * whether enable admin group, if true and group id equal 1, the user will is admin
      *
-     * @var type 
+     * @var boolean 
      */
     protected $enableAdmin = false;
     
-    public function getUid() {
+    /**
+     * whether allow change to root user
+     *
+     * @var boolean 
+     */
+    protected $allSu = false;
+    /**
+     * Get user Id number
+     * 
+     * @return integer
+     */
+    final public function getUid() {
         return $this->uid;
     }
-    public function getGid() {
+    
+    /**
+     * Get group id number
+     * 
+     * @return type
+     */
+    final public function getGid() {
         return $this->gid;
     }
-    public function getLogin() {
+    
+    /**
+     * Get current login user of name
+     * 
+     * @return string
+     */
+    final public function getLogin() {
         return $this->userName;
     }
-    public function getGroup() {
+    
+    /**
+     * Get current group of user or class
+     * 
+     * @return string
+     */
+    final public function getGroup() {
         return $this->groupName;
     }
 }

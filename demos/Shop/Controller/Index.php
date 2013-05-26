@@ -32,10 +32,8 @@ class Index extends ShopBase {
         $shopDatabase->product->id->autoIncrement = true;
         
         $shopDatabase->productCat->isdel->type ='integer';
-        
         $shopDatabase->productCat->id->type = 'integer';
         $shopDatabase->productCat->id->isPK = true;
-        
         $shopDatabase->productCat->id->autoIncrement = true;
         $shopDatabase->createTable();
         //From product table get latest product with 50 number and is host and is not del

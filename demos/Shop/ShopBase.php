@@ -9,8 +9,9 @@
  */
 
 namespace Shop;
+use Toknot\User\ClassUserControl;
 
-class ShopBase {
+class ShopBase extends ClassUserControl {
 
     protected $FMAI;
     protected $CFG;
@@ -31,7 +32,7 @@ class ShopBase {
         $view->scanPath = __DIR__ . '/View';
         $view->cachePath = __DIR__ . '/Data/View';
         $view->fileExtension = 'html';
-        $FMAI->checkAccess($this->perms,$this->classGroup);
+        $FMAI->checkAccess($this);
     }
 
     public function CLI() {

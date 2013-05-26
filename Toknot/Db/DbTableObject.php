@@ -28,13 +28,14 @@ final class DbTableObject extends DbCRUD {
     public $where = 1;
     public $logical = ActiveQuery::LOGICAL_AND;
 
-    public function __construct($tableName, DatabaseObject &$databaseObject) {
+    public function __construct($tableName, DatabaseObject &$databaseObject, $newTable = false) {
         $this->tableName = $tableName;
         $this->dbObject = $databaseObject;
         $this->connectInstance = $databaseObject->connectInstance;
         $this->dbINSType = $databaseObject->dbINSType;
-
-        $this->showColumnList();
+        if(!$newTable) {
+            $this->showColumnList();
+        }
         $this->order = ActiveQuery::ORDER_DESC;
         $this->orderBy = $this->primaryName;
     }
