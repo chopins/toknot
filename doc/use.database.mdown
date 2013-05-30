@@ -36,7 +36,7 @@ prefix = tbl_
 dirverOptions[p] = 1
 dirverOptions[c] = 0
 ```
-DSN 的格式取决于所使用的 [PDO](http://www.php.net/manual/en/book.pdo.php) 数据库驱动。总体来说， DSN 要含有 PDO 驱动的名字，跟上一个冒号，再跟上驱动特定的连接语法。可查阅PHP PDO 文档 获取更多信息。 下面是一个常用DSN格式的列表。
+DSN 的格式取决于所使用的 [PDO](http://www.php.net/manual/en/book.pdo.php) 数据库驱动。总体来说， DSN 要含有 [PDO](http://www.php.net/manual/en/book.pdo.php) 驱动的名字，跟上一个冒号，再跟上驱动特定的连接语法。可查阅PHP [PDO](http://www.php.net/manual/en/book.pdo.php) 文档 获取更多信息。 下面是一个常用DSN格式的列表。
 
     SQLite: sqlite:/path/to/dbfile
     MySQL: mysql:host=localhost;dbname=testdb
@@ -80,5 +80,5 @@ $database->product->product_name->type = 'varchar';
 $database->product->product_name->length = 255;
 $database->createTable();
 ```
-DatabaseObject::createTable 方法可以一次创建多个表，所以如果需要你可以在调用以前声明多个表的字段信息
+[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::createTable 方法可以一次创建多个表，所以如果需要你可以在调用以前声明多个表的字段信息
 
