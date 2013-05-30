@@ -1,0 +1,85 @@
+###使用数据库
+Toknot数据库操作并没有实现传统意义上的ActiveRecord模型, 但是处于习惯，框架仍然叫ActiveRecord
+ToKnot目前数据库操作相关的类主要包含如下几个:
+ActiveRecord            创建伪AR数据库对象模型
+ActiveQuery             数据库相关对象查询兼容层
+DatabaseObject          数据库对象
+DbTableObject           数据库表对象
+DbTableJoinObject       关联表对象
+
+1.创建一个数据库对象模型实例
+ ```php
+$AR = ActiveRecord::singleton();
+
+//在应用中使用FMAI实例来进行访问
+$AR = $FMAI->getActiveRecord();
+```
+2.使用数据库配置
+数据库配置文件使用INI格式，类似如下:
+```ini
+[Database]
+;数据库连接DSN
+dsn = 'mysql:dbname=test;host=localhost;port=3306'
+
+;数据库连接用户名
+username = root
+
+;数据库连接密码
+password  = 112211
+
+;表前缀
+prefix = tbl_
+
+;相关PDO连接选项，见PHP PDO 的相关文档
+dirverOptions[p] = 1
+dirverOptions[c] = 0
+```
+DSN 的格式取决于所使用的 PDO 数据库驱动。总体来说， DSN 要含有 PDO 驱动的名字，跟上一个冒号，再跟上驱动特定的连接语法。可查阅PHP PDO 文档 获取更多信息。 下面是一个常用DSN格式的列表。
+
+    SQLite: sqlite:/path/to/dbfile
+    MySQL: mysql:host=localhost;dbname=testdb
+    PostgreSQL: pgsql:host=localhost;port=5432;dbname=testdb
+    SQL Server: mssql:host=localhost;dbname=testdb
+    Oracle: oci:dbname=//localhost:1521/testdb
+
+```php
+//$CFG->Database为上面配置文件的Database块
+$AR->config($CFG->Database);
+```
+3.连接数据库
+    通过调用ActiveRecord对象的connect方法，将创建一个数据库连接对象(DatabaseObject的实例)，这样我们就可以使用数据库对象进行数据库操作
+```php
+$database = $AR->connect();
+```
+4.数据库对象DatabaseObject的相关DAO操作方法
+showTableList   获取表列表
+tableJOIN       创建连表对象
+createTable     创建一个数据库
+
+DatabaseObject对象实例的一个可访问属性即映射一个表实例(DbTableObject的实例)
+
+5.创建连表对象
+  利用数据库的tableJOIN方法创建一个联表对象来进行 LEFT JOIN 多表查询，代码类似下面
+```php
+   $tableJoin = $database->createTable($database->table1,$database->table2,$database->tabl3);
+```
+
+6.创建一个表
+   DatabaseObject::createTable 目前只支持SQLite数据库表的创建
+    假如需要创建product表，他有一个三个字段，分别是:
+    pid             主键，自增长，整型数字
+    product_name    字符串，变长
+    可以使用如下方法创建：
+```php
+$database->product->pid->type = 'integer';
+$database->product->pid->isPK = true;
+$database->product->pid->autoIncrement = true;
+$database->product->product_name->type = 'varchar';
+$database->product->product_name->length = 255;
+$database->createTable();
+```
+DatabaseObject::createTable 方法可以一次创建多个表，所以如果需要你可以在调用以前声明多个表的字段信息
+    
+    
+    
+    
