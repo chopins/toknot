@@ -8,7 +8,7 @@
 	<title>File Toknot/Db/DatabaseObject.php | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?257222038"></script>
+	<script type="text/javascript" src="elementlist.js?3693668261"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -62,6 +62,8 @@
 						</li>
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
+						</li>
+				<li><a href="namespace-Toknot.User.html">User</a>
 						</li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
@@ -224,7 +226,7 @@
 </span><span id="97" class="l"><a class="l" href="#97"> 97: </a>        } <span class="php-keyword1">elseif</span> (<span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;tableValueList[<span class="php-var">$propertie</span>])) {
 </span><span id="98" class="l"><a class="l" href="#98"> 98: </a>            <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;tableValueList[<span class="php-var">$propertie</span>];
 </span><span id="99" class="l"><a class="l" href="#99"> 99: </a>        } <span class="php-keyword1">else</span> {
-</span><span id="100" class="l"><a class="l" href="#100">100: </a>            <span class="php-var">$this</span>-&gt;tableValueList[<span class="php-var">$propertie</span>] = <span class="php-keyword1">new</span> DbTableObject(<span class="php-var">$propertie</span>, <span class="php-var">$this</span>);
+</span><span id="100" class="l"><a class="l" href="#100">100: </a>            <span class="php-var">$this</span>-&gt;tableValueList[<span class="php-var">$propertie</span>] = <span class="php-keyword1">new</span> DbTableObject(<span class="php-var">$propertie</span>, <span class="php-var">$this</span>, <span class="php-keyword1">true</span>);
 </span><span id="101" class="l"><a class="l" href="#101">101: </a>            <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;tableValueList[<span class="php-var">$propertie</span>];
 </span><span id="102" class="l"><a class="l" href="#102">102: </a>        }
 </span><span id="103" class="l"><a class="l" href="#103">103: </a>    }
@@ -255,14 +257,17 @@
 </span><span id="128" class="l"><a class="l" href="#128">128: </a>    }
 </span><span id="129" class="l"><a class="l" href="#129">129: </a>
 </span><span id="130" class="l"><a class="l" href="#130">130: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_createTable" href="#_createTable">createTable</a>() {
-</span><span id="131" class="l"><a class="l" href="#131">131: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;tableValueList <span class="php-keyword1">as</span> <span class="php-var">$tableName</span> =&gt; <span class="php-var">$table</span>) {
-</span><span id="132" class="l"><a class="l" href="#132">132: </a>            <span class="php-var">$sql</span> = ActiveQuery::createTable(<span class="php-var">$tableName</span>);
-</span><span id="133" class="l"><a class="l" href="#133">133: </a>            <span class="php-var">$sql</span> .= ActiveQuery::setColumn(<span class="php-var">$table</span>);
-</span><span id="134" class="l"><a class="l" href="#134">134: </a>            <span class="php-var">$this</span>-&gt;create(<span class="php-var">$sql</span>);
-</span><span id="135" class="l"><a class="l" href="#135">135: </a>        }
-</span><span id="136" class="l"><a class="l" href="#136">136: </a>    }
-</span><span id="137" class="l"><a class="l" href="#137">137: </a>
-</span><span id="138" class="l"><a class="l" href="#138">138: </a></span>}</code></pre>
+</span><span id="131" class="l"><a class="l" href="#131">131: </a>        <span class="php-keyword1">if</span>(ActiveQuery::getDbDriverType() != ActiveQuery::DRIVER_SQLITE) {
+</span><span id="132" class="l"><a class="l" href="#132">132: </a>            <span class="php-keyword1">throw</span> <span class="php-keyword1">new</span> DatabaseException(<span class="php-quote">'ToKnot only provide create table on SQLite'</span>);
+</span><span id="133" class="l"><a class="l" href="#133">133: </a>        }
+</span><span id="134" class="l"><a class="l" href="#134">134: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;tableValueList <span class="php-keyword1">as</span> <span class="php-var">$tableName</span> =&gt; <span class="php-var">$table</span>) {
+</span><span id="135" class="l"><a class="l" href="#135">135: </a>            <span class="php-var">$sql</span> = ActiveQuery::createTable(<span class="php-var">$tableName</span>);
+</span><span id="136" class="l"><a class="l" href="#136">136: </a>            <span class="php-var">$sql</span> .= ActiveQuery::setColumn(<span class="php-var">$table</span>);
+</span><span id="137" class="l"><a class="l" href="#137">137: </a>            <span class="php-var">$this</span>-&gt;create(<span class="php-var">$sql</span>);
+</span><span id="138" class="l"><a class="l" href="#138">138: </a>        }
+</span><span id="139" class="l"><a class="l" href="#139">139: </a>    }
+</span><span id="140" class="l"><a class="l" href="#140">140: </a>
+</span><span id="141" class="l"><a class="l" href="#141">141: </a></span>}</code></pre>
 
 	<div id="footer">
 		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

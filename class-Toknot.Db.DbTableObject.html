@@ -7,7 +7,7 @@
 	<title>Class Toknot\Db\DbTableObject | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?257222038"></script>
+	<script type="text/javascript" src="elementlist.js?3693668261"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -61,6 +61,8 @@
 						</li>
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
+						</li>
+				<li><a href="namespace-Toknot.User.html">User</a>
 						</li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
@@ -167,7 +169,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Db.html">Db</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Db.DbTableObject.html#20-287" title="Go to source code">Toknot/Db/DbTableObject.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Db.DbTableObject.html#20-302" title="Go to source code">Toknot/Db/DbTableObject.php</a><br />
 	</div>
 
 
@@ -185,7 +187,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#31-40" title="Go to source code">__construct</a>( <span>mixed <var>$tableName</var></span>, <span><code><a href="class-Toknot.Db.DatabaseObject.html">Toknot\Db\DatabaseObject</a></code> <var>&amp; $databaseObject</var></span> )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#31-41" title="Go to source code">__construct</a>( <span>mixed <var>$tableName</var></span>, <span><code><a href="class-Toknot.Db.DatabaseObject.html">Toknot\Db\DatabaseObject</a></code> <var>&amp; $databaseObject</var></span>, <span>mixed <var>$newTable</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
@@ -214,7 +216,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setPropertie">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#42-49" title="Go to source code">setPropertie</a>( <span>string <var>$name</var></span>, <span>mixed <var>$value</var></span> )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#43-50" title="Go to source code">setPropertie</a>( <span>string <var>$name</var></span>, <span>mixed <var>$value</var></span> )</code>
 
 		<div class="description short">
 			
@@ -252,7 +254,36 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___get">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#51-65" title="Go to source code">__get</a>( <span>mixed <var>$name</var></span> )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#52-66" title="Go to source code">__get</a>( <span>mixed <var>$name</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="importColumnValue" id="_importColumnValue">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_importColumnValue">#</a>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#68-72" title="Go to source code">importColumnValue</a>( <span>mixed <var>$array</var></span> )</code>
 
 		<div class="description short">
 			
@@ -281,7 +312,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_showSetColumnList">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#67-69" title="Go to source code">showSetColumnList</a>( )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#74-76" title="Go to source code">showSetColumnList</a>( )</code>
 
 		<div class="description short">
 			
@@ -310,7 +341,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_showColumnList">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#71-91" title="Go to source code">showColumnList</a>( )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#78-98" title="Go to source code">showColumnList</a>( )</code>
 
 		<div class="description short">
 			
@@ -343,7 +374,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#93-115" title="Go to source code">save</a>( )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#100-130" title="Go to source code">save</a>( )</code>
 
 		<div class="description short">
 			
@@ -370,6 +401,21 @@ class="php-quote">'the name'</span>;
 <span
 class="php-var">$db</span>-&gt;tableName-&gt;isLocked = <span
 class="php-num">0</span>;
+<span
+class="php-var">$db</span>-&gt;tableName-&gt;save();
+</pre>
+
+<p>array import like below:</p>
+
+<pre>
+<span class="php-var">$ar</span> = <span
+class="php-keyword1">new</span> ActiveRecourd();
+<span
+class="php-var">$db</span> = <span
+class="php-var">$ar</span>-&gt;connect();
+<span
+class="php-var">$db</span>-&gt;tableName-&gt;import(<span
+class="php-var">$dataArray</span>);
 <span
 class="php-var">$db</span>-&gt;tableName-&gt;save();
 </pre>
@@ -403,7 +449,7 @@ class="php-var">$db</span>-&gt;tableName-&gt;save();
 
 		<td class="name"><div>
 		<a class="anchor" href="#_updateByWhere">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#117-146" title="Go to source code">updateByWhere</a>( <span>array <var>$params</var> = <span class="php-keyword1">array</span>()</span> )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#132-161" title="Go to source code">updateByWhere</a>( <span>array <var>$params</var> = <span class="php-keyword1">array</span>()</span> )</code>
 
 		<div class="description short">
 			
@@ -476,7 +522,7 @@ statement of parameter</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_deleteByWhere">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#148-170" title="Go to source code">deleteByWhere</a>( <span>array <var>$params</var> = <span class="php-keyword1">array</span>()</span> )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#163-185" title="Go to source code">deleteByWhere</a>( <span>array <var>$params</var> = <span class="php-keyword1">array</span>()</span> )</code>
 
 		<div class="description short">
 			
@@ -541,7 +587,7 @@ parameter</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findByWhere">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#172-199" title="Go to source code">findByWhere</a>( <span>array <var>$params</var> = <span class="php-keyword1">array</span>()</span>, <span>type <var>$start</var> = <span class="php-num">0</span></span>, <span>type <var>$limit</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#187-214" title="Go to source code">findByWhere</a>( <span>array <var>$params</var> = <span class="php-keyword1">array</span>()</span>, <span>type <var>$start</var> = <span class="php-num">0</span></span>, <span>type <var>$limit</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -611,7 +657,7 @@ parameter</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findByPK">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#201-248" title="Go to source code">findByPK</a>( <span>string <var>$pkValue</var></span>, <span>integer <var>$start</var> = <span class="php-num">1</span></span>, <span>integer <var>$limit</var> = <span class="php-keyword1">null</span></span>, <span>type <var>$condition</var> = <code><a href="class-Toknot.Db.ActiveQuery.html#EQUAL">Toknot\Db\ActiveQuery::<b>EQUAL</b></a></code></span> )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#216-263" title="Go to source code">findByPK</a>( <span>string <var>$pkValue</var></span>, <span>integer <var>$start</var> = <span class="php-num">1</span></span>, <span>integer <var>$limit</var> = <span class="php-keyword1">null</span></span>, <span>type <var>$condition</var> = <code><a href="class-Toknot.Db.ActiveQuery.html#EQUAL">Toknot\Db\ActiveQuery::<b>EQUAL</b></a></code></span> )</code>
 
 		<div class="description short">
 			
@@ -696,7 +742,7 @@ class="php-num">5</span>, ActiveQuery::LESS_OR_EQUAL);
 
 		<td class="name"><div>
 		<a class="anchor" href="#_findByAttr">#</a>
-		<code><a href="source-class-Toknot.Db.DbTableObject.html#250-285" title="Go to source code">findByAttr</a>( <span>type <var>$start</var></span>, <span>type <var>$limit</var> = <span class="php-keyword1">null</span></span>, <span>type <var>$logical</var> = <code><a href="class-Toknot.Db.ActiveQuery.html#LOGICAL_AND">Toknot\Db\ActiveQuery::<b>LOGICAL_AND</b></a></code></span> )</code>
+		<code><a href="source-class-Toknot.Db.DbTableObject.html#265-300" title="Go to source code">findByAttr</a>( <span>type <var>$start</var></span>, <span>type <var>$limit</var> = <span class="php-keyword1">null</span></span>, <span>type <var>$logical</var> = <code><a href="class-Toknot.Db.ActiveQuery.html#LOGICAL_AND">Toknot\Db\ActiveQuery::<b>LOGICAL_AND</b></a></code></span> )</code>
 
 		<div class="description short">
 			
