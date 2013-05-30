@@ -27,7 +27,7 @@ View            页面HTML模板文件存放位置，建议
 WebRoot         web站点入口文件存放位置，建议  
 Model           模块文件夹,建议  
 ```
-4. 进入 /home/MyApp/WebRoot 文件夹创建 index.php 文件(建议)， 在该文件中创建如下代码
+4. 进入`/home/MyApp/WebRoot`文件夹创建`index.php`文件(建议的文件名)， 在该文件中创建如下代码
 ```php
 use Toknot\Control\Application;
 require_once '/home/Toknot/Control/Application.php';
@@ -193,7 +193,7 @@ $dirverOptions = $confg->Database->dirverOptions['p'];
 //下面是访问配置我文件中的`Localization`块下面的`encoding`项
 $encoding = $config->Localization->encoding;
 ```
-   注意：目前框架的数据库链接所需要的配置项与上面Database块的一样       
+   注意：目前框架的数据库链接所需要的配置项与上面`Database`块的一样       
 9. 创建模板文件
    在`/home/MyApp/View`下面创建 index.html, 模板文件语法见模板相关文档
    对于`/home/MyApp/View`的子文件夹下的文件使用类似下面的方法来调用：
