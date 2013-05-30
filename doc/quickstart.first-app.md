@@ -2,29 +2,31 @@
 1. 下载Toknot框架文件，例如保存在下面的地址     
     `/home/Toknot`
 
-    该文件夹下目录结构如下:  
-            Config              默认配置文件和配置文件夹加载类  
-            Control             框架控制中心    
-            Db                  数据库相关      
-            Di                  框架内部数据类型    
-            Exception           异常类      
-            Http                HTTP协议相关        
-            Process             进程管理相关        
-            Tool                工具类      
-            User                用户组件        
-            View                页面渲染相关        
- 
+    该文件夹下目录结构如下: 
+```
+Config              默认配置文件和配置文件夹加载类  
+Control             框架控制中心    
+Db                  数据库相关      
+Di                  框架内部数据类型    
+Exception           异常类      
+Http                HTTP协议相关        
+Process             进程管理相关        
+Tool                工具类      
+User                用户组件        
+View                页面渲染相关        
+```
 2. 创建一个应用程序的文件夹，如下所示  
     `mkdir /home/MyApp`
 
-3. 然后在`/home/MyApp`目录下面分别创建如下文件夹 
-            Config          配置文件,建议  
-            Controller      应用控制器文件夹，必须  
-            Data            应用程序数据存放文件夹，建议  
-            View            页面HTML模板文件存放位置，建议  
-            WebRoot         web站点入口文件存放位置，建议  
-            Model           模块文件夹,建议  
-
+3. 然后在`/home/MyApp`目录下面分别创建如下文件夹
+```
+Config          配置文件,建议  
+Controller      应用控制器文件夹，必须  
+Data            应用程序数据存放文件夹，建议  
+View            页面HTML模板文件存放位置，建议  
+WebRoot         web站点入口文件存放位置，建议  
+Model           模块文件夹,建议  
+```
 4. 进入 /home/MyApp/WebRoot 文件夹创建 index.php 文件(建议)， 在该文件中创建如下代码
 ```php
 use Toknot\Control\Application;
