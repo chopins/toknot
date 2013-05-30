@@ -1,7 +1,8 @@
 ###建立第一个ToKnot应用
 1. 下载Toknot框架文件，例如保存在下面的地址 
-    /home/Toknot 
-    该文件夹下目录结构如下: 
+    `/home/Toknot`
+
+该文件夹下目录结构如下: 
         Config              默认配置文件和配置文件夹加载类 
         Control             框架控制中心 
         Db                  数据库相关 
