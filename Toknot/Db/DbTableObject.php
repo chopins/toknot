@@ -64,6 +64,12 @@ final class DbTableObject extends DbCRUD {
         }
         return $this->columnValueList[$name];
     }
+    
+    public function importColumnValue($array) {
+        foreach($array as $key => $var) {
+            $this->setPropertie($key, $var);
+        }
+    }
 
     public function showSetColumnList() {
         return $this->columnValueList;
@@ -100,6 +106,14 @@ final class DbTableObject extends DbCRUD {
      * $db->tableName->id = 1;
      * $db->tableName->name = 'the name';
      * $db->tableName->isLocked = 0;
+     * $db->tableName->save();
+     * </code>
+     * 
+     * array import like below:
+     * <code>
+     * $ar = new ActiveRecourd();
+     * $db = $ar->connect();
+     * $db->tableName->import($dataArray);
      * $db->tableName->save();
      * </code>
      * 

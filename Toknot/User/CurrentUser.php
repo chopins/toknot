@@ -69,11 +69,11 @@ class CurrentUser extends UserControl {
             return Root::login($password);
         }
         $tableName = self::$tableName;
-        $password = self::$passColumn;
+        $passwordColumn = self::$passColumn;
         $username = is_numeric($id) ?  self::$uidColumn : self::$userNameColumn;
         self::$DBConnect->$tableName->$username = $id;
         self::$DBConnect->$tableName->$password = $password;
-        $userInfo = self::$DBConnect->$tableName->findByAttr($passColumn);
+        $userInfo = self::$DBConnect->$tableName->findByAttr($passwordColumn);
         if(empty($userInfo)) {
             return false;
         } else {
@@ -99,6 +99,12 @@ class CurrentUser extends UserControl {
         }
         if(isset($data[self::$gidColumn]) && is_array($data[self::$gidColumn])) {
             $data[self::$gidColumn] = serialize($data[self::$gidColumn]);
+        }
+        $tabname = self::$tableName;
+        self::$DBConnect->$tabname->import($data);
+        $re = self::$DBConnect->$tabname->save();
+        if($re) {
+            
         }
     }
 
