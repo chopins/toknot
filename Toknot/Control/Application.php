@@ -28,7 +28,6 @@ use \ReflectionClass;
  * //Note the constant default set true
  * define('DEVELOPMENT', true); 
  * 
- * 
  * use Toknot\Control\Application;
  * require_once '/path/Toknot/Control/Application.php';
  * $app = new Application;
@@ -165,6 +164,8 @@ class Application {
      * parameter set path(like: /path/appPath/Controller). The class be invoke by toknot of router 
      * invoke method with passed instance of Toknot 
      * {@see \Toknot\Control\FMAI}, you can receive the object of instance when class construct
+     * the method can recived variable number of arguments, {@see Toknot\Control\Router} use two parameters
+     * that is $routerMode and $routerDepth
      * 
      * Usual use toknot of router, run framework like below:
      * <code>
@@ -204,6 +205,21 @@ class Application {
      * $app->run('\AppTopNamespace', '/path/AppPath', '\Index');
      * </code>
      * 
+     * if change router mode,
+     * like this:
+     * <code>
+     * use Toknot\Control\Application;
+     * use Toknot\Control\Router.php;
+     * require_once './Toknot/Control/Application.php';
+     *
+     * $app = new Application;
+     * 
+     * //set index page without TopNamespace and ControllerNamespace
+     * //set router mode is get query mode
+     * //set router namespace level is 2
+     * $app->run('\AppTopNamespace', '/path/AppPath', '\Index', Router::ROUTER_GET_QUERY, 2);
+     * </code>
+     * 
      * @param string $appNameSpace  Application of Namespace with top without full namespace
      * @param string $appPath   Application of directory with full path, and not is Controller layer full path
      * @param string $defaultInvoke  The parameter of default invoke class for router when no request uri,
@@ -211,11 +227,12 @@ class Application {
      *                                and no query,The class name of default with not full namespace
      *                                class name can not contain application top namespace and
      *                                Controller layer namespace
+     * @param integeter $routerMode Use set {@see Toknot\Control\Router::ROUTER_PATH} is default or 
+     *                               {@see Toknot\Control\Router::ROUTER_GET_QUERY}, only use framework router
+     *                               the parameter is set router mode
+     * @param integeter $routerDepth It is router of controller max namespace level, the value default is 1 
+     *                                Only use framework router the parameter is set router depth
      * @param mixed $_   Variable list of router need of paramers on runtime, the toknot default router support
-     *                    2 parameters:
-     *                    $routerMode  use set {@see Toknot\Control\Router::ROUTER_PATH} or 
-     *                                  {@see Toknot\Control\Router::ROUTER_GET_QUERY}
-     *                    $routerDepth it is controller max namespace level
      * @throws BadNamespaceException
      * @throws BadClassCallException
      * @throws StandardException
