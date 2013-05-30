@@ -1,11 +1,13 @@
 ###使用数据库
-Toknot数据库操作并没有实现传统意义上的ActiveRecord模型, 但是处于习惯，框架仍然叫ActiveRecord
+Toknot数据库操作并没有实现传统意义上的ActiveRecord模型, 但是处于习惯，框架仍然叫ActiveRecord  
+
 ToKnot目前数据库操作相关的类主要包含如下几个:
-ActiveRecord            创建伪AR数据库对象模型
-ActiveQuery             数据库相关对象查询兼容层
-DatabaseObject          数据库对象
-DbTableObject           数据库表对象
-DbTableJoinObject       关联表对象
+
+[ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)              创建伪AR数据库对象模型   
+[ActiveQuery](http://toknot.com/toknot/class-Toknot.Db.ActiveQuery.html)                数据库相关对象查询兼容层    
+[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)          数据库对象   
+[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)            数据库表对象  
+[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)    关联表对象   
 
 1.创建一个数据库对象模型实例
  ```php
@@ -79,7 +81,4 @@ $database->product->product_name->length = 255;
 $database->createTable();
 ```
 DatabaseObject::createTable 方法可以一次创建多个表，所以如果需要你可以在调用以前声明多个表的字段信息
-    
-    
-    
-    
+
