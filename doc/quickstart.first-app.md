@@ -30,7 +30,7 @@ Model           模块文件夹,建议
 4. 进入 /home/MyApp/WebRoot 文件夹创建 index.php 文件(建议)， 在该文件中创建如下代码
 ```php
 use Toknot\Control\Application;
-require_once dirname(dirname(dirname(__DIR__))).'/Toknot/Control/Application.php';
+require_once '/home/Toknot/Control/Application.php';
 $app = new Application;
 $app->run('\MyApp',dirname(__DIR__));
 ```  
@@ -64,11 +64,13 @@ class Index {
     如果我们构造一个HTML form表单, 并且以 POST 方式提交到`http://localhost/`， 将会看到打印了 'This POST method request' 的页面, 这因为框架路由器将会根据不同请求HTTP方法映射到不同的控制器方法上。   
 
     框架对控制器的规定如下： 
+```
         1. 类名首字目大写
         2. 类必须是在一个命名空间类，且命名空间名必须与类文件所在文件夹相同
         3. 类提供用户HTTP访问的方法名必须大写，且只能为GET,POST,PUT,HEAD等HTTP协议中定义的请求方法的名字，他们分别会在用户以同名方法请求时被调用
         4. 非第3条定义的方法，路由器不会调用
         5. 命名空间下的Index控制器类将会作为该空间下默认调用的控制器，这类似于web服务器配置index.html等文件
+```
 6. 配置Web服务器        
    Web服务器普通配置情况下，可以通过类似下面的方式访问控制器:       
    `http://localhost/index.php?c=Index`     
