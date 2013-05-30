@@ -36,7 +36,7 @@ prefix = tbl_
 dirverOptions[p] = 1
 dirverOptions[c] = 0
 ```
-DSN 的格式取决于所使用的 PDO 数据库驱动。总体来说， DSN 要含有 PDO 驱动的名字，跟上一个冒号，再跟上驱动特定的连接语法。可查阅PHP PDO 文档 获取更多信息。 下面是一个常用DSN格式的列表。
+DSN 的格式取决于所使用的 [PDO](http://www.php.net/manual/en/book.pdo.php) 数据库驱动。总体来说， DSN 要含有 PDO 驱动的名字，跟上一个冒号，再跟上驱动特定的连接语法。可查阅PHP PDO 文档 获取更多信息。 下面是一个常用DSN格式的列表。
 
     SQLite: sqlite:/path/to/dbfile
     MySQL: mysql:host=localhost;dbname=testdb
@@ -49,25 +49,25 @@ DSN 的格式取决于所使用的 PDO 数据库驱动。总体来说， DSN 要
 $AR->config($CFG->Database);
 ```
 3.连接数据库
-    通过调用ActiveRecord对象的connect方法，将创建一个数据库连接对象(DatabaseObject的实例)，这样我们就可以使用数据库对象进行数据库操作
+    通过调用[ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)对象的connect方法，将创建一个数据库连接对象([DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)的实例)，这样我们就可以使用数据库对象进行数据库操作
 ```php
 $database = $AR->connect();
 ```
-4.数据库对象DatabaseObject的相关DAO操作方法
+4.数据库对象[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)的相关DAO操作方法
 showTableList   获取表列表
 tableJOIN       创建连表对象
 createTable     创建一个数据库
 
-DatabaseObject对象实例的一个可访问属性即映射一个表实例(DbTableObject的实例)
+[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)对象实例的一个可访问属性即映射一个表实例([DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)的实例)
 
 5.创建连表对象
   利用数据库的tableJOIN方法创建一个联表对象来进行 LEFT JOIN 多表查询，代码类似下面
 ```php
    $tableJoin = $database->createTable($database->table1,$database->table2,$database->tabl3);
 ```
-
+上面的方法将返回一个[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)对象
 6.创建一个表
-   DatabaseObject::createTable 目前只支持SQLite数据库表的创建
+   [DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::createTable 目前只支持SQLite数据库表的创建
     假如需要创建product表，他有一个三个字段，分别是:
     pid             主键，自增长，整型数字
     product_name    字符串，变长
