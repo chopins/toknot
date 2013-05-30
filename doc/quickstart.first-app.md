@@ -2,7 +2,7 @@
 1. 下载Toknot框架文件，例如保存在下面的地址 
     `/home/Toknot`
 
-   该文件夹下目录结构如下:  
+    该文件夹下目录结构如下:  
         Config              默认配置文件和配置文件夹加载类 
         Control             框架控制中心 
         Db                  数据库相关 
@@ -15,15 +15,15 @@
         View                页面渲染相关 
  
 2. 创建一个应用程序的文件夹，如下所示  
-   `mkdir /home/MyApp`
+    `mkdir /home/MyApp`
 
 3. 然后在`/home/MyApp`目录下面分别创建如下文件夹 
-   Config          配置文件,建议 
-   Controller      应用控制器文件夹，必须 
-   Data            应用程序数据存放文件夹，建议 
-   View            页面HTML模板文件存放位置，建议 
-   WebRoot         web站点入口文件存放位置，建议 
-   Model           模块文件夹,建议 
+        Config          配置文件,建议  
+        Controller      应用控制器文件夹，必须  
+        Data            应用程序数据存放文件夹，建议  
+        View            页面HTML模板文件存放位置，建议  
+        WebRoot         web站点入口文件存放位置，建议  
+        Model           模块文件夹,建议  
 
 4. 进入 /home/MyApp/WebRoot 文件夹创建 index.php 文件(建议)， 在该文件中创建如下代码
 ```php
@@ -32,13 +32,12 @@ require_once dirname(dirname(dirname(__DIR__))).'/Toknot/Control/Application.php
 $app = new Application;
 $app->run('\MyApp',dirname(__DIR__));
 ```  
-   从上面的例子，可以看到，我们使用了 MyApp 这个命名空间，这个名字与`/home/MyApp`相同。  
-   因为这是框架约定的命名空间的规则：即命名空间的名字与类所在文件夹的名字相同 
+    从上面的例子，可以看到，我们使用了 MyApp 这个命名空间，这个名字与`/home/MyApp`相同。  
+    因为这是框架约定的命名空间的规则：即命名空间的名字与类所在文件夹的名字相同 
  
 5. 进入`/home/MyApp/Controller`文件夹，创建`Index.php`文件, 输入如下代码:
 ```php
 namespace MyApp\Controller;
-
 class Index {
     public $FMAI = null;
     public function __construct($FMAI) {
@@ -54,23 +53,25 @@ class Index {
     }
 ```
  
-   上面例子可以看到，Index.php 文件中的类名是与文件名相同的，这是框架默认路由器规定的 
-   而用户控制器的构造函数将会接收到了一个FMAI类的实例，这个类提供框架各个组件的标准访问方法，该类所拥有的方法可以建框架类参考`http://toknot.com/toknot/class-Toknot.Control.FMAI.html` 
-   如果web服务器已经配置，你可以通过访问`http://localhost/`看到打印了 'hello world' 的页面 
-   如果我们构造一个HTML form表单, 并且以 POST 方式提交到`http://localhost/`， 将会看到打印了 'This POST method request' 的页面, 这因为框架路由器将会根据不同请求HTTP方法映射到不同的控制器方法上。 
-   框架对控制器的规定如下： 
+    上面例子可以看到,`Index.php`文件中的类名是与文件名相同的，这是框架默认路由器规定的  
+
+    而用户控制器的构造函数将会接收到了一个FMAI类的实例，这个类提供框架各个组件的标准访问方法，该类所拥有的方法可以建框架类参考http://toknot.com/toknot/class-Toknot.Control.FMAI.html    
+
+    如果web服务器已经配置，你可以通过访问`http://localhost/`看到打印了 'hello world' 的页面    
+
+    如果我们构造一个HTML form表单, 并且以 POST 方式提交到`http://localhost/`， 将会看到打印了 'This POST method request' 的页面, 这因为框架路由器将会根据不同请求HTTP方法映射到不同的控制器方法上。   
+
+    框架对控制器的规定如下： 
         1. 类名首字目大写
         2. 类必须是在一个命名空间类，且命名空间名必须与类文件所在文件夹相同
         3. 类提供用户HTTP访问的方法名必须大写，且只能为GET,POST,PUT,HEAD等HTTP协议中定义的请求方法的名字，他们分别会在用户以同名方法请求时被调用
         4. 非第3条定义的方法，路由器不会调用
         5. 命名空间下的Index控制器类将会作为该空间下默认调用的控制器，这类似于web服务器配置index.html等文件
-    
-
-6. 配置Web服务器
-   Web服务器普通配置情况下，可以通过类似下面的方式访问控制器:
-   `http://localhost/index.php?c=Index`
-   `http://localhost/index.php?c=User.Login`
-   `http://localhost/index.php?c=User`
+6. 配置Web服务器        
+   Web服务器普通配置情况下，可以通过类似下面的方式访问控制器:       
+   `http://localhost/index.php?c=Index`     
+   `http://localhost/index.php?c=User.Login`       
+   `http://localhost/index.php?c=User`      
 
    在 nginx 下可以通过如下配置来实现 PATH 模式
 ```conf
@@ -149,7 +150,8 @@ class Index {
 }
 ```
 8. 配置文件
-   Toknot配置文件类型与PHP的INI配置文件一样, 使用框架加载类加载配置文件会区分配置块，例如下面的数据库配置
+   Toknot配置文件类型与PHP的INI配置文件一样, 使用框架加载类加载配置文件会区分配置块，例如下面的数据库配置       
+
 ```ini
 [Database]
 dsn = 'mysql:dbname=test;host=localhost;port=3306'
@@ -166,7 +168,9 @@ encoding = utf-8
 [Site]
 domain = MyApp
 ```
+
    上面配置假设存放在 `$ini` 表示的文件名中，可以通过下面的方式加载:
+
 ```php
 $confg = ConfigLoader::loadCFG($ini);
 
@@ -181,8 +185,7 @@ $dirverOptions = $confg->Database->dirverOptions['p'];
 //下面是访问配置我文件中的`Localization`块下面的`encoding`项
 $encoding = $config->Localization->encoding;
 ```
-   注意：目前框架的数据库链接所需要的配置项与上面Database块的一样，
-
+   注意：目前框架的数据库链接所需要的配置项与上面Database块的一样       
 9. 创建模板文件
    在`/home/MyApp/View`下面创建 index.html, 模板文件语法见模板相关文档
    对于`/home/MyApp/View`的子文件夹下的文件使用类似下面的方法来调用：
