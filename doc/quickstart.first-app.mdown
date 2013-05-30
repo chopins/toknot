@@ -146,7 +146,7 @@ class Index {
           $shopDatabase = $this->AR->connect();
 
           //查询tableName 表主键等于 1 的记录
-          //$shopDatabase->tableName  是一个数据库表对象实例类文档见
+          //$shopDatabase->tableName  是一个数据库表对象实例，类文档见
           //http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html
           $record = $shopDatabase->tableName->findByPK(1);
 
