@@ -28,9 +28,7 @@
 4. 进入 /home/MyApp/WebRoot 文件夹创建 index.php 文件(建议)， 在该文件中创建如下代码
 ```php
 use Toknot\Control\Application;
-
 require_once dirname(dirname(dirname(__DIR__))).'/Toknot/Control/Application.php';
-
 $app = new Application;
 $app->run('\MyApp',dirname(__DIR__));
 ```  
