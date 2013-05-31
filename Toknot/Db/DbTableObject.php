@@ -33,7 +33,7 @@ final class DbTableObject extends DbCRUD {
         $this->dbObject = $databaseObject;
         $this->connectInstance = $databaseObject->connectInstance;
         $this->dbINSType = $databaseObject->dbINSType;
-        if(!$newTable) {
+        if (!$newTable) {
             $this->showColumnList();
         }
         $this->order = ActiveQuery::ORDER_DESC;
@@ -64,9 +64,9 @@ final class DbTableObject extends DbCRUD {
         }
         return $this->columnValueList[$name];
     }
-    
+
     public function importColumnValue($array) {
-        foreach($array as $key => $var) {
+        foreach ($array as $key => $var) {
             $this->setPropertie($key, $var);
         }
     }
@@ -143,10 +143,12 @@ final class DbTableObject extends DbCRUD {
      * </code>
      * 
      * @param array $params Options of the parameter of a element bound in the SQL of where statement of parameter
+     * @param integer $start update start row number, default is 0
+     * @param integer $limit update limit number, default is 1
      * @return int  return the opreater affected row of number
      * @throws DatabaseException
      */
-    public function updateByWhere(array $params = array()) {
+    public function updateByWhere(array $params = array(), $start = 0, $limit = 1) {
         if ($this->where === 1) {
             throw new DatabaseException("Must first set {$this->tableName}::\$where");
         }
@@ -157,7 +159,36 @@ final class DbTableObject extends DbCRUD {
         $sql .= ActiveQuery::set($this->columnValueList);
         $this->columnValueList = array();
         $sql .= ActiveQuery::where($this->where);
+        $sql .= ActiveQuery::limit($start, $limit);
         return $this->update($sql, $params);
+    }
+
+    /**
+     * Execute Update opreater by the table primary key
+     * 
+     * @param mixed $pkValue The value of the table primary key
+     * @param integer $start   update start row number, default is 0, when $condition is set ActiveQuery::EQUAL,
+     *                       the set is invaild
+     * @param integer $limit   limit number default is 1, when $condition is set ActiveQuery::EQUAL,
+     *                       the set is invaild
+     * @param string $condition Options of default is {@see ActiveQuery::EQUAL} The value use the
+     *                         {@see ActiveQuery::EQUAL}{@see ActiveQuery::LESS_OR_EQUAL},
+     *                         {@see ActiveQuery::LESS_THAN},{@see ActiveQuery::GREATER_OR_EQUAL},
+     *                         {@see ActiveQuery::GREATER_THAN}
+     * @return integer|boolean  return the update sql affected rows number or false on error
+     * @throws DatabaseException
+     * @throws InvalidArgumentException
+     */
+    public function updateByPK($pkValue, $start = 0, $limit = 1, $condition = ActiveQuery::EQUAL) {
+        if (empty($this->columnValueList)) {
+            throw new DatabaseException("Must first set {$this->tableName}::\$columnValueList for update column");
+        }
+        $sql = ActiveQuery::update($this->tableName);
+        $sql .= ActiveQuery::set($this->columnValueList);
+        $this->columnValueList = array();
+        $sql .= ActiveQuery::where("{$this->primaryName} {$condition} ?");
+        $sql .= ActiveQuery::conditionLimit($condition, $start, $limit);
+        return $this->update($sql, array($pkValue));
     }
 
     /**
@@ -172,16 +203,39 @@ final class DbTableObject extends DbCRUD {
      * </code>
      * 
      * @param array $params The parameter of a element bound in the SQL of where statement of parameter
-     * @return int return the opreater affected row of number
+     * @param integer $start delete start row number
+     * @param integer $limit delete limit number
+     * @return integer return the opreater affected row of number
      * @throws DatabaseException  if not set where property throw out
      */
-    public function deleteByWhere(array $params = array()) {
+    public function deleteByWhere(array $params = array(), $start = 0, $limit = 1) {
         if ($this->where === 1) {
             throw new DatabaseException("Must first set {$this->tableName}->where");
         }
         $sql = ActiveQuery::delete($this->tableName);
         $sql .= ActiveQuery::where($sql);
+        $sql .= ActiveQuery::limit($start, $limit);
         return $this->delete($sql, $params);
+    }
+
+    /**
+     * Execute Delete opreater by the primary key value of the table
+     * 
+     * @param mixed $pkValue The value of the table primary key
+     * @param integer $start see {@see DbTableObject::updateByPK()}
+     * @param integer $limit    see {@see DbTableObject::updateByPK()}
+     * @param string $condition see {@see DbTableObject::updateByPK()}
+     * @return integer return the opreater affected row of number
+     * @throws DatabaseException
+     */
+    public function deleteByPk($pkValue, $start = 0, $limit = 1, $condition = ActiveQuery::EQUAL) {
+        if ($this->where === 1) {
+            throw new DatabaseException("Must first set {$this->tableName}->where");
+        }
+        $sql = ActiveQuery::delete($this->tableName);
+        $sql .= ActiveQuery::where("{$this->primaryName} {$condition} ?");
+        $sql .= ActiveQuery::conditionLimit($condition, $start, $limit);
+        return $this->delete($sql, array($pkValue));
     }
 
     /**

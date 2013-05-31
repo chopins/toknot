@@ -172,6 +172,19 @@ class ActiveQuery {
             return " LIMIT {$start},{$limit}";
         }
     }
+    public static function conditionLimit($condition, $start,$limit) {
+        switch ($condition) {
+            case ActiveQuery::EQUAL:
+                return ActiveQuery::limit(0, 1);
+            case ActiveQuery::LESS_OR_EQUAL:
+            case ActiveQuery::LESS_THAN:
+            case ActiveQuery::GREATER_OR_EQUAL:
+            case ActiveQuery::GREATER_THAN:
+                return ActiveQuery::limit($start, $limit);
+            default:
+                throw new InvalidArgumentException('Condition must be ActiveQuery defined opreater of comparison');
+        }
+    }
 
     public static function order($order, $field) {
         if($field == NULL) {
