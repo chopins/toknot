@@ -1,30 +1,31 @@
-#Toknot V2dev
+##Toknot V2-dev
 
-##About 
+###About
 The project is php of web fast development of MVC framework
+The project is development now
 
-##LICENSE
+###License
 see [LICENSE](https://github.com/chopins/toknot/blob/master/LICENSE)
 
-##API and Class Documentation
+###API and Class Reference
 see (http://toknot.com/toknot/)
 
-##DIRECTORY STRUCTURE
+###Directory Structure
     Toknot/             framework sources code
           Config/       default ini file and load config of class
           Control/      Router
           Db/           Database opreate
           Di/           framework of object
-          Exception/    
+          Exception/
           Http/         Http opreate
           Process/      Process manage
-          Tool/         
+          Tool/
           View/         view layer
      demos/
 
-##Install and Configure Usage
+###Install and Configure Usage
 
-Simply download the framework, extract it to the folder you would like to keep it in，and include 
+Simply download the framework, extract it to the folder you would like to keep it in，and include
 `Toknot/Control/Application.php` on your application index.php file, like below code:
 
 your application of `index.php`:
@@ -37,7 +38,7 @@ $app = new Application;
 $app->run('\Shop',dirname(__DIR__));
 ```
 then, configure your nginx conf file of server section like below:
-```conf  
+```conf
 server {
     listen 80;
     server_name localhost;
@@ -51,21 +52,21 @@ server {
         fastcgi_pass   127.0.0.1:9000;
         fastcgi_index  index.php;
 
-        #set applcation index.php file(a single entry point file) for nginx SCRIPT_FILENAME 
+        #set applcation index.php file(a single entry point file) for nginx SCRIPT_FILENAME
         #support PATH access mode, otherwise only use GET query mode
         fastcgi_param  SCRIPT_FILENAME $appPath/WebRoot/index.php;
         include        fastcgi_params;
     }
 }
-```   
-##Create Application
+```
+###Create Application
 1. creare application of one simply controller provide `http://your_domain/Index` visit, code like below:
     ```php
 
     //The class provide url is http://your_domain/Index visit
     class Index {
         public $FMAI = null;
-        
+
         //the method recived FMAI object instance(only on controller construct method recived)
         public function __construct($FMAI) {
             $this->FMAI = $FMAI;
@@ -99,5 +100,5 @@ server {
 3. create your configure file in `/your_application/Config` if your have config
 4. more usage see demo https://github.com/chopins/toknot/tree/master/demos
 
-##Previous versions 
+###Previous Versions
 The ToKnot Freamwork v1 visit https://github.com/chopins/toknot/tree/V1
