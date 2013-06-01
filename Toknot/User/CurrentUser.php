@@ -170,6 +170,11 @@ class CurrentUser extends UserControl {
      * password length less 6
      */
     const PASSWD_SHORT6 = 9200;
+    
+    /**
+     * the string is orderless
+     */
+    const PASSWD_ORDERLESS = 9300;
 
     /**
      * create a user instance
@@ -424,7 +429,17 @@ class CurrentUser extends UserControl {
             return sha1($password . $salt);
         }
     }
-
+    
+    /**
+     * get password sting texture
+     * 
+     * @param string $password
+     * @return integer value is {@see CurrentUser::PASSWD_ALL_NUMBER},{@see CurrentUser::PASSWD_SHORT6}
+     *                  {@see CurrentUser::PASSWD_NUMBER_SORT},{@see CurrentUser::PASSWD_ABC_SORT},
+     *                  {@see CurrentUser::PASSWD_ABC_KEYBOARD_SORT},{@see CurrentUser::PASSWD_ALL_LOWER},
+     *                  {@see CurrentUser::PASSWD_ALL_UPPER},{@see CurrentUser::PASSWD_ALL_ABC}
+     *                  {@see CurrentUser::PASSWD_ORDERLESS}
+     */
     public static function getPasswordTexture($password) {
         $len = strlen($password);
         if ($len < 6) {
@@ -457,6 +472,7 @@ class CurrentUser extends UserControl {
         if (preg_match('/[A-Za-z]/i', $password)) {
             return self::PASSWD_ALL_ABC;
         }
+        return self::PASSWD_ORDERLESS;
     }
 
     /**
