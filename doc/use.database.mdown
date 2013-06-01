@@ -58,9 +58,10 @@ $database = $AR->connect();
 ```
 --------------------
 4.数据库对象[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)的相关DAO操作方法
-showTableList   获取表列表
-tableJOIN       创建连表对象
-createTable     创建一个数据库
+
+    showTableList   获取表列表
+    tableJOIN       创建连表对象
+    createTable     创建一个数据库
 
 [DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)对象实例的一个可访问属性即映射一个表实例([DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)的实例)
 
