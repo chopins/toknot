@@ -17,11 +17,12 @@ see (http://toknot.com/toknot/)
           Control/      Router
           Db/           Database opreate
           Di/           framework of object
-          Exception/
+          Exception/    Framework Exception class
           Http/         Http opreate
           Process/      Process manage
           Tool/
           View/         view layer
+          User/         User Control model that is like unix file access permissions
      demos/
 
 ####Usage and Configure
@@ -36,30 +37,11 @@ use Toknot\Control\Application;
 require_once '/your_install_path/Toknot/Control/Application.php';
 
 $app = new Application;
-$app->run('\Shop',dirname(__DIR__));
+$app->run('\MyApp',dirname(__DIR__));
 ```
-then, configure your nginx conf file of server section like below:
-```conf
-server {
-    listen 80;
-    server_name localhost;
+then, configure your web-server set webroot to the path be index.php in directory, and set rewrite
+become all http request access the index.php
 
-    #set applcation site path
-    set $appPath /your_application_path;
-
-    #if the server have statice file and add static file location
-    location / {
-        root $appPath/WebRoot;
-        fastcgi_pass   127.0.0.1:9000;
-        fastcgi_index  index.php;
-
-        #set applcation index.php file(a single entry point file) for nginx SCRIPT_FILENAME
-        #support PATH access mode, otherwise only use GET query mode
-        fastcgi_param  SCRIPT_FILENAME $appPath/WebRoot/index.php;
-        include        fastcgi_params;
-    }
-}
-```
 ####Create Application
 1. creare application of one simply controller provide `http://your_domain/Index` visit, code like below:
     ```php
