@@ -13,6 +13,7 @@ namespace Toknot\User;
 use Toknot\User\UserControl;
 use Toknot\User\Root;
 use Toknot\Exception\StandardException;
+use Toknot\Config\ConfigLoader;
 
 class CurrentUser extends UserControl {
 
@@ -31,7 +32,7 @@ class CurrentUser extends UserControl {
      * @access public
      * @static
      */
-    public static $tableName = null;
+    private static $tableName = null;
 
     /**
      * Column name of the UID field in the user-account table on database
@@ -40,7 +41,7 @@ class CurrentUser extends UserControl {
      * @access public
      * @static 
      */
-    public static $uidColumn = null;
+    private static $uidColumn = null;
 
     /**
      * Column name of the user-account field in the user-account table on database
@@ -49,7 +50,7 @@ class CurrentUser extends UserControl {
      * @access public
      * @static
      */
-    public static $userNameColumn = null;
+    private static $userNameColumn = null;
 
     /**
      * column name of the user-account group id field in the user-account table on database
@@ -58,7 +59,7 @@ class CurrentUser extends UserControl {
      * @access public
      * @static
      */
-    public static $gidColumn = null;
+    private static $gidColumn = null;
 
     /**
      * column name of the user-account password field in the user-account table on database
@@ -67,7 +68,7 @@ class CurrentUser extends UserControl {
      * @access public
      * @static
      */
-    public static $passColumn = null;
+    private static $passColumn = null;
 
     /**
      * the database connect object of the user-account table in daabase
@@ -81,28 +82,28 @@ class CurrentUser extends UserControl {
      * @access public
      * @static 
      */
-    public static $DBConnect = null;
+    private static $DBConnect = null;
 
     /**
      * name of algorithm for the hash function
      *
      * @var string
      */
-    public static $hashAlgo = 'sha512';
+    private static $hashAlgo = 'sha512';
 
     /**
      * whether use hash extension of function
      *
      * @var boolean
      */
-    public static $useHashFunction = true;
+    private static $useHashFunction = true;
 
     /**
      * set salt of the hash 
      *
      * @var string
      */
-    public static $hashSalt = '';
+    private static $hashSalt = '';
 
     /**
      * User exists status code
@@ -129,6 +130,46 @@ class CurrentUser extends UserControl {
      * The password salt string
      */
     const PASSWORD_SALT = 'ToKnot-PHP-Framework-Password-Default-Salt';
+    
+    /**
+     * All number
+     */
+    const PASSWD_ALL_NUMBER = 9000;
+    
+    /**
+     * natural order number
+     */
+    const PASSWD_NUMBER_SORT = 9001;
+    
+    /**
+     * All letter
+     */
+    const PASSWD_ALL_ABC = 9100;
+    
+    /**
+     * All lower letter
+     */
+    const PASSWD_ALL_LOWER = 9101;
+    
+    /**
+     * All upper letter
+     */
+    const PASSWD_ALL_UPPER = 9102;
+    
+    /**
+     * natural order letter
+     */
+    const PASSWD_ABC_SORT = 9103;
+    
+    /**
+     * same keyboard letter order
+     */
+    const PASSWD_ABC_KEYBOARD_SORT = 9104;
+    
+    /**
+     * password length less 6
+     */
+    const PASSWD_SHORT6 = 9200;
 
     /**
      * create a user instance
@@ -170,32 +211,6 @@ class CurrentUser extends UserControl {
     }
 
     /**
-     * find a best hash algos from current PHP hash algorithms list
-     * 
-     * @return boolean|string  If have sha and tiger algorithm, will return max bit algo otherise return false
-     * @access public
-     * @static
-     */
-    public static function bestHashAlgos() {
-        if (!function_exists('hash_algos')) {
-            return false;
-        }
-        $algoList = array_reverse(hash_algos());
-        foreach ($algoList as $algo) {
-            if (strlen($algo) < 5) {
-                continue;
-            }
-            if (substr($algo, 0, 3) == 'sha') {
-                return $algo;
-            }
-            if (substr($algo, 0, 5) == 'tiger') {
-                return $algo;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Generate a seesion id that is hash string
      */
     protected function generateSessionId() {
@@ -223,19 +238,20 @@ class CurrentUser extends UserControl {
      * 
      * @static
      * @access public
-     * @param type $id  The account of user
-     * @param type $password    The account of password
+     * @param string $id  The account of user
+     * @param string $password    The account of password
      * @return boolean|Toknot\User\CurrentUser
      */
     public static function login($id, $password) {
-        if (is_numeric($id) && $id === 0) {
+        if ($id == 'root' && $id === 0) {
             return Root::login($password);
         }
+        self::loadConfigure();
         $tableName = self::$tableName;
         $passwordColumn = self::$passColumn;
         $username = self::$userNameColumn;
         self::$DBConnect->$tableName->$username = $id;
-        self::$DBConnect->$tableName->$password = $password;
+        self::$DBConnect->$tableName->$password = self::hashPassword($password);
         $userInfo = self::$DBConnect->$tableName->findByAttr($passwordColumn);
         if (empty($userInfo)) {
             return false;
@@ -270,7 +286,8 @@ class CurrentUser extends UserControl {
      * 
      * @param string $oldPassword user current password
      * @param string $newPassword   set new password
-     * @return integer
+     * @return integer  opreate status use {@see CurrentUser::OPRATE_SUCC} 
+     *                   and {@see CurrentUser::OPRATE_FAIL}
      */
     public function changePassword($oldPassword, $newPassword) {
         $oldPasswordHash = self::hashPassword($oldPassword);
@@ -289,12 +306,19 @@ class CurrentUser extends UserControl {
         }
     }
 
+    /**
+     * Add a group to current user 
+     * 
+     * @param integer $gid
+     * @return integer opreate status use {@see CurrentUser::OPRATE_SUCC} 
+     *                  and {@see CurrentUser::OPRATE_FAIL}
+     */
     public function addGroup($gid) {
-        if(!is_array($this->gid) && $this->gid != $gid) {
+        if (!is_array($this->gid) && $this->gid != $gid) {
             $this->gid = array($this->gid, $gid);
         } else {
             $key = array_search($gid, $this->gid);
-            if($key === false) {
+            if ($key === false) {
                 $this->gid[] = $gid;
             } else {
                 return self::OPRATE_SUCC;
@@ -307,12 +331,18 @@ class CurrentUser extends UserControl {
         return $row ? self::OPRATE_SUCC : self::OPRATE_FAIL;
     }
 
+    /**
+     * delete a group from current of group list
+     * 
+     * @param integer $gid
+     * @return integer
+     */
     public function deleteGroup($gid) {
-        if(!is_array($this->gid) || count($this->gid) == 1) {
+        if (!is_array($this->gid) || count($this->gid) == 1) {
             return self::OPRATE_FAIL;
         }
         $key = array_search($gid, $this->gid);
-        if($key === false) {
+        if ($key === false) {
             return self::OPRATE_FAIL;
         }
         unset($this->gid[$key]);
@@ -323,6 +353,12 @@ class CurrentUser extends UserControl {
         return $row ? self::OPRATE_SUCC : self::OPRATE_FAIL;
     }
 
+    /**
+     * Delete current user
+     * 
+     * @return integer opreate status use {@see CurrentUser::OPRATE_SUCC} 
+     *                   and {@see CurrentUser::OPRATE_FAIL}
+     */
     public function deleteUser() {
         $tableName = self::$tableName;
         $row = self::$DBConnect->$tableName->deleteByPk($this->uid);
@@ -342,6 +378,7 @@ class CurrentUser extends UserControl {
      * @static
      */
     public static function addUser(array $data) {
+        self::loadConfigure();
         if ($data[self::$userNameColumn] == 'root') {
             return self::USER_EXISTS;
         }
@@ -385,6 +422,85 @@ class CurrentUser extends UserControl {
             return hash(self::$hashAlgo, $password . $salt);
         } else {
             return sha1($password . $salt);
+        }
+    }
+
+    public static function getPasswordTexture($password) {
+        $len = strlen($password);
+        if ($len < 6) {
+            return self::PASSWD_SHORT6;
+        }
+        $strArr = str_split($password);
+        natsort($strArr);
+        $natstr = implode('', $strArr);
+        if (is_numeric($password)) {
+            if ($natstr == $password || $password == strrev($natstr)) {
+                return self::PASSWD_NUMBER_SORT;
+            }
+            return self::PASSWD_ALL_NUMBER;
+        }
+        if ($natstr == $password || $password == strrev($natstr)) {
+            return self::PASSWD_ABC_SORT;
+        }
+        $keyboardChar = array('qwertyuiop','asdfghjkl','zxcvbnm');
+        foreach($keyboardChar as $wordList) {
+            if(strpos($password, $wordList) !== false) {
+                return self::PASSWD_ABC_KEYBOARD_SORT;
+            }
+        }
+        if (preg_match('/[a-z]/', $password)) {
+            return self::PASSWD_ALL_LOWER;
+        }
+        if (preg_match('/[A-Z]/', $password)) {
+            return self::PASSWD_ALL_UPPER;
+        }
+        if (preg_match('/[A-Za-z]/i', $password)) {
+            return self::PASSWD_ALL_ABC;
+        }
+    }
+
+    /**
+     * Get a CurrentUser object by uid, recommended ser serialize() the user object
+     * 
+     * @param integer $id
+     * @return Toknot\User\CurrentUser
+     * @static
+     */
+    public static function getInstanceByUid($id) {
+        self::loadConfigure();
+        $tableName = self::$tableName;
+        $userInfo = self::$DBConnect->$tableName->findByPK($this->uid);
+        return new static($userInfo);
+    }
+
+    private static function loadConfigure() {
+        $cfg = ConfigLoader::CFG();
+        if (!isset($cfg->User)) {
+            return;
+        }
+        if (!empty($cfg->User->userTableName)) {
+            self::$tableName = $cfg->User->userTableName;
+            if (!empty($cfg->User->userIdColumnName)) {
+                self::$uidColumn = $cfg->User->userIdColumnName;
+            }
+            if (!empty($cfg->User->userNameColumnName)) {
+                self::$userNameColumn = $cfg->User->userNameColumnName;
+            }
+            if (!empty($cfg->User->userGroupIdColumnName)) {
+                self::$gidColumn = $cfg->User->userGroupIdColumnName;
+            }
+            if (!empty($cfg->User->userPasswordColumnName)) {
+                self::$passColumn = $cfg->User->userPasswordColumnName;
+            }
+        }
+        if (!empty($cfg->User->userPasswordEncriyptionAlgorithms)) {
+            self::$hashAlgo = $cfg->User->userPasswordEncriyptionAlgorithms;
+        }
+        if (!empty($cfg->User->enableUseHashFunction)) {
+            self::$useHashFunction = $cfg->User->enableUseHashFunction;
+        }
+        if (!empty($cfg->User->userPasswordEncriyptionSalt)) {
+            self::$hashSalt = $cfg->User->userPasswordEncriyptionSalt;
         }
     }
 

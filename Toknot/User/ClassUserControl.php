@@ -22,8 +22,34 @@ class ClassUserControl extends UserControl {
      * @var integer
      */
     protected $permissions = 0777;
-
+    
     /**
+     * current object type of opreate data
+     *
+     * @var integer
+     */
+    protected $classType = self::CLASS_READ;
+    
+    /**
+     * only show data
+     */
+    const CLASS_READ = 1;
+    
+    /**
+     * only add data
+     */
+    const CLASS_WRITE = 2;
+    
+    /**
+     * only change data of current exists
+     */
+    const CLASS_UPDATE = 3;
+    
+    public function getClassType() {
+        return $this->classType;
+    }
+
+     /**
      * Use Root user change class of permission with is temp
      * 
      * @param \Toknot\User\Root $user

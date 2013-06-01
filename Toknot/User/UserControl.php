@@ -95,4 +95,30 @@ abstract class UserControl extends Object {
     final public function getGroup() {
         return $this->groupName;
     }
+    
+    /**
+     * find a best hash algos from current PHP hash algorithms list
+     * 
+     * @return boolean|string  If have sha and tiger algorithm, will return max bit algo otherise return false
+     * @access public
+     * @static
+     */
+    public static function bestHashAlgos() {
+        if (!function_exists('hash_algos')) {
+            return false;
+        }
+        $algoList = array_reverse(hash_algos());
+        foreach ($algoList as $algo) {
+            if (strlen($algo) < 5) {
+                continue;
+            }
+            if (substr($algo, 0, 3) == 'sha') {
+                return $algo;
+            }
+            if (substr($algo, 0, 5) == 'tiger') {
+                return $algo;
+            }
+        }
+        return false;
+    }
 }

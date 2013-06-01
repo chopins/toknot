@@ -33,14 +33,21 @@ final class FMAI extends Object {
      */
     public $D = array();
     
+    /**
+     * Current HTTP request method
+     *
+     * @var string
+     */
     public $requestMethod = 'GET';
-    
+
     /**
      * In path mode, URI path without router controller path
      *
      * @var array
      */
     protected $uriOutRouterPath = array();
+    protected $accessControlStatus = true;
+    private $accessDeniedController = null;
 
     public static function singleton() {
         return parent::__singleton();
@@ -55,13 +62,14 @@ final class FMAI extends Object {
     protected function __construct() {
         ConfigLoader::singleton();
     }
-    
+
     /**
      * @param string $uri
      */
     public function setURIOutRouterPath($uri) {
         $this->uriOutRouterPath = $uri;
     }
+
     public function getURIOutRouterPath() {
         return $this->uriOutRouterPath;
     }
@@ -178,7 +186,7 @@ final class FMAI extends Object {
         $view->importVars($this->D);
         $view->display($tplName);
     }
-    
+
     /**
      * Get parameter of passed by URI and with out router path
      * 
@@ -188,10 +196,65 @@ final class FMAI extends Object {
     public function getParam($index) {
         return $this->uriOutRouterPath[$index];
     }
-    public function checkAccess(ClassUserControl $obj) {
-        
+    
+    /**
+     * Get current user access status
+     * 
+     * @return boolean if allow access return true otherise false
+     */
+    public function getAccessStatus() {
+        return $this->accessControlStatus;
     }
+    
+    /**
+     * Register a controller when the user access denied be invoked GET method
+     * 
+     * @param string $controllerName
+     */
+    public function registerAccessDeniedController($controllerName) {
+        $this->accessDeniedController = $controllerName;
+    }
+    
+    /**
+     * Get current registered controller name of access denied 
+     * 
+     * @return string
+     */
+    public function getAccessDeniedController() {
+        return $this->accessDeniedController;
+    }
+    
+    /**
+     * Check a user object whether can access class object be passed
+     * 
+     * @param \Toknot\User\ClassUserControl $clsObj
+     * @param \Toknot\User\CurrentUser $user
+     */
+    public function checkAccess(ClassUserControl $clsObj, CurrentUser $user) {
+        switch ($clsObj->getClassType()) {
+            case ClassUserControl::CLASS_READ:
+                $this->accessControlStatus = $clsObj->checkRead($user);
+                break;
+            case ClassUserControl::CLASS_WRITE:
+                $this->accessControlStatus = $clsObj->checkWrite($user);
+                break;
+            case ClassUserControl::CLASS_UPDATE:
+                $this->accessControlStatus = $clsObj->checkChange($user);
+                break;
+            default :
+               $this->accessControlStatus = true;
+                break;
+        }
+    }
+    
+    /**
+     * Get a user object by uid, recommended ser serialize() the user object instead
+     * 
+     * @param integer $id
+     * @return \Toknot\User\CurrentUser
+     */
     public function setCurrentUser($id) {
-        return new CurrentUser($id);
+        return CurrentUser::getInstanceByUid($id);
     }
+
 }

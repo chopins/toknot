@@ -188,9 +188,17 @@ class Router extends Object implements RouterInterface {
             $FMAI->setURIOutRouterPath($this->suffixPart);
             $FMAI->requestMethod = $method;
             $invokeObject = $invokeClassReflection->newInstance($FMAI);
+            if($invokeClassReflection->isSubclassOf('\Toknot\User\ClassUserControl')
+                    && $FMAI->getAccessStatus() === false) {
+                $accessDeniedController = $FMAI->getAccessDeniedController();
+                $invokeObject = new $accessDeniedController($FMAI);
+                $invokeObject->GET();
+                return;
+            }
             if ($method == 'GET' && ViewCache::$enableCache) {
                 ViewCache::outPutCache();
             }
+            
             if (ViewCache::$cacheEffective == false) {
                 $invokeObject->$method();
             }

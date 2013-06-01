@@ -12,11 +12,11 @@ use Shop\ShopBase;
 
 class Register extends ShopBase {
     public $perms = 0777;
-    public function GET($appContext) {
+    public function GET() {
         $appContext->D->hashkey = '11222';
         $appContext->display('register');
     }
-    public function POST($appContext) {
+    public function POST() {
         $postData = $_POST;
         $db =  new ActiveRecord;
         $db->user->importPropertie($postData);
