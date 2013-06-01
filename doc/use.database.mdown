@@ -1,5 +1,5 @@
 ###使用数据库
-Toknot数据库操作并没有实现传统意义上的ActiveRecord模型, 但是处于习惯，框架仍然叫ActiveRecord
+Toknot数据库操作并没有实现传统意义上的ActiveRecord模型, 但是出于习惯，框架仍然叫ActiveRecord
 
 ToKnot目前数据库操作相关的类主要包含如下几个:
 
@@ -52,7 +52,7 @@ $AR->config($CFG->Database);
 ```
 --------------------
 3.连接数据库
-    通过调用[ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)对象的connect方法，将创建一个数据库连接对象([DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)的实例)，这样我们就可以使用数据库对象进行数据库操作
+    通过调用[ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)对象的`connect()`方法，将创建一个数据库连接对象([DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)的实例)，这样我们就可以使用数据库对象进行数据库操作
 ```php
 $database = $AR->connect();
 ```
@@ -66,19 +66,22 @@ createTable     创建一个数据库
 
 -----------------------
 5.创建连表对象
-  利用数据库的tableJOIN方法创建一个联表对象来进行 LEFT JOIN 多表查询，代码类似下面
+  利用数据库的`tableJOIN()`方法创建一个联表对象来进行`LEFT JOIN`多表查询，代码类似下面
 ```php
    $tableJoin = $database->createTable($database->table1,$database->table2,$database->tabl3);
 ```
 上面的方法将返回一个[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)对象
+详细见第9条数据库联表查询
 
 -----------------------
 6.创建一个表
-   [DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::createTable 目前只支持SQLite数据库表的创建
-    假如需要创建product表，他有一个三个字段，分别是:
+   [DatabaseObject::createTable()](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html) 目前只支持SQLite数据库表的创建
+假如需要创建product表，他有一个三个字段，分别是:
+
     pid             主键，自增长，整型数字
     product_name    字符串，变长
-    可以使用如下方法创建：
+
+可以使用如下方法创建：
 ```php
 $database->product->pid->type = 'integer';
 $database->product->pid->isPK = true;
@@ -87,7 +90,7 @@ $database->product->product_name->type = 'varchar';
 $database->product->product_name->length = 255;
 $database->createTable();
 ```
-[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::createTable 方法可以一次创建多个表，所以如果需要你可以在调用以前声明多个表的字段信息
+[DatabaseObject::createTable()](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html) 方法可以一次创建多个表，所以如果需要你可以在调用以前声明多个表的字段信息
 
 --------------------------
 7.表的查询
@@ -116,36 +119,42 @@ while($row = $database->theTable->fetch()) {
 //全部获取
 $all = $database->theTable->fetchAll();
 ```
-上面的方法非常复杂的查询非常有用.[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::exec()与
-[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)::exec()方法都是继承于[DbCRUD](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)::exec()方法, 对于使用PHP PDO 驱动时，该方法将返回一个[PDOStatement](php.net/PDOStatement)对象
-[DbCRUD](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)还提供了可传参数到SQL中的CRUD操作方法，传参数的方法和[PDO](php.net/PDO)一样，唯一不同的是目前不支持参数的绑定。
+上面的方法非常复杂的查询非常有用.[DatabaseObject::exec()](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)与
+[DbTableObject::exec()](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)方法都是继承于[DbCRUD::exec()](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)方法
+
+[DbCRUD](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)还提供了可传参数到SQL中的CRUD操作方法，传参数的方法和[PDO](php.net/PDO)类似
 
 * Create/Insert:
-```php
-$sql = "INSERT INTO tablename (id,name) VALUES(?,?)";
-$database->create($sql, array(1,'test'));
-```
-* Read/Select:
-```php
-$sql = "SELECT * FROM table WHERE id = ?";
-//只查询一条结果，该方法会自动设置LIMIT 1到SQL中
-$database->readOne($sql, array(1));
+    ```php
+    $sql = "INSERT INTO tablename (id,name) VALUES(?,?)";
+    $database->create($sql, array(1,'test'));
+    ```
 
-//获取全部结果
-$database->readAll($sql,array(1));
-```
+* Read/Select:
+    ```php
+    $sql = "SELECT * FROM table WHERE id = ?";
+    //只查询一条结果，该方法会自动设置LIMIT 1到SQL中
+    $database->readOne($sql, array(1));
+
+    //获取全部结果
+    $database->readAll($sql,array(1));
+    ```
+
 * Update:
-```php
-$sql = "UPDATE table SET name = ? WHERE id = ?";
-$database->update($sql, array('test',1);
-```
+    ```php
+    $sql = "UPDATE table SET name = ? WHERE id = ?";
+    $database->update($sql, array('test',1);
+    ```
+
 * Delete:
-```php
-$sql = "DELETE FROM table WHERE id = ?";
-$database->delete($sql, array(1));
-```
+    ```php
+    $sql = "DELETE FROM table WHERE id = ?";
+    $database->delete($sql, array(1));
+    ```
+
 上面的例子只展示了[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)对象使用CRUD的方法，[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)的使用方法与上面的一样
 如果需要定制SELECT获取结果集的类型，需要在调用`readOne()`与`readAll()`方法以前设置当前对象的`$fetchStyle`属性，像下面的代码那样:
+
 ```php
 use Toknot\Db\ActiveQuery;
 
