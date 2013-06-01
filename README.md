@@ -1,16 +1,17 @@
 ##Toknot V2-dev
 
-###About
-The project is php of web fast development of MVC framework
-The project is development now
+####About
+ToKnot is php MVC framework
 
-###License
+__The project is still under heavy development__
+
+####License
 see [LICENSE](https://github.com/chopins/toknot/blob/master/LICENSE)
 
-###API and Class Reference
+####API and Class Reference
 see (http://toknot.com/toknot/)
 
-###Directory Structure
+####Directory Structure
     Toknot/             framework sources code
           Config/       default ini file and load config of class
           Control/      Router
@@ -23,7 +24,7 @@ see (http://toknot.com/toknot/)
           View/         view layer
      demos/
 
-###Install and Configure Usage
+####Usage and Configure
 
 Simply download the framework, extract it to the folder you would like to keep it in，and include
 `Toknot/Control/Application.php` on your application index.php file, like below code:
@@ -59,7 +60,7 @@ server {
     }
 }
 ```
-###Create Application
+####Create Application
 1. creare application of one simply controller provide `http://your_domain/Index` visit, code like below:
     ```php
 
@@ -100,5 +101,5 @@ server {
 3. create your configure file in `/your_application/Config` if your have config
 4. more usage see demo https://github.com/chopins/toknot/tree/master/demos
 
-###Previous Versions
+####Previous Versions
 The ToKnot Freamwork v1 visit https://github.com/chopins/toknot/tree/V1
