@@ -108,9 +108,9 @@ class MySQL {
 
     public function exec($sql) {
         if ($this->useMySQLi) {
-            return self::$link->query($sql);
+            $this->query = self::$link->query($sql);
         } else {
-            return mysql_query($sql, self::$link);
+            $this->query = mysql_query($sql, self::$link);
         }
     }
 

@@ -1,14 +1,15 @@
 ###使用数据库
-Toknot数据库操作并没有实现传统意义上的ActiveRecord模型, 但是处于习惯，框架仍然叫ActiveRecord  
+Toknot数据库操作并没有实现传统意义上的ActiveRecord模型, 但是处于习惯，框架仍然叫ActiveRecord
 
 ToKnot目前数据库操作相关的类主要包含如下几个:
 
-[ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)              创建伪AR数据库对象模型   
-[ActiveQuery](http://toknot.com/toknot/class-Toknot.Db.ActiveQuery.html)                数据库相关对象查询兼容层    
-[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)          数据库对象   
-[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)            数据库表对象  
-[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)    关联表对象   
+[ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)              创建伪AR数据库对象模型
+[ActiveQuery](http://toknot.com/toknot/class-Toknot.Db.ActiveQuery.html)                数据库相关对象查询兼容层
+[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)          数据库对象
+[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)            数据库表对象
+[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)    关联表对象
 
+--------------------
 1.创建一个数据库对象模型实例
  ```php
 $AR = ActiveRecord::singleton();
@@ -16,6 +17,7 @@ $AR = ActiveRecord::singleton();
 //在应用中使用FMAI实例来进行访问
 $AR = $FMAI->getActiveRecord();
 ```
+--------------------
 2.使用数据库配置
 数据库配置文件使用INI格式，类似如下:
 ```ini
@@ -48,11 +50,13 @@ DSN 的格式取决于所使用的 [PDO](http://www.php.net/manual/en/book.pdo.p
 //$CFG->Database为上面配置文件的Database块
 $AR->config($CFG->Database);
 ```
+--------------------
 3.连接数据库
     通过调用[ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)对象的connect方法，将创建一个数据库连接对象([DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)的实例)，这样我们就可以使用数据库对象进行数据库操作
 ```php
 $database = $AR->connect();
 ```
+--------------------
 4.数据库对象[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)的相关DAO操作方法
 showTableList   获取表列表
 tableJOIN       创建连表对象
@@ -60,12 +64,15 @@ createTable     创建一个数据库
 
 [DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)对象实例的一个可访问属性即映射一个表实例([DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)的实例)
 
+-----------------------
 5.创建连表对象
   利用数据库的tableJOIN方法创建一个联表对象来进行 LEFT JOIN 多表查询，代码类似下面
 ```php
    $tableJoin = $database->createTable($database->table1,$database->table2,$database->tabl3);
 ```
 上面的方法将返回一个[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)对象
+
+-----------------------
 6.创建一个表
    [DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::createTable 目前只支持SQLite数据库表的创建
     假如需要创建product表，他有一个三个字段，分别是:
@@ -82,3 +89,111 @@ $database->createTable();
 ```
 [DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::createTable 方法可以一次创建多个表，所以如果需要你可以在调用以前声明多个表的字段信息
 
+--------------------------
+7.表的查询
+当获得了数据实例[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)以后，就可以访问该类的属性了，这些可访问属性都被映射到了该数据库的表上，每一个表就是一个[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)实例，该对象提供了表的常用操作方法。
+首先数据库映射[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)对象与表映射[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)对象都提供了数据SQL语句的直接执行方法。使用方法见下面的代码：
+```php
+//利用AR映射连接数据库，获得一个数据库实例
+$database = $AR->connect();
+
+//在该数据库中执行一条SQL语句
+$sql = "SELECT * FROM theTable";
+$database->exec($sql);
+while($row = $database->fetch()) {
+    /**操作代码**/
+}
+//全部获取
+$all = $database->fetchAll();
+
+//或者通过表对象来查询
+$result = $database->theTable->exec($sql);
+
+//然后操作结果集
+while($row = $database->theTable->fetch()) {
+    /**操作代码**/
+}
+//全部获取
+$all = $database->theTable->fetchAll();
+```
+上面的方法非常复杂的查询非常有用.[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::exec()与
+[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)::exec()方法都是继承于[DbCRUD](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)::exec()方法, 对于使用PHP PDO 驱动时，该方法将返回一个[PDOStatement](php.net/PDOStatement)对象
+[DbCRUD](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)还提供了可传参数到SQL中的CRUD操作方法，传参数的方法和[PDO](php.net/PDO)一样，唯一不同的是目前不支持参数的绑定。
+Create/Insert:
+```php
+$sql = "INSERT INTO tablename (id,name) VALUES(?,?)";
+$database->create($sql, array(1,'test'));
+```
+Read/Select:
+```php
+$sql = "SELECT * FROM table WHERE id = ?";
+//只查询一条结果，该方法会自动设置LIMIT 1到SQL中
+$database->readOne($sql, array(1));
+
+//获取全部结果
+$database->readAll($sql,array(1));
+```
+Update:
+```php
+$sql = "UPDATE table SET name = ? WHERE id = ?";
+$database->update($sql, array('test',1);
+```
+Delete:
+```php
+$sql = "DELETE FROM table WHERE id = ?";
+$database->delete($sql, array(1));
+```
+上面的例子只展示了[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)对象使用CRUD的方法，[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)的使用方法与上面的一样
+如果需要定制SELECT获取结果集的类型，需要在调用`readOne()`与`readAll()`方法以前设置当前对象的`$fetchStyle`属性，像下面的代码那样:
+```php
+use Toknot\Db\ActiveQuery;
+
+//设置结果集类型
+$database->fetchStyle = ActiveQuery::FETCH_ASSOC;
+$sql = "SELECT * FROM table WHERE id = ?";
+$database->readOne($sql, array(1));
+
+//设置结果集类型
+$database->table->fetchStyle = ActiveQuery::FETCH_ASSOC;
+$sql = "SELECT * FROM table WHERE id = ?";
+$database->table->readOne($sql, array(1));
+```
+`$fetchStyle`属性的可选值定义在[Toknot\Db\ActiveQuery](http://toknot.com/toknot/class-Toknot.Db.ActiveQuery.html)中，包括下面几个类常量:
+
+    ActiveQuery::FETCH_ASSOC    字段名作为KEY名
+    ActiveQuery::FETCH_NUM      数字作为KEY名
+    ActiveQuery::FETCH_BOTH     字段和数字作为KEY名
+    ActiveQuery::FETCH_OBJ      返回对象模式
+
+--------------------
+8.常用的表操作方法:
+DbTableObject提供的方法介绍和使用例子见[类参考](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)
+
+    DbTableObject::findByPK()       以主键为唯一条件进行SELECT查询
+    DbTableObject::deleteByPK()     以主键为唯一条件进行DELETE删除操作
+    DbTableObject::updateByPK()     以主键为唯一条件进行Update更新操作
+    DbTableObject::findByAttr()     以上文设置的表字段值为条件进行SELECT查询操作，所有的条件间拥有相同的逻辑关系
+    DbTableObject::findByWhere()    以上文设置的Where语句为条件进行SELECT查询操作
+    DbTableObject::updateByWhere()  以上文设置的Where语句为条件，以上文设置的字段为需要更新的自动进行更新操作
+    DbTableObject::save()           以上文设置的表字段值进行添加记录的操作
+    DbTableObject::deleteByWhere()  以上文设置的语句为条件进行删除操作
+
+__注意上面提供的方法中，上文设置Where语句在方法被调用后并不会被删除(重置)。而上文设置字段值将会在调用后被清除__
+
+9.联表查询
+联表查询目前只支持`LEFT JOIN`查询,该数据库操作由[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)提供
+使用方法见下面的代码：
+```php
+$ar = new create ActiveRecord()
+$db = $ar->connect();
+$joinTable = $db->tableJOIN($db->table1, $db->table2);
+$joinTable->table1->alias = 'a';
+$joinTable->table2->alias = 'b';
+$joinTable->tableON($joinTable->table1->Id, $joinTable->table2->id);
+$joinTable->where = 'a.id > 5';   //set where is table1 of id greater than 5
+$joinTable->order = ActiveQuery::ORDER_DESC;
+$joinTable->orderBy = 'b.id';  //set order by table2 of id
+$joinTable->find(10);
+
+```
+更加详细的信息见[DbTableJoinObject类参考](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)

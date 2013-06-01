@@ -24,6 +24,7 @@ abstract class DbCRUD extends Object {
     public $fetchStyle = ActiveQuery::FETCH_ASSOC;
     protected $dbDriverType = 0;
     protected $dbINSType = 0;
+    protected $queryResult = null;
     private function getDbDriverFetchStyle() {
         if ($this->dbINSType == Connect::DB_INS_DRIVER) {
             return $this->fetchStyle;
@@ -56,7 +57,10 @@ abstract class DbCRUD extends Object {
         }
     }
     public function exec($sql) {
-        return $this->connectInstance->query($sql);
+        $this->queryResult = $this->connectInstance->query($sql);
+    }
+    public function fetch() {
+        return $this->queryResult->fetch($this->getDbDriverFetchStyle());
     }
 
     public function readOne($sql, $params = array()) {
