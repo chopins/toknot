@@ -3,11 +3,11 @@ Toknot数据库操作并没有实现传统意义上的ActiveRecord模型, 但是
 
 ToKnot目前数据库操作相关的类主要包含如下几个:
 
-[ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)              创建伪AR数据库对象模型
-[ActiveQuery](http://toknot.com/toknot/class-Toknot.Db.ActiveQuery.html)                数据库相关对象查询兼容层
-[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)          数据库对象
-[DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)            数据库表对象
-[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)    关联表对象
++ [ActiveRecord](http://toknot.com/toknot/class-Toknot.Db.ActiveRecord.html)              创建伪AR数据库对象模型
++ [ActiveQuery](http://toknot.com/toknot/class-Toknot.Db.ActiveQuery.html)                数据库相关对象查询兼容层
++ [DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)          数据库对象
++ [DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)            数据库表对象
++ [DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)    关联表对象
 
 --------------------
 1.创建一个数据库对象模型实例
@@ -119,12 +119,13 @@ $all = $database->theTable->fetchAll();
 上面的方法非常复杂的查询非常有用.[DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)::exec()与
 [DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)::exec()方法都是继承于[DbCRUD](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)::exec()方法, 对于使用PHP PDO 驱动时，该方法将返回一个[PDOStatement](php.net/PDOStatement)对象
 [DbCRUD](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)还提供了可传参数到SQL中的CRUD操作方法，传参数的方法和[PDO](php.net/PDO)一样，唯一不同的是目前不支持参数的绑定。
-Create/Insert:
+
+* Create/Insert:
 ```php
 $sql = "INSERT INTO tablename (id,name) VALUES(?,?)";
 $database->create($sql, array(1,'test'));
 ```
-Read/Select:
+* Read/Select:
 ```php
 $sql = "SELECT * FROM table WHERE id = ?";
 //只查询一条结果，该方法会自动设置LIMIT 1到SQL中
@@ -133,12 +134,12 @@ $database->readOne($sql, array(1));
 //获取全部结果
 $database->readAll($sql,array(1));
 ```
-Update:
+* Update:
 ```php
 $sql = "UPDATE table SET name = ? WHERE id = ?";
 $database->update($sql, array('test',1);
 ```
-Delete:
+* Delete:
 ```php
 $sql = "DELETE FROM table WHERE id = ?";
 $database->delete($sql, array(1));
@@ -180,6 +181,7 @@ DbTableObject提供的方法介绍和使用例子见[类参考](http://toknot.co
 
 __注意上面提供的方法中，上文设置Where语句在方法被调用后并不会被删除(重置)。而上文设置字段值将会在调用后被清除__
 
+------------------
 9.联表查询
 联表查询目前只支持`LEFT JOIN`查询,该数据库操作由[DbTableJoinObject](http://toknot.com/toknot/class-Toknot.Db.DbTableJoinObject.html)提供
 使用方法见下面的代码：
