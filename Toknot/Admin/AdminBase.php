@@ -8,9 +8,13 @@
  * @link       https://github.com/chopins/toknot
  */
 
-use Toknot\Control\Application;
+namespace Toknot\Admin;
 
-require_once dirname(dirname(__DIR__)).'/Toknot/Control/Application.php';
+class AdminBase {
+    protected $adminConfig = null;
+    public function __construct($FMAI) {
+        
+    }
+}
 
-$app = new Application;
-$app->run('\news',__DIR__);
+?>
