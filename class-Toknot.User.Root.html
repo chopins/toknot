@@ -7,7 +7,7 @@
 	<title>Class Toknot\User\Root | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?3693668261"></script>
+	<script type="text/javascript" src="elementlist.js?3855207076"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -25,6 +25,8 @@
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
 				<li><a href="namespace-Toknot.Config.html">Config</a>
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
@@ -165,64 +167,48 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.User.html">User</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.User.Root.html#14-60" title="Go to source code">Toknot/User/Root.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.User.Root.html#15-126" title="Go to source code">Toknot/User/Root.php</a><br />
 	</div>
 
 
 
 	<table class="summary" id="methods">
 	<caption>Methods summary</caption>
-	<tr data-order="setRootPassword" id="_setRootPassword">
+	<tr data-order="hashPassword" id="_hashPassword">
 
 		<td class="attributes"><code>
 			 public static
-			
+			string
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_setRootPassword">#</a>
-		<code><a href="source-class-Toknot.User.Root.html#29-31" title="Go to source code">setRootPassword</a>( <span>mixed <var>$password</var></span> )</code>
+		<a class="anchor" href="#_hashPassword">#</a>
+		<code><a href="source-class-Toknot.User.Root.html#56-68" title="Go to source code">hashPassword</a>( <span>string <var>$password</var></span> )</code>
 
 		<div class="description short">
 			
+<p>use current configure encrypt a password</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>use current configure encrypt a password</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$password</var></dt>
+					<dd><code>string</code><br>$password</dd>
+				</dl></div>
 
-
-
-
-		</div>
-		</div></td>
-	</tr>
-	<tr data-order="allowRootLogin" id="_allowRootLogin">
-
-		<td class="attributes"><code>
-			 public static
-			
-			
-			</code>
-		</td>
-
-		<td class="name"><div>
-		<a class="anchor" href="#_allowRootLogin">#</a>
-		<code><a href="source-class-Toknot.User.Root.html#33-35" title="Go to source code">allowRootLogin</a>( )</code>
-
-		<div class="description short">
-			
-		</div>
-
-		<div class="description detailed hidden">
-			
-
-
-
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
 
 
 
@@ -234,24 +220,39 @@
 
 		<td class="attributes"><code>
 			 public static
-			
+			boolean|<code><a href="class-Toknot.User.Root.html">Toknot\User\Root</a></code>
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_su">#</a>
-		<code><a href="source-class-Toknot.User.Root.html#37-46" title="Go to source code">su</a>( <span><code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code> <var>$user</var></span>, <span>mixed <var>$password</var></span> )</code>
+		<code><a href="source-class-Toknot.User.Root.html#70-90" title="Go to source code">su</a>( <span><code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code> <var>$user</var></span>, <span>string <var>$password</var></span> )</code>
 
 		<div class="description short">
 			
+<p>Change current to root</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Change current to root</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$user</var></dt>
+					<dd><code><code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code></code><br>$user</dd>
+					<dt><var>$password</var></dt>
+					<dd><code>string</code><br>$password</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean|<code><a href="class-Toknot.User.Root.html">Toknot\User\Root</a></code></code><br />
+				</div>
 
 
 
@@ -263,24 +264,79 @@
 
 		<td class="attributes"><code>
 			 public static
-			
+			boolean|<code><a href="class-Toknot.User.Root.html">Toknot\User\Root</a></code>
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_login">#</a>
-		<code><a href="source-class-Toknot.User.Root.html#47-58" title="Go to source code">login</a>( <span>mixed <var>$password</var></span> )</code>
+		<code><a href="source-class-Toknot.User.Root.html#92-110" title="Go to source code">login</a>( <span>string <var>$password</var></span> )</code>
 
 		<div class="description short">
 			
+<p>Login root user, if root not configure password will not allow login</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Login root user, if root not configure password will not allow login</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$password</var></dt>
+					<dd><code>string</code><br>$password</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean|<code><a href="class-Toknot.User.Root.html">Toknot\User\Root</a></code></code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getEncryptionRootPass" id="_getEncryptionRootPass">
+
+		<td class="attributes"><code>
+			 public static
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getEncryptionRootPass">#</a>
+		<code><a href="source-class-Toknot.User.Root.html#112-125" title="Go to source code">getEncryptionRootPass</a>( <span>string <var>$password</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Passed a password text generate a encryption sting for root password</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Passed a password text generate a encryption sting for root password</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$password</var></dt>
+					<dd><code>string</code><br>$password</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br>The array 1st is algos name , 2 is encryption sting<br />
+				</div>
 
 
 
@@ -294,6 +350,7 @@
 	<caption>Methods inherited from <a href="class-Toknot.User.UserControl.html#methods">Toknot\User\UserControl</a></caption>
 	<tr>
 		<td><code>
+			<a href="class-Toknot.User.UserControl.html#_bestHashAlgos">bestHashAlgos()</a>, 
 			<a href="class-Toknot.User.UserControl.html#_getGid">getGid()</a>, 
 			<a href="class-Toknot.User.UserControl.html#_getGroup">getGroup()</a>, 
 			<a href="class-Toknot.User.UserControl.html#_getLogin">getLogin()</a>, 
@@ -340,7 +397,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.Root.html#15" title="Go to source code"><var>$userName</var></a>
+				<a href="source-class-Toknot.User.Root.html#16" title="Go to source code"><var>$userName</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">'root'</span></code></td>
 		<td class="description"><div>
@@ -367,7 +424,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.Root.html#16" title="Go to source code"><var>$uid</var></a>
+				<a href="source-class-Toknot.User.Root.html#17" title="Go to source code"><var>$uid</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">0</span></code></td>
 		<td class="description"><div>
@@ -394,7 +451,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.Root.html#19" title="Go to source code"><var>$groupName</var></a>
+				<a href="source-class-Toknot.User.Root.html#21" title="Go to source code"><var>$groupName</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">'root'</span></code></td>
 		<td class="description"><div>
@@ -417,7 +474,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.Root.html#20" title="Go to source code"><var>$gid</var></a>
+				<a href="source-class-Toknot.User.Root.html#22" title="Go to source code"><var>$gid</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">0</span></code></td>
 		<td class="description"><div>

@@ -7,7 +7,7 @@
 	<title>Class Toknot\View\Renderer | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?3693668261"></script>
+	<script type="text/javascript" src="elementlist.js?3855207076"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -25,6 +25,8 @@
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
 				<li><a href="namespace-Toknot.Config.html">Config</a>
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
@@ -157,7 +159,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.View.html">View</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.View.Renderer.html#18-196" title="Go to source code">Toknot/View/Renderer.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.View.Renderer.html#19-225" title="Go to source code">Toknot/View/Renderer.php</a><br />
 	</div>
 
 
@@ -175,7 +177,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.View.Renderer.html#73-75" title="Go to source code">__construct</a>( )</code>
+		<code><a href="source-class-Toknot.View.Renderer.html#95-97" title="Go to source code">__construct</a>( )</code>
 
 		<div class="description short">
 			
@@ -204,7 +206,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_singleton">#</a>
-		<code><a href="source-class-Toknot.View.Renderer.html#77-79" title="Go to source code">singleton</a>( )</code>
+		<code><a href="source-class-Toknot.View.Renderer.html#99-101" title="Go to source code">singleton</a>( )</code>
 
 		<div class="description short">
 			
@@ -233,7 +235,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_importVars">#</a>
-		<code><a href="source-class-Toknot.View.Renderer.html#81-88" title="Go to source code">importVars</a>( <span>array <var>$vars</var></span> )</code>
+		<code><a href="source-class-Toknot.View.Renderer.html#103-110" title="Go to source code">importVars</a>( <span>array <var>$vars</var></span> )</code>
 
 		<div class="description short">
 			
@@ -271,7 +273,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_outPutHTMLCache">#</a>
-		<code><a href="source-class-Toknot.View.Renderer.html#90-101" title="Go to source code">outPutHTMLCache</a>( <span>mixed <var>$tplName</var></span> )</code>
+		<code><a href="source-class-Toknot.View.Renderer.html#112-117" title="Go to source code">outPutHTMLCache</a>( <span>mixed <var>$tplName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -300,7 +302,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_display">#</a>
-		<code><a href="source-class-Toknot.View.Renderer.html#103-137" title="Go to source code">display</a>( <span>mixed <var>$tplName</var></span> )</code>
+		<code><a href="source-class-Toknot.View.Renderer.html#119-170" title="Go to source code">display</a>( <span>mixed <var>$tplName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -346,6 +348,79 @@
 
 
 
+	<table class="summary" id="constants">
+	<caption>Constants summary</caption>
+	<tr data-order="CACHE_FLAG_HTML" id="CACHE_FLAG_HTML">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.View.Renderer.html#84-87" title="Go to source code"><b>CACHE_FLAG_HTML</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">1</span></code></td>
+		<td class="description"><div>
+			<a href="#CACHE_FLAG_HTML" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>cache page to html</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>cache page to html</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="CACHE_FLAG_DATA" id="CACHE_FLAG_DATA">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.View.Renderer.html#89-92" title="Go to source code"><b>CACHE_FLAG_DATA</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">2</span></code></td>
+		<td class="description"><div>
+			<a href="#CACHE_FLAG_DATA" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>only cache data of be invoked controller without your construct method
+data</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>only cache data of be invoked controller without your construct method
+data</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="CACHE_USE_SUCC" id="CACHE_USE_SUCC">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.View.Renderer.html#94" title="Go to source code"><b>CACHE_USE_SUCC</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">200</span></code></td>
+		<td class="description"><div>
+			<a href="#CACHE_USE_SUCC" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	</table>
 
 
 
@@ -354,12 +429,12 @@
 	<caption>Properties summary</caption>
 	<tr data-order="fileExtension" id="$fileExtension">
 		<td class="attributes"><code>
-			public  
+			public static 
 			string
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#23-29" title="Go to source code"><var>$fileExtension</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#24-31" title="Go to source code"><var>$fileExtension</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">'htm'</span></code></td>
 		<td class="description"><div>
@@ -381,12 +456,12 @@
 	</tr>
 	<tr data-order="scanPath" id="$scanPath">
 		<td class="attributes"><code>
-			public  
+			public static 
 			string
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#31-37" title="Go to source code"><var>$scanPath</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#33-40" title="Go to source code"><var>$scanPath</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">''</span></code></td>
 		<td class="description"><div>
@@ -408,12 +483,12 @@
 	</tr>
 	<tr data-order="cachePath" id="$cachePath">
 		<td class="attributes"><code>
-			public  
+			public static 
 			string
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#39-45" title="Go to source code"><var>$cachePath</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#42-49" title="Go to source code"><var>$cachePath</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">''</span></code></td>
 		<td class="description"><div>
@@ -435,18 +510,18 @@ Application of Data View path</p>
 			</div>
 		</div></td>
 	</tr>
-	<tr data-order="enableHTMLCache" id="$enableHTMLCache">
+	<tr data-order="enableCache" id="$enableCache">
 		<td class="attributes"><code>
-			public  
+			public static 
 			boolean
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#49-54" title="Go to source code"><var>$enableHTMLCache</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#52-57" title="Go to source code"><var>$enableCache</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">false</span></code></td>
 		<td class="description"><div>
-			<a href="#$enableHTMLCache" class="anchor">#</a>
+			<a href="#$enableCache" class="anchor">#</a>
 
 			<div class="description short">
 				
@@ -466,12 +541,12 @@ Renderer::$htmlCachePath</p>
 	</tr>
 	<tr data-order="htmlCachePath" id="$htmlCachePath">
 		<td class="attributes"><code>
-			public  
+			public static 
 			string
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#56-62" title="Go to source code"><var>$htmlCachePath</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#59-65" title="Go to source code"><var>$htmlCachePath</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">null</span></code></td>
 		<td class="description"><div>
@@ -491,14 +566,37 @@ Renderer::$htmlCachePath</p>
 			</div>
 		</div></td>
 	</tr>
+	<tr data-order="dataCachePath" id="$dataCachePath">
+		<td class="attributes"><code>
+			public static 
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.View.Renderer.html#66" title="Go to source code"><var>$dataCachePath</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$dataCachePath" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
 	<tr data-order="outCacheThreshold" id="$outCacheThreshold">
 		<td class="attributes"><code>
-			public  
+			public static 
 			integer
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#64-71" title="Go to source code"><var>$outCacheThreshold</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#68-75" title="Go to source code"><var>$outCacheThreshold</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">2</span></code></td>
 		<td class="description"><div>
@@ -517,6 +615,33 @@ file</p>
 <p>set output HTML static cache of threshold time, if one REQUEST query is same
 and twice request time of interval less the value, will output exists HTML
 file</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="cacheFlag" id="$cacheFlag">
+		<td class="attributes"><code>
+			public static 
+			integer
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.View.Renderer.html#77-82" title="Go to source code"><var>$cacheFlag</var></a>
+		</td>
+		<td class="value"><code><span class="php-num">1</span></code></td>
+		<td class="description"><div>
+			<a href="#$cacheFlag" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>set cache type</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>set cache type</p>
 
 
 			</div>

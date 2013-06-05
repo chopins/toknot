@@ -7,7 +7,7 @@
 	<title>Class Toknot\User\CurrentUser | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?3693668261"></script>
+	<script type="text/javascript" src="elementlist.js?3855207076"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -25,6 +25,8 @@
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
 				<li><a href="namespace-Toknot.Config.html">Config</a>
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
@@ -165,7 +167,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.User.html">User</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.User.CurrentUser.html#17-111" title="Go to source code">Toknot/User/CurrentUser.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.User.CurrentUser.html#18-523" title="Go to source code">Toknot/User/CurrentUser.php</a><br />
 	</div>
 
 
@@ -183,7 +185,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.User.CurrentUser.html#31-66" title="Go to source code">__construct</a>( <span>integer <var>$userinfo</var></span> )</code>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#179-216" title="Go to source code">__construct</a>( <span>integer <var>$userinfo</var></span> )</code>
 
 		<div class="description short">
 			
@@ -271,28 +273,113 @@ class="php-var">$uid</span>);
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="login" id="_login">
+	<tr data-order="generateSessionId" id="_generateSessionId">
 
 		<td class="attributes"><code>
-			 public static
+			 protected 
 			
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_login">#</a>
-		<code><a href="source-class-Toknot.User.CurrentUser.html#67-82" title="Go to source code">login</a>( <span>mixed <var>$id</var></span>, <span>mixed <var>$password</var></span> )</code>
+		<a class="anchor" href="#_generateSessionId">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#218-230" title="Go to source code">generateSessionId</a>( )</code>
 
 		<div class="description short">
 			
+<p>Generate a seesion id that is hash string</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Generate a seesion id that is hash string</p>
 
 
 
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getSessionId" id="_getSessionId">
+
+		<td class="attributes"><code>
+			 public 
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getSessionId">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#232-239" title="Go to source code">getSessionId</a>( )</code>
+
+		<div class="description short">
+			
+<p>get session id of the CurrentUser object</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>get session id of the CurrentUser object</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="login" id="_login">
+
+		<td class="attributes"><code>
+			 public static
+			boolean|<code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_login">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#241-266" title="Go to source code">login</a>( <span>string <var>$id</var></span>, <span>string <var>$password</var></span> )</code>
+
+		<div class="description short">
+			
+<p>username and password be used for user login</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>username and password be used for user login</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$id</var></dt>
+					<dd><code>string</code><br>$id The account of user</dd>
+					<dt><var>$password</var></dt>
+					<dd><code>string</code><br>$password The account of password</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean|<code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code></code><br />
+				</div>
 
 
 
@@ -304,24 +391,37 @@ class="php-var">$uid</span>);
 
 		<td class="attributes"><code>
 			 public 
-			
+			boolean|<code><a href="class-Toknot.User.Root.html">Toknot\User\Root</a></code>
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_suRoot">#</a>
-		<code><a href="source-class-Toknot.User.CurrentUser.html#84-86" title="Go to source code">suRoot</a>( <span>mixed <var>$password</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#268-277" title="Go to source code">suRoot</a>( <span>string <var>$password</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
+<p>change current user to root user and have super permissions</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>change current user to root user and have super permissions</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$password</var></dt>
+					<dd><code>string</code><br>$password The Root user password</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean|<code><a href="class-Toknot.User.Root.html">Toknot\User\Root</a></code></code><br />
+				</div>
 
 
 
@@ -333,24 +433,197 @@ class="php-var">$uid</span>);
 
 		<td class="attributes"><code>
 			 public 
-			
+			array
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getUserInfo">#</a>
-		<code><a href="source-class-Toknot.User.CurrentUser.html#88-91" title="Go to source code">getUserInfo</a>( <span>mixed <var>$uid</var></span> )</code>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#279-287" title="Go to source code">getUserInfo</a>( )</code>
 
 		<div class="description short">
 			
+<p>Get user info of CurrentObject instance</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Get user info of CurrentObject instance</p>
 
 
 
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="changePassword" id="_changePassword">
+
+		<td class="attributes"><code>
+			 public 
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_changePassword">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#289-312" title="Go to source code">changePassword</a>( <span>string <var>$oldPassword</var></span>, <span>string <var>$newPassword</var></span> )</code>
+
+		<div class="description short">
+			
+<p>change password of user</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>change password of user</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$oldPassword</var></dt>
+					<dd><code>string</code><br>$oldPassword user current password</dd>
+					<dt><var>$newPassword</var></dt>
+					<dd><code>string</code><br>$newPassword set new password</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>integer</code><br>opreate status use <code><a href="class-Toknot.User.CurrentUser.html#OPRATE_SUCC">Toknot\User\CurrentUser::<b>OPRATE_SUCC</b></a></code> and <code><a href="class-Toknot.User.CurrentUser.html#OPRATE_FAIL">Toknot\User\CurrentUser::<b>OPRATE_FAIL</b></a></code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="addGroup" id="_addGroup">
+
+		<td class="attributes"><code>
+			 public 
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_addGroup">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#314-337" title="Go to source code">addGroup</a>( <span>integer <var>$gid</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Add a group to current user</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Add a group to current user</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$gid</var></dt>
+					<dd><code>integer</code><br>$gid</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>integer</code><br>opreate status use <code><a href="class-Toknot.User.CurrentUser.html#OPRATE_SUCC">Toknot\User\CurrentUser::<b>OPRATE_SUCC</b></a></code> and <code><a href="class-Toknot.User.CurrentUser.html#OPRATE_FAIL">Toknot\User\CurrentUser::<b>OPRATE_FAIL</b></a></code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="deleteGroup" id="_deleteGroup">
+
+		<td class="attributes"><code>
+			 public 
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_deleteGroup">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#339-359" title="Go to source code">deleteGroup</a>( <span>integer <var>$gid</var></span> )</code>
+
+		<div class="description short">
+			
+<p>delete a group from current of group list</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>delete a group from current of group list</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$gid</var></dt>
+					<dd><code>integer</code><br>$gid</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>integer</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="deleteUser" id="_deleteUser">
+
+		<td class="attributes"><code>
+			 public 
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_deleteUser">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#361-375" title="Go to source code">deleteUser</a>( )</code>
+
+		<div class="description short">
+			
+<p>Delete current user</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Delete current user</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>integer</code><br>opreate status use <code><a href="class-Toknot.User.CurrentUser.html#OPRATE_SUCC">Toknot\User\CurrentUser::<b>OPRATE_SUCC</b></a></code> and <code><a href="class-Toknot.User.CurrentUser.html#OPRATE_FAIL">Toknot\User\CurrentUser::<b>OPRATE_FAIL</b></a></code><br />
+				</div>
 
 
 
@@ -362,24 +635,177 @@ class="php-var">$uid</span>);
 
 		<td class="attributes"><code>
 			 public static
-			
+			<code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code>|boolean
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addUser">#</a>
-		<code><a href="source-class-Toknot.User.CurrentUser.html#93-109" title="Go to source code">addUser</a>( <span>mixed <var>$data</var></span> )</code>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#377-407" title="Go to source code">addUser</a>( <span>array <var>$data</var></span> )</code>
 
 		<div class="description short">
 			
+<p>add user by user info data, the key name of data is same the user table of
+column name</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>add user by user info data, the key name of data is same the user table of
+column name</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$data</var></dt>
+					<dd><code>array</code><br>$data</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code>|boolean</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="hashPassword" id="_hashPassword">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_hashPassword">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#409-431" title="Go to source code">hashPassword</a>( <span>string <var>$password</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Get password string of hash value, the method use CurrentUser::$hashSalt static property for the password of hash salt, if not
+set CurrentUser::$hashSalt will use <code><a href="class-Toknot.User.CurrentUser.html#PASSWORD_SALT">Toknot\User\CurrentUser::<b>PASSWORD_SALT</b></a></code> if
+set CurrentUser::$useHashFunction is true will use CurrentUser::$hashAlgo for the hash function algorithm</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Get password string of hash value, the method use CurrentUser::$hashSalt static property for the password of hash salt, if not
+set CurrentUser::$hashSalt will use <code><a href="class-Toknot.User.CurrentUser.html#PASSWORD_SALT">Toknot\User\CurrentUser::<b>PASSWORD_SALT</b></a></code> if
+set CurrentUser::$useHashFunction is true will use CurrentUser::$hashAlgo for the hash function algorithm</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$password</var></dt>
+					<dd><code>string</code><br>$password</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Exception.StandardException.html">Toknot\Exception\StandardException</a></code></code><br>if set use hash function and hash function not exists<br />
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getPasswordTexture" id="_getPasswordTexture">
+
+		<td class="attributes"><code>
+			 public static
+			integer
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getPasswordTexture">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#433-476" title="Go to source code">getPasswordTexture</a>( <span>string <var>$password</var></span> )</code>
+
+		<div class="description short">
+			
+<p>get password sting texture</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>get password sting texture</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$password</var></dt>
+					<dd><code>string</code><br>$password</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>integer</code><br>value is <code><a href="class-Toknot.User.CurrentUser.html#PASSWD_ALL_NUMBER">Toknot\User\CurrentUser::<b>PASSWD_ALL_NUMBER</b></a></code>,<code><a href="class-Toknot.User.CurrentUser.html#PASSWD_SHORT6">Toknot\User\CurrentUser::<b>PASSWD_SHORT6</b></a></code>
+<code><a href="class-Toknot.User.CurrentUser.html#PASSWD_NUMBER_SORT">Toknot\User\CurrentUser::<b>PASSWD_NUMBER_SORT</b></a></code>,<code><a href="class-Toknot.User.CurrentUser.html#PASSWD_ABC_SORT">Toknot\User\CurrentUser::<b>PASSWD_ABC_SORT</b></a></code>,
+<code><a href="class-Toknot.User.CurrentUser.html#PASSWD_ABC_KEYBOARD_SORT">Toknot\User\CurrentUser::<b>PASSWD_ABC_KEYBOARD_SORT</b></a></code>,<code><a href="class-Toknot.User.CurrentUser.html#PASSWD_ALL_LOWER">Toknot\User\CurrentUser::<b>PASSWD_ALL_LOWER</b></a></code>, <code><a href="class-Toknot.User.CurrentUser.html#PASSWD_ALL_UPPER">Toknot\User\CurrentUser::<b>PASSWD_ALL_UPPER</b></a></code>,<code><a href="class-Toknot.User.CurrentUser.html#PASSWD_ALL_ABC">Toknot\User\CurrentUser::<b>PASSWD_ALL_ABC</b></a></code> <code><a href="class-Toknot.User.CurrentUser.html#PASSWD_ORDERLESS">Toknot\User\CurrentUser::<b>PASSWD_ORDERLESS</b></a></code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getInstanceByUid" id="_getInstanceByUid">
+
+		<td class="attributes"><code>
+			 public static
+			<code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getInstanceByUid">#</a>
+		<code><a href="source-class-Toknot.User.CurrentUser.html#478-490" title="Go to source code">getInstanceByUid</a>( <span>integer <var>$id</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Get a CurrentUser object by uid, recommended ser serialize() the user
+object</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Get a CurrentUser object by uid, recommended ser serialize() the user
+object</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$id</var></dt>
+					<dd><code>integer</code><br>$id</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.User.CurrentUser.html">Toknot\User\CurrentUser</a></code></code><br />
+				</div>
 
 
 
@@ -393,6 +819,7 @@ class="php-var">$uid</span>);
 	<caption>Methods inherited from <a href="class-Toknot.User.UserControl.html#methods">Toknot\User\UserControl</a></caption>
 	<tr>
 		<td><code>
+			<a href="class-Toknot.User.UserControl.html#_bestHashAlgos">bestHashAlgos()</a>, 
 			<a href="class-Toknot.User.UserControl.html#_getGid">getGid()</a>, 
 			<a href="class-Toknot.User.UserControl.html#_getGroup">getGroup()</a>, 
 			<a href="class-Toknot.User.UserControl.html#_getLogin">getLogin()</a>, 
@@ -432,7 +859,7 @@ class="php-var">$uid</span>);
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.User.CurrentUser.html#27" title="Go to source code"><b>USER_EXISTS</b></a>
+				<a href="source-class-Toknot.User.CurrentUser.html#109-112" title="Go to source code"><b>USER_EXISTS</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">1</span></code></td>
 		<td class="description"><div>
@@ -440,10 +867,14 @@ class="php-var">$uid</span>);
 
 			<div class="description short">
 				
+<p>User exists status code</p>
+
 			</div>
 
 			<div class="description detailed hidden">
 				
+<p>User exists status code</p>
+
 
 			</div>
 		</div></td>
@@ -452,7 +883,7 @@ class="php-var">$uid</span>);
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.User.CurrentUser.html#28" title="Go to source code"><b>USER_NOT_EXISTS</b></a>
+				<a href="source-class-Toknot.User.CurrentUser.html#114-117" title="Go to source code"><b>USER_NOT_EXISTS</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">2</span></code></td>
 		<td class="description"><div>
@@ -460,10 +891,14 @@ class="php-var">$uid</span>);
 
 			<div class="description short">
 				
+<p>user not exists status code</p>
+
 			</div>
 
 			<div class="description detailed hidden">
 				
+<p>user not exists status code</p>
+
 
 			</div>
 		</div></td>
@@ -472,7 +907,7 @@ class="php-var">$uid</span>);
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.User.CurrentUser.html#29" title="Go to source code"><b>OPRATE_SUCC</b></a>
+				<a href="source-class-Toknot.User.CurrentUser.html#119-122" title="Go to source code"><b>OPRATE_SUCC</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">200</span></code></td>
 		<td class="description"><div>
@@ -480,10 +915,278 @@ class="php-var">$uid</span>);
 
 			<div class="description short">
 				
+<p>opreate of user success status code</p>
+
 			</div>
 
 			<div class="description detailed hidden">
 				
+<p>opreate of user success status code</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="OPRATE_FAIL" id="OPRATE_FAIL">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#124-127" title="Go to source code"><b>OPRATE_FAIL</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">500</span></code></td>
+		<td class="description"><div>
+			<a href="#OPRATE_FAIL" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>opreate of user fail status code</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>opreate of user fail status code</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWORD_SALT" id="PASSWORD_SALT">
+
+		<td class="attributes"><code>string</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#129-132" title="Go to source code"><b>PASSWORD_SALT</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-quote">'ToKnot-PHP-Framework-Password-Default-Salt'</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWORD_SALT" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>The password salt string</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>The password salt string</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_ALL_NUMBER" id="PASSWD_ALL_NUMBER">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#134-137" title="Go to source code"><b>PASSWD_ALL_NUMBER</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9000</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_ALL_NUMBER" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>All number</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>All number</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_NUMBER_SORT" id="PASSWD_NUMBER_SORT">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#139-142" title="Go to source code"><b>PASSWD_NUMBER_SORT</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9001</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_NUMBER_SORT" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>natural order number</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>natural order number</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_ALL_ABC" id="PASSWD_ALL_ABC">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#144-147" title="Go to source code"><b>PASSWD_ALL_ABC</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9100</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_ALL_ABC" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>All letter</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>All letter</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_ALL_LOWER" id="PASSWD_ALL_LOWER">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#149-152" title="Go to source code"><b>PASSWD_ALL_LOWER</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9101</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_ALL_LOWER" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>All lower letter</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>All lower letter</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_ALL_UPPER" id="PASSWD_ALL_UPPER">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#154-157" title="Go to source code"><b>PASSWD_ALL_UPPER</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9102</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_ALL_UPPER" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>All upper letter</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>All upper letter</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_ABC_SORT" id="PASSWD_ABC_SORT">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#159-162" title="Go to source code"><b>PASSWD_ABC_SORT</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9103</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_ABC_SORT" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>natural order letter</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>natural order letter</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_ABC_KEYBOARD_SORT" id="PASSWD_ABC_KEYBOARD_SORT">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#164-167" title="Go to source code"><b>PASSWD_ABC_KEYBOARD_SORT</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9104</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_ABC_KEYBOARD_SORT" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>same keyboard letter order</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>same keyboard letter order</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_SHORT6" id="PASSWD_SHORT6">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#169-172" title="Go to source code"><b>PASSWD_SHORT6</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9200</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_SHORT6" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>password length less 6</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>password length less 6</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="PASSWD_ORDERLESS" id="PASSWD_ORDERLESS">
+
+		<td class="attributes"><code>integer</code></td>
+		<td class="name"><code>
+				<a href="source-class-Toknot.User.CurrentUser.html#174-177" title="Go to source code"><b>PASSWD_ORDERLESS</b></a>
+		</code></td>
+		<td class="value"><code><span class="php-num">9300</span></code></td>
+		<td class="description"><div>
+			<a href="#PASSWD_ORDERLESS" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>the string is orderless</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>the string is orderless</p>
+
 
 			</div>
 		</div></td>
@@ -498,11 +1201,11 @@ class="php-var">$uid</span>);
 	<tr data-order="sessionId" id="$sessionId">
 		<td class="attributes"><code>
 			protected  
-			integer
+			string
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.CurrentUser.html#19" title="Go to source code"><var>$sessionId</var></a>
+				<a href="source-class-Toknot.User.CurrentUser.html#20-26" title="Go to source code"><var>$sessionId</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">0</span></code></td>
 		<td class="description"><div>
@@ -510,148 +1213,14 @@ class="php-var">$uid</span>);
 
 			<div class="description short">
 				
+<p>current user token id</p>
+
 			</div>
 
 			<div class="description detailed hidden">
 				
+<p>current user token id</p>
 
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="tableName" id="$tableName">
-		<td class="attributes"><code>
-			public static 
-			mixed
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.User.CurrentUser.html#20" title="Go to source code"><var>$tableName</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">null</span></code></td>
-		<td class="description"><div>
-			<a href="#$tableName" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="uidColumn" id="$uidColumn">
-		<td class="attributes"><code>
-			public static 
-			mixed
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.User.CurrentUser.html#21" title="Go to source code"><var>$uidColumn</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">null</span></code></td>
-		<td class="description"><div>
-			<a href="#$uidColumn" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="userNameColumn" id="$userNameColumn">
-		<td class="attributes"><code>
-			public static 
-			mixed
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.User.CurrentUser.html#22" title="Go to source code"><var>$userNameColumn</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">null</span></code></td>
-		<td class="description"><div>
-			<a href="#$userNameColumn" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="gidColumn" id="$gidColumn">
-		<td class="attributes"><code>
-			public static 
-			mixed
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.User.CurrentUser.html#23" title="Go to source code"><var>$gidColumn</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">null</span></code></td>
-		<td class="description"><div>
-			<a href="#$gidColumn" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="passColumn" id="$passColumn">
-		<td class="attributes"><code>
-			public static 
-			mixed
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.User.CurrentUser.html#24" title="Go to source code"><var>$passColumn</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">null</span></code></td>
-		<td class="description"><div>
-			<a href="#$passColumn" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="DBConnect" id="$DBConnect">
-		<td class="attributes"><code>
-			public static 
-			mixed
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.User.CurrentUser.html#25" title="Go to source code"><var>$DBConnect</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">null</span></code></td>
-		<td class="description"><div>
-			<a href="#$DBConnect" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
 
 			</div>
 		</div></td>

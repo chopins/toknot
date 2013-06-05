@@ -7,7 +7,7 @@
 	<title>Class Toknot\Control\Application | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?3693668261"></script>
+	<script type="text/javascript" src="elementlist.js?3855207076"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -25,6 +25,8 @@
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
 				<li><a href="namespace-Toknot.Config.html">Config</a>
 						</li>
 				<li class="active"><a href="namespace-Toknot.Control.html">Control<span></span></a>
@@ -77,7 +79,6 @@
 			<h3>Classes</h3>
 			<ul>
 				<li class="active"><a href="class-Toknot.Control.Application.html">Application</a></li>
-				<li><a href="class-Toknot.Control.FMAI.html">FMAI</a></li>
 				<li><a href="class-Toknot.Control.Router.html">Router</a></li>
 				<li><a href="class-Toknot.Control.StandardAutoloader.html">StandardAutoloader</a></li>
 			</ul>
@@ -173,7 +174,7 @@ class="php-quote">'/path/AppPath'</span>);
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Control.html">Control</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Control.Application.html#23-322" title="Go to source code">Toknot/Control/Application.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Control.Application.html#23-328" title="Go to source code">Toknot/Control/Application.php</a><br />
 	</div>
 
 
@@ -191,7 +192,7 @@ class="php-quote">'/path/AppPath'</span>);
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#60-100" title="Go to source code">__construct</a>( <span>array <var>$argv</var> = <span class="php-keyword1">array</span>()</span>, <span>integer <var>$argc</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#62-102" title="Go to source code">__construct</a>( <span>array <var>$argv</var> = <span class="php-keyword1">array</span>()</span>, <span>integer <var>$argc</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -270,6 +271,45 @@ class="php-comment">//print number of args</span>
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="setRouterArgs" id="_setRouterArgs">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setRouterArgs">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#161-171" title="Go to source code">setRouterArgs</a>( )</code>
+
+		<div class="description short">
+			
+<p>The method set router need parameters, the method can recived variable number
+of arguments, parameter info same your runtimeArgs() method paramters of your
+Router, if default, <code><a href="class-Toknot.Control.Router.html#_runtimeArgs">Toknot\Control\Router::runtimeArgs()</a></code> use 4 parameters
+that is $routerMode, $routerDepth, $notFound, $methodNotAllowed</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>The method set router need parameters, the method can recived variable number
+of arguments, parameter info same your runtimeArgs() method paramters of your
+Router, if default, <code><a href="class-Toknot.Control.Router.html#_runtimeArgs">Toknot\Control\Router::runtimeArgs()</a></code> use 4 parameters
+that is $routerMode, $routerDepth, $notFound, $methodNotAllowed</p>
+
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="run" id="_run">
 
 		<td class="attributes"><code>
@@ -281,7 +321,7 @@ class="php-comment">//print number of args</span>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_run">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#160-278" title="Go to source code">run</a>( <span>string <var>$appNameSpace</var></span>, <span>string <var>$appPath</var></span>, <span>string <var>$defaultInvoke</var> = <span class="php-quote">'\Index'</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#173-284" title="Go to source code">run</a>( <span>string <var>$appNameSpace</var></span>, <span>string <var>$appPath</var></span>, <span>string <var>$defaultInvoke</var> = <span class="php-quote">'\Index'</span></span> )</code>
 
 		<div class="description short">
 			
@@ -289,9 +329,8 @@ class="php-comment">//print number of args</span>
 <code><a href="class-Toknot.Control.RouterInterface.html">Toknot\Control\RouterInterface</a></code> of all method, Toknot Freamework default
 invoke class under application of Controller Dicetory, scan file path is under
 $appPath parameter set path(like: /path/appPath/Controller). The class be invoke
-by toknot of router invoke method with passed instance of Toknot <code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code>, you can receive the object of instance when class
-construct the method can recived variable number of arguments, <code><a href="class-Toknot.Control.Router.html">Toknot\Control\Router</a></code> use two parameters that is $routerMode and
-$routerDepth</p>
+by toknot of router invoke method with passed instance of Toknot \Toknot\Control\FMAI, you can receive the object of instance when class
+construct</p>
 
 		</div>
 
@@ -301,9 +340,8 @@ $routerDepth</p>
 <code><a href="class-Toknot.Control.RouterInterface.html">Toknot\Control\RouterInterface</a></code> of all method, Toknot Freamework default
 invoke class under application of Controller Dicetory, scan file path is under
 $appPath parameter set path(like: /path/appPath/Controller). The class be invoke
-by toknot of router invoke method with passed instance of Toknot <code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code>, you can receive the object of instance when class
-construct the method can recived variable number of arguments, <code><a href="class-Toknot.Control.Router.html">Toknot\Control\Router</a></code> use two parameters that is $routerMode and
-$routerDepth</p>
+by toknot of router invoke method with passed instance of Toknot \Toknot\Control\FMAI, you can receive the object of instance when class
+construct</p>
 
 <p>Usual use toknot of router, run framework like below:</p>
 
@@ -392,11 +430,13 @@ class="php-comment">//set router mode is get query mode</span>
 <span
 class="php-comment">//set router namespace level is 2</span>
 <span
-class="php-var">$app</span>-&gt;run(<span
+class="php-var">$app</span>-&gt;setRouterArgs(Router::ROUTER_GET_QUERY, <span
+class="php-num">2</span>);
+
+<span class="php-var">$app</span>-&gt;run(<span
 class="php-quote">'\AppTopNamespace'</span>, <span
 class="php-quote">'/path/AppPath'</span>, <span
-class="php-quote">'\Index'</span>, Router::ROUTER_GET_QUERY, <span
-class="php-num">2</span>);
+class="php-quote">'\Index'</span>);
 </pre>
 
 
@@ -439,7 +479,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorReportHandler">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#280-288" title="Go to source code">errorReportHandler</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#286-294" title="Go to source code">errorReportHandler</a>( )</code>
 
 		<div class="description short">
 			
@@ -472,7 +512,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setUserRouter">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#290-302" title="Go to source code">setUserRouter</a>( <span>string <var>$routerName</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#296-308" title="Go to source code">setUserRouter</a>( <span>string <var>$routerName</var></span> )</code>
 
 		<div class="description short">
 			
