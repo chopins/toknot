@@ -20,8 +20,7 @@ class Index extends ShopBase {
     }
 
     public function GET() {
-        //create ActiveRecord
-        $this->AR->config($this->CFG->Database);
+        
         //create database connect and return one DatabaseObject instance
         //one database is a instace
         $shopDatabase = $this->AR->connect();

@@ -52,9 +52,7 @@ class ActiveRecord extends Object {
         } else {
             throw new DatabaseConfigException('dirverOptions');
         }
-        if (isset($config->tablePrefix)) {
-            $this->dbObject->setTablePrefix($config->tablePrefix);
-        }
+        $this->dbObject->setConifg($config); 
     }
 
 }

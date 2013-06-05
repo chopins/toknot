@@ -18,7 +18,7 @@ use \RuntimeException;
 use \InvalidArgumentException;
 
 class ArrayObject extends Object implements ArrayAccess, Serializable {
-    
+
     /**
      * transfrom array type to ArrayObject type of object
      * 
@@ -43,10 +43,8 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         }
         foreach ($args as $arrObj) {
             foreach ($arrObj as $key => $var) {
-                if (isset($this->interatorArray[$key]) 
-                        && $var instanceof ArrayObject 
-                        && $this->interatorArray[$key] instanceof ArrayObject) {
-                        $this->interatorArray[$key]->replace_recursive($var);
+                if (isset($this->interatorArray[$key]) && $var instanceof ArrayObject && $this->interatorArray[$key] instanceof ArrayObject) {
+                    $this->interatorArray[$key]->replace_recursive($var);
                 } else {
                     $this->interatorArray[$key] = $var;
                 }
@@ -94,7 +92,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         $return = array();
         foreach ($array as $value) {
             if ($this->$value instanceof $this->propertieClassName) {
-                $return[$value] = $this->$value->covertToArray();
+                $return[$value] = $this->$value->transformToArray();
             } else {
                 $return[$value] = $this->$value;
             }
@@ -126,7 +124,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         $return = array();
         foreach ($this->interatorArray as $value) {
             if ($this->$value instanceof $this->propertieClassName) {
-                $return[$value] = $this->$value->covertToArray();
+                $return[$value] = $this->$value->transformToArray();
             } else {
                 $return[$value] = $this->$value;
             }
@@ -135,7 +133,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
     }
 
     public function serialize() {
-        $array = $this->covertToArray();
+        $array = $this->transformToArray();
         return serialize($array);
     }
 

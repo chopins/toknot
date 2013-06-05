@@ -17,7 +17,7 @@ use Toknot\Exception\BadClassCallException;
 use Toknot\Control\FMAI;
 use \ReflectionClass;
 use Toknot\Control\StandardAutoloader;
-use Toknot\View\ViewCache;
+
 
 class Router extends Object implements RouterInterface {
 
@@ -73,7 +73,29 @@ class Router extends Object implements RouterInterface {
      * @access private
      */
     private $routerDepth = 1;
+    
+    /**
+     * Array of url path query without Controller path
+     *
+     * @var array 
+     */
     private $suffixPart = array();
+    
+    /**
+     * the class be invoked when the request controller not found, the class
+     * namspace under Application root namespace
+     *
+     * @var string
+     */
+    private $notFuondController = null;
+    
+    /**
+     * the class be invoked when the request controller not has support the method of the http request, 
+     * the class namspace under Application root namespace
+     *
+     * @var string
+     */
+    private $methodNotAllowedController = null;
 
     /**
      * use URI of path controller invoke application controller of class
@@ -151,6 +173,21 @@ class Router extends Object implements RouterInterface {
         $this->defaultClass = $defaultClass;
     }
 
+    private function invokeNotFoundController(&$invokeClass) {
+        if (DEVELOPMENT) {
+            throw new BadClassCallException($invokeClass);
+        }
+        header('404 Not Found');
+        if ($this->notFuondController === null) {
+            $invokeClass = "{$this->routerNameSpace}\{$this->notFuondController}";
+            if (!class_exists($invokeClass, true)) {
+                die('404 Not Found');
+            }
+        } else {
+            die('404 Not Found');
+        }
+    }
+
     /**
      * Invoke Application Controller, the method will call application of Controller what is
      * $this->routerNameSpace\Controller{$this->spacePath}, and router action by request method
@@ -167,49 +204,37 @@ class Router extends Object implements RouterInterface {
             if (is_dir($dir) && $this->defaultClass != null) {
                 $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}\{$this->defaultClass}";
                 if (!class_exists($invokeClass, true)) {
-                    if (DEVELOPMENT) {
-                        throw new BadClassCallException($invokeClass);
-                    } else {
-                        header('404 Not Found');
-                        die('404 Not Found');
-                    }
+                    $invokeClass = $this->invokeNotFoundController();
                 }
             } else {
-                if (DEVELOPMENT) {
-                    throw new BadClassCallException($invokeClass);
-                } else {
-                    header('404 Not Found');
-                    die('404 Not Found');
-                }
+                $this->invokeNotFoundController($invokeClass);
             }
         }
         $invokeClassReflection = new ReflectionClass($invokeClass);
-        if ($invokeClassReflection->hasMethod($method)) {
-            $FMAI->setURIOutRouterPath($this->suffixPart);
-            $FMAI->requestMethod = $method;
-            $invokeObject = $invokeClassReflection->newInstance($FMAI);
-            if($invokeClassReflection->isSubclassOf('\Toknot\User\ClassUserControl')
-                    && $FMAI->getAccessStatus() === false) {
-                $accessDeniedController = $FMAI->getAccessDeniedController();
-                $invokeObject = new $accessDeniedController($FMAI);
-                $invokeObject->GET();
-                return;
-            }
-            if ($method == 'GET' && ViewCache::$enableCache) {
-                ViewCache::outPutCache();
-            }
-            
-            if (ViewCache::$cacheEffective == false) {
-                $invokeObject->$method();
-            }
-        } else {
+        if (!$invokeClassReflection->hasMethod($method)) {
             if (DEVELOPMENT) {
                 throw new StandardException("Not Support Request Method ($method)");
             } else {
                 header('405 Method Not Allowed');
-                die('405 Method Not Allowed');
+                if ($this->methodNotAllowedController === null) {
+                    $invokeClass = "{$this->routerNameSpace}\{$this->methodNotAllowedController}";
+                    if (!class_exists($invokeClass, true)) {
+                        die('405 Method Not Allowed');
+                    }
+                } else {
+                    die('405 Method Not Allowed');
+                }
             }
         }
+        
+        $FMAI->setURIOutRouterPath($this->suffixPart);
+        $FMAI->requestMethod = $method;
+        $invokeObject = $invokeClassReflection->newInstance($FMAI);
+        $stat = $FMAI->invokeBefore($invokeClassReflection);
+        if($stat === true) {
+            $invokeObject->$method();
+        }
+        $FMAI->invokeAfter($invokeClassReflection);
     }
 
     /**
@@ -217,12 +242,21 @@ class Router extends Object implements RouterInterface {
      * set toknot defualt router of run mode {@see Toknot\Control\Router::$routerMode} and
      * set the controller max level namespace which on PATH mode in effect
      * 
-     * @param int $mode  router of run mode be passed by {@see Toknot\Control\Application::run()} of 4th parameter
-     * @param int $name  the under controller of namespace max level, if set 0 will not limit
+     * @param int $mode  Router of run mode Use set {@see Toknot\Control\Router::ROUTER_PATH} is default or 
+     *                    {@see Toknot\Control\Router::ROUTER_GET_QUERY}, only use framework router
+     *                    the parameter is set router mode
+     * @param int $routerDepth  The under controller of namespace max level, if set 0 will not limit
+     * @param string $notFound  When controller not found be invoked simailar web 404 page set, The class
+     *                           namespace under Application root, default is null
+     * @param string $methodNotAllowed  When controller not has method be invoked simailar web 405 page set
+     *                                  The class namespace under Application root ,default is null
      */
-    public function runtimeArgs($mode = self::ROUTER_PATH, $routeDepth = 1) {
+    public function runtimeArgs($mode = self::ROUTER_PATH, $routeDepth = 1, 
+                            $notFound = null, $methodNotAllowed = null) {
         $this->routerMode = $mode;
         $this->routerDepth = $routeDepth;
+        $this->notFuondController = $notFound;
+        $this->methodNotAllowedController = $methodNotAllowed;
     }
 
     /**
@@ -251,12 +285,12 @@ class Router extends Object implements RouterInterface {
     }
 
     /**
-     * __construct 
+     * __construct reject new of outside
      * 
      * @access protected
      * @return void
      */
-    public function __construct() {
+    protected function __construct() {
         
     }
 

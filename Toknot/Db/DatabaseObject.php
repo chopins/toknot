@@ -18,17 +18,19 @@ use \InvalidArgumentException;
 use Toknot\Db\Connect;
 use Toknot\Db\ActiveQuery;
 use Toknot\Db\Exception\DatabaseException;
+use Toknot\Di\DataCacheControl;
 
 final class DatabaseObject extends DbCRUD {
 
     protected $dsn = null;
     protected $username = null;
     protected $password = null;
-    private static $tableList = array();
+    private $tableList = array();
     protected $driverOptions = null;
     protected $tablePrefix = '';
     protected $tableValueList = array();
-
+    protected $databaseStructInfoCache = '';
+    protected $databaseCacheExpire = 100;
     protected function __construct() {
         
     }
@@ -40,13 +42,20 @@ final class DatabaseObject extends DbCRUD {
     public static function singleton() {
         return parent::__singleton();
     }
+    public function setConfig($config) {
+        if (isset($config->tablePrefix)) {
+            $this->tablePrefix = $config->tablePrefix;
+        }
+        if(isset($config->databaseStructInfoCache)) {
+            $this->databaseStructInfoCache = $config->databaseStructInfoCache;
+        }
+        if(isset($config->databaseStructInfoCacheExpire)) {
+            $this->databaseCacheExpire = $config->databaseStructInfoCacheExpire;
+        }
+    }
 
     public function setDSN($dsn) {
         $this->dsn = $dsn;
-    }
-
-    public function setTablePrefix($prefix) {
-        $this->tablePrefix = $prefix;
     }
 
     public function setUsername($username) {
@@ -63,7 +72,7 @@ final class DatabaseObject extends DbCRUD {
 
     public function setConnectInstance(Connect $connect) {
         $this->connectInstance = $connect->getConnectInstance();
-        self::$tableList = $this->showTableList();
+        $this->tableList = $this->showTableList();
     }
 
     /**
@@ -72,11 +81,19 @@ final class DatabaseObject extends DbCRUD {
      * @return array table list
      */
     public function showTableList() {
-        $sql = ActiveQuery::showTableList();
-        $result = $this->readALL($sql);
-        $tableList = array();
-        foreach ($result as $tableInfo) {
-            $tableList[] = array_shift($tableInfo);
+        $cache = new DataCacheControl($this->dataStructInfoCache);
+        $cache->useExpire($this->databaseCacheExpire * 60);
+        $cacheTable = $cache->get();
+        if($cacheTable === false) {
+            $sql = ActiveQuery::showTableList();
+            $result = $this->readALL($sql);
+            $tableList = array();
+            foreach ($result as $tableInfo) {
+                $tableList[] = array_shift($tableInfo);
+            }
+            $cache->save($tableList);
+        } else {
+            return $cacheTable;
         }
         return $tableList;
     }
@@ -89,7 +106,7 @@ final class DatabaseObject extends DbCRUD {
     public function __get($propertie) {
         if (isset($this->$propertie)) {
             return $this->$propertie;
-        } elseif (in_array($this->tablePrefix . $propertie, self::$tableList)) {
+        } elseif (in_array($this->tablePrefix . $propertie, $this->tableList)) {
             if (!isset($this->interatorArray[$propertie])) {
                 $this->interatorArray[$propertie] = new DbTableObject($propertie, $this);
             }

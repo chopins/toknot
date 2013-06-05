@@ -56,6 +56,8 @@ class Application {
      * @access private
      */
     private $routerName = '\Toknot\Control\Router';
+    
+    private $routerArgs = array();
 
     /**
      * The construct parameters only receive PHP in CLI mode passed  argv and argc 
@@ -155,7 +157,18 @@ class Application {
             parse_str($_SERVER['QUERY_STRING'], $_GET);
         }
     }
-   
+    
+    /**
+     * The method set router need parameters,
+     * the method can recived variable number of arguments, parameter info same your runtimeArgs()
+     * method paramters of your Router, if default, {@see Toknot\Control\Router::runtimeArgs()} use 4 parameters 
+     * that is $routerMode, $routerDepth, $notFound, $methodNotAllowed
+     * 
+     * @param mixed $*   Variable list of router need of paramers on runtime, the toknot default router support
+     */
+    public function setRouterArgs() {
+        $this->routerArgs = func_get_args();
+    }
 
     /**
      * Run application, the method will invoke router with implements interface of 
@@ -164,8 +177,6 @@ class Application {
      * parameter set path(like: /path/appPath/Controller). The class be invoke by toknot of router 
      * invoke method with passed instance of Toknot 
      * {@see \Toknot\Control\FMAI}, you can receive the object of instance when class construct
-     * the method can recived variable number of arguments, {@see Toknot\Control\Router} use two parameters
-     * that is $routerMode and $routerDepth
      * 
      * Usual use toknot of router, run framework like below:
      * <code>
@@ -217,7 +228,9 @@ class Application {
      * //set index page without TopNamespace and ControllerNamespace
      * //set router mode is get query mode
      * //set router namespace level is 2
-     * $app->run('\AppTopNamespace', '/path/AppPath', '\Index', Router::ROUTER_GET_QUERY, 2);
+     * $app->setRouterArgs(Router::ROUTER_GET_QUERY, 2);
+     * 
+     * $app->run('\AppTopNamespace', '/path/AppPath', '\Index');
      * </code>
      * 
      * @param string $appNameSpace  Application of Namespace with top without full namespace
@@ -227,12 +240,6 @@ class Application {
      *                                and no query,The class name of default with not full namespace
      *                                class name can not contain application top namespace and
      *                                Controller layer namespace
-     * @param integeter $routerMode Use set {@see Toknot\Control\Router::ROUTER_PATH} is default or 
-     *                               {@see Toknot\Control\Router::ROUTER_GET_QUERY}, only use framework router
-     *                               the parameter is set router mode
-     * @param integeter $routerDepth It is router of controller max namespace level, the value default is 1 
-     *                                Only use framework router the parameter is set router depth
-     * @param mixed $_   Variable list of router need of paramers on runtime, the toknot default router support
      * @throws BadNamespaceException
      * @throws BadClassCallException
      * @throws StandardException
@@ -257,10 +264,9 @@ class Application {
                 $router = new $this->routerName;
             }
 
-            $args = func_get_args();
             $this->addAppPath($appPath);
             $context = FMAI::singleton($appPath);
-            call_user_func_array(array($router,'runtimeArgs'), array_slice($args,2));
+            call_user_func_array(array($router,'runtimeArgs'), $this->routerArgs);
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
             $router->routerRule();

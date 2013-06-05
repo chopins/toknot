@@ -14,6 +14,7 @@ use Toknot\Di\Object;
 use Toknot\Exception\StandardException;
 use Toknot\Di\ArrayObject;
 use Toknot\Di\FileObject;
+use Toknot\Di\DataCacheControl;
 
 class Renderer extends Object {
 
@@ -25,33 +26,35 @@ class Renderer extends Object {
      * 
      * @var string 
      * @access public
+     * @static
      */
-    public $fileExtension = 'htm';
+    public static $fileExtension = 'htm';
 
     /**
      * Set template file path, usual the path is Application of View layer path
      *
      * @var string
      * @access public
+     * @static
      */
-    public $scanPath = '';
+    public static $scanPath = '';
 
     /**
      * Set template file be transfrom to php file save path, usual the path is Application of Data View path
      *
      * @var string
      * @access public
+     * @static
      */
-    public $cachePath = '';
+    public static $cachePath = '';
     private $transfromFile = '';
-    private $htmlCacheFile = '';
 
     /**
      * Set whether enable HTML static cache, if set true is enable and must set Renderer::$htmlCachePath
      *
      * @var boolean
      */
-    public $enableHTMLCache = false;
+    public static $enableCache = false;
 
     /**
      * set HTML static cache save path when enable HTML cache
@@ -59,7 +62,8 @@ class Renderer extends Object {
      * @var string
      * @access public
      */
-    public $htmlCachePath = null;
+    public static $htmlCachePath = null;
+    public static $dataCachePath = null;
 
     /**
      * set output HTML static cache of threshold time, if one REQUEST query is same and 
@@ -68,10 +72,28 @@ class Renderer extends Object {
      * @var int
      * @access public
      */
-    public $outCacheThreshold = 2;
-
+    public static $outCacheThreshold = 2;
+    
+    /**
+     * set cache type
+     *
+     * @var integer
+     */
+    public static $cacheFlag = 1;
+    
+    /**
+     * cache page to html
+     */
+    const CACHE_FLAG_HTML = 1;
+    
+    /**
+     * only cache data of be invoked controller without your construct method data
+     */
+    const CACHE_FLAG_DATA = 2;
+    
+    const CACHE_USE_SUCC = 200;
     protected function __construct() {
-        ;
+        $this->varList = new ArrayObject;
     }
 
     public static function singleton() {
@@ -84,39 +106,50 @@ class Renderer extends Object {
      * @param array $vars
      */
     public function importVars($vars) {
-        $this->varList = new ArrayObject($vars);
+        $this->varList->importPropertie($vars);
     }
 
     public function outPutHTMLCache($tplName) {
-        $key = md5($_SERVER['QUERY_STRING']);
-        $this->htmlCacheFile = $this->htmlCachePath . '/' . $tplName . '.' . $key . '.html';
-        if (file_exists($this->htmlCacheFile)) {
-            $mtime = filemtime($this->htmlCacheFile);
-            if ($mtime + $this->outCacheThreshold <= time()) {
-                include_once $this->htmlCacheFile;
-                return true;
-            }
-        }
+        $result = $this->display($tplName);
+        if ($result === self::CACHE_USE_SUCC)
+            return true;
         return false;
     }
 
     public function display($tplName) {
-        $this->tplName = $this->scanPath . '/' . $tplName . '.' . $this->fileExtension;
+        $this->tplName = self::$scanPath . '/' . $tplName . '.' . self::$fileExtension;
         if (!file_exists($this->tplName)) {
             throw new StandardException("{$this->tplName} not exists");
         }
 
         //HTML cache control
-        if ($this->enableHTMLCache && $this->htmlCachePath != null) {
+        if (self::$enableCache && self::$htmlCachePath != null) {
             $key = md5($_SERVER['QUERY_STRING']);
-            $this->htmlCacheFile = $this->htmlCachePath . '/' . $tplName . '.' . $key . '.html';
-            if (file_exists($this->htmlCacheFile)) {
-                $mtime = filemtime($this->htmlCacheFile);
-                if ($mtime + $this->outCacheThreshold <= time()) {
-                    return include_once $this->htmlCacheFile;
+            if (self::$cacheFlag == self::CACHE_FLAG_HTML) {
+                $htmlCacheFile = self::$htmlCachePath . '/' . $tplName . '.' . $key . '.html';
+                if (file_exists($htmlCacheFile)) {
+                    $mtime = filemtime($htmlCacheFile);
+                    if ($mtime + self::$outCacheThreshold <= time()) {
+                        include_once $htmlCacheFile;
+                        return self::CACHE_USE_SUCC;
+                    }
+                    ob_start();
+                }
+            } elseif(self::$cacheFlag == self::CACHE_FLAG_DATA) {
+                $dataCacheFile = self::$dataCachePath . '/' . $tplName . '.' . $key;
+                $cache = new DataCacheControl($dataCacheFile);
+                $cache->useExpire(self::$outCacheThreshold);
+                $varList = $cache->get();
+                if($varList === false) {
+                    $cacheData = $this->varList->transformToArray();
+                    $cache->save($cacheData);
+                } else {
+                    $cacheVar = new ArrayObject($varList);
+                    $cacheVar->importPropertie($this->varList);
+                    $this->varList = $cacheVar;
+                    uset($cacheVar,$varList);
                 }
             }
-            ob_start();
         }
 
         $this->transfromFile = $this->cachePath . '/' . $tplName . '.php';
@@ -128,11 +161,11 @@ class Renderer extends Object {
         include_once $this->transfromFile;
 
         //HTML Cache write
-        if ($this->enableHTMLCache && $this->htmlCachePath != null) {
+        if (self::$enableCache && self::$htmlCachePath != null && self::$cacheFlag == self::CACHE_FLAG_HTML) {
             $html = ob_get_contents();
             ob_flush();
             ob_end_clean();
-            FileObject::saveContent($this->htmlCacheFile, $html);
+            FileObject::saveContent($htmlCacheFile, $html);
         }
     }
 
@@ -187,10 +220,6 @@ class Renderer extends Object {
         $content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
 
         FileObject::saveContent($this->transfromFile, $content);
-    }
-
-    private function importFile($file) {
-        $this->display($file);
     }
 
 }

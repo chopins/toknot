@@ -18,6 +18,8 @@ use Toknot\View\XML;
 use Toknot\View\ViewCache;
 use Toknot\User\ClassUserControl;
 use Toknot\User\CurrentUser;
+use Toknot\View\ViewCache;
+use Toknot\Di\DataCacheControl;
 
 /**
  * Framework Module Access Interfaces
@@ -32,7 +34,7 @@ final class FMAI extends Object {
      * @var array 
      */
     public $D = array();
-    
+
     /**
      * Current HTTP request method
      *
@@ -48,9 +50,10 @@ final class FMAI extends Object {
     protected $uriOutRouterPath = array();
     protected $accessControlStatus = true;
     private $accessDeniedController = null;
+    public $appRoot = '';
 
-    public static function singleton() {
-        return parent::__singleton();
+    public static function singleton($appRoot) {
+        return parent::__singleton($appRoot);
     }
 
     /**
@@ -59,8 +62,10 @@ final class FMAI extends Object {
      * The method will load framework default configure file
      * 
      */
-    protected function __construct() {
+    protected function __construct($appRoot) {
         ConfigLoader::singleton();
+        $this->appRoot = $appRoot;
+        DataCacheControl::$appRoot = $appRoot;
     }
 
     /**
@@ -74,13 +79,36 @@ final class FMAI extends Object {
         return $this->uriOutRouterPath;
     }
 
+    public function invokeBefore(&$invokeClassReflection) {
+        if ($invokeClassReflection->isSubclassOf('\Toknot\User\ClassUserControl') && $this->getAccessStatus() === false) {
+            $accessDeniedController = $this->getAccessDeniedController();
+            $invokeObject = new $accessDeniedController($this);
+            $invokeObject->GET();
+            return false;
+        }
+        if ($this->requestMethod == 'GET' && ViewCache::$enableCache) {
+            ViewCache::outPutCache();
+            return false;
+        }
+        if (ViewCache::$cacheEffective == false) {
+            return true;
+        }
+    }
+    
+    public function invokeAfter(&$invokeClassReflection) {
+        
+    }
+
     /**
-     * Load configure file
+     * Load configure file, and set cache file
      * 
      * @param string $ini
+     * @param string $iniCacheFile Set configure option cache file, if empty will not use cache
+     *                              the file relative to your application root directory
      * @return ArrayObject
      */
-    public function loadConfigure($ini) {
+    public function loadConfigure($ini, $iniCacheFile = '') {
+        ConfigLoader::$cacheFile = $iniCacheFile;
         return ConfigLoader::loadCFG($ini);
     }
 
@@ -97,25 +125,7 @@ final class FMAI extends Object {
      * 
      *      //get instance of Toknot\View\Renderer
      *      $view = $this->FMAI->newTemplateView();
-     *      
-     *      //set template file of directory
-     *      $view->scanPath = __DIR__ . '/View';
-     * 
-     *      //set transfrom to php file save of directory
-     *      $view->cachePath = __DIR__ . '/Data/View';
-     * 
-     *      //set template file extension
-     *      $view->fileExtension = 'html';
-     *      
-     *      //enable Toknot\View\Renderer write html data to disk
-     *      $view->enableHTMLCache = true;
-     * 
-     *      //set Toknot\View\Renderer write html file of save path
-     *      $view->htmlCachePath = __DIR__ . '/Data/HTML';
-     * 
-     *      //set update html file time of seconds
-     *      $view->outCacheThreshold = 5;
-     *      
+     *    
      *      //set cache file
      *      $FMAI->setCacheFile('index');
      * }
@@ -127,7 +137,6 @@ final class FMAI extends Object {
      * </code>
      */
     public function enableHTMLCache() {
-
         ViewCache::$enableCache = true;
         $view = $this->newTemplateView();
         ViewCache::setRenderer($view);
@@ -140,8 +149,12 @@ final class FMAI extends Object {
      * {@see Toknot\Control\FMAI::display()}
      * 
      * @param string $file
+     * @param mixed $flag  Cache flag, value is {@see Toknot\View\Renderer::CACHE_FLAG_HTML} and
+     *                      {@see Toknot\View\Renderer::CACHE_FLAG_DATA}
      */
-    public function setCacheFile($file) {
+    public function setCacheFile($file, $flag = Renderer::CACHE_FLAG_HTML) {
+        Renderer::$enableCache = true;
+        Renderer::$cacheFlag = $flag;
         ViewCache::setCacheFile($file);
     }
 
@@ -159,7 +172,13 @@ final class FMAI extends Object {
      * 
      * @return Toknot\View\Renderer
      */
-    public function newTemplateView() {
+    public function newTemplateView(& $CFG) {
+        Renderer::$cachePath = $this->appRoot . $CFG->templateCompileFileSavePath;
+        Renderer::$fileExtension = $this->appRoot . $CFG->templateFileExtensionName;
+        Renderer::$scanPath = $this->appRoot . $CFG->templateFileScanPath;
+        Renderer::$htmlCachePath = $this->appRoot . $CFG->htmlStaticCachePath;
+        Renderer::$outCacheThreshold = $CFG->defaultPrintCacheThreshold;
+        Renderer::$dataCachePath = $CFG->dataCachePath;
         return Renderer::singleton();
     }
 
@@ -196,7 +215,7 @@ final class FMAI extends Object {
     public function getParam($index) {
         return $this->uriOutRouterPath[$index];
     }
-    
+
     /**
      * Get current user access status
      * 
@@ -205,7 +224,7 @@ final class FMAI extends Object {
     public function getAccessStatus() {
         return $this->accessControlStatus;
     }
-    
+
     /**
      * Register a controller when the user access denied be invoked GET method
      * 
@@ -214,7 +233,7 @@ final class FMAI extends Object {
     public function registerAccessDeniedController($controllerName) {
         $this->accessDeniedController = $controllerName;
     }
-    
+
     /**
      * Get current registered controller name of access denied 
      * 
@@ -223,7 +242,7 @@ final class FMAI extends Object {
     public function getAccessDeniedController() {
         return $this->accessDeniedController;
     }
-    
+
     /**
      * Check a user object whether can access class object be passed
      * 
@@ -242,11 +261,11 @@ final class FMAI extends Object {
                 $this->accessControlStatus = $clsObj->checkChange($user);
                 break;
             default :
-               $this->accessControlStatus = true;
+                $this->accessControlStatus = true;
                 break;
         }
     }
-    
+
     /**
      * Get a user object by uid, recommended ser serialize() the user object instead
      * 

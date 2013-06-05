@@ -22,16 +22,16 @@ class ShopBase extends ClassUserControl {
     protected $classGroup;
     public function __construct($FMAI) {
         $this->FMAI = $FMAI;
+        $this->CFG = $this->FMAI->loadConfigure($FMAI->appRoot . '/Config/config.ini');
+        
         $this->AR = $this->FMAI->getActiveRecord();
-        $this->AppPath = __DIR__;
-        $this->CFG = $this->FMAI->loadConfigure($this->AppPath . '/Config/config.ini');
+
+        $this->AR->config($this->CFG->Database);
         
         $this->FMAI->enableHTMLCache();
         
-        $view = $this->FMAI->newTemplateView();
-        $view->scanPath = __DIR__ . '/View';
-        $view->cachePath = __DIR__ . '/Data/View';
-        $view->fileExtension = 'html';
+        $this->view = $this->FMAI->newTemplateView($this->CFG->View);
+
         $FMAI->checkAccess($this);
     }
 

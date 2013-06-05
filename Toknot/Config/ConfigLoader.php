@@ -12,10 +12,12 @@ namespace Toknot\Config;
 
 use Toknot\Di\Object;
 use Toknot\Di\ArrayObject;
+use Toknot\Di\DataCacheControl;
 
 final class ConfigLoader extends Object {
 
     private static $_CFG = null;
+    public static $cacheFile = '';
 
     protected function __construct() {
         $file = __DIR__ . '/default.ini';
@@ -26,6 +28,7 @@ final class ConfigLoader extends Object {
     public static function singleton() {
         return parent::__singleton();
     }
+
     public static function CFG() {
         return self::$_CFG;
     }
@@ -50,9 +53,17 @@ final class ConfigLoader extends Object {
      */
     public static function loadCfg($file) {
         if (file_exists($file)) {
-            $userConfig = parse_ini_file($file, true);
-            $userConfig = self::detach($userConfig);
-            self::$_CFG->replace_recursive($userConfig);
+            $cacheControl = new DataCacheControl(self::$cacheFile, filemtime($file));
+            $cache = $cacheControl->get();
+            if ($cache === false) {
+                $userConfig = parse_ini_file($file, true);
+                $userConfig = self::detach($userConfig);
+                self::$_CFG->replace_recursive($userConfig);
+                $cacheData = self::$_CFG->transformToArray();
+                $cacheControl->save($cacheData);
+            } else {
+                self::$_CFG = self::detach($cache);
+            }
         }
         return self::$_CFG;
     }

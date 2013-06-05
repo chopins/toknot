@@ -17,6 +17,7 @@ use \InvalidArgumentException;
 use Toknot\Db\Exception\DatabaseException;
 use Toknot\Db\DbTableColumn;
 
+
 final class DbTableObject extends DbCRUD {
 
     private $tableName;
