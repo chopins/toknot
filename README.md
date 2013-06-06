@@ -43,7 +43,14 @@ then, configure your web-server set webroot to the path be index.php in director
 become all http request access the index.php
 
 ####Create Application
-1. creare application of one simply controller provide `http://your_domain/Index` visit, code like below:
+1. In command line, use `php -f /yourpath/Toknot/Tool/CreateApp.php applicationPath` create your application
+    default directory structure, example below:
+    `php -f /yourpath/Toknot/Tool/CreateApp.php /rootpath/your_application`     
+     up example also like below be create:      
+     `cd /rootpath/`        
+    then:   `php -f /yourpath/Toknot/Tool/CreateApp.php  your_application`      
+
+2. change /rootpath/appName/Controller/Index.php, write code like below:
     ```php
 
     //The class provide url is http://your_domain/Index visit
@@ -71,17 +78,16 @@ become all http request access the index.php
     }
 
     ```
-    then save the file is Index.php under `/your_application_path/Controller`
 
-2. use HTML template, create index.html template under `/your_application/View`
+3. use HTML template, create index.html template under `/your_application/View`
     ```html
     <html>
     <head></head>
     <body>{$hello}</body>
     </html>
     ```
-3. create your configure file in `/your_application/Config` if your have config
-4. more usage see demo https://github.com/chopins/toknot/tree/master/demos
+4. change `/your_application/Config/config.ini`
+5. more usage see demo https://github.com/chopins/toknot/tree/master/demos
 
 ####Previous Versions
 The ToKnot Freamwork v1 visit https://github.com/chopins/toknot/tree/V1

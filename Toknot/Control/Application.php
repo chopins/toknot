@@ -226,9 +226,9 @@ class Application {
      * $app = new Application;
      * 
      * //set index page without TopNamespace and ControllerNamespace
-     * //set router mode is get query mode
+     * //set router mode is PATH query mode
      * //set router namespace level is 2
-     * $app->setRouterArgs(Router::ROUTER_GET_QUERY, 2);
+     * $app->setRouterArgs(Router::ROUTER_PATH, 2);
      * 
      * $app->run('\AppTopNamespace', '/path/AppPath', '\Index');
      * </code>
