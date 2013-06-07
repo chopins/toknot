@@ -7,19 +7,14 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
+namespace Toknot\User;
 
-namespace Toknot\Admin;
+use Toknot\User\UserControl;
 
-use Toknot\Admin\AdminBase;
-
-class Login extends AdminBase {
-    
-    public function GET() {
-        
-    }
-    public function POST() {
-        
-    }
+class Nobody extends UserControl{
+    protected $userName = 'nobody';
+    protected $uid = -1;
+    protected $gid = -1;
 }
 
 ?>

@@ -13,6 +13,8 @@ namespace Toknot\Admin;
 use Toknot\Control\FMAI;
 use Toknot\User\ClassUserControl;
 use Toknot\Exception\FileIOException;
+use Toknot\Config\ConfigLoader;
+use Toknot\User\Nobody;
 
 class AdminBase extends ClassUserControl {
 
@@ -22,13 +24,15 @@ class AdminBase extends ClassUserControl {
     protected $CFG = null;
     protected $dbConnect = null;
 
-    public function __construct(FMAI &$FMAI) {
+    public function __construct(FMAI $FMAI) {
         $this->FMAI = $FMAI;
         $this->loadAdminConfig();
 
         $FMAI->registerAccessDeniedController('Toknot\Admin\Login');
-        $FMAI->checkAccess($this);
         $this->initDatabase();
+        $user = $this->getUserObject();
+        $FMAI->checkAccess($this, $user);
+
         $this->view = $FMAI->newTemplateView($this->CFG->View);
     }
 
@@ -53,12 +57,15 @@ class AdminBase extends ClassUserControl {
     }
 
     public function loadAdminConfig() {
-        if (!file_exists($FMAI->appRoot . '/Config/config.ini')) {
+        if (!file_exists($this->FMAI->appRoot . '/Config/config.ini')) {
             throw new FileIOException('must create ' . $FMAI->appRoot . '/Config/config.ini');
         }
-        $this->CFG = $this->FMAI->loadConfigure($FMAI->appRoot . '/Config/config.ini');
+        ConfigLoader::$cacheFile = $this->FMAI->appRoot.'/Data/config';
+        $this->CFG = $this->FMAI->loadConfigure($this->FMAI->appRoot . '/Config/config.ini');
     }
-
+    public function getUserObject() {
+        return new Nobody();
+    }
 }
 
 ?>

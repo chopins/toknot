@@ -18,7 +18,7 @@ use Toknot\View\XML;
 use Toknot\View\ViewCache;
 use Toknot\User\ClassUserControl;
 use Toknot\User\CurrentUser;
-use Toknot\View\ViewCache;
+use Toknot\User\UserControl;
 use Toknot\Di\DataCacheControl;
 
 /**
@@ -249,7 +249,7 @@ final class FMAI extends Object {
      * @param \Toknot\User\ClassUserControl $clsObj
      * @param \Toknot\User\CurrentUser $user
      */
-    public function checkAccess(ClassUserControl $clsObj, CurrentUser $user) {
+    public function checkAccess(ClassUserControl $clsObj, UserControl $user) {
         switch ($clsObj->getClassType()) {
             case ClassUserControl::CLASS_READ:
                 $this->accessControlStatus = $clsObj->checkRead($user);

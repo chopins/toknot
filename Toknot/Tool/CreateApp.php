@@ -66,7 +66,6 @@ class CreateApp {
 
         $this->message("Create $dir/Data/View/Compile");
         mkdir($dir . '/Data/View/Compile', 0777, true);
-
         
         $this->message('Create Success');
         $this->message("Configure your web root to $dir/WebRoot and visit your Application on browser");

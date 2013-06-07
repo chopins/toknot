@@ -35,8 +35,8 @@ use \ReflectionClass;
  * </code>
  * 
  */
-class Application {
-    
+final class Application {
+
     /**
      * This save toknot of standard autoloader ({@see Toknot\Control\StandardAutoloader}) instance
      * current do not use user's autoloader class, so will call toknot standard
@@ -46,7 +46,7 @@ class Application {
      * @access private 
      */
     private $standardAutoLoader = null;
-    
+
     /**
      * This is router class name, if do not use setUserRouter method set a router 
      * after new Application and before invoke run method, and will use toknot default router
@@ -56,8 +56,10 @@ class Application {
      * @access private
      */
     private $routerName = '\Toknot\Control\Router';
-    
     private $routerArgs = array();
+    private $debugTrace = array();
+    private $traceTime = 0;
+    private $scriptStartTime = 0;
 
     /**
      * The construct parameters only receive PHP in CLI mode passed  argv and argc 
@@ -92,15 +94,15 @@ class Application {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
-        
+        $this->scriptStartTime = microtime(true);
         //define Application status, DEVELOPMENT is true will show Exeption
-        if(!defined('DEVELOPMENT')) {
+        if (!defined('DEVELOPMENT')) {
             define('DEVELOPMENT', true);
         }
         $this->iniEnv($argv, $argc);
         $this->registerAutoLoader();
     }
-    
+
     /**
      * set CLI mode passed arguments and set Error Handler
      * 
@@ -122,7 +124,15 @@ class Application {
         }
 
         set_error_handler(array($this, 'errorReportHandler'));
+        register_shutdown_function(array($this, 'errorExitReportHandler'));
+        set_exception_handler(array($this, 'uncaughtExceptionHandler'));
+        error_reporting(0);
         clearstatcache();
+
+        if (DEVELOPMENT && self::checkXDebug() == false) {
+            declare (ticks = 1);
+            register_tick_function(array($this, 'tickTraceHandler'));
+        }
     }
 
     /**
@@ -157,7 +167,7 @@ class Application {
             parse_str($_SERVER['QUERY_STRING'], $_GET);
         }
     }
-    
+
     /**
      * The method set router need parameters,
      * the method can recived variable number of arguments, parameter info same your runtimeArgs()
@@ -265,21 +275,49 @@ class Application {
             }
 
             $this->addAppPath($appPath);
-            $context = FMAI::singleton($appPath);
-            call_user_func_array(array($router,'runtimeArgs'), $this->routerArgs);
+            $FMAI = FMAI::singleton($appPath);
+            call_user_func_array(array($router, 'runtimeArgs'), $this->routerArgs);
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
             $router->routerRule();
-            if(is_null($defaultInvoke)) {
+            if (is_null($defaultInvoke)) {
                 $root = substr($defaultInvoke, 0, 1);
                 if ($root != '\\') {
                     throw new BadNamespaceException($defaultInvoke);
                 }
                 $router->defaultInvoke($defaultInvoke);
             }
-            $router->invoke($context);
+            $router->invoke($FMAI);
         } catch (StandardException $e) {
-            echo $e;
+            if (DEVELOPMENT) {
+                echo $e;
+            } else {
+                header('500 Internal Server Error');
+                die('500 Internal Server Error');
+            }
+        }
+    }
+
+    public function tickTraceHandler() {
+        $testTrace = debug_backtrace(false,2);
+        if(!isset($testTrace[1]['type']) || ($testTrace[1]['type'] != '->' && $testTrace[1]['type'] != '::')) {
+            return;
+        }
+        $start = microtime(true);
+        $this->debugTrace = debug_backtrace(true, 10);
+        $this->traceTime += microtime(true) - $start;
+    }
+
+    public function uncaughtExceptionHandler($e) {
+        try {
+            throw new StandardException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine());
+        } catch (StandardException $e) {
+            if (DEVELOPMENT) {
+                echo $e;
+            } else {
+                header('500 Internal Server Error');
+                die('500 Internal Server Error');
+            }
         }
     }
 
@@ -292,7 +330,7 @@ class Application {
         $argv = func_get_args();
         StandardException::errorReportHandler($argv);
     }
-    
+
     /**
      * set user router instead of toknot default router
      * 
@@ -306,7 +344,7 @@ class Application {
         }
         $this->routerName = $routerName;
     }
-    
+
     /**
      * Append application path to autoloader scan path list
      * 
@@ -316,7 +354,7 @@ class Application {
     private function addAppPath($path) {
         $this->standardAutoLoader->addPath($path);
     }
-    
+
     /**
      * Register Autoloader Class
      */
@@ -325,5 +363,54 @@ class Application {
         $this->standardAutoLoader->register();
     }
 
+    public function errorExitReportHandler() {
+        $err = error_get_last();
+        if (empty($err))
+            return;
+        if (in_array($err['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING))) {
+            try {
+                throw new StandardException($err['message'], $err['type'], $err['file'], $err['line']);
+            } catch (StandardException $e) {
+                if (DEVELOPMENT) {
+                    array_shift($this->debugTrace);
+                    $e->traceArr = $this->debugTrace;
+                    echo $e;
+                    $this->pageRunInfo();
+                } else {
+                    header('500 Internal Server Error');
+                    die('500 Internal Server Error');
+                }
+            }
+        }
+    }
+    public static function getMemoryUsage() {
+        $m = memory_get_usage(true);
+        if($m > 1024*1024) {
+            return round($m /(1024*1024),2) .' MiB';
+        } else if($m > 1024) {
+            return round($m / 1024,2) .' KiB';
+        } else {
+            return $m ." iB";
+        }
+    }
+    public function pageRunInfo() {
+        $mem = self::getMemoryUsage();
+        echo '<b style="color:red;">The trace time: '.$this->traceTime.' seconds</b>';
+        echo '<br />Memory Usage: '.$mem;
+        $et = microtime(true) - $this->scriptStartTime;
+        echo '<br />PHP Script Execure Time: '. $et .' seconds';
+    }
+    public static function checkXDebug() {
+        if(extension_loaded('xdebug') && ini_get('xdebug.default_enable') == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public function __destruct() {
+        if(DEVELOPMENT) {
+            $this->pageRunInfo();
+        }
+    }
 }
 

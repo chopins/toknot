@@ -71,14 +71,14 @@ final class Process {
     private function checkEnvironment() {
         if (!function_exists('pcntl_fork')) {
             try {
-                dl('pcntl.so');
+                dl('pcntl.'.PHP_SHLIB_SUFFIX);
             } catch (DependExtensionException $e) {
                 echo $e;
             }
         }
         if (!function_exists('posix_setuid')) {
             try {
-                dl('posix.so');
+                dl('posix.'.PHP_SHLIB_SUFFIX);
             } catch (DependExtensionException $e) {
                 echo $e;
             }
@@ -88,7 +88,7 @@ final class Process {
     public function setProcessTitle($title) {
         if (!function_exists('setproctitle')) {
             try {
-                dl('proctitle.so');
+                dl('proctitle.'.PHP_SHLIB_SUFFIX);
             } catch (StandardException $e) {
                 echo $e;
             }
@@ -105,7 +105,7 @@ final class Process {
         $this->enableProcessMutex = true;
         if (!function_exists('sem_acquire')) { 
             try {
-                dl('sysvsem.so');
+                dl('sysvsem.'.PHP_SHLIB_SUFFIX);
             } catch (StandardException $e) {
                 $this->useFileLock = true;
             }
@@ -113,7 +113,7 @@ final class Process {
         if($this->useFileLock == false) {
             if(!function_exists('shmop_open')) {
                 try {
-                    dl('shmop.so');
+                    dl('shmop.'.PHP_SHLIB_SUFFIX);
                 } catch (StandardException $e) {
                     $this->useFileLock = true;
                 }

@@ -24,18 +24,28 @@ class StandardException extends ErrorException {
     protected $errline = '';
     protected $isException = false;
     protected $exceptionMessage = null;
+    public $traceArr = array();
     protected $errcss = '<style>
-                        .ToKnotDebugArea {border:1px #555555 solid;background-color:#EEEEEE;padding-left:10px;}
-                        .ToKnotMessage {color:#555555;font-size:20px;font-weight:bold;}
+                        .ToKnotDebugArea {border:1px #CCCCCC solid;background-color:#EEEFFF;padding:0;font-family:Helvetica,arial,freesans,clean,sans-serif;}
+                        .ToKnotDebugArea ul {margin-top:0;}
+                        .ToKnotMessage {color:#666666;font-size:18px;font-weight:bold;padding:10px;margin:0px;background-color:#D6E685;border-bottom:1px solid #94DA3A;}
                         .ToKnotCallFile {color:#6A8295;}
                         .ToKnotAccess {color:#336258;}
-                        .ToKnotTraceItem{list-style-type:none;border-bottom:1px #8397B1 solid;padding:5px;color:#0F4C9E;}
+                        .ToKnotTraceItem{list-style-type:none;padding:10px;color:#0F4C9E;font-size:15px;}
+                        .ToKnotTraceItem li {padding:5px;}
                         .ToKnotDebugArgs{background-color:#FAD5D2;font-size:12px;margin-right:10px;}
                         .ToKnotDebugFunc{color:#176B4E;font-weight:normal;}
-                        .ToKnotDebugThrow{color:#A9291F;}
+                        .ToKnotDebugThrow{color:#D14836;font-weight:bold;background-color:#FFECCC;padding:8px;}
                         .ToKnotDebugProcess {color:#333;font-size:12px;}
                         </style>';
-
+    /**
+     * construct StandardException
+     * 
+     * @param string $message
+     * @param integer $code
+     * @param string $file
+     * @param integer $line
+     */
     public function __construct($message = '', $code = 0, $file = null, $line = null) {
         if ($this->exceptionMessage) {
             $this->message = $this->exceptionMessage;
@@ -90,23 +100,24 @@ class StandardException extends ErrorException {
         $this->message = "<b>$type : </b>" . $this->message;
     }
 
-    public function getDebugTraceAsString($traceArr = null) {
-
-        if ($this->isException == false)
-            return $this->message;
+    public function getDebugTraceAsString() {
+//        if ($this->isException == false)
+//            return $this->message;
         $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type">';
+        $str .= $this->errcss;
         $str .='<div class="ToknotDebugArea">';
-        $str .="<div ><span class='ToknotMessage'>{$this->message}</span>\n<ul>";
-        $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div>\n<pre>";
+        $str .="<p class='ToknotMessage'>{$this->message}</p>\n";
+        $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div><ul class='ToKnotTraceItem'>\n";
         if (PHP_SAPI == 'cli' && function_exists('posix_getpid')) {
             $str .= 'Process ID:' . posix_getpid() . "\n";
         }
-        if (empty($traceArr)) {
-            $str .= $this->getTraceAsString();
+        if (empty($this->traceArr)) {
+            $traceStr = $this->getTraceAsString();
+            $str .= '<li>'.str_replace("\n", '</li><li>', $traceStr) . '</li>';
         } else {
-            $str .= $this->earch($traceArr);
+            $str .= $this->earch($this->traceArr);
         }
-        $str .='</pre></ul></div>';
+        $str .='</ul></div>';
         if (PHP_SAPI == 'cli') {
             return strip_tags($str);
         } else {
@@ -125,10 +136,13 @@ class StandardException extends ErrorException {
 
     public function earch($traceArr) {
         $str = '';
-        foreach ($traceArr as $key => $value) {
-            if (isset($value['function']) && $value['function'] == 'error2debug')
+        $key = 0;
+        foreach ($traceArr as $value) {
+            if(!isset($value['class']) || !isset($value['file'])) {
                 continue;
-            $str .= "<li class='ToknotTraceItem'>#{$key} " . $this->getInfoStr($value) . "</li>\n";
+            }
+            $str .= "<li>#{$key} {$value['file']}({$value['line']}):{$value['class']}->{$value['function']}()</li>\n";
+            $key++;
         }
         return $str;
     }

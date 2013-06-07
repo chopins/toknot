@@ -130,47 +130,47 @@ class CurrentUser extends UserControl {
      * The password salt string
      */
     const PASSWORD_SALT = 'ToKnot-PHP-Framework-Password-Default-Salt';
-    
+
     /**
      * All number
      */
     const PASSWD_ALL_NUMBER = 9000;
-    
+
     /**
      * natural order number
      */
     const PASSWD_NUMBER_SORT = 9001;
-    
+
     /**
      * All letter
      */
     const PASSWD_ALL_ABC = 9100;
-    
+
     /**
      * All lower letter
      */
     const PASSWD_ALL_LOWER = 9101;
-    
+
     /**
      * All upper letter
      */
     const PASSWD_ALL_UPPER = 9102;
-    
+
     /**
      * natural order letter
      */
     const PASSWD_ABC_SORT = 9103;
-    
+
     /**
      * same keyboard letter order
      */
     const PASSWD_ABC_KEYBOARD_SORT = 9104;
-    
+
     /**
      * password length less 6
      */
     const PASSWD_SHORT6 = 9200;
-    
+
     /**
      * the string is orderless
      */
@@ -206,12 +206,13 @@ class CurrentUser extends UserControl {
         if (self::$DBConnect == null) {
             throw new StandardException('Must set Db connect instance');
         }
-        if (self::$tableName == null || self::$uidColumn == null || self::$userNameColumn == null) {
-            throw new StandardException('Must set user tablename and  uidColumn name, userNameColumn name of database');
-        }
-        $this->gid = unserialize($userinfo[self::$gidColumn]);
         $this->uid = $userinfo[self::$uidColumn];
         $this->userName = $userinfo[self::$userNameColumn];
+        if (empty(self::$gidColumn)) {
+            $this->gid = $this->uid;
+        } else {
+            $this->gid = unserialize($userinfo[self::$gidColumn]);
+        }
         $this->generateSessionId();
     }
 
@@ -429,7 +430,7 @@ class CurrentUser extends UserControl {
             return sha1($password . $salt);
         }
     }
-    
+
     /**
      * get password sting texture
      * 
@@ -457,9 +458,9 @@ class CurrentUser extends UserControl {
         if ($natstr == $password || $password == strrev($natstr)) {
             return self::PASSWD_ABC_SORT;
         }
-        $keyboardChar = array('qwertyuiop','asdfghjkl','zxcvbnm');
-        foreach($keyboardChar as $wordList) {
-            if(strpos($password, $wordList) !== false) {
+        $keyboardChar = array('qwertyuiop', 'asdfghjkl', 'zxcvbnm');
+        foreach ($keyboardChar as $wordList) {
+            if (strpos($password, $wordList) !== false) {
                 return self::PASSWD_ABC_KEYBOARD_SORT;
             }
         }
@@ -492,22 +493,29 @@ class CurrentUser extends UserControl {
     private static function loadConfigure() {
         $cfg = ConfigLoader::CFG();
         if (!isset($cfg->User)) {
-            return;
+            throw new StandardException('Must add User section in configure');
         }
-        if (!empty($cfg->User->userTableName)) {
-            self::$tableName = $cfg->User->userTableName;
-            if (!empty($cfg->User->userIdColumnName)) {
-                self::$uidColumn = $cfg->User->userIdColumnName;
-            }
-            if (!empty($cfg->User->userNameColumnName)) {
-                self::$userNameColumn = $cfg->User->userNameColumnName;
-            }
-            if (!empty($cfg->User->userGroupIdColumnName)) {
-                self::$gidColumn = $cfg->User->userGroupIdColumnName;
-            }
-            if (!empty($cfg->User->userPasswordColumnName)) {
-                self::$passColumn = $cfg->User->userPasswordColumnName;
-            }
+        if (empty($cfg->User->userTableName)) {
+            throw new StandardException('Must set userTabelName in User section of configure');
+        }
+        self::$tableName = $cfg->User->userTableName;
+        if (empty($cfg->User->userIdColumnName)) {
+            throw new StandardException('Must set userIdColumnName in User section of configure');
+        } else {
+            self::$uidColumn = $cfg->User->userIdColumnName;
+        }
+        if (empty($cfg->User->userNameColumnName)) {
+            throw new StandardException('Must set userNameColumnName in User section of configure');
+        } else {
+            self::$userNameColumn = $cfg->User->userNameColumnName;
+        }
+        if (empty($cfg->User->userPasswordColumnName)) {
+            throw new StandardException('Must set userPasswordColumnName in User section of configure');
+        } else {
+            self::$passColumn = $cfg->User->userPasswordColumnName;
+        }
+        if (!empty($cfg->User->userGroupIdColumnName)) {
+            self::$gidColumn = $cfg->User->userGroupIdColumnName;
         }
         if (!empty($cfg->User->userPasswordEncriyptionAlgorithms)) {
             self::$hashAlgo = $cfg->User->userPasswordEncriyptionAlgorithms;

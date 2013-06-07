@@ -91,7 +91,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         $array = array_slice($this->interatorArray, $offset, $length, $preserve_keys);
         $return = array();
         foreach ($array as $value) {
-            if ($this->$value instanceof $this->propertieClassName) {
+            if ($this->$value instanceof ArrayObject) {
                 $return[$value] = $this->$value->transformToArray();
             } else {
                 $return[$value] = $this->$value;
@@ -122,11 +122,11 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
 
     public function transformToArray() {
         $return = array();
-        foreach ($this->interatorArray as $value) {
-            if ($this->$value instanceof $this->propertieClassName) {
-                $return[$value] = $this->$value->transformToArray();
+        foreach ($this->interatorArray as $key=> $value) {
+            if ($this->$key instanceof ArrayObject) {
+                $return[$key] = $value->transformToArray();
             } else {
-                $return[$value] = $this->$value;
+                $return[$key] = $value;
             }
         }
         return $return;

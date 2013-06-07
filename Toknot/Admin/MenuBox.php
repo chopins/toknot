@@ -18,12 +18,12 @@ class MenuBox extends StringObject {
     public $subNav = array();
 
     public function setPropertie($propertie, $value) {
-        $this->subNav[$propertie] = new AdminNav($value);
+        $this->subNav[$propertie] = new MenuBox($value);
     }
 
     public function __get($name) {
-        if (isset($subNav[$name])) {
-            return $subNav[$name];
+        if (isset($this->subNav[$name])) {
+            return $this->subNav[$name];
         }
     }
 

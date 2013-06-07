@@ -18,7 +18,6 @@ use Toknot\Control\FMAI;
 use \ReflectionClass;
 use Toknot\Control\StandardAutoloader;
 
-
 class Router extends Object implements RouterInterface {
 
     /**
@@ -73,14 +72,14 @@ class Router extends Object implements RouterInterface {
      * @access private
      */
     private $routerDepth = 1;
-    
+
     /**
      * Array of url path query without Controller path
      *
      * @var array 
      */
     private $suffixPart = array();
-    
+
     /**
      * the class be invoked when the request controller not found, the class
      * namspace under Application root namespace
@@ -88,7 +87,7 @@ class Router extends Object implements RouterInterface {
      * @var string
      */
     private $notFuondController = null;
-    
+
     /**
      * the class be invoked when the request controller not has support the method of the http request, 
      * the class namspace under Application root namespace
@@ -226,12 +225,13 @@ class Router extends Object implements RouterInterface {
                 }
             }
         }
-        
+
         $FMAI->setURIOutRouterPath($this->suffixPart);
         $FMAI->requestMethod = $method;
+
         $invokeObject = $invokeClassReflection->newInstance($FMAI);
         $stat = $FMAI->invokeBefore($invokeClassReflection);
-        if($stat === true) {
+        if ($stat === true) {
             $invokeObject->$method();
         }
         $FMAI->invokeAfter($invokeClassReflection);
@@ -251,8 +251,7 @@ class Router extends Object implements RouterInterface {
      * @param string $methodNotAllowed  When controller not has method be invoked simailar web 405 page set
      *                                  The class namespace under Application root ,default is null
      */
-    public function runtimeArgs($mode = self::ROUTER_PATH, $routeDepth = 1, 
-                            $notFound = null, $methodNotAllowed = null) {
+    public function runtimeArgs($mode = self::ROUTER_PATH, $routeDepth = 1, $notFound = null, $methodNotAllowed = null) {
         $this->routerMode = $mode;
         $this->routerDepth = $routeDepth;
         $this->notFuondController = $notFound;
