@@ -28,10 +28,10 @@ class StandardAutoloader {
     }
 
     public static function transformClassNameToFilename($class, $dir) {
-        $topNamespace = strtok($class, self::NS_SEPARATOR);
-        $lastPath = basename($dir);
-        if ($topNamespace != $lastPath)
-            return false;
+//        $topNamespace = strtok($class, self::NS_SEPARATOR);
+//        $lastPath = basename($dir);
+//        if ($topNamespace != $lastPath)
+//            return false;
         $dir = dirname($dir);
         $nsPath = str_replace(self::NS_SEPARATOR, DIRECTORY_SEPARATOR, $class);
         return $dir . DIRECTORY_SEPARATOR . $nsPath . '.php';
@@ -42,12 +42,29 @@ class StandardAutoloader {
             $filename = self::transformClassNameToFilename($class, $dir);
             if (!$filename)
                 continue;
-            $resolvedName = stream_resolve_include_path($filename);
-            if ($resolvedName !== false) {
-                return require_once $resolvedName;
+            //$resolvedName = stream_resolve_include_path($filename);
+            if (file_exists($filename)) {
+                return require_once $filename;
             }
         }
         return false;
+    }
+    public static function importToknotClass($class) {
+        $toknotRoot = dirname(__DIR__);
+        $path = $toknotRoot . '/'.str_replace(self::NS_SEPARATOR, DIRECTORY_SEPARATOR, $class);
+        return require_once $path.'.php';
+    }
+    public static function importToknotModule($module) {
+        $toknotRoot = dirname(__DIR__);
+        $path = $toknotRoot . '/'.$module;
+        $dir = dir($path);
+        while(false !== ($file=$dir->read())) {
+            if($file =='.' ||$file =='..') {
+                if(is_file($path.'/'.$file)) {
+                    include  $path.'/'.$file;
+                }
+            }
+        }
     }
 
     public function register() {

@@ -108,17 +108,6 @@ class Router extends Object implements RouterInterface {
     const ROUTER_GET_QUERY = 2;
 
     /**
-     * singleton 
-     * 
-     * @static
-     * @access public
-     * @return void
-     */
-    public static function singleton() {
-        return parent::__singleton();
-    }
-
-    /**
      * Set Controler info that under application, if CLI mode, will set request method is CLI
      * 
      */
@@ -131,7 +120,11 @@ class Router extends Object implements RouterInterface {
             }
         } else {
             if (PHP_SAPI == 'cli') {
-                $_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
+                if (isset($_SERVER['argv'][1])) {
+                    $_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
+                } else {
+                    $_SERVER['REQUEST_URI'] = '/';
+                }
             }
             if (($pos = strpos($_SERVER['REQUEST_URI'], '?')) !== false) {
                 $urlPath = substr($_SERVER['REQUEST_URI'], 0, $pos);
@@ -198,11 +191,21 @@ class Router extends Object implements RouterInterface {
     public function invoke(FMAI $FMAI) {
         $method = $this->getRequestMethod();
         $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}";
-        if (!class_exists($invokeClass, true)) {
+        $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
+        $classExist = false;
+        if (file_exists($classFile)) {
+            include_once $classFile;
+            $classExist = class_exists($invokeClass, false);
+        }
+        if (!$classExist) {
             $dir = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
             if (is_dir($dir) && $this->defaultClass != null) {
                 $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}\{$this->defaultClass}";
-                if (!class_exists($invokeClass, true)) {
+                $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
+                if (file_exists($classFile)) {
+                    include $classFile;
+                }
+                if (!class_exists($invokeClass, false)) {
                     $invokeClass = $this->invokeNotFoundController();
                 }
             } else {
@@ -217,7 +220,11 @@ class Router extends Object implements RouterInterface {
                 header('405 Method Not Allowed');
                 if ($this->methodNotAllowedController === null) {
                     $invokeClass = "{$this->routerNameSpace}\{$this->methodNotAllowedController}";
-                    if (!class_exists($invokeClass, true)) {
+                    $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
+                    if (file_exists($classFile)) {
+                        include $classFile;
+                    }
+                    if (!class_exists($invokeClass, false)) {
                         die('405 Method Not Allowed');
                     }
                 } else {
@@ -286,10 +293,10 @@ class Router extends Object implements RouterInterface {
     /**
      * __construct reject new of outside
      * 
-     * @access protected
+     * @access public
      * @return void
      */
-    protected function __construct() {
+    public function __construct() {
         
     }
 

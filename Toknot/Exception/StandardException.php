@@ -38,6 +38,7 @@ class StandardException extends ErrorException {
                         .ToKnotDebugThrow{color:#D14836;font-weight:bold;background-color:#FFECCC;padding:8px;}
                         .ToKnotDebugProcess {color:#333;font-size:12px;}
                         </style>';
+
     /**
      * construct StandardException
      * 
@@ -104,21 +105,29 @@ class StandardException extends ErrorException {
 //        if ($this->isException == false)
 //            return $this->message;
         $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type">';
-        $str .= $this->errcss;
+        if (PHP_SAPI != 'cli') {
+            $str .= $this->errcss;
+        } else {
+            $str .= "==============\n";
+        }
         $str .='<div class="ToknotDebugArea">';
+        if(PHP_SAPI == 'cli') {
+            $this->message = "\e[1;31m{$this->message}\e[0m";
+        }
         $str .="<p class='ToknotMessage'>{$this->message}</p>\n";
         $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div><ul class='ToKnotTraceItem'>\n";
-        if (PHP_SAPI == 'cli' && function_exists('posix_getpid')) {
-            $str .= 'Process ID:' . posix_getpid() . "\n";
+        if (PHP_SAPI == 'cli') {
+            $str .= 'Process ID:' . getmypid(). "\n";
         }
         if (empty($this->traceArr)) {
             $traceStr = $this->getTraceAsString();
-            $str .= '<li>'.str_replace("\n", '</li><li>', $traceStr) . '</li>';
+            $str .= '<li>' . str_replace("\n", "</li>\n<li>", $traceStr) . "</li>\n";
         } else {
             $str .= $this->earch($this->traceArr);
         }
         $str .='</ul></div>';
         if (PHP_SAPI == 'cli') {
+            $str .= "==============\n";
             return strip_tags($str);
         } else {
             return $str;
@@ -138,7 +147,7 @@ class StandardException extends ErrorException {
         $str = '';
         $key = 0;
         foreach ($traceArr as $value) {
-            if(!isset($value['class']) || !isset($value['file'])) {
+            if (!isset($value['class']) || !isset($value['file'])) {
                 continue;
             }
             $str .= "<li>#{$key} {$value['file']}({$value['line']}):{$value['class']}->{$value['function']}()</li>\n";

@@ -18,7 +18,7 @@ use Toknot\Contorl\Exception\PHPVersionException;
 use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
 use Toknot\Control\FMAI;
-use \ReflectionClass;
+use Toknot\Control\RouterInterface;
 
 /**
  * Toknot main class and run framework
@@ -99,6 +99,8 @@ final class Application {
         if (!defined('DEVELOPMENT')) {
             define('DEVELOPMENT', true);
         }
+        StandardAutoloader::importToknotClass('Exception\StandardException');
+        StandardAutoloader::importToknotModule('Di');
         $this->iniEnv($argv, $argc);
         $this->registerAutoLoader();
     }
@@ -122,14 +124,16 @@ final class Application {
         if (version_compare(PHP_VERSION, '5.3.0') < 0) {
             throw new PHPVersionException();
         }
-
+        StandardAutoloader::importToknotClass('Exception\StandardException');
         set_error_handler(array($this, 'errorReportHandler'));
-        register_shutdown_function(array($this, 'errorExitReportHandler'));
+        
         set_exception_handler(array($this, 'uncaughtExceptionHandler'));
-        error_reporting(0);
+        
         clearstatcache();
 
         if (DEVELOPMENT && self::checkXDebug() == false) {
+            error_reporting(0);
+            register_shutdown_function(array($this, 'errorExitReportHandler'));
             declare (ticks = 1);
             register_tick_function(array($this, 'tickTraceHandler'));
         }
@@ -263,17 +267,16 @@ final class Application {
             if (!class_exists($this->routerName, true)) {
                 throw new BadClassCallException($this->routerName);
             }
-            $routerReflection = new ReflectionClass($this->routerName);
-            if (!$routerReflection->implementsInterface('Toknot\Control\RouterInterface')) {
+            StandardAutoloader::importToknotClass('Control\RouterInterface');
+            if($this->routerName instanceof RouterInterface) {
                 throw new StandardException('Router not support');
             }
-            if ($routerReflection->hasMethod('singleton')) {
-                $routerName = $this->routerName;
-                $router = $routerName :: singleton();
-            } else {
-                $router = new $this->routerName;
+            if($this->routerName == '\Toknot\Control\Router') {
+                StandardAutoloader::importToknotClass('Control\Router');
             }
-
+        
+            $router = new $this->routerName;
+            StandardAutoloader::importToknotClass('Control\FMAI');
             $this->addAppPath($appPath);
             $FMAI = FMAI::singleton($appPath);
             call_user_func_array(array($router, 'runtimeArgs'), $this->routerArgs);
@@ -395,10 +398,11 @@ final class Application {
     }
     public function pageRunInfo() {
         $mem = self::getMemoryUsage();
-        echo '<b style="color:red;">The trace time: '.$this->traceTime.' seconds</b>';
-        echo '<br />Memory Usage: '.$mem;
+        $str = '<b style="color:red;">The trace time: '.$this->traceTime." seconds</b>\n";
+        $str .= '<br />Memory Usage: '.$mem ."\n";
         $et = microtime(true) - $this->scriptStartTime;
-        echo '<br />PHP Script Execure Time: '. $et .' seconds';
+        $str .= '<br />PHP Script Execure Time: '. $et ." seconds\n";
+        echo PHP_SAPI == 'cli' ? strip_tags($str) : $str;
     }
     public static function checkXDebug() {
         if(extension_loaded('xdebug') && ini_get('xdebug.default_enable') == 1) {

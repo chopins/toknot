@@ -66,6 +66,9 @@ class AdminBase extends ClassUserControl {
     public function getUserObject() {
         return new Nobody();
     }
+    public function CLI() {
+        $this->GET();
+    }
 }
 
 ?>
