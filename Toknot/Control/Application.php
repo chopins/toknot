@@ -99,8 +99,9 @@ final class Application {
         if (!defined('DEVELOPMENT')) {
             define('DEVELOPMENT', true);
         }
+        StandardAutoloader::importToknotModule('Di', 'Object');
         StandardAutoloader::importToknotClass('Exception\StandardException');
-        StandardAutoloader::importToknotModule('Di');
+
         $this->iniEnv($argv, $argc);
         $this->registerAutoLoader();
     }
@@ -117,8 +118,13 @@ final class Application {
     private function iniEnv($argv, $argc) {
         $this->checkSuperglobals();
         if (PHP_SAPI == 'cli' && !isset($_SERVER['argv'])) {
-            $_SERVER['argc'] = $argc;
-            $_SERVER['argv'] = $argv;
+            if (empty($argv)) {
+                $_SERVER['argc'] = $GLOBALS['argc'];
+                $_SERVER['argv'] = $GLOBALS['argv'];
+            } else {
+                $_SERVER['argc'] = $argc;
+                $_SERVER['argv'] = $argv;
+            }
         }
 
         if (version_compare(PHP_VERSION, '5.3.0') < 0) {
@@ -126,9 +132,9 @@ final class Application {
         }
         StandardAutoloader::importToknotClass('Exception\StandardException');
         set_error_handler(array($this, 'errorReportHandler'));
-        
+
         set_exception_handler(array($this, 'uncaughtExceptionHandler'));
-        
+
         clearstatcache();
 
         if (DEVELOPMENT && self::checkXDebug() == false) {
@@ -264,17 +270,18 @@ final class Application {
             if ($root != '\\') {
                 throw new BadNamespaceException($appNameSpace);
             }
-            if (!class_exists($this->routerName, true)) {
-                throw new BadClassCallException($this->routerName);
-            }
             StandardAutoloader::importToknotClass('Control\RouterInterface');
-            if($this->routerName instanceof RouterInterface) {
-                throw new StandardException('Router not support');
-            }
-            if($this->routerName == '\Toknot\Control\Router') {
+            if ($this->routerName == '\Toknot\Control\Router') {
                 StandardAutoloader::importToknotClass('Control\Router');
             }
-        
+            if (!class_exists($this->routerName, false)) {
+                throw new BadClassCallException($this->routerName);
+            }
+
+            if ($this->routerName instanceof RouterInterface) {
+                throw new StandardException('Router not support');
+            }
+
             $router = new $this->routerName;
             StandardAutoloader::importToknotClass('Control\FMAI');
             $this->addAppPath($appPath);
@@ -302,8 +309,8 @@ final class Application {
     }
 
     public function tickTraceHandler() {
-        $testTrace = debug_backtrace(false,2);
-        if(!isset($testTrace[1]['type']) || ($testTrace[1]['type'] != '->' && $testTrace[1]['type'] != '::')) {
+        $testTrace = debug_backtrace(false, 2);
+        if (!isset($testTrace[1]['type']) || ($testTrace[1]['type'] != '->' && $testTrace[1]['type'] != '::')) {
             return;
         }
         $start = microtime(true);
@@ -386,35 +393,44 @@ final class Application {
             }
         }
     }
+
     public static function getMemoryUsage() {
         $m = memory_get_usage(true);
-        if($m > 1024*1024) {
-            return round($m /(1024*1024),2) .' MiB';
-        } else if($m > 1024) {
-            return round($m / 1024,2) .' KiB';
+        if ($m > 1024 * 1024) {
+            return round($m / (1024 * 1024), 2) . ' MiB';
+        } else if ($m > 1024) {
+            return round($m / 1024, 2) . ' KiB';
         } else {
-            return $m ." iB";
+            return $m . " iB";
         }
     }
+
     public function pageRunInfo() {
         $mem = self::getMemoryUsage();
-        $str = '<b style="color:red;">The trace time: '.$this->traceTime." seconds</b>\n";
-        $str .= '<br />Memory Usage: '.$mem ."\n";
+        $str = '<br /><b style="color:red;">The trace time: ' . $this->traceTime . " seconds</b>\n";
+        $str .= '<br />Memory Usage: ' . $mem . "\n";
         $et = microtime(true) - $this->scriptStartTime;
-        $str .= '<br />PHP Script Execure Time: '. $et ." seconds\n";
+        if ($et < 1) {
+            $et = round($et * 1000, 2) . ' ms';
+        } else {
+            $et = $et . ' seconds';
+        }
+        $str .= '<br />PHP Script Execure Time: ' . $et . "\n";
         echo PHP_SAPI == 'cli' ? strip_tags($str) : $str;
     }
+
     public static function checkXDebug() {
-        if(extension_loaded('xdebug') && ini_get('xdebug.default_enable') == 1) {
+        if (extension_loaded('xdebug') && ini_get('xdebug.default_enable') == 1) {
             return true;
         }
         return false;
     }
 
     public function __destruct() {
-        if(DEVELOPMENT) {
+        if (DEVELOPMENT) {
             $this->pageRunInfo();
         }
     }
+
 }
 

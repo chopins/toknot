@@ -51,6 +51,8 @@ final class FMAI extends Object {
     protected $accessControlStatus = true;
     private $accessDeniedController = null;
     public $appRoot = '';
+    public $enableCache = false;
+    public $cacheEffective = false;
 
     public static function singleton($appRoot) {
         return parent::__singleton($appRoot);
@@ -63,6 +65,7 @@ final class FMAI extends Object {
      * 
      */
     protected function __construct($appRoot) {
+        StandardAutoloader::importToknotClass('Config\ConfigLoader');
         ConfigLoader::singleton();
         $this->appRoot = $appRoot;
         DataCacheControl::$appRoot = $appRoot;
@@ -80,17 +83,20 @@ final class FMAI extends Object {
     }
 
     public function invokeBefore(&$invokeClassReflection) {
-        if ($invokeClassReflection->isSubclassOf('\Toknot\User\ClassUserControl') && $this->getAccessStatus() === false) {
+        
+        if ($invokeClassReflection->isSubclassOf('\Toknot\User\ClassUserControl') 
+                && $this->getAccessStatus() === false) {
             $accessDeniedController = $this->getAccessDeniedController();
             $invokeObject = new $accessDeniedController($this);
             $invokeObject->GET();
             return false;
         }
-        if ($this->requestMethod == 'GET' && ViewCache::$enableCache) {
+        if ($this->requestMethod == 'GET' && $this->enableCache) {
             ViewCache::outPutCache();
+            $this->cacheEffective = ViewCache::$cacheEffective;
             return false;
         }
-        if (ViewCache::$cacheEffective == false) {
+        if ($this->cacheEffective == false) {
             return true;
         }
     }
@@ -137,6 +143,8 @@ final class FMAI extends Object {
      * </code>
      */
     public function enableHTMLCache() {
+        StandardAutoloader::importToknotClass('View\ViewCache');
+        $this->enableCache = true;
         ViewCache::$enableCache = true;
         $view = $this->newTemplateView();
         ViewCache::setRenderer($view);
@@ -164,6 +172,7 @@ final class FMAI extends Object {
      * @return Toknot\Db\ActiveRecord
      */
     public function getActiveRecord() {
+        StandardAutoloader::importToknotModule('Db','DbCRUD');
         return ActiveRecord::singleton();
     }
 
@@ -173,6 +182,7 @@ final class FMAI extends Object {
      * @return Toknot\View\Renderer
      */
     public function newTemplateView(& $CFG) {
+        StandardAutoloader::importToknotClass('View\Renderer');
         Renderer::$cachePath = $this->appRoot . $CFG->templateCompileFileSavePath;
         Renderer::$fileExtension = $this->appRoot . $CFG->templateFileExtensionName;
         Renderer::$scanPath = $this->appRoot . $CFG->templateFileScanPath;

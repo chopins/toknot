@@ -123,10 +123,14 @@ class DataCacheControl {
             $this->cacheServerInstance->set($key, $data, time() + $this->expire);
             return true;
         }
+        if(empty($this->file)) {
+            return false;
+        }
         if ($this->cacheTime() >= $this->dataModifyTime) {
             return false;
         }
         $dataString = '<?php return ' . var_export($data, true) . ';';
+
         FileObject::saveContent(self::$appRoot . "{$this->file}.php", $dataString);
         return true;
     }

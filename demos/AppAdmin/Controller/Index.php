@@ -15,6 +15,7 @@ use Toknot\Admin\MenuBox;
 class Index extends AdminBase {
 
     public function GET() {
+        print 'hello world';
         $catNav = new MenuBox();
         $catNav->setting = '网站设置';
         $catNav->setting->info = '摘要';

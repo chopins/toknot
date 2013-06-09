@@ -10,7 +10,6 @@
 
 namespace Toknot\Control;
 
-use Toknot\Di\Object;
 use Toknot\Control\RouterInterface;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
@@ -18,7 +17,7 @@ use Toknot\Control\FMAI;
 use \ReflectionClass;
 use Toknot\Control\StandardAutoloader;
 
-class Router extends Object implements RouterInterface {
+class Router implements RouterInterface {
 
     /**
      * router mode, default 0 is PATH mode, 1 is GET query mode and use $_GET['r']

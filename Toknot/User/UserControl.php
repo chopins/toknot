@@ -27,13 +27,6 @@ abstract class UserControl extends Object {
     protected $uid = '';
     
     /**
-     * password of user account
-     *
-     * @var string 
-     */
-    protected $password = '';
-    
-    /**
      * ID of group
      *
      * @var mixed  May be array or string

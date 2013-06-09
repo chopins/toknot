@@ -11,7 +11,6 @@
 namespace Toknot\Db;
 
 use Toknot\Di\ArrayObject;
-use Toknot\Di\DbTableObject;
 
 class ActiveQuery {
 

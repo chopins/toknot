@@ -49,20 +49,26 @@ class StandardAutoloader {
         }
         return false;
     }
+
     public static function importToknotClass($class) {
         $toknotRoot = dirname(__DIR__);
-        $path = $toknotRoot . '/'.str_replace(self::NS_SEPARATOR, DIRECTORY_SEPARATOR, $class);
-        return require_once $path.'.php';
+        $path = $toknotRoot . '/' . str_replace(self::NS_SEPARATOR, DIRECTORY_SEPARATOR, $class);
+        return require_once $path . '.php';
     }
-    public static function importToknotModule($module) {
+
+    public static function importToknotModule($module, $first =null) {
         $toknotRoot = dirname(__DIR__);
-        $path = $toknotRoot . '/'.$module;
+        $path = $toknotRoot . '/' . $module;
         $dir = dir($path);
-        while(false !== ($file=$dir->read())) {
-            if($file =='.' ||$file =='..') {
-                if(is_file($path.'/'.$file)) {
-                    include  $path.'/'.$file;
-                }
+        if($first) {
+            include_once  "{$path}/{$first}.php";
+        }
+        while (false !== ($file = $dir->read())) {
+            if ($file == '.' || $file == '..'|| $file == "{$first}.php") {
+                continue;
+            }
+            if (is_file($path . '/' . $file)) {
+                include_once  $path . '/' . $file;
             }
         }
     }
