@@ -12,23 +12,31 @@ class CreateApp {
     public $workDir = '';
     public $appName = '';
     public $isAdmin = false;
+    public $toknotDir = '';
 
-    public function __construct($dir, $admin = false) {
-        if ($dir == '--help' || $dir == '-h') {
-            return $this->printUsage();
-        }
-        if($admin == 'admin') $admin = true;
-        $this->isAdmin = $admin;
-        if (empty($dir)) {
-            return $this->message("must enter application path");
-        }
+    public function __construct() {
+        $this->toknotDir = dirname(__DIR__);
         $this->workDir = getcwd();
-        $root = substr($dir, 0, 1);
-        if ($root != DIRECTORY_SEPARATOR) {
-            $dir = $this->workDir . '/' . $dir;
+        $this->message("Whether current path yes/no(default:no)");
+        $isCurrent = trim(fgets(STDIN));
+        $dir = $this->createAppRootDir($isCurrent);
+        $this->message('Whether admin of applicaton yes/no(default:no):');
+        $admin = trim(fgets(STDIN));
+        if ($admin == 'yes') {
+            $this->isAdmin = true;
+            while (($password = $this->enterRootPass()) === false) {
+                $this->message('Twice password not same, enter again:');
+            }
+            include_once $this->toknotDir . '/Control/Application.php';
+            $app = new Toknot\Control\Application;
+            \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserControl');
+            $encrypt = Toknot\User\Root::getEncryptionRootPass($password);
+            
         }
-        if (file_exists($dir)) {
-            return $this->message("$dir is exists");
+
+        while(file_exists($dir)) {
+            $this->message("$dir is exists, change other");
+            $dir = $this->createAppRootDir($isCurrent);
         }
         $this->message("Create $dir");
         $res = mkdir($dir, 0777, true);
@@ -49,7 +57,14 @@ class CreateApp {
         mkdir($dir . '/Config');
 
         $this->message("Create $dir/Config/config.ini");
-        copy(dirname(__DIR__) . '/Config/default.ini', $dir . '/Config/config.ini');
+
+        $configure = file_get_contents($this->toknotDir . '/Config/default.ini');
+        if ($this->isAdmin) {
+            $configure = preg_replace('/(allowRootLogin\s*)=(.*)$/im', "$1= true", $configure);
+            $configure = preg_replace('/(rootPassword\s*)=(.*)$/im', "$1={$encrypt[1]}", $configure);
+            $configure = preg_replace('/(rootEncriyptionAlgorithms\s*)=(.*)$/im', "$1={$encrypt[0]}", $configure);
+        }
+        file_put_contents($dir . '/Config/config.ini', $configure);
 
         $this->writeIndex($dir . '/WebRoot');
         if (!$this->isAdmin) {
@@ -57,44 +72,78 @@ class CreateApp {
         }
         $this->message("Create $dir/View");
         mkdir($dir . '/View');
-        if($this->isAdmin) {
-            $this->copyDir(dirname(__DIR__).'/Admin/View', $dir . '/View');
-            $this->copyDir(dirname(__DIR__).'/Admin/Static', $dir . '/WebRoot/Static');
+        if ($this->isAdmin) {
+            $this->copyDir($this->toknotDir . '/Admin/View', $dir . '/View');
+            $this->copyDir($this->toknotDir . '/Admin/Static', $dir . '/WebRoot/Static');
         }
         $this->message("Create $dir/Data/View");
         mkdir($dir . '/Data/View', 0777, true);
 
         $this->message("Create $dir/Data/View/Compile");
         mkdir($dir . '/Data/View/Compile', 0777, true);
-        
+
         $this->message('Create Success');
         $this->message("Configure your web root to $dir/WebRoot and visit your Application on browser");
     }
 
-    public function printUsage() {
-        $this->message("php CreateApp.php apppath         Create website application\r\n
-php CreateApp.php apppath admin   Create Admin Application
-                        ");
+    public function enterRootPass() {
+        $this->message('Enter root password:');
+        $password = trim(fgets(STDIN));
+        while (strlen($password) < 6) {
+            $this->message('root password too short,enter again:');
+            $password = trim(fgets(STDIN));
+        }
+        $this->message('Enter root password again:');
+        $repassword = trim(fgets(STDIN));
+        while (empty($password)) {
+            $this->message('must enter root password again:');
+            $repassword = trim(fgets(STDIN));
+        }
+        if ($repassword != $password) {
+            return false;
+        } else {
+            return $password;
+        }
     }
+
+    public function createAppRootDir($isCurrent) {
+        if ($isCurrent == 'yes') {
+            $this->message("Enter application root namespace name:");
+            $topnamespace = '';
+            while (empty($topnamespace)) {
+                $topnamespace = trim(fgets(STDIN));
+            }
+            $dir = $this->workDir . '/' . $topnamespace;
+        } else {
+            $this->message("Enter application path, the basename is root namespace name:");
+            $dir = trim(fgets(STDIN));
+            while (empty($dir)) {
+                $this->message("must enter application path:");
+                $dir = trim(fgets(STDIN));
+            }
+        }
+        return $dir;
+    }
+
     public function copyDir($source, $dest) {
-        if(is_file($source)) {
+        if (is_file($source)) {
             return copy($source, $dest);
-        } else if(is_dir($source)) {
+        } else if (is_dir($source)) {
             $dir = dir($source);
-            if(is_file($dest)) {
+            if (is_file($dest)) {
                 return $this->message($dest . ' is exist file');
             }
-            if(!is_dir($dest)) {
+            if (!is_dir($dest)) {
                 mkdir($dest, 0777, true);
             }
-            while(false !== ($f = $dir->read())) {
-                if($f == '.'||$f == '..') {
+            while (false !== ($f = $dir->read())) {
+                if ($f == '.' || $f == '..') {
                     continue;
                 }
-                $file = $source .'/'.$f;
+                $file = $source . '/' . $f;
                 $this->message($file);
-                $destfile = $dest.'/'.$f;
-                if(is_dir($file)) {
+                $destfile = $dest . '/' . $f;
+                if (is_dir($file)) {
                     $this->copyDir($file, $destfile);
                 } else {
                     copy($file, $destfile);
@@ -105,13 +154,13 @@ php CreateApp.php apppath admin   Create Admin Application
 
     public function writeIndexController($path) {
         $use = $this->isAdmin ? 'Toknot\Admin' : "{$this->appName}\{$this->appName}Base";
-        $base =  $this->isAdmin ? 'AdminBase' : "{$this->appName}Base";
+        $base = $this->isAdmin ? 'AdminBase' : "{$this->appName}Base";
         $phpCode = '<?php
 namespace ' . $this->appName . '\Controller;
             
-use ' .$use. 'Base;
+use ' . $use . 'Base;
 
-class Index extends ' . $base.'{
+class Index extends ' . $base . '{
     public $perms = 0777;
 
     public function GET() {
@@ -186,5 +235,5 @@ $app->run("' . $namespace . '",dirname(__DIR__));';
 
 }
 
-return new CreateApp($argv[1], $argv[2]);
+return new CreateApp();
 ?>

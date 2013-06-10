@@ -321,9 +321,10 @@ final class Application {
     public function uncaughtExceptionHandler($e) {
         try {
             throw new StandardException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine());
-        } catch (StandardException $e) {
+        } catch (StandardException $se) {
             if (DEVELOPMENT) {
-                echo $e;
+                $se->traceArr = $e->getTrace();
+                echo $se;
             } else {
                 header('500 Internal Server Error');
                 die('500 Internal Server Error');
