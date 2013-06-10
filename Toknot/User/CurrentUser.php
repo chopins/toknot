@@ -24,6 +24,8 @@ class CurrentUser extends UserControl {
      * @access protected
      */
     protected $sessionId = 0;
+    protected $loginKey = '';
+    private $password = '';
 
     /**
      * Table name of the user-account table in database
@@ -213,21 +215,45 @@ class CurrentUser extends UserControl {
         } else {
             $this->gid = unserialize($userinfo[self::$gidColumn]);
         }
+        $this->password = $userinfo[self::$passColumn];
         $this->generateSessionId();
+    }
+
+    public function generateLoginKey() {
+        $userInfoHash = self::getUserKey($this->userName , $this->password);
+        $userSidHash = self::getSidKey($this->uid ,$this->sessionId);
+        return self::hash($userInfoHash . $userSidHash);
+    }
+
+    public static function getSidKey($uid, $sessionid) {
+        return self::hash($uid. $sessionid);
+    }
+    public static function getUserKey($username,$password) {
+        return self::hash($username.$password);
+    }
+
+    public static function checkLogin($uid,$sid,$loginKey) {
+        $sidKey = self::getSidKey($uid, $sid);
+        $user = self::getInstanceByUid($uid);
+        if(empty($user)) {
+            return false;
+        }
+        $userKey = self::getUserKey($user[self::$userNameColumn], $user[self::$passColumn]);
+        $checkKey = self::hash($userKey.$sidKey);
+        if($checkKey == $loginKey) {
+            return $user;
+        } else {
+            return false;
+        }
     }
 
     /**
      * Generate a seesion id that is hash string
      */
     protected function generateSessionId() {
-        $seed = md5($this->userName . $this->uid . $this->gid);
+        $seed = self::hash($this->userName . $this->uid . $this->gid);
         $str = str_shuffle(microtime() . $seed . mt_rand(100000, 9999999));
-        $algo = self::bestHashAlgos();
-        if ($algo) {
-            $this->sessionId = hash($algo, $str);
-        } else {
-            $this->sessionId = sha1($str);
-        }
+        $this->sessionId = self::hash($str);
     }
 
     /**
@@ -424,11 +450,7 @@ class CurrentUser extends UserControl {
             throw new StandardException('need hash extension or ' . self::$hashAlgo . ' algo un-support');
         }
         $salt = $salt ? self::$hashSalt : self::PASSWORD_SALT;
-        if (self::$useHashFunction) {
-            return hash(self::$hashAlgo, $password . $salt);
-        } else {
-            return sha1($password . $salt);
-        }
+        return self::hash($password . $salt);
     }
 
     /**
@@ -474,6 +496,14 @@ class CurrentUser extends UserControl {
             return self::PASSWD_ALL_ABC;
         }
         return self::PASSWD_ORDERLESS;
+    }
+
+    public static function hash($str) {
+        if (self::$useHashFunction) {
+            return hash(self::$hashAlgo, $str);
+        } else {
+            return sha1($str);
+        }
     }
 
     /**

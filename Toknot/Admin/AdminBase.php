@@ -15,6 +15,7 @@ use Toknot\User\ClassUserControl;
 use Toknot\Exception\FileIOException;
 use Toknot\Config\ConfigLoader;
 use Toknot\User\Nobody;
+use Toknot\User\CurrentUser;
 
 class AdminBase extends ClassUserControl {
 
@@ -30,7 +31,7 @@ class AdminBase extends ClassUserControl {
 
         $FMAI->registerAccessDeniedController('Toknot\Admin\Login');
         $this->initDatabase();
-        $user = $this->getUserObject();
+        $user = $this->checkUserLogin();
         $FMAI->checkAccess($this, $user);
 
         $this->view = $FMAI->newTemplateView($this->CFG->View);
@@ -63,11 +64,15 @@ class AdminBase extends ClassUserControl {
         ConfigLoader::$cacheFile = $this->FMAI->appRoot.'/Data/config';
         $this->CFG = $this->FMAI->loadConfigure($this->FMAI->appRoot . '/Config/config.ini');
     }
-    public function getUserObject() {
-        return new Nobody();
-    }
     public function CLI() {
         $this->GET();
+    }
+    public function checkUserLogin() {
+        if(isset($_SESSION['SID'])) {
+            return CurrentUser::getInstanceByUid($_SESSION['SID']);
+        } elseif(isset($_COOKIE['SID'])) {
+            
+        }
     }
 }
 
