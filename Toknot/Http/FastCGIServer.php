@@ -378,7 +378,8 @@ final class FastCGIServer extends HttpResponse {
 
     private function CGIAccept() {
         $this->CGIWorkerProcessIPCWrite(self::WORKER_ACCPT);
-        $this->requestBacklog[] = @stream_socket_accept($this->socketFileDescriptor, 5);
+        $this->requestBacklog[] = @stream_socket_accept($this->socketFileDescriptor, 5, $clientAddress);
+        $_SERVER['REMOTE_ADDR'] = $clientAddress;
         $this->process->processUnLock();
         $this->CGIWorkerProcessIPCWrite(self::WORKER_READ);
         foreach ($this->requestBacklog as $i => $conn) {

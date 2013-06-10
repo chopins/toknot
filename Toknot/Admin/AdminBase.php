@@ -28,7 +28,7 @@ class AdminBase extends ClassUserControl {
     public function __construct(FMAI $FMAI) {
         $this->FMAI = $FMAI;
         $this->loadAdminConfig();
-
+        $this->startSession();
         $FMAI->registerAccessDeniedController('Toknot\Admin\Login');
         $this->initDatabase();
         $user = $this->checkUserLogin();
@@ -43,8 +43,8 @@ class AdminBase extends ClassUserControl {
         if ($this->CFG->Admin->multiDatabase) {
             $i = 0;
             while (true) {
-                $section = $this->CFG->Admin->databaseOptionSectionName.$i;
-                if(!isset($this->CFG->$section)) {
+                $section = $this->CFG->Admin->databaseOptionSectionName . $i;
+                if (!isset($this->CFG->$section)) {
                     break;
                 }
                 $this->AR->config($this->CFG->$section);
@@ -59,21 +59,48 @@ class AdminBase extends ClassUserControl {
 
     public function loadAdminConfig() {
         if (!file_exists($this->FMAI->appRoot . '/Config/config.ini')) {
-            throw new FileIOException('must create ' . $FMAI->appRoot . '/Config/config.ini');
+            throw new FileIOException('must create ' . $this->FMAI->appRoot . '/Config/config.ini');
         }
-        ConfigLoader::$cacheFile = $this->FMAI->appRoot.'/Data/config';
+        ConfigLoader::$cacheFile = $this->FMAI->appRoot . '/Data/config';
         $this->CFG = $this->FMAI->loadConfigure($this->FMAI->appRoot . '/Config/config.ini');
     }
+
     public function CLI() {
         $this->GET();
     }
-    public function checkUserLogin() {
-        if(isset($_SESSION['SID'])) {
-            return CurrentUser::getInstanceByUid($_SESSION['SID']);
-        } elseif(isset($_COOKIE['SID'])) {
+
+    public function startSession() {
+        if (!empty($this->CFG->Admin->adminSessionName)) {
             
         }
+        
     }
+
+    public function checkUserLogin() {
+        if (isset($_SESSION['uid']) && isset($_SESSION['Flag'])) {
+            $user = CurrentUser::getInstanceByUid($_SESSION['uid']);
+            if($user->checkUserFlag()) {
+                return $user;
+            }
+        } elseif (isset($_COOKIE['uid']) && isset($_COOKIE['Flag']) && isset($_COOKIE['TokenKey'])) {
+            $user = CurrentUser::checkLogin($_COOKIE['uid'], $_COOKIE['Flag'], $_COOKIE['TokenKey']);
+            if ($user) {
+                return $user;
+            }
+        }
+        return new Nobody;
+    }
+
+    protected function setAdminLogin(CurrentUser $user) {
+        $_SESSION['Flag'] = $user->getUserFlag();
+        $_SESSION['uid'] = $user->getUid();
+        if ($user->loginExpire > 0) {
+            setcookie('uid', $user->getUid(), $user->loginExpire);
+            setcookie('Flag', $_SESSION['Flag'], $user->loginExpire);
+            setcookie('TokenKey', $user->generateLoginKey(), $user->loginExpire);
+        }
+    }
+
 }
 
 ?>

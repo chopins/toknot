@@ -23,9 +23,9 @@ class CurrentUser extends UserControl {
      * @var string
      * @access protected
      */
-    protected $sessionId = 0;
-    protected $loginKey = '';
+    protected $userFlag = 0;
     private $password = '';
+    public $loginExpire = 0;
 
     /**
      * Table name of the user-account table in database
@@ -216,31 +216,35 @@ class CurrentUser extends UserControl {
             $this->gid = unserialize($userinfo[self::$gidColumn]);
         }
         $this->password = $userinfo[self::$passColumn];
-        $this->generateSessionId();
+        $this->generateUserFlag();
     }
 
     public function generateLoginKey() {
-        $userInfoHash = self::getUserKey($this->userName , $this->password);
-        $userSidHash = self::getSidKey($this->uid ,$this->sessionId);
+        $userInfoHash = self::getUserKey($this->userName, $this->password);
+        $userSidHash = self::getSidKey($this->uid, $this->userFlag);
         return self::hash($userInfoHash . $userSidHash);
     }
 
     public static function getSidKey($uid, $sessionid) {
-        return self::hash($uid. $sessionid);
-    }
-    public static function getUserKey($username,$password) {
-        return self::hash($username.$password);
+        return self::hash($uid . $sessionid);
     }
 
-    public static function checkLogin($uid,$sid,$loginKey) {
-        $sidKey = self::getSidKey($uid, $sid);
+    public static function getUserKey($username, $password) {
+        return self::hash($username . $password);
+    }
+
+    public static function checkLogin($uid, $flag, $loginKey) {
+        $sidKey = self::getSidKey($uid, $flag);
         $user = self::getInstanceByUid($uid);
-        if(empty($user)) {
+        if (empty($user)) {
+            return false;
+        }
+        if(!$user->checkUserFlag()) {
             return false;
         }
         $userKey = self::getUserKey($user[self::$userNameColumn], $user[self::$passColumn]);
-        $checkKey = self::hash($userKey.$sidKey);
-        if($checkKey == $loginKey) {
+        $checkKey = self::hash($userKey . $sidKey);
+        if ($checkKey == $loginKey) {
             return $user;
         } else {
             return false;
@@ -250,10 +254,13 @@ class CurrentUser extends UserControl {
     /**
      * Generate a seesion id that is hash string
      */
-    protected function generateSessionId() {
-        $seed = self::hash($this->userName . $this->uid . $this->gid);
-        $str = str_shuffle(microtime() . $seed . mt_rand(100000, 9999999));
-        $this->sessionId = self::hash($str);
+    protected function generateUserFlag() {
+        $userFlag = self::getUserRemoteAddress() . $_SERVER['HTTP_USER_AGENT'];
+        $str= self::hash($this->userName . $this->uid . $this->gid . $userFlag);
+        $this->userFlag = self::hash($str);
+    }
+    public function checkUserFlag($flag) {
+        return $this->generateUserFlag() == $flag;
     }
 
     /**
@@ -261,8 +268,26 @@ class CurrentUser extends UserControl {
      * 
      * @return string
      */
-    public function getSessionId() {
-        return $this->sessionId;
+    public function getUserFlag() {
+        return $this->userFlag;
+    }
+
+    public static function getUserRemoteAddress() {
+        $ip = 'unknown';
+        $headers = array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP',  'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED','REMOTE_ADDR');
+        foreach ($headers as $h) {
+            if (!empty($_SERVER[$h])) {
+                if (strpos($h, 'FORWARDED')) {
+                    list($ip) = explode(',', $_SERVER[$h]);
+                }
+                if (strcasecmp($ip, 'unknown')) {
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                    break;
+                }
+            }
+        }
+        preg_match("/[\d\.]{7,15}/", $ip, $ipm);
+        return isset($ipm[0]) ? $ipm[0] : 'unknown';
     }
 
     /**
@@ -274,15 +299,15 @@ class CurrentUser extends UserControl {
      * @param string $password    The account of password
      * @return boolean|Toknot\User\CurrentUser
      */
-    public static function login($id, $password) {
-        if ($id == 'root' && $id === 0) {
+    public static function login($userName, $password) {
+        if ($userName == 'root' && $userName === 0) {
             return Root::login($password);
         }
         self::loadConfigure();
         $tableName = self::$tableName;
         $passwordColumn = self::$passColumn;
         $username = self::$userNameColumn;
-        self::$DBConnect->$tableName->$username = $id;
+        self::$DBConnect->$tableName->$username = $userName;
         self::$DBConnect->$tableName->$password = self::hashPassword($password);
         $userInfo = self::$DBConnect->$tableName->findByAttr($passwordColumn);
         if (empty($userInfo)) {
@@ -311,6 +336,56 @@ class CurrentUser extends UserControl {
     public function getUserInfo() {
         $tableName = self::$tableName;
         return self::$DBConnect->$tableName->findByPK($this->uid);
+    }
+
+    /**
+     * Set login expire time, if $time is number, login expire time is current time 
+     * plus the passed time, if number is followed a letter are recognized in the $time
+     * parameter string:
+     *      d   Number of the days after the current time, e.g  7d for 7*24*3600 seconds
+     *      h   Number of the hours after the current time, e.g 24h
+     *      m   Number of the months after the current time, 30 days of a month
+     *      w   Number of the weeks after the current time, e.g 2w for 2*7*24*3600 seconds
+     *      y   Number of the years after the current time, 365 days of a year
+     * other string be passed will use {@see strtotime} get time for the expire time
+     *      
+     * @param string $time 
+     * @return boolean
+     */
+    public function setLoginExpire($time) {
+        $currentTime = time();
+        if (is_numeric($time)) {
+            $this->loginExpire = $currentTime + $time;
+            return true;
+        }
+        $last = strtolower(substr($time, -1, 1));
+        $timeNumber = substr($time, 0, -1);
+        if (!is_numeric($timeNumber)) {
+            $t = strtotime($time, $currentTime);
+            if ($t) {
+                $this->loginExpire = $t;
+                return true;
+            }
+            return false;
+        }
+        switch ($last) {
+            case 'd':
+                $this->loginExpire = $timeNumber * 86400;
+                return true;
+            case 'h':
+                $this->loginExpire = $timeNumber * 3600;
+                return true;
+            case 'm':
+                $this->loginExpire = $timeNumber * 2592000;
+                return true;
+            case 'w':
+                $this->loginExpire = $timeNumber * 604800;
+                return true;
+            case 'y':
+                $this->loginExpire = $timeNumber * 31536000;
+                return true;
+            default :
+        }
     }
 
     /**
@@ -557,5 +632,5 @@ class CurrentUser extends UserControl {
             self::$hashSalt = $cfg->User->userPasswordEncriyptionSalt;
         }
     }
-
+  
 }
