@@ -18,13 +18,13 @@ use Toknot\User\Nobody;
 use Toknot\User\CurrentUser;
 
 class AdminBase extends ClassUserControl {
-
+    protected $permissions = 0770;
     protected $FMAI = null;
     protected $AR = null;
     protected $view = null;
     protected $CFG = null;
     protected $dbConnect = null;
-
+    
     public function __construct(FMAI $FMAI) {
         $this->FMAI = $FMAI;
         $this->loadAdminConfig();

@@ -83,7 +83,6 @@ final class FMAI extends Object {
     }
 
     public function invokeBefore(&$invokeClassReflection) {
-        
         if ($invokeClassReflection->isSubclassOf('\Toknot\User\ClassUserControl') 
                 && $this->getAccessStatus() === false) {
             $accessDeniedController = $this->getAccessDeniedController();

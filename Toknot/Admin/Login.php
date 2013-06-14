@@ -14,9 +14,9 @@ use Toknot\Admin\AdminBase;
 use Toknot\User\CurrentUser;
 
 class Login extends AdminBase {
-    
+    protected $permissions = 0777;
     public function GET() {
-        
+        print 'need login';
     }
     public function POST() {
         $userName = $_POST['username'];

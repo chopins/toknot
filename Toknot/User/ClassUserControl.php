@@ -12,6 +12,7 @@ namespace Toknot\User;
 
 use Toknot\User\UserControl;
 use Toknot\User\Root;
+use Toknot\User\Nobody;
 use Toknot\Exception\StandardException;
 
 class ClassUserControl extends UserControl {
@@ -76,8 +77,12 @@ class ClassUserControl extends UserControl {
         if ($user instanceof Root) {
             return true;
         }
-        if ($this->permissions ^ 0770 > $perm) {
+        
+        if (($this->permissions ^ 0770) > $perm) {
             return true;
+        }
+        if ($user instanceof Nobody) {
+            return false;
         }
         if ($user->inGroup($this->gid) && $this->permissions ^ 0707 >> 3 > $perm) {
             return true;

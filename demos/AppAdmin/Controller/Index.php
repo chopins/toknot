@@ -13,7 +13,7 @@ use Toknot\Admin\AdminBase;
 use Toknot\Admin\MenuBox;
 
 class Index extends AdminBase {
-
+    
     public function GET() {
         print 'hello world';
         $catNav = new MenuBox();
