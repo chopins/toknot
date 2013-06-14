@@ -21,7 +21,6 @@ class AdminBase extends ClassUserControl {
     protected $permissions = 0770;
     protected $FMAI = null;
     protected $AR = null;
-    protected $view = null;
     protected $CFG = null;
     protected $dbConnect = null;
     
@@ -33,8 +32,9 @@ class AdminBase extends ClassUserControl {
         $this->initDatabase();
         $user = $this->checkUserLogin();
         $FMAI->checkAccess($this, $user);
-
-        $this->view = $FMAI->newTemplateView($this->CFG->View);
+        $FMAI->D->title = 'ToKnot Admin';
+    
+        $FMAI->newTemplateView($this->CFG->View);
     }
 
     public function initDatabase() {

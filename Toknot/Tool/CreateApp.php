@@ -83,6 +83,7 @@ class CreateApp {
         mkdir($dir . '/Data/View/Compile', 0777, true);
 
         $this->message('Create Success');
+        $this->message('You should configure '.$dir . '/Config/config.ini');
         $this->message("Configure your web root to $dir/WebRoot and visit your Application on browser");
     }
 
@@ -153,7 +154,7 @@ class CreateApp {
     }
 
     public function writeIndexController($path) {
-        $use = $this->isAdmin ? 'Toknot\Admin' : "{$this->appName}\{$this->appName}Base";
+        $use = $this->isAdmin ? 'Toknot\Admin\Admin' : "{$this->appName}\{$this->appName}Base";
         $base = $this->isAdmin ? 'AdminBase' : "{$this->appName}Base";
         $phpCode = '<?php
 namespace ' . $this->appName . '\Controller;
@@ -168,7 +169,8 @@ class Index extends ' . $base . '{
         print "hello world";
 
         //$this->display(\'index\');
-    }';
+    }
+ }';
         $this->message("Create $path/Index.php");
         file_put_contents("$path/Index.php", $phpCode);
     }
@@ -212,7 +214,7 @@ class ' . $this->appName . 'Base extends ClassUserControl {
     }
 
     public function writeIndex($path) {
-        $toknot = dirname(__DIR__) . '/Application.php';
+        $toknot = dirname(__DIR__) . '/Control/Application.php';
         $namespace = '\\' . $this->appName;
         $phpCode = '<?php
 use Toknot\Control\Application;

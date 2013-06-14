@@ -19,7 +19,6 @@ use Toknot\Di\DataCacheControl;
 class Renderer extends Object {
 
     private $varList = null;
-    private $tplName = '';
 
     /**
      * Set template file extension name
@@ -47,7 +46,6 @@ class Renderer extends Object {
      * @static
      */
     public static $cachePath = '';
-    private $transfromFile = '';
 
     /**
      * Set whether enable HTML static cache, if set true is enable and must set Renderer::$htmlCachePath
@@ -73,25 +71,26 @@ class Renderer extends Object {
      * @access public
      */
     public static $outCacheThreshold = 2;
-    
+
     /**
      * set cache type
      *
      * @var integer
      */
     public static $cacheFlag = 1;
-    
+
     /**
      * cache page to html
      */
+
     const CACHE_FLAG_HTML = 1;
-    
+
     /**
      * only cache data of be invoked controller without your construct method data
      */
     const CACHE_FLAG_DATA = 2;
-    
     const CACHE_USE_SUCC = 200;
+
     protected function __construct() {
         $this->varList = new ArrayObject;
     }
@@ -103,10 +102,14 @@ class Renderer extends Object {
     /**
      * import variable of template
      * 
-     * @param array $vars
+     * @param array|Toknot\Di\ArrayObject $vars
      */
-    public function importVars($vars) {
-        $this->varList->importPropertie($vars);
+    public function importVars(& $vars) {
+        if ($vars instanceof ArrayObject) {
+            $this->varList = $vars;
+        } else {
+            $this->varList->importPropertie($vars);
+        }
     }
 
     public function outPutHTMLCache($tplName) {
@@ -117,9 +120,9 @@ class Renderer extends Object {
     }
 
     public function display($tplName) {
-        $this->tplName = self::$scanPath . '/' . $tplName . '.' . self::$fileExtension;
-        if (!file_exists($this->tplName)) {
-            throw new StandardException("{$this->tplName} not exists");
+        $tplFile = self::$scanPath . '/' . $tplName . '.' . self::$fileExtension;
+        if (!file_exists($tplFile)) {
+            throw new StandardException("{$tplFile} not exists");
         }
 
         //HTML cache control
@@ -135,30 +138,30 @@ class Renderer extends Object {
                     }
                     ob_start();
                 }
-            } elseif(self::$cacheFlag == self::CACHE_FLAG_DATA) {
+            } elseif (self::$cacheFlag == self::CACHE_FLAG_DATA) {
                 $dataCacheFile = self::$dataCachePath . '/' . $tplName . '.' . $key;
                 $cache = new DataCacheControl($dataCacheFile);
                 $cache->useExpire(self::$outCacheThreshold);
                 $varList = $cache->get();
-                if($varList === false) {
+                if ($varList === false) {
                     $cacheData = $this->varList->transformToArray();
                     $cache->save($cacheData);
                 } else {
                     $cacheVar = new ArrayObject($varList);
                     $cacheVar->importPropertie($this->varList);
                     $this->varList = $cacheVar;
-                    uset($cacheVar,$varList);
+                    uset($cacheVar, $varList);
                 }
             }
         }
 
-        $this->transfromFile = $this->cachePath . '/' . $tplName . '.php';
-        if (!file_exists($this->transfromFile) ||
-                filemtime($this->transfromFile) < filemtime($this->tplName)) {
-            $this->transfromToPHP();
+        $transfromFile = self::$cachePath . '/' . $tplName . '.php';
+        if (DEVELOPMENT || !file_exists($transfromFile) ||
+                filemtime($transfromFile) < filemtime($tplFile)) {
+            $this->transfromToPHP($tplFile,$transfromFile);
         }
 
-        include_once $this->transfromFile;
+        include_once $transfromFile;
 
         //HTML Cache write
         if (self::$enableCache && self::$htmlCachePath != null && self::$cacheFlag == self::CACHE_FLAG_HTML) {
@@ -169,29 +172,49 @@ class Renderer extends Object {
         }
     }
 
-    private function transfromToPHP() {
-        $content = file_get_contents($this->tplName);
+    private function transfromToPHP($tplFile,$transfromFile) {
+        $content = file_get_contents($tplFile);
+
+        //transfrom foreach statement
+        $content = preg_replace_callback('/\{foreach\040+\$(\S+)\040+as\040+([\$a-zA-Z0-9_=>\040]+)}(.*)\{\/foreach\}/ims',
+                function($matches) {
+                    $matches[1] = str_replace('.', '->', $matches[1]);
+                    $str = "<?php foreach(\$this->varList->$matches[1] as $matches[2]) { ?>";
+                    if (preg_match('/\$([a-zA-Z0-9_]+)\040*=>\040*\$([a-zA-Z0-9_]+)/i', $matches[2], $setValue)) {
+                        $varName = $setValue[2];
+                        $keyName = $setValue[1];
+                    } elseif (preg_match('/\$([a-zA-Z0-9_]+)/i', $matches[2], $setValue)) {
+                        $varName = $setValue[1];
+                        $keyName = null;
+                    }
+                    $str .= preg_replace_callback('/\{\$([a-zA-Z0-9_]+)\}/', 
+                            function($matches) use ($varName, $keyName) {
+                                if ($matches[1] == $varName) {
+                                    $str = "<?php echo \${$varName};?>";
+                                } elseif ($matches[1] == $keyName) {
+                                    $str = "<?php echo \${$keyName};?>";
+                                } else {
+                                    $str = $matches[0];
+                                }
+                                return $str;
+                            }, $matches[3]);
+                    $str .= '<?php }?>';
+                    return $str;
+                }, $content);
+
 
         //transfrom variable
-        $content = preg_replace_callback('/\{\$(\.a-zA-Z0-9_\x7f-\xff]+)\}/i', function($matches) {
+        $content = preg_replace_callback('/\{\$([\.a-zA-Z0-9_\[\]]+)\}/i', function($matches) {
                     $str = '<?php echo $this->varList->';
                     $str .= str_replace('.', '->', $matches[1]);
                     $str .= ';?>';
                     return $str;
                 }, $content);
 
-        //transfrom foreach statement
-        $content = preg_replace_callback('/\{foreach\s+\$(\S+)\s+as(.*)\}/i', function($matches) {
-                    $matches[1] = str_replace('.', '->', $matches[1]);
-                    $str = "<?php if(is_array(\$this->varList->{$matches[1]}) && !empty(\$this->varList->{$matches[1]})){";
-                    $str .= "foreach(\$this->varList->$matches[1] as $matches[2]) { ?>";
-                    return $str;
-                }, $content);
-        $content = str_replace('{/foreach}', '<?php }} ?>', $content);
 
         //transfrom define variable which is not controller set
-        $content = preg_replace('/\{set\s+([^\{^\}]+)\}/i', "<?php $1;?>", $content);
-
+        $content = preg_replace('/\{set\s+\$([\.a-zA-Z0-9_\x7f-\xff\[\]]+)\s*=\s*(.*)\}/i', "<?php \$this->varList->$1=$2;?>", $content);
+        
         //transfrom if statement
         $content = preg_replace_callback('/\{if\s+([^\{^\}]+)\}/i', function($matches) {
                     $matches[1] = str_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$this->varList->$1', $matches[1]);
@@ -219,7 +242,9 @@ class Renderer extends Object {
         //clean the whitespace from beginning and end of line and html comment
         $content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
 
-        FileObject::saveContent($this->transfromFile, $content);
+        FileObject::saveContent($transfromFile, $content);
     }
-
+    protected function importFile($file) {
+        $this->display($file);
+    }
 }

@@ -1,7 +1,11 @@
 <?php
 use Toknot\Control\Application;
+use Toknot\Control\Router;
 
-require_once dirname(dirname(dirname(__DIR__))).'/Toknot/Control/Application.php';
+//If developement set true, product set false
+define('DEVELOPMENT', true);
+require_once "/home/chopin/NetBeansProjects/toknot/Toknot/Control/Application.php";
 
 $app = new Application;
-$app->run('\AppAdmin',dirname(__DIR__));
+$app->setRouterArgs(Router::ROUTER_PATH, 2);
+$app->run("\AppAdmin",dirname(__DIR__));

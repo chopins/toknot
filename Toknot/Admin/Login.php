@@ -16,7 +16,7 @@ use Toknot\User\CurrentUser;
 class Login extends AdminBase {
     protected $permissions = 0777;
     public function GET() {
-        print 'need login';
+        $this->FMAI->display('login');
     }
     public function POST() {
         $userName = $_POST['username'];

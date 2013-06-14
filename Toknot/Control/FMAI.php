@@ -20,6 +20,7 @@ use Toknot\User\ClassUserControl;
 use Toknot\User\CurrentUser;
 use Toknot\User\UserControl;
 use Toknot\Di\DataCacheControl;
+use Toknot\Di\ArrayObject;
 
 /**
  * Framework Module Access Interfaces
@@ -31,9 +32,9 @@ final class FMAI extends Object {
      * {@see Toknot\View\Renderer::$varList} use ArrayObject, so available to Application 
      * one Array of set way instead ArrayObject
      *
-     * @var array 
+     * @var ArrayObject 
      */
-    public $D = array();
+    private $D = null;
 
     /**
      * Current HTTP request method
@@ -69,6 +70,7 @@ final class FMAI extends Object {
         ConfigLoader::singleton();
         $this->appRoot = $appRoot;
         DataCacheControl::$appRoot = $appRoot;
+        $this->D = new ArrayObject;
     }
 
     /**
@@ -183,12 +185,20 @@ final class FMAI extends Object {
     public function newTemplateView(& $CFG) {
         StandardAutoloader::importToknotClass('View\Renderer');
         Renderer::$cachePath = $this->appRoot . $CFG->templateCompileFileSavePath;
-        Renderer::$fileExtension = $this->appRoot . $CFG->templateFileExtensionName;
+        Renderer::$fileExtension = $CFG->templateFileExtensionName;
         Renderer::$scanPath = $this->appRoot . $CFG->templateFileScanPath;
         Renderer::$htmlCachePath = $this->appRoot . $CFG->htmlStaticCachePath;
         Renderer::$outCacheThreshold = $CFG->defaultPrintCacheThreshold;
         Renderer::$dataCachePath = $CFG->dataCachePath;
         return Renderer::singleton();
+    }
+    public function setViewVar($name,$value) {
+        $this->D->$name = $value;
+    }
+    public function &__get($name) {
+        if($name == 'D') {
+            return $this->D;
+        }
     }
 
     public function newXMLView() {
