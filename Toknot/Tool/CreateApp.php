@@ -25,13 +25,16 @@ class CreateApp {
         if ($admin == 'yes') {
             $this->isAdmin = true;
             while (($password = $this->enterRootPass()) === false) {
-                $this->message('Twice password not same, enter again:');
+                $this->message('Twice password not same, enter again:', 'red');
             }
             include_once $this->toknotDir . '/Control/Application.php';
             $app = new Toknot\Control\Application;
             \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserControl');
-            $encrypt = Toknot\User\Root::getEncryptionRootPass($password);
-            
+            $this->message('Generate hash salt');
+            $salt = substr(str_shuffle('1234567890qwertyuiopasdfghjklzxcvbnm'), 0, 8);
+            $algo = Toknot\User\Root::bestHashAlgos();
+            $password = Toknot\User\Root::getTextHashOutSalt($password,$algo, $salt);
+            $this->message('Generate Root password hash string');
         }
 
         while(file_exists($dir)) {
@@ -60,9 +63,10 @@ class CreateApp {
 
         $configure = file_get_contents($this->toknotDir . '/Config/default.ini');
         if ($this->isAdmin) {
-            $configure = preg_replace('/(allowRootLogin\s*)=(.*)$/im', "$1= true", $configure);
-            $configure = preg_replace('/(rootPassword\s*)=(.*)$/im', "$1={$encrypt[1]}", $configure);
-            $configure = preg_replace('/(rootEncriyptionAlgorithms\s*)=(.*)$/im', "$1={$encrypt[0]}", $configure);
+            $configure = preg_replace('/(allowRootLogin\040*)=(.*)$/im', "$1= true", $configure);
+            $configure = preg_replace('/(rootPassword\040*)=(.*)$/im', "$1={$password}", $configure);
+            $configure = preg_replace('/(userPasswordEncriyptionAlgorithms\040*)=(.*)$/im', "$1={$algo}", $configure);
+            $configure = preg_replace('/(userPasswordEncriyptionSalt\040*)=(.*)$/im', "$1={$salt}", $configure);
         }
         file_put_contents($dir . '/Config/config.ini', $configure);
 
@@ -82,7 +86,7 @@ class CreateApp {
         $this->message("Create $dir/Data/View/Compile");
         mkdir($dir . '/Data/View/Compile', 0777, true);
 
-        $this->message('Create Success');
+        $this->message('Create Success','green');
         $this->message('You should configure '.$dir . '/Config/config.ini');
         $this->message("Configure your web root to $dir/WebRoot and visit your Application on browser");
     }
@@ -91,13 +95,13 @@ class CreateApp {
         $this->message('Enter root password:');
         $password = trim(fgets(STDIN));
         while (strlen($password) < 6) {
-            $this->message('root password too short,enter again:');
+            $this->message('root password too short,enter again:','red');
             $password = trim(fgets(STDIN));
         }
         $this->message('Enter root password again:');
         $repassword = trim(fgets(STDIN));
         while (empty($password)) {
-            $this->message('must enter root password again:');
+            $this->message('must enter root password again:','red');
             $repassword = trim(fgets(STDIN));
         }
         if ($repassword != $password) {
@@ -122,6 +126,10 @@ class CreateApp {
                 $this->message("must enter application path:");
                 $dir = trim(fgets(STDIN));
             }
+        }
+        if(file_exists($dir)) {
+            $this->message('Path ('. $dir .') is exists, change other path','red');
+            $this->createAppRootDir($isCurrent);
         }
         return $dir;
     }
@@ -231,8 +239,29 @@ $app->run("' . $namespace . '",dirname(__DIR__));';
         file_put_contents($path . '/index.php', $phpCode);
     }
 
-    public function message($str) {
+    public function message($str, $color = null) {
+        $number = FALSE;
+        switch ($color) {
+            case 'red':
+                $number = 31;
+                break;
+            case 'green':
+                $number = 32;
+                break;
+            case 'blue':
+                $number = 44;
+                break;
+            case 'yellow':
+                $number = 43;
+                break;
+        }
+        if($number) {
+            echo "\e[1;{$number}m";
+        }
         echo "$str\r\n";
+        if($number) {
+            echo "\e[0m";
+        } 
     }
 
 }

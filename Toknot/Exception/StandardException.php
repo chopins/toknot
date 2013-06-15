@@ -108,7 +108,7 @@ class StandardException extends ErrorException {
         if (PHP_SAPI != 'cli') {
             $str .= $this->errcss;
         } else {
-            $str .= "==============\n";
+            $str .= str_repeat('=',20)."\n";
         }
         $str .='<div class="ToknotDebugArea">';
         if(PHP_SAPI == 'cli') {

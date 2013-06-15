@@ -7,20 +7,22 @@
  * @license    http://opensource.org/licenses/bsd-license.php New BSD License
  * @link       https://github.com/chopins/toknot
  */
+
 namespace Toknot\User;
 
 use Toknot\User\UserControl;
 use Toknot\Config\ConfigLoader;
 
 final class Root extends UserControl {
+
     protected $userName = 'root';
     protected $uid = 0;
     private static $password = null;
     private static $allowLogin = false;
-    private static $algorithms = null;
     protected $groupName = 'root';
     protected $gid = 0;
     private $suUser = false;
+
     private function __construct() {
         $this->suUser = 0;
         $this->uid = 0;
@@ -28,42 +30,35 @@ final class Root extends UserControl {
         $this->userName = 'root';
         $this->groupName = 'root';
     }
-    private static  function loadUserConfigure() {
+
+    private static function loadUserConfigure() {
         $cfg = ConfigLoader::CFG();
-        if(!isset($cfg->User)) {
+        if (!isset($cfg->User)) {
             self::$allowLogin = false;
             self::$password = null;
-            self::$algorithms = 'sha1';
+            self::$hashAlgo = 'sha1';
             return;
         }
-        if(!isset($cfg->User->allowLogin)) {
+        if (!isset($cfg->User->allowRootLogin)) {
             self::$allowLogin = false;
         } else {
-             self::$allowLogin = $cfg->User->allowLogin;
+            self::$allowLogin = $cfg->User->allowRootLogin;
         }
-        if(!isset($cfg->User->rootPassword) || empty($cfg->User->rootPassword)) {
+        if (!isset($cfg->User->rootPassword) || empty($cfg->User->rootPassword)) {
             self::$password = null;
         } else {
             self::$password = $cfg->User->rootPassword;
         }
-        if(!isset($cfg->User->rootEncriyptionAlgorithms)) {
-            self::$algorithms = 'sha1';
+        if (!isset($cfg->User->userPasswordEncriyptionAlgorithms)) {
+            self::$hashAlgo = 'sha1';
         } else {
-            self::$algorithms = $cfg->User->rootEncriyptionAlgorithms;
+            self::$hashAlgo = $cfg->User->userPasswordEncriyptionAlgorithms;
         }
-    }
-    
-    /**
-     * use current configure encrypt a password
-     * 
-     * @param string $password
-     * @return string
-     */
-    public static function hashPassword($password) {
-        if(self::$algorithms != 'sha1') {
-            return hash(self::$algorithms, $password);
-        } else {
-            return sha1($password);
+        if (!empty($cfg->User->enableUseHashFunction)) {
+            self::$useHashFunction = $cfg->User->enableUseHashFunction;
+        }
+        if (!empty($cfg->User->userPasswordEncriyptionSalt)) {
+            self::$hashSalt = $cfg->User->userPasswordEncriyptionSalt;
         }
     }
 
@@ -76,19 +71,19 @@ final class Root extends UserControl {
      */
     public static function su(CurrentUser $user, $password) {
         self::loadUserConfigure();
-        if(self::$password === null && $password != self::$password) {
+        if (self::$password === null && $password != self::$password) {
             return false;
         }
-        if(self::$password !== null && self::hashPassword($password) != self::$password ) {
+        if (self::$password !== null && self::hashPassword($password) != self::$password) {
             return false;
         }
         $rootObject = new static;
         $rootObject->suUser = true;
         $rootObject->uid = $user->uid;
-        $rootObject->userName  = $user->userName;
+        $rootObject->userName = $user->userName;
         return $rootObject;
     }
-    
+
     /**
      * Login root user, if root not configure password will not allow login
      * 
@@ -97,30 +92,17 @@ final class Root extends UserControl {
      */
     public static function login($password) {
         self::loadUserConfigure();
-        if(!self::$allowLogin) {
+        if (!self::$allowLogin) {
             return false;
         }
-        if(self::$password === null) {
+
+        if (self::$password === null) {
             return false;
         }
-        if(self::$password != self::hashPassword($password)) {
+        if (self::$password != self::hashPassword($password)) {
             return false;
         }
         return new static;
     }
-    
-    /**
-     * Passed a password text generate a encryption sting for root password
-     * 
-     * @param string $password
-     * @return array  The array 1st is algos name , 2 is encryption sting
-     */
-    public static function getEncryptionRootPass($password) {
-        $algo = self::bestHashAlgos();
-        if($algo) {
-            return array($algo,hash($algo, $password));
-        } else {
-            return array('sha1', sha1($password));
-        }
-    }
+
 }

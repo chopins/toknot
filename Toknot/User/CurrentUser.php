@@ -87,27 +87,6 @@ class CurrentUser extends UserControl {
     private static $DBConnect = null;
 
     /**
-     * name of algorithm for the hash function
-     *
-     * @var string
-     */
-    private static $hashAlgo = 'sha512';
-
-    /**
-     * whether use hash extension of function
-     *
-     * @var boolean
-     */
-    private static $useHashFunction = true;
-
-    /**
-     * set salt of the hash 
-     *
-     * @var string
-     */
-    private static $hashSalt = '';
-
-    /**
      * User exists status code
      */
 
@@ -127,11 +106,6 @@ class CurrentUser extends UserControl {
      * opreate of user fail status code
      */
     const OPRATE_FAIL = 500;
-
-    /**
-     * The password salt string
-     */
-    const PASSWORD_SALT = 'ToKnot-PHP-Framework-Password-Default-Salt';
 
     /**
      * All number
@@ -257,7 +231,7 @@ class CurrentUser extends UserControl {
     protected function generateUserFlag() {
         $userFlag = self::getUserRemoteAddress() . $_SERVER['HTTP_USER_AGENT'];
         $str= self::hash($this->userName . $this->uid . $this->gid . $userFlag);
-        $this->userFlag = self::hash($str);
+        $this->userFlag = self::hash($str.self::$hashSalt);
     }
     public function checkUserFlag($flag) {
         return $this->generateUserFlag() == $flag;
@@ -507,27 +481,7 @@ class CurrentUser extends UserControl {
             return false;
         }
     }
-
-    /**
-     * Get password string of hash value, the method use {@see CurrentUser::$hashSalt} static property
-     * for the password of hash salt, if not set {@see CurrentUser::$hashSalt} will use {@see CurrentUser::PASSWORD_SALT}
-     * if set {@see CurrentUser::$useHashFunction} is true will use {@see CurrentUser::$hashAlgo} for 
-     * the hash function algorithm
-     * 
-     * @param string $password
-     * @return string
-     * @access public
-     * @static
-     * @throws Toknot\Exception\StandardException if set use hash function and hash function not exists
-     */
-    public static function hashPassword($password) {
-        if (self::$useHashFunction && !function_exists('hash') && !in_array(self::$hashAlgo, hash_algos())) {
-            throw new StandardException('need hash extension or ' . self::$hashAlgo . ' algo un-support');
-        }
-        $salt = $salt ? self::$hashSalt : self::PASSWORD_SALT;
-        return self::hash($password . $salt);
-    }
-
+    
     /**
      * get password sting texture
      * 
@@ -573,25 +527,18 @@ class CurrentUser extends UserControl {
         return self::PASSWD_ORDERLESS;
     }
 
-    public static function hash($str) {
-        if (self::$useHashFunction) {
-            return hash(self::$hashAlgo, $str);
-        } else {
-            return sha1($str);
-        }
-    }
 
     /**
      * Get a CurrentUser object by uid, recommended ser serialize() the user object
      * 
-     * @param integer $id
+     * @param integer $uid
      * @return Toknot\User\CurrentUser
      * @static
      */
-    public static function getInstanceByUid($id) {
+    public static function getInstanceByUid($uid) {
         self::loadConfigure();
         $tableName = self::$tableName;
-        $userInfo = self::$DBConnect->$tableName->findByPK($this->uid);
+        $userInfo = self::$DBConnect->$tableName->findByPK($uid);
         return new static($userInfo);
     }
 
