@@ -7,6 +7,7 @@ __The project is still under heavy development__
 
 ####License
 The PHP framework under New BSD License (http://toknot.com/LICENSE.txt)
+
 The demos under GNU GPL version 3 or later <http://opensource.org/licenses/gpl-3.0.html>
 
 ####API and Class Reference
