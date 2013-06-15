@@ -1,10 +1,11 @@
+#!/bin/env php
 <?php
 
 /**
  * Toknot (http://toknot.com)
  *
  * @copyright  Copyright (c) 2011 - 2013 Toknot.com
- * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+ * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
 class CreateApp {
@@ -17,27 +18,31 @@ class CreateApp {
     public function __construct() {
         $this->toknotDir = dirname(__DIR__);
         $this->workDir = getcwd();
-        $this->message("Whether current path yes/no(default:no)");
+        require_once $this->toknotDir . '/Control/Application.php';
+        define('DEVELOPMENT', false);
+        new Toknot\Control\Application;
+        $this->versionInfo();
+
+        $this->message("Whether create to current path yes/no(default:no):", null, false);
         $isCurrent = trim(fgets(STDIN));
         $dir = $this->createAppRootDir($isCurrent);
-        $this->message('Whether admin of applicaton yes/no(default:no):');
+        $this->message('Whether admin of applicaton yes/no(default:no):', null, false);
         $admin = trim(fgets(STDIN));
         if ($admin == 'yes') {
             $this->isAdmin = true;
             while (($password = $this->enterRootPass()) === false) {
                 $this->message('Twice password not same, enter again:', 'red');
             }
-            include_once $this->toknotDir . '/Control/Application.php';
-            $app = new Toknot\Control\Application;
+
             \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserControl');
             $this->message('Generate hash salt');
             $salt = substr(str_shuffle('1234567890qwertyuiopasdfghjklzxcvbnm'), 0, 8);
             $algo = Toknot\User\Root::bestHashAlgos();
-            $password = Toknot\User\Root::getTextHashOutSalt($password,$algo, $salt);
+            $password = Toknot\User\Root::getTextHashOutSalt($password, $algo, $salt);
             $this->message('Generate Root password hash string');
         }
 
-        while(file_exists($dir)) {
+        while (file_exists($dir)) {
             $this->message("$dir is exists, change other");
             $dir = $this->createAppRootDir($isCurrent);
         }
@@ -86,22 +91,30 @@ class CreateApp {
         $this->message("Create $dir/Data/View/Compile");
         mkdir($dir . '/Data/View/Compile', 0777, true);
 
-        $this->message('Create Success','green');
-        $this->message('You should configure '.$dir . '/Config/config.ini');
+        $this->message('Create Success', 'green');
+        $this->message('You should configure ' . $dir . '/Config/config.ini');
         $this->message("Configure your web root to $dir/WebRoot and visit your Application on browser");
     }
 
+    public function versionInfo() {
+        $this->message('Toknot Framework Application Create Script');
+        $this->message('Toknot '.\Toknot\Di\Version::VERSION.'-'.\Toknot\Di\Version::STATUS.';PHP '.PHP_VERSION);
+        $this->message('Copyright (c) 2010-2013 Szopen Xiao');
+        $this->message('New BSD Licenses <https://github.com/chopins/toknot/blob/master/LICENSE>');
+        $this->message('');
+    }
+
     public function enterRootPass() {
-        $this->message('Enter root password:');
+        $this->message('Enter root password:', null, false);
         $password = trim(fgets(STDIN));
         while (strlen($password) < 6) {
-            $this->message('root password too short,enter again:','red');
+            $this->message('root password too short,enter again:', 'red', false);
             $password = trim(fgets(STDIN));
         }
-        $this->message('Enter root password again:');
+        $this->message('Enter root password again:', null, false);
         $repassword = trim(fgets(STDIN));
         while (empty($password)) {
-            $this->message('must enter root password again:','red');
+            $this->message('must enter root password again:', 'red', false);
             $repassword = trim(fgets(STDIN));
         }
         if ($repassword != $password) {
@@ -113,22 +126,22 @@ class CreateApp {
 
     public function createAppRootDir($isCurrent) {
         if ($isCurrent == 'yes') {
-            $this->message("Enter application root namespace name:");
             $topnamespace = '';
             while (empty($topnamespace)) {
+                $this->message("Enter application root namespace name:", null, false);
                 $topnamespace = trim(fgets(STDIN));
             }
             $dir = $this->workDir . '/' . $topnamespace;
         } else {
-            $this->message("Enter application path, the basename is root namespace name:");
+            $this->message("Enter application path, the basename is root namespace name:", null, false);
             $dir = trim(fgets(STDIN));
             while (empty($dir)) {
-                $this->message("must enter application path:");
+                $this->message("must enter application path: ", null, false);
                 $dir = trim(fgets(STDIN));
             }
         }
-        if(file_exists($dir)) {
-            $this->message('Path ('. $dir .') is exists, change other path','red');
+        if (file_exists($dir)) {
+            $this->message('Path (' . $dir . ') is exists, change other path', 'red');
             $this->createAppRootDir($isCurrent);
         }
         return $dir;
@@ -239,7 +252,7 @@ $app->run("' . $namespace . '",dirname(__DIR__));';
         file_put_contents($path . '/index.php', $phpCode);
     }
 
-    public function message($str, $color = null) {
+    public function message($str, $color = null, $newLine = true) {
         $number = FALSE;
         switch ($color) {
             case 'red':
@@ -255,13 +268,16 @@ $app->run("' . $namespace . '",dirname(__DIR__));';
                 $number = 43;
                 break;
         }
-        if($number) {
+        if ($number) {
             echo "\e[1;{$number}m";
         }
-        echo "$str\r\n";
-        if($number) {
+        echo "$str";
+        if ($newLine) {
+            echo "\r\n";
+        }
+        if ($number) {
             echo "\e[0m";
-        } 
+        }
     }
 
 }

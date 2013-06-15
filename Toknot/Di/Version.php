@@ -7,11 +7,10 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
-namespace Toknot\View;
-use Toknot\Di\Object;
+namespace Toknot\Di;
 
-class XML extends Object {
-    public static function singleton() {
-        parent::__singleton();
-    }
+final class Version {
+    const VERSION = '2.0';
+    const STATUS = 'dev';
+    const REQUIRE_PHP_VERSION = '5.3';
 }
