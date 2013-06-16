@@ -168,7 +168,9 @@ final class Application {
             $_SERVER['SERVER_NAME'] = getenv('SERVER_NAME');
             $_SERVER['QUERY_STRING'] = getenv('QUERY_STRING');
         }
-
+        if(!isset($_SERVER['QUERY_STRING'])) {
+            $_SERVER['QUERY_STRING'] = getenv('QUERY_STRING');
+        }
         if (!isset($_SERVER['REQUEST_TIME_FLOAT'])) {
             $_SERVER['REQUEST_TIME_FLOAT'] = microtime(true);
         }
@@ -408,7 +410,12 @@ final class Application {
 
     public function pageRunInfo() {
         $mem = self::getMemoryUsage();
-        $str = '<br /><b style="color:red;">The trace time: ' . $this->traceTime . " seconds</b>\n";
+        if($this->traceTime <1) {
+            $this->traceTime = round($this->traceTime * 1000, 2) . ' ms';
+        } else {
+            $this->traceTime .= ' seconds';
+        }
+        $str = '<br /><b style="color:red;">The trace time: ' . $this->traceTime . "</b>\n";
         $str .= '<br />Memory Usage: ' . $mem . "\n";
         $et = microtime(true) - $this->scriptStartTime;
         if ($et < 1) {

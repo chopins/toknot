@@ -28,11 +28,11 @@ class ShopBase extends ClassUserControl {
 
         $this->AR->config($this->CFG->Database);
         
-        $this->FMAI->enableHTMLCache();
+        $this->FMAI->enableHTMLCache($this->CFG->View);
         
         $this->view = $this->FMAI->newTemplateView($this->CFG->View);
 
-        $FMAI->checkAccess($this);
+        $FMAI->checkAccess($this , new \Toknot\User\Nobody);
     }
 
     public function CLI() {

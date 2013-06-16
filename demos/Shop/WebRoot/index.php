@@ -15,6 +15,7 @@
 
 use Toknot\Control\Application;
 
+define('DEVELOPMENT', false);
 require_once dirname(dirname(dirname(__DIR__))).'/Toknot/Control/Application.php';
 
 $app = new Application;
