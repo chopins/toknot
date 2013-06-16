@@ -83,7 +83,7 @@ class CreateApp {
         mkdir($dir . '/View');
         if ($this->isAdmin) {
             $this->copyDir($this->toknotDir . '/Admin/View', $dir . '/View');
-            $this->copyDir($this->toknotDir . '/Admin/Static', $dir . '/WebRoot/Static');
+            $this->copyDir($this->toknotDir . '/Admin/Static', $dir . '/WebRoot/static');
         }
         $this->message("Create $dir/Data/View");
         mkdir($dir . '/Data/View', 0777, true);
@@ -100,7 +100,7 @@ class CreateApp {
         $this->message('Toknot Framework Application Create Script');
         $this->message('Toknot '.\Toknot\Di\Version::VERSION.'-'.\Toknot\Di\Version::STATUS.';PHP '.PHP_VERSION);
         $this->message('Copyright (c) 2010-2013 Szopen Xiao');
-        $this->message('New BSD Licenses <https://github.com/chopins/toknot/blob/master/LICENSE>');
+        $this->message('New BSD Licenses <http://toknot.com/LICENSE.txt>');
         $this->message('');
     }
 

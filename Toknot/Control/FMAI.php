@@ -71,6 +71,7 @@ final class FMAI extends Object {
         $this->appRoot = $appRoot;
         DataCacheControl::$appRoot = $appRoot;
         $this->D = new ArrayObject;
+        date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
     }
 
     /**
@@ -116,7 +117,9 @@ final class FMAI extends Object {
      */
     public function loadConfigure($ini, $iniCacheFile = '') {
         ConfigLoader::$cacheFile = $iniCacheFile;
-        return ConfigLoader::loadCFG($ini);
+        ConfigLoader::loadCFG($ini);
+        date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
+        return ConfigLoader::CFG();
     }
 
     /**

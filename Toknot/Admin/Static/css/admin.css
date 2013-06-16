@@ -1,0 +1,24 @@
+/**
+ * Toknot (http://toknot.com)
+ *
+ * @copyright  Copyright (c) 2011 - 2013 Toknot.com
+ * @license    http://toknot.com/LICENSE.txt New BSD License
+ * @link       https://github.com/chopins/toknot
+ */
+
+body {margin: 0;padding: 0;font-family:'Trebuchet MS','Geneva CE',lucida,sans-serif;font-size: 16px;background-color: #E6EDF6;}
+.top-panel {background-color: #333333;color: #FFFFFF;height: 40px;line-height: 40px;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);padding: 0 11px 0;cursor:default;}
+.time-bar {display:inline-block;height: 40px;padding: 0 5px 0;width: 180px;font-weight: bold;}
+.user-nav {display: inline-block;float: right;padding: 0 10px;}
+.user-nav:hover,.time-bar:hover {background-color: #555555;}
+.main-footer {text-align: right;color: #666666;font-size: 13px;}
+.main-footer p {margin: 5px 20px 5px;}
+.main-warpper {height: 500px;}
+.login-box {background: none repeat scroll 0 0 #444444;border: 1px solid #BCD7F9;border-radius: 10px 10px 10px 10px;padding: 10px 20px;width: 600px;margin: 50px auto;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);color: #CCCCCC;}
+.login-box h2 {text-align: center;}
+.login-form {color: #E6EDF6;}
+.login-button {margin-left: 150px;height: 30px;border-radius: 3px;border: 1px solid #3079ED;background-color: #4D90FE;background-image: -moz-linear-gradient(center top , #4D90FE, #4787ED);color: #EEEEEE;font-weight: bold;}
+.login-form p {display: block;text-align: center;}
+.login-form span {display: inline-block;width: 100px;text-align: justify;font-weight: bold;}
+.login-text{height: 30px;border: 1px solid #CCCCCC;border-radius: 3px;padding:3px;box-shadow: 1px 1px 3px #C3C3C3 inset;}
+.login-text:focus{border-color: #3EABFF;box-shadow: 0 0 1px #1681D3, 1px 1px 3px #C3C3C3 inset;}

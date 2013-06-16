@@ -16,14 +16,16 @@ use Toknot\Exception\FileIOException;
 use Toknot\Config\ConfigLoader;
 use Toknot\User\Nobody;
 use Toknot\User\CurrentUser;
+use Toknot\Di\Version;
 
 class AdminBase extends ClassUserControl {
+
     protected $permissions = 0770;
     protected $FMAI = null;
     protected $AR = null;
     protected $CFG = null;
     protected $dbConnect = null;
-    
+
     public function __construct(FMAI $FMAI) {
         $this->FMAI = $FMAI;
         $this->loadAdminConfig();
@@ -32,9 +34,13 @@ class AdminBase extends ClassUserControl {
         $this->initDatabase();
         $user = $this->checkUserLogin();
         $FMAI->checkAccess($this, $user);
-        $FMAI->D->title = 'ToKnot Admin';
-    
+        $this->commonTplVarSet();
         $FMAI->newTemplateView($this->CFG->View);
+    }
+
+    public function commonTplVarSet() {
+        $this->FMAI->D->title = 'ToKnot Admin';
+        $this->FMAI->D->toknotVersion = Version::VERSION .'-'.Version::STATUS;
     }
 
     public function initDatabase() {
@@ -73,13 +79,12 @@ class AdminBase extends ClassUserControl {
         if (!empty($this->CFG->Admin->adminSessionName)) {
             
         }
-        
     }
 
     public function checkUserLogin() {
         if (isset($_SESSION['uid']) && isset($_SESSION['Flag'])) {
             $user = CurrentUser::getInstanceByUid($_SESSION['uid']);
-            if($user->checkUserFlag()) {
+            if ($user->checkUserFlag()) {
                 return $user;
             }
         } elseif (isset($_COOKIE['uid']) && isset($_COOKIE['Flag']) && isset($_COOKIE['TokenKey'])) {

@@ -236,7 +236,7 @@ class Renderer extends Object {
         $content = preg_replace_callback('/\{func\s+([a-zA-Z_\d]+)\((.*)\)\}/i', function ($matches) {
                     $matches[2] = str_replace('.', '->', $matches[2]);
                     $matches[2] = str_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$this->varList->$1', $matches[2]);
-                    return "<?php if(function_exists({$matches[1]})){ echo {$matches[1]}({$matches[2]});} ?>";
+                    return "<?php if(function_exists('{$matches[1]}')){ echo {$matches[1]}({$matches[2]});} ?>";
                 }, $content);
 
         //clean the whitespace from beginning and end of line and html comment
