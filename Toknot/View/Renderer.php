@@ -132,7 +132,7 @@ class Renderer extends Object {
                 $htmlCacheFile = self::$htmlCachePath . '/' . $tplName . '.' . $key . '.html';
                 if (file_exists($htmlCacheFile)) {
                     $mtime = filemtime($htmlCacheFile);
-                    if ($mtime + self::$outCacheThreshold <= time()) {
+                    if ($mtime + (string)self::$outCacheThreshold <= time()) {
                         include_once $htmlCacheFile;
                         return self::CACHE_USE_SUCC;
                     }

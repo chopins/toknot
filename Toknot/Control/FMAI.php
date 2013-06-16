@@ -143,11 +143,11 @@ final class FMAI extends Object {
      * 
      * </code>
      */
-    public function enableHTMLCache() {
+    public function enableHTMLCache(&$CFG) {
         StandardAutoloader::importToknotClass('View\ViewCache');
         $this->enableCache = true;
         ViewCache::$enableCache = true;
-        $view = $this->newTemplateView();
+        $view = $this->newTemplateView($CFG);
         ViewCache::setRenderer($view);
         ViewCache::registerDisplayHandle('outPutHTMLCache');
     }

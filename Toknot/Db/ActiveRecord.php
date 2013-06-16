@@ -53,7 +53,7 @@ class ActiveRecord extends Object {
         } else {
             throw new DatabaseConfigException('dirverOptions');
         }
-        $this->dbObject->setConifg($config); 
+        $this->dbObject->setConfig($config); 
     }
 
 }
