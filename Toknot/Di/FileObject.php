@@ -82,7 +82,7 @@ class FileObject extends Object {
     }
     public static function saveContent($file,$data) {
         $path = dirname($file);
-        if(!is_dir(dirname($path))) {
+        if(!is_dir($path)) {
             $r = mkdir($path, 0777, true);
             if(!$r) {
                 throw new FileIOException("$file write fail or $path is not directory");

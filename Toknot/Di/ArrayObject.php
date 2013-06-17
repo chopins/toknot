@@ -53,9 +53,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
     }
 
     public function setPropertie($propertie, $value) {
-        if (is_string($value)) {
-            $this->interatorArray[$propertie] = new StringObject($value);
-        } elseif (is_array($value)) {
+        if (is_array($value)) {
             $this->interatorArray[$propertie] = new ArrayObject($value);
         } else {
             $this->interatorArray[$propertie] = $value;

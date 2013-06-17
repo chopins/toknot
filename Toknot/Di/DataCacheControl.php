@@ -78,7 +78,6 @@ class DataCacheControl {
         if (empty($this->file)) {
             return 0;
         }
-
         if (file_exists($this->file)) {
             $file = self::$appRoot . $this->file . '.php';
             return filemtime($file);

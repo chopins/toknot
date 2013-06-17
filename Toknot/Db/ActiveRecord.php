@@ -15,7 +15,6 @@ use Toknot\Db\DatabaseObject;
 use Toknot\Db\Connect;
 use Toknot\Di\ArrayObject;
 use Toknot\Db\Exception\DatabaseConfigException;
-use Toknot\Control\StandardAutoloader;
 
 class ActiveRecord extends Object {
 

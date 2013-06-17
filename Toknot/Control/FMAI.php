@@ -90,7 +90,8 @@ final class FMAI extends Object {
                 && $this->getAccessStatus() === false) {
             $accessDeniedController = $this->getAccessDeniedController();
             $invokeObject = new $accessDeniedController($this);
-            $invokeObject->GET();
+            $method = $this->requestMethod;
+            $invokeObject->$method();
             return false;
         }
         if ($this->requestMethod == 'GET' && $this->enableCache) {

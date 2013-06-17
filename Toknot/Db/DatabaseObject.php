@@ -81,7 +81,7 @@ final class DatabaseObject extends DbCRUD {
      * @return array table list
      */
     public function showTableList() {
-        $cache = new DataCacheControl($this->dataStructInfoCache);
+        $cache = new DataCacheControl($this->databaseStructInfoCache);
         $cache->useExpire($this->databaseCacheExpire * 60);
         $cacheTable = $cache->get();
         if($cacheTable === false) {

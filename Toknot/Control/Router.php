@@ -212,25 +212,6 @@ class Router implements RouterInterface {
             }
         }
         $invokeClassReflection = new ReflectionClass($invokeClass);
-        if (!$invokeClassReflection->hasMethod($method)) {
-            if (DEVELOPMENT) {
-                throw new StandardException("Not Support Request Method ($method)");
-            } else {
-                header('405 Method Not Allowed');
-                if ($this->methodNotAllowedController === null) {
-                    $invokeClass = "{$this->routerNameSpace}\{$this->methodNotAllowedController}";
-                    $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
-                    if (file_exists($classFile)) {
-                        include $classFile;
-                    }
-                    if (!class_exists($invokeClass, false)) {
-                        die('405 Method Not Allowed');
-                    }
-                } else {
-                    die('405 Method Not Allowed');
-                }
-            }
-        }
 
         $FMAI->setURIOutRouterPath($this->suffixPart);
         $FMAI->requestMethod = $method;
@@ -238,6 +219,25 @@ class Router implements RouterInterface {
         $invokeObject = $invokeClassReflection->newInstance($FMAI);
         $stat = $FMAI->invokeBefore($invokeClassReflection);
         if ($stat === true) {
+            if (!$invokeClassReflection->hasMethod($method)) {
+                if (DEVELOPMENT) {
+                    throw new StandardException("Not Support Request Method ($method)");
+                } else {
+                    header('405 Method Not Allowed');
+                    if ($this->methodNotAllowedController === null) {
+                        $invokeClass = "{$this->routerNameSpace}\{$this->methodNotAllowedController}";
+                        $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
+                        if (file_exists($classFile)) {
+                            include $classFile;
+                        }
+                        if (!class_exists($invokeClass, false)) {
+                            die('405 Method Not Allowed');
+                        }
+                    } else {
+                        die('405 Method Not Allowed');
+                    }
+                }
+            }
             $invokeObject->$method();
         }
         $FMAI->invokeAfter($invokeClassReflection);

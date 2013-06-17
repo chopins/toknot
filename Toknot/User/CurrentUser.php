@@ -84,7 +84,7 @@ class CurrentUser extends UserControl {
      * @access public
      * @static 
      */
-    private static $DBConnect = null;
+    public static $DBConnect = null;
 
     /**
      * User exists status code
@@ -280,7 +280,7 @@ class CurrentUser extends UserControl {
         self::loadConfigure();
         $tableName = self::$tableName;
         $passwordColumn = self::$passColumn;
-        $username = self::$userNameColumn;
+        $username = (string)self::$userNameColumn;
         self::$DBConnect->$tableName->$username = $userName;
         self::$DBConnect->$tableName->$password = self::hashPassword($password);
         $userInfo = self::$DBConnect->$tableName->findByAttr($passwordColumn);

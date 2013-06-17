@@ -33,7 +33,8 @@ class StandardException extends ErrorException {
                         .ToKnotAccess {color:#336258;}
                         .ToKnotTraceItem{list-style-type:none;padding:10px;color:#0F4C9E;font-size:15px;}
                         .ToKnotTraceItem li {padding:5px;}
-                        .ToKnotDebugArgs{background-color:#FAD5D2;font-size:12px;margin-right:10px;}
+                        .ToKnotDebugArgs{text-decoration:underline;font-size:12px;margin:0 3px;}
+                        .ToKnotDebugArgs b {font-size:15;margin:0 3px;}
                         .ToKnotDebugFunc{color:#176B4E;font-weight:normal;}
                         .ToKnotDebugThrow{color:#D14836;font-weight:bold;background-color:#FFECCC;padding:8px;}
                         .ToKnotDebugProcess {color:#333;font-size:12px;}
@@ -108,20 +109,55 @@ class StandardException extends ErrorException {
         if (PHP_SAPI != 'cli') {
             $str .= $this->errcss;
         } else {
-            $str .= str_repeat('=',20)."\n";
+            $str .= str_repeat('=', 20) . "\n";
         }
         $str .='<div class="ToknotDebugArea">';
-        if(PHP_SAPI == 'cli') {
+        if (PHP_SAPI == 'cli') {
             $this->message = "\e[1;31m{$this->message}\e[0m";
         }
         $str .="<p class='ToknotMessage'>{$this->message}</p>\n";
         $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div><ul class='ToKnotTraceItem'>\n";
         if (PHP_SAPI == 'cli') {
-            $str .= 'Process ID:' . getmypid(). "\n";
+            $str .= 'Process ID:' . getmypid() . "\n";
         }
+        ini_set('xdebug.var_display_max_children', -1);
+        ini_set('xdebug.var_display_max_data', -1);
+        ini_set('xdebug.var_display_max_depth', -1);
         if (empty($this->traceArr)) {
-            $traceStr = $this->getTraceAsString();
-            $str .= '<li>' . str_replace("\n", "</li>\n<li>", $traceStr) . "</li>\n";
+            $traceArr = $this->getTrace();
+            array_shift($traceArr);
+            array_shift($traceArr);
+            $traceArr = array_reverse($traceArr);
+            foreach ($traceArr as $key => $value) {
+                $str .= "<li>#{$key} ";
+                $str .= isset($value['file']) ? $value['file'] : '';
+                $str .= isset($value['line']) ? "({$value['line']}): " : '';
+                $str .= isset($value['class']) ? $value['class'] : '';
+                $str .= isset($value['type']) ? $value['type'] : '';
+                if($value['function'] == 'unknown') {
+                    $value['function'] = 'main';
+                }
+                $str .= isset($value['function']) ? "{$value['function']}(" : '';
+                if(isset($value['args'])) {
+                    foreach ($value['args'] as $arg) {
+                        if(is_string($arg)) {
+                            $str .= "<span class='ToKnotDebugArgs' title='String(".strlen($arg).")'><b>String(</b>".substr($arg,0,100)."<b>)</b></span>";
+                        } elseif(is_int($arg)) {
+                            $str .= "<span class='ToKnotDebugArgs'><b>Integer(</b>".substr($arg,0,100)."<b>)</b></span>";
+                        } elseif(is_float($arg)) {
+                            $str .= "<span class='ToKnotDebugArgs'><b>Float(</b>".substr($arg,0,100)."<b>)</b></span>";
+                        } elseif(is_array($arg)) {
+                            $str .= "<span class='ToKnotDebugArgs' title='".  print_r($arg, true)."'><b>Array()</b></span>";
+                        } elseif(is_object($arg)) {
+                            $str .= "<span class='ToKnotDebugArgs' title='".print_r($arg,true)."'><b>Object(</b> ".  get_class($arg)." <b>)</b></span>";
+                        } elseif(is_resource($arg)) {
+                            $str .= "<span calss='ToKnotDebugArgs'">print_r($arg, true).'</span>';
+                        }
+                    }
+                }
+                $str .= isset($value['function']) ? ")" :'';
+                $str .= "</li>\n";
+            }
         } else {
             $str .= $this->earch($this->traceArr);
         }

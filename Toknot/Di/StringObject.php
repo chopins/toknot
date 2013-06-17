@@ -142,6 +142,9 @@ class StringObject extends Object implements ArrayAccess {
             return $str;
         }
     }
+    public function valueOf() {
+        return $this->interatorArray;
+    }
 
     public function __toString() {
         return $this->interatorArray;

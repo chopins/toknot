@@ -29,9 +29,9 @@ class AdminBase extends ClassUserControl {
     public function __construct(FMAI $FMAI) {
         $this->FMAI = $FMAI;
         $this->loadAdminConfig();
+        $this->initDatabase();
         $this->startSession();
         $FMAI->registerAccessDeniedController('Toknot\Admin\Login');
-        $this->initDatabase();
         $user = $this->checkUserLogin();
         $FMAI->checkAccess($this, $user);
         $this->commonTplVarSet();
@@ -57,9 +57,13 @@ class AdminBase extends ClassUserControl {
                 $this->dbConnect[$i] = $this->AR->connect();
                 $i++;
             }
+            if(empty($this->CFG->Admin->userTableDatabaseId)) {
+                CurrentUser::$DBConnect = $this->dbConnect[0];
+            }
         } else {
             $this->AR->config($this->CFG->$dbSectionName);
             $this->dbConnect = $this->AR->connect();
+            CurrentUser::$DBConnect = $this->dbConnect;
         }
     }
 

@@ -44,13 +44,10 @@ class Connect extends Object {
         if ($connectObject->driverOptions instanceof StringObject) {
             $this->driverOptions = array($connectObject->driverOptions);
         }
-        try {
-            $this->connectDatabase();
-            $connectObject->setConnectInstance($this);
-            $connectObject->setDbINSType($this->dbINSType);
-        } catch (DatabaseException $e) {
-            echo $e;
-        }
+
+        $this->connectDatabase();
+        $connectObject->setConnectInstance($this);
+        $connectObject->setDbINSType($this->dbINSType);
     }
 
     public function getDbDriverType() {
