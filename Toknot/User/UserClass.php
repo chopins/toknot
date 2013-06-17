@@ -280,7 +280,7 @@ class UserClass extends UserAccessControl {
         self::loadConfigure();
         $tableName = self::$tableName;
         $passwordColumn = self::$passColumn;
-        $username = (string)self::$userNameColumn;
+        $username = self::$userNameColumn;
         self::$DBConnect->$tableName->$username = $userName;
         self::$DBConnect->$tableName->$passwordColumn = self::hashPassword($password);
         $userInfo = self::$DBConnect->$tableName->findByAttr(1);
