@@ -1822,17 +1822,38 @@ if (typeof TK == 'undefined') {
         time: function() {
             return new Date().getTime();
         },
-        preZero: function(num) {
-            return num < 10 ? num : '0' + num;
+        repeat: function(str, n) {
+            if (n < 1)
+                return '';
+            var result = '';
+            while (n > 0) {
+                if (n & 1)
+                    result += str;
+                n >>= 1, str += str;
+            }
+            return result;
         },
-        date: function() {
-            var date = new Date();
-            var month = TK.preZero(date.getMonth() + 1);
-            var date = TK.preZero(date.getDate());
-            var hours = TK.preZero(date.getHours());
-            var minutes = TK.preZero(date.getMinutes());
-            var seconds = TK.preZero(date.getSeconds());
-            return date.getFullYear() + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds;
+        /**
+         * add leading zero to a specified digits
+         * 
+         * @param {int} num     the number be add leaded
+         * @param {int} bit     a specified digits
+         * @returns {string}
+         */
+        preZero: function(num, bit) {
+            var max = 10 ^ (bit - 1);
+            bit = bit - num.toString().length;
+            var str = TK.repeat('0', bit);
+            return num < max ? str + num : num;
+        },
+        date: function(time) {
+            var d = time ? new Date(time) : new Date;
+            var month = TK.preZero(d.getMonth() + 1);
+            var date = TK.preZero(d.getDate());
+            var hours = TK.preZero(d.getHours());
+            var minutes = TK.preZero(d.getMinutes());
+            var seconds = TK.preZero(d.getSeconds());
+            return d.getFullYear() + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds;
         },
         localDate: function() {
             var d = new Date();
