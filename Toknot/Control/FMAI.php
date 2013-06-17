@@ -17,7 +17,7 @@ use Toknot\Db\ActiveRecord;
 use Toknot\View\XML;
 use Toknot\View\ViewCache;
 use Toknot\User\ClassUserControl;
-use Toknot\User\CurrentUser;
+use Toknot\User\UserClass;
 use Toknot\User\UserControl;
 use Toknot\Di\DataCacheControl;
 use Toknot\Di\ArrayObject;
@@ -270,7 +270,7 @@ final class FMAI extends Object {
      * Check a user object whether can access class object be passed
      * 
      * @param \Toknot\User\ClassUserControl $clsObj
-     * @param \Toknot\User\CurrentUser $user
+     * @param \Toknot\User\UserClass $user
      */
     public function checkAccess(ClassUserControl $clsObj, UserControl $user) {
         switch ($clsObj->getClassType()) {
@@ -293,10 +293,10 @@ final class FMAI extends Object {
      * Get a user object by uid, recommended ser serialize() the user object instead
      * 
      * @param integer $id
-     * @return \Toknot\User\CurrentUser
+     * @return \Toknot\User\UserClass
      */
     public function setCurrentUser($id) {
-        return CurrentUser::getInstanceByUid($id);
+        return UserClass::getInstanceByUid($id);
     }
 
 }

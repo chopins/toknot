@@ -96,7 +96,7 @@ class ClassUserControl extends UserControl {
     /**
      * Check current use whether can access the GET method of invoke class
      * 
-     * @param \Toknot\User\CurrentUser $user
+     * @param \Toknot\User\UserClass $user
      * @return boolean
      */
     public function checkRead($user) {
@@ -106,7 +106,7 @@ class ClassUserControl extends UserControl {
     /**
      * Check current use whether can access the POST method of invoke class
      * 
-     * @param \Toknot\User\CurrentUser $user
+     * @param \Toknot\User\UserClass $user
      * @return boolean
      */
     public function checkWrite($user) {
@@ -116,7 +116,7 @@ class ClassUserControl extends UserControl {
     /**
      * Check current use whether change current class data
      *  
-     * @param \Toknot\User\CurrentUser $user
+     * @param \Toknot\User\UserClass $user
      * @return boolean
      */
     public function checkChange($user) {

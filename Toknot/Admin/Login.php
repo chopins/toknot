@@ -11,25 +11,33 @@
 namespace Toknot\Admin;
 
 use Toknot\Admin\AdminBase;
-use Toknot\User\CurrentUser;
+use Toknot\User\UserClass;
 
 class Login extends AdminBase {
+
     protected $permissions = 0777;
+
     public function GET() {
-        $s = \Toknot\User\Root::login('112211');
+
         $this->FMAI->display('login');
     }
+
     public function POST() {
         $userName = $_POST['username'];
         $password = $_POST['password'];
-        $user = CurrentUser::login($userName, $password);
-        if(isset($_POST['week'])) {
-            $user->setLoginExpire('1w');
-        }
-        if($user) {
-            $this->setAdminLogin($user);
+        $user = UserClass::login($userName, $password);
+        if ($user) {
+            if (isset($_POST['week'])) {
+                $user->setLoginExpire('1w');
+            }
+            if ($user) {
+                $this->setAdminLogin($user);
+            }
+        } else {
+            $this->GET();
         }
     }
+
 }
 
 ?>

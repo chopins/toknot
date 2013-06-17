@@ -10,10 +10,10 @@
 
 namespace Toknot\User;
 
-use Toknot\User\UserControl;
+use Toknot\User\UserClass;
 use Toknot\Config\ConfigLoader;
 
-final class Root extends UserControl {
+final class Root extends UserClass {
 
     protected $userName = 'root';
     protected $uid = 0;
@@ -31,7 +31,7 @@ final class Root extends UserControl {
         $this->groupName = 'root';
     }
 
-    private static function loadUserConfigure() {
+    private static function loadConfigure() {
         $cfg = ConfigLoader::CFG();
         if (!isset($cfg->User)) {
             self::$allowLogin = false;
@@ -65,12 +65,12 @@ final class Root extends UserControl {
     /**
      * Change current to root 
      * 
-     * @param \Toknot\User\CurrentUser $user
+     * @param \Toknot\User\UserClass $user
      * @param string $password
      * @return boolean|\Toknot\User\Root
      */
-    public static function su(CurrentUser $user, $password) {
-        self::loadUserConfigure();
+    public static function su(UserClass $user, $password) {
+        self::loadConfigure();
         if (self::$password === null && $password != self::$password) {
             return false;
         }
@@ -91,7 +91,7 @@ final class Root extends UserControl {
      * @return boolean|\Toknot\User\Root
      */
     public static function login($password) {
-        self::loadUserConfigure();
+        self::loadConfigure();
         if (!self::$allowLogin) {
             return false;
         }

@@ -15,8 +15,9 @@ use Toknot\User\ClassUserControl;
 use Toknot\Exception\FileIOException;
 use Toknot\Config\ConfigLoader;
 use Toknot\User\Nobody;
-use Toknot\User\CurrentUser;
+use Toknot\User\UserClass;
 use Toknot\Di\Version;
+use Toknot\User\UserControl;
 
 class AdminBase extends ClassUserControl {
 
@@ -58,12 +59,12 @@ class AdminBase extends ClassUserControl {
                 $i++;
             }
             if(empty($this->CFG->Admin->userTableDatabaseId)) {
-                CurrentUser::$DBConnect = $this->dbConnect[0];
+                UserClass::$DBConnect = $this->dbConnect[0];
             }
         } else {
             $this->AR->config($this->CFG->$dbSectionName);
             $this->dbConnect = $this->AR->connect();
-            CurrentUser::$DBConnect = $this->dbConnect;
+            UserClass::$DBConnect = $this->dbConnect;
         }
     }
 
@@ -87,12 +88,12 @@ class AdminBase extends ClassUserControl {
 
     public function checkUserLogin() {
         if (isset($_SESSION['uid']) && isset($_SESSION['Flag'])) {
-            $user = CurrentUser::getInstanceByUid($_SESSION['uid']);
+            $user = UserClass::getInstanceByUid($_SESSION['uid']);
             if ($user->checkUserFlag()) {
                 return $user;
             }
         } elseif (isset($_COOKIE['uid']) && isset($_COOKIE['Flag']) && isset($_COOKIE['TokenKey'])) {
-            $user = CurrentUser::checkLogin($_COOKIE['uid'], $_COOKIE['Flag'], $_COOKIE['TokenKey']);
+            $user = UserClass::checkLogin($_COOKIE['uid'], $_COOKIE['Flag'], $_COOKIE['TokenKey']);
             if ($user) {
                 return $user;
             }
@@ -100,7 +101,7 @@ class AdminBase extends ClassUserControl {
         return new Nobody;
     }
 
-    protected function setAdminLogin(CurrentUser $user) {
+    protected function setAdminLogin(UserControl $user) {
         $_SESSION['Flag'] = $user->getUserFlag();
         $_SESSION['uid'] = $user->getUid();
         if ($user->loginExpire > 0) {

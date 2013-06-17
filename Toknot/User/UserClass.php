@@ -15,7 +15,7 @@ use Toknot\User\Root;
 use Toknot\Exception\StandardException;
 use Toknot\Config\ConfigLoader;
 
-class CurrentUser extends UserControl {
+class UserClass extends UserControl {
 
     /**
      * current user token id
@@ -271,10 +271,10 @@ class CurrentUser extends UserControl {
      * @access public
      * @param string $id  The account of user
      * @param string $password    The account of password
-     * @return boolean|Toknot\User\CurrentUser
+     * @return boolean|Toknot\User\UserClass
      */
     public static function login($userName, $password) {
-        if ($userName == 'root' && $userName === 0) {
+        if ($userName == 'root' || $userName === 0) {
             return Root::login($password);
         }
         self::loadConfigure();
@@ -282,8 +282,8 @@ class CurrentUser extends UserControl {
         $passwordColumn = self::$passColumn;
         $username = (string)self::$userNameColumn;
         self::$DBConnect->$tableName->$username = $userName;
-        self::$DBConnect->$tableName->$password = self::hashPassword($password);
-        $userInfo = self::$DBConnect->$tableName->findByAttr($passwordColumn);
+        self::$DBConnect->$tableName->$passwordColumn = self::hashPassword($password);
+        $userInfo = self::$DBConnect->$tableName->findByAttr(1);
         if (empty($userInfo)) {
             return false;
         } else {
@@ -454,7 +454,7 @@ class CurrentUser extends UserControl {
      * add user by user info data, the key name of data is same the user table of column name
      * 
      * @param array $data
-     * @return Toknot\User\CurrentUser|boolean
+     * @return Toknot\User\UserClass|boolean
      * @access public
      * @static
      */
@@ -532,7 +532,7 @@ class CurrentUser extends UserControl {
      * Get a CurrentUser object by uid, recommended ser serialize() the user object
      * 
      * @param integer $uid
-     * @return Toknot\User\CurrentUser
+     * @return Toknot\User\UserClass
      * @static
      */
     public static function getInstanceByUid($uid) {
