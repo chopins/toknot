@@ -11,15 +11,15 @@
 namespace Toknot\Admin;
 
 use Toknot\Control\FMAI;
-use Toknot\User\ClassUserControl;
+use Toknot\User\ClassAccessControl;
 use Toknot\Exception\FileIOException;
 use Toknot\Config\ConfigLoader;
 use Toknot\User\Nobody;
 use Toknot\User\UserClass;
 use Toknot\Di\Version;
-use Toknot\User\UserControl;
+use Toknot\User\UserAccessControl;
 
-class AdminBase extends ClassUserControl {
+class AdminBase extends ClassAccessControl {
 
     protected $permissions = 0770;
     protected $FMAI = null;
@@ -101,7 +101,7 @@ class AdminBase extends ClassUserControl {
         return new Nobody;
     }
 
-    protected function setAdminLogin(UserControl $user) {
+    protected function setAdminLogin(UserAccessControl $user) {
         $_SESSION['Flag'] = $user->getUserFlag();
         $_SESSION['uid'] = $user->getUid();
         if ($user->loginExpire > 0) {

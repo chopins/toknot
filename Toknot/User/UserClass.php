@@ -10,12 +10,12 @@
 
 namespace Toknot\User;
 
-use Toknot\User\UserControl;
+use Toknot\User\UserAccessControl;
 use Toknot\User\Root;
 use Toknot\Exception\StandardException;
 use Toknot\Config\ConfigLoader;
 
-class UserClass extends UserControl {
+class UserClass extends UserAccessControl {
 
     /**
      * current user token id

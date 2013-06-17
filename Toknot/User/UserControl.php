@@ -12,7 +12,7 @@ namespace Toknot\User;
 
 use Toknot\Di\Object;
 
-abstract class UserControl extends Object {
+abstract class UserAccessControl extends Object {
 
     /**
      * user's account of name
@@ -142,7 +142,7 @@ abstract class UserControl extends Object {
     /**
      * Passed a password text generate a hash sting for a string, the method use 
      * wrapper around crypt(), now only support Blowfish, sha1, sha512, sha256, 
-     * you should {@see UserControl::bestHashAlgos()} get 
+     * you should {@see UserAccessControl::bestHashAlgos()} get 
      * 
      * @param string $password  The string to be hashed
      * @param string $algo Value of hash name of the algorithms
@@ -183,17 +183,17 @@ abstract class UserControl extends Object {
     }
 
     /**
-     * return information about the given hash which created by {@see UserControl::getTextHash()}
+     * return information about the given hash which created by {@see UserAccessControl::getTextHash()}
      * 
-     * @param string $hash a hash created by {@see UserControl::getTextHash()}
-     * @return array|boolean The hash not created by {@see UserControl::getTextHash()} will return false
+     * @param string $hash a hash created by {@see UserAccessControl::getTextHash()}
+     * @return array|boolean The hash not created by {@see UserAccessControl::getTextHash()} will return false
      *                        otherwise return a array with 4 elements order by:
      *                        hashStr     only hashed string
      *                        algorithm   use algorithm name
      *                        salt        use salt string
      *                        round       number of times the hashing loop be executed, 
      *                                    if BLOWFISH hashing the value is cost, which not 
-     *                                    $rounds parameter of {@see UserControl::getTextHash()}
+     *                                    $rounds parameter of {@see UserAccessControl::getTextHash()}
      */
     public static function getHashInfo($hash) {
         $hashInfo = explode('$', $hash);
@@ -270,10 +270,10 @@ abstract class UserControl extends Object {
     }
 
     /**
-     * Verifies that a password matches a hash which be created by {@see UserControl::getTextHash()}
+     * Verifies that a password matches a hash which be created by {@see UserAccessControl::getTextHash()}
      * 
      * @param string $password  The string to be verifyed
-     * @param string $hash  a hash created by {@see UserControl::getTextHash()}
+     * @param string $hash  a hash created by {@see UserAccessControl::getTextHash()}
      * @return boolean  equal return true, otherwise return false
      */
     public static function verifyHash($password, $hash) {

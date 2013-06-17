@@ -34,7 +34,7 @@ class CreateApp {
                 $this->message('Twice password not same, enter again:', 'red');
             }
 
-            \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserControl');
+            \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserAccessControl');
             $this->message('Generate hash salt');
             $salt = substr(str_shuffle('1234567890qwertyuiopasdfghjklzxcvbnm'), 0, 8);
             $algo = Toknot\User\Root::bestHashAlgos();

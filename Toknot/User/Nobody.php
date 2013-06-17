@@ -9,9 +9,9 @@
  */
 namespace Toknot\User;
 
-use Toknot\User\UserControl;
+use Toknot\User\UserAccessControl;
 
-class Nobody extends UserControl{
+class Nobody extends UserAccessControl{
     protected $userName = 'nobody';
     protected $uid = -1;
     protected $gid = -1;

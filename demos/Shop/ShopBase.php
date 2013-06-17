@@ -9,9 +9,9 @@
  */
 
 namespace Shop;
-use Toknot\User\ClassUserControl;
+use Toknot\User\ClassAccessControl;
 
-class ShopBase extends ClassUserControl {
+class ShopBase extends ClassAccessControl {
 
     protected $FMAI;
     protected $CFG;

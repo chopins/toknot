@@ -10,12 +10,12 @@
 
 namespace Toknot\User;
 
-use Toknot\User\UserControl;
+use Toknot\User\UserAccessControl;
 use Toknot\User\Root;
 use Toknot\User\Nobody;
 use Toknot\Exception\StandardException;
 
-class ClassUserControl extends UserControl {
+class ClassAccessControl extends UserAccessControl {
 
     /**
      * 8 bit permission of current object instance
@@ -71,7 +71,7 @@ class ClassUserControl extends UserControl {
     }
 
     private function checkPermes($user, $perm) {
-        if (!($user instanceof UserControl)) {
+        if (!($user instanceof UserAccessControl)) {
             throw new StandardException('Undefined user type');
         }
         if ($user instanceof Root) {

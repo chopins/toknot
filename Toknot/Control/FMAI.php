@@ -16,9 +16,9 @@ use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
 use Toknot\View\XML;
 use Toknot\View\ViewCache;
-use Toknot\User\ClassUserControl;
+use Toknot\User\ClassAccessControl;
 use Toknot\User\UserClass;
-use Toknot\User\UserControl;
+use Toknot\User\UserAccessControl;
 use Toknot\Di\DataCacheControl;
 use Toknot\Di\ArrayObject;
 
@@ -269,18 +269,18 @@ final class FMAI extends Object {
     /**
      * Check a user object whether can access class object be passed
      * 
-     * @param \Toknot\User\ClassUserControl $clsObj
+     * @param \Toknot\User\ClassAccessControl $clsObj
      * @param \Toknot\User\UserClass $user
      */
-    public function checkAccess(ClassUserControl $clsObj, UserControl $user) {
+    public function checkAccess(ClassAccessControl $clsObj, UserAccessControl $user) {
         switch ($clsObj->getClassType()) {
-            case ClassUserControl::CLASS_READ:
+            case ClassAccessControl::CLASS_READ:
                 $this->accessControlStatus = $clsObj->checkRead($user);
                 break;
-            case ClassUserControl::CLASS_WRITE:
+            case ClassAccessControl::CLASS_WRITE:
                 $this->accessControlStatus = $clsObj->checkWrite($user);
                 break;
-            case ClassUserControl::CLASS_UPDATE:
+            case ClassAccessControl::CLASS_UPDATE:
                 $this->accessControlStatus = $clsObj->checkChange($user);
                 break;
             default :
