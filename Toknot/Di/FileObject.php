@@ -49,8 +49,7 @@ class FileObject extends Object {
 
     public static function mkdir($path) {
         if (mkdir($path)) {
-            $this->path = $path;
-            return self::__singleton($path);
+            return new static($path);
         }
         return false;
     }

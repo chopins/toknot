@@ -18,8 +18,7 @@ class Login extends AdminBase {
     protected $permissions = 0777;
 
     public function GET() {
-
-        $this->FMAI->display('login');
+        self::$FMAI->display('login');
     }
 
     public function POST() {

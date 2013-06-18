@@ -120,50 +120,18 @@ class StandardException extends ErrorException {
         if (PHP_SAPI == 'cli') {
             $str .= 'Process ID:' . getmypid() . "\n";
         }
-        ini_set('xdebug.var_display_max_children', -1);
-        ini_set('xdebug.var_display_max_data', -1);
-        ini_set('xdebug.var_display_max_depth', -1);
         if (empty($this->traceArr)) {
             $traceArr = $this->getTrace();
             array_shift($traceArr);
             array_shift($traceArr);
             $traceArr = array_reverse($traceArr);
-            foreach ($traceArr as $key => $value) {
-                $str .= "<li>#{$key} ";
-                $str .= isset($value['file']) ? $value['file'] : '';
-                $str .= isset($value['line']) ? "({$value['line']}): " : '';
-                $str .= isset($value['class']) ? $value['class'] : '';
-                $str .= isset($value['type']) ? $value['type'] : '';
-                if($value['function'] == 'unknown') {
-                    $value['function'] = 'main';
-                }
-                $str .= isset($value['function']) ? "{$value['function']}(" : '';
-                if(isset($value['args'])) {
-                    foreach ($value['args'] as $arg) {
-                        if(is_string($arg)) {
-                            $str .= "<span class='ToKnotDebugArgs' title='String(".strlen($arg).")'><b>String(</b>".substr($arg,0,100)."<b>)</b></span>";
-                        } elseif(is_int($arg)) {
-                            $str .= "<span class='ToKnotDebugArgs'><b>Integer(</b>".substr($arg,0,100)."<b>)</b></span>";
-                        } elseif(is_float($arg)) {
-                            $str .= "<span class='ToKnotDebugArgs'><b>Float(</b>".substr($arg,0,100)."<b>)</b></span>";
-                        } elseif(is_array($arg)) {
-                            $str .= "<span class='ToKnotDebugArgs' title='".  print_r($arg, true)."'><b>Array()</b></span>";
-                        } elseif(is_object($arg)) {
-                            $str .= "<span class='ToKnotDebugArgs' title='".print_r($arg,true)."'><b>Object(</b> ".  get_class($arg)." <b>)</b></span>";
-                        } elseif(is_resource($arg)) {
-                            $str .= "<span calss='ToKnotDebugArgs'">print_r($arg, true).'</span>';
-                        }
-                    }
-                }
-                $str .= isset($value['function']) ? ")" :'';
-                $str .= "</li>\n";
-            }
+            $str .= $this->earch($traceArr);
         } else {
             $str .= $this->earch($this->traceArr);
         }
         $str .='</ul></div>';
         if (PHP_SAPI == 'cli') {
-            $str .= "==============\n";
+            $str .= str_repeat('=', 20) . "\n";
             return strip_tags($str);
         } else {
             return $str;
@@ -181,63 +149,36 @@ class StandardException extends ErrorException {
 
     public function earch($traceArr) {
         $str = '';
-        $key = 0;
-        foreach ($traceArr as $value) {
-            if (!isset($value['class']) || !isset($value['file'])) {
-                continue;
+        foreach ($traceArr as $key => $value) {
+            $str .= "<li>#{$key} ";
+            $str .= isset($value['file']) ? $value['file'] : '';
+            $str .= isset($value['line']) ? "({$value['line']}): " : '';
+            $str .= isset($value['class']) ? $value['class'] : '';
+            $str .= isset($value['type']) ? $value['type'] : '';
+            if ($value['function'] == 'unknown') {
+                $value['function'] = 'main';
             }
-            $str .= "<li>#{$key} {$value['file']}({$value['line']}):{$value['class']}->{$value['function']}()</li>\n";
-            $key++;
+            $str .= isset($value['function']) ? "{$value['function']}(" : '';
+            if (isset($value['args'])) {
+                foreach ($value['args'] as $arg) {
+                    if (is_string($arg)) {
+                        $str .= "<span class='ToKnotDebugArgs' title='String(" . strlen($arg) . ") ". $arg ."'><b>String(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
+                    } elseif (is_int($arg)) {
+                        $str .= "<span class='ToKnotDebugArgs'><b>Integer(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
+                    } elseif (is_float($arg)) {
+                        $str .= "<span class='ToKnotDebugArgs'><b>Float(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
+                    } elseif (is_array($arg)) {
+                        $str .= "<span class='ToKnotDebugArgs' title='" . print_r($arg, true) . "'><b>Array()</b></span>";
+                    } elseif (is_object($arg)) {
+                        $str .= "<span class='ToKnotDebugArgs' title='" . print_r($arg, true) . "'><b>Object(</b> " . get_class($arg) . " <b>)</b></span>";
+                    } elseif (is_resource($arg)) {
+                        $str .= "<span calss='ToKnotDebugArgs'" > print_r($arg, true) . '</span>';
+                    }
+                }
+            }
+            $str .= isset($value['function']) ? ")" : '';
+            $str .= "</li>\n";
         }
         return $str;
     }
-
-    public function getInfoStr($arr) {
-        $par = $str = '';
-        if (!empty($arr['args'])) {
-            foreach ($arr['args'] as $key => $value) {
-                $par .= '<span class="ToknotDebugSrgs">';
-                if (is_array($value)) {
-                    $info = print_r($value, true);
-                    $par .= '<span title="' . $info . '">Array</span>';
-                } elseif (is_object($value)) {
-                    $par .= 'Object <span title="' . print_r($value, true) . '">' . get_class($value) . '</span>';
-                } else {
-                    if (is_string($value)) {
-                        if (PHP_CLI == false) {
-                            $value = '<span title="' . $value . '">' . substr($value, 0, 32) . '</span>';
-                        }
-                    }
-                    $par .= "'$value'";
-                }
-                $par .= '</span>';
-                $par .= ',';
-            }
-            $par = substr($par, 0, -1);
-        }
-        $par .='<b class="ToknotDebugFunc">)</b>';
-        $msg = "<b class='ToknotDebugFunc'>";
-        if (isset($arr['class'])) {
-            $classReflectionInfo = new ReflectionClass($arr['class']);
-            $mergeClassInfo = $classReflectionInfo->getDefaultProperties();
-            if (isset($arr['file']) && isset($arr['line']) && $arr['file'] != $classReflectionInfo->getFileName()) {
-                $fileName = basename($arr['file'], '.php');
-                if (class_exists($fileName, false)) {
-                    $fileReflectionInfo = new ReflectionClass($fileName);
-                    $mergeClassInfo = $fileReflectionInfo->getDefaultProperties();
-                }
-            }
-            $msg .= $arr['class'];
-        }
-        $msg .= isset($arr['type']) ? $arr['type'] : '';
-        if ($arr['function'] == 'unknown')
-            $arr['function'] = 'Main';
-        $msg .= isset($arr['function']) ? $arr['function'] . '(' : '';
-        $msg .= '</b> ';
-        if (isset($arr['file'])) {
-            $str = " in {$arr['file']} line {$arr['line']};";
-        }
-        return $msg . $par . $str;
-    }
-
 }

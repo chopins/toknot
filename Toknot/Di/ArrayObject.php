@@ -13,7 +13,6 @@ namespace Toknot\Di;
 use Toknot\Di\Object;
 use \ArrayAccess;
 use \Serializable;
-use Toknot\Di\StringObject;
 use \RuntimeException;
 use \InvalidArgumentException;
 

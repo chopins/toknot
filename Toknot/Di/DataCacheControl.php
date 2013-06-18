@@ -16,11 +16,14 @@ use Toknot\Exception\StandardException;
 class DataCacheControl {
 
     /**
-     * Data cache file name, without extension name
+     * Data cache file name, without extension name, if use server , must set one 
+     * server connect handle instance,the object be supposed set($key, $data, $expire)
+     * and get($key) method, and set method should recvie array type parameter for $data, get 
+     * method should return a array or boolean
      *
      * @var string
      */
-    public $file = '';
+    private $cacheHandle = '';
 
     /**
      * Current data modify seconds
@@ -43,17 +46,7 @@ class DataCacheControl {
      *
      * @var integer
      */
-    public $cacheType = self::CACHE_FILE;
-
-    /**
-     * if set cache type is server cache, must set, the object be supposed set($key, $data, $expire)
-     * and get($key) method, and set method should recvie array type parameter for $data, get 
-     * method should return a array or boolean
-     *
-     * @var object
-     * @access public
-     */
-    public $cacheServerInstance = null;
+    private $cacheType = self::CACHE_FILE;
     private $expire = 0;
 
     const CACHE_FILE = '1001';
@@ -64,9 +57,10 @@ class DataCacheControl {
      * @param string $cacheFile 
      * @param integer $modifyTime option, if use expire time, pass it
      */
-    public function __construct($cacheFile, $modifyTime = 0) {
-        $this->file = $cacheFile;
+    public function __construct($cacheHandle, $modifyTime = 0, $cacheType = self::CACHE_FILE) {
+        $this->cacheHandle = $cacheHandle;
         $this->dataModifyTime = $modifyTime;
+        $this->cacheType = $cacheType;
     }
 
     /**
@@ -75,15 +69,22 @@ class DataCacheControl {
      * @return int
      */
     public function cacheTime() {
-        if (empty($this->file)) {
+        if ($this->cacheType == self::CACHE_SERVER || empty($this->cacheHandle)) {
             return 0;
         }
-        if (file_exists($this->file)) {
-            $file = self::$appRoot . $this->file . '.php';
+        if (file_exists($this->cacheHandle)) {
+            $file = self::$appRoot . $this->cacheHandle . '.php';
             return filemtime($file);
         } else {
             return 0;
         }
+    }
+    public static function createCachePath($path) {
+        $path = self::$appRoot.$path;
+        if(file_exists($path)) {
+            return;
+        }
+        return mkdir($path,0777, true);
     }
 
     /**
@@ -93,7 +94,7 @@ class DataCacheControl {
      */
     public function useExpire($expire) {
         if ($this->cacheType == self::CACHE_SERVER) {
-            if (!is_object($this->cacheServerInstance)) {
+            if (!is_object($this->cacheHandle)) {
                 throw new StandardException('must set cache server instance');
             }
             $this->expire = $expire;
@@ -113,16 +114,17 @@ class DataCacheControl {
     /**
      * store data
      * 
-     * @param array $data
+     * @param mixed $data
+     * @param string $key If not use file store, must set
      * @return boolean  if data not change return false
      */
-    public function save(array $data) {
+    public function save($data, $key = '') {
         if ($this->cacheType == self::CACHE_SERVER) {
-            $key = md5($this->appRoot . "{$this->file}.php");
-            $this->cacheServerInstance->set($key, $data, time() + $this->expire);
+            $key = md5($this->appRoot . "{$key}.php");
+            $this->cacheHandle->set($key, $data, time() + $this->expire);
             return true;
         }
-        if(empty($this->file)) {
+        if (empty($this->cacheHandle)) {
             return false;
         }
         if ($this->cacheTime() >= $this->dataModifyTime) {
@@ -130,27 +132,54 @@ class DataCacheControl {
         }
         $dataString = '<?php return ' . var_export($data, true) . ';';
 
-        FileObject::saveContent(self::$appRoot . "{$this->file}.php", $dataString);
+        FileObject::saveContent(self::$appRoot . "{$this->cacheHandle}{$key}.php", $dataString);
         return true;
     }
 
     /**
      * Get cache data
      * 
+     * @param string $key data key
      * @return boolean|array  if cache data is old return false
      */
-    public function get() {
+    public function get($key = '') {
         if ($this->cacheType == self::CACHE_SERVER) {
-            $key = md5(self::$appRoot . "{$this->file}.php");
-            return $this->cacheServerInstance->get($key);
+            $key = md5(self::$appRoot . "{$key}.php");
+            return $this->cacheHandle->get($key);
         }
 
         if ($this->cacheTime() <= $this->dataModifyTime) {
             return false;
         }
-        return include_once self::$appRoot . "{$this->file}.php";
+        $file = self::$appRoot . "{$this->cacheHandle}{$key}.php";
+        if (file_exists($file)) {
+            return include_once $file;
+        }
     }
 
+    /**
+     * Delete cache data
+     * 
+     * @param sting $key
+     * @return boolean
+     */
+    public function del($key = '') {
+        if ($this->cacheType == self::CACHE_SERVER) {
+            return $this->cacheHandle->del($key);
+        }
+        $file = self::$appRoot . "{$this->cacheHandle}{$key}.php";
+        if (file_exists($file)) {
+            return unlink(self::$appRoot . "{$this->cacheHandle}{$key}.php");
+        }
+    }
+    public function exists($key = '') {
+        if($this->cacheType == self::CACHE_SERVER) {
+            return $this->cacheHandle->exist($key);
+        }
+        $file = self::$appRoot . "{$this->cacheHandle}{$key}.php";
+
+        return file_exists($file);
+    }
 }
 
 ?>

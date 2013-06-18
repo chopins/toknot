@@ -40,7 +40,7 @@ abstract class Object implements Iterator, Countable {
      * @var object
      * @access private 
      */
-    private static $instance = null;
+    private static $instance = array();
 
     /**
      * provide singleton pattern for Object child class
@@ -50,19 +50,19 @@ abstract class Object implements Iterator, Countable {
      * @access public
      * @return object
      */
-    final protected static function __singleton() {
+    final protected static function &__singleton() {
         $className = get_called_class();
-        if (is_object(self::$instance) && self::$instance instanceof $className) {
-            return self::$instance;
+        if (isset(self::$instance[$className]) && is_object(self::$instance[$className]) && self::$instance[$className] instanceof $className) {
+            return self::$instance[$className];
         }
         if (func_num_args() > 0) {
             $args = func_get_args();
             $argsString = implode('\'', $args);
-            eval("self::\$instance = new {$className}('{$argsString}');");
+            eval("self::\$instance['{$className}'] = new {$className}('{$argsString}');");
         } else {
-            self::$instance = new $className;
+            self::$instance[$className] = new $className;
         }
-        return self::$instance;
+        return self::$instance[$className];
     }
 
     final protected static function newInstance() {

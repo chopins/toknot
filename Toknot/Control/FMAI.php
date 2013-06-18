@@ -71,6 +71,7 @@ final class FMAI extends Object {
         $this->appRoot = $appRoot;
         DataCacheControl::$appRoot = $appRoot;
         $this->D = new ArrayObject;
+        //ConfigLoader::CFG()->AppRoot = $this->appRoot;
         date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
     }
 
@@ -86,14 +87,7 @@ final class FMAI extends Object {
     }
 
     public function invokeBefore(&$invokeClassReflection) {
-        if ($invokeClassReflection->isSubclassOf('\Toknot\User\ClassUserControl') 
-                && $this->getAccessStatus() === false) {
-            $accessDeniedController = $this->getAccessDeniedController();
-            $invokeObject = new $accessDeniedController($this);
-            $method = $this->requestMethod;
-            $invokeObject->$method();
-            return false;
-        }
+        
         if ($this->requestMethod == 'GET' && $this->enableCache) {
             ViewCache::outPutCache();
             $this->cacheEffective = ViewCache::$cacheEffective;
@@ -256,6 +250,19 @@ final class FMAI extends Object {
     public function registerAccessDeniedController($controllerName) {
         $this->accessDeniedController = $controllerName;
     }
+    public function redirectAccessDeniedController($class) {
+        if ($class instanceof \Toknot\User\ClassAccessControl 
+                && $this->getAccessStatus() === false) {
+            $accessDeniedController = $this->getAccessDeniedController();
+            //header("Location:$accessDeniedController");
+            $invokeObject = new $accessDeniedController($this);
+            $method = $this->requestMethod;
+            $invokeObject->$method();
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Get current registered controller name of access denied 
@@ -287,6 +294,7 @@ final class FMAI extends Object {
                 $this->accessControlStatus = true;
                 break;
         }
+        
     }
 
     /**

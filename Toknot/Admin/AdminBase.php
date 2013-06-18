@@ -18,62 +18,73 @@ use Toknot\User\Nobody;
 use Toknot\User\UserClass;
 use Toknot\Di\Version;
 use Toknot\User\UserAccessControl;
+use Toknot\User\Session;
 
 class AdminBase extends ClassAccessControl {
 
     protected $permissions = 0770;
-    protected $FMAI = null;
+    protected static $FMAI = null;
     protected $AR = null;
-    protected $CFG = null;
+    protected static $CFG = null;
     protected $dbConnect = null;
+    private static $adminConstruct = false;
 
     public function __construct(FMAI $FMAI) {
-        $this->FMAI = $FMAI;
+        if (self::$adminConstruct) {
+            return;
+        }
+        self::$adminConstruct = true;
+        self::$FMAI = $FMAI;
         $this->loadAdminConfig();
         $this->initDatabase();
         $this->startSession();
         $FMAI->registerAccessDeniedController('Toknot\Admin\Login');
+
         $user = $this->checkUserLogin();
         $FMAI->checkAccess($this, $user);
+
         $this->commonTplVarSet();
-        $FMAI->newTemplateView($this->CFG->View);
+        $FMAI->newTemplateView(self::$CFG->View);
+        if ($FMAI->redirectAccessDeniedController($this)) {
+            exit();
+        }
     }
 
     public function commonTplVarSet() {
-        $this->FMAI->D->title = 'ToKnot Admin';
-        $this->FMAI->D->toknotVersion = Version::VERSION .'-'.Version::STATUS;
+        self::$FMAI->D->title = 'ToKnot Admin';
+        self::$FMAI->D->toknotVersion = Version::VERSION . '-' . Version::STATUS;
     }
 
     public function initDatabase() {
-        $this->AR = $this->FMAI->getActiveRecord();
-        $dbSectionName = $this->CFG->Admin->databaseOptionSectionName;
-        if ($this->CFG->Admin->multiDatabase) {
+        $this->AR = self::$FMAI->getActiveRecord();
+        $dbSectionName = self::$CFG->Admin->databaseOptionSectionName;
+        if (self::$CFG->Admin->multiDatabase) {
             $i = 0;
             while (true) {
-                $section = $this->CFG->Admin->databaseOptionSectionName . $i;
-                if (!isset($this->CFG->$section)) {
+                $section = self::$CFG->Admin->databaseOptionSectionName . $i;
+                if (!isset(self::$CFG->$section)) {
                     break;
                 }
-                $this->AR->config($this->CFG->$section);
+                $this->AR->config(self::$CFG->$section);
                 $this->dbConnect[$i] = $this->AR->connect();
                 $i++;
             }
-            if(empty($this->CFG->Admin->userTableDatabaseId)) {
+            if (empty(self::$CFG->Admin->userTableDatabaseId)) {
                 UserClass::$DBConnect = $this->dbConnect[0];
             }
         } else {
-            $this->AR->config($this->CFG->$dbSectionName);
+            $this->AR->config(self::$CFG->$dbSectionName);
             $this->dbConnect = $this->AR->connect();
             UserClass::$DBConnect = $this->dbConnect;
         }
     }
 
     public function loadAdminConfig() {
-        if (!file_exists($this->FMAI->appRoot . '/Config/config.ini')) {
-            throw new FileIOException('must create ' . $this->FMAI->appRoot . '/Config/config.ini');
+        if (!file_exists(self::$FMAI->appRoot . '/Config/config.ini')) {
+            throw new FileIOException('must create ' . self::$FMAI->appRoot . '/Config/config.ini');
         }
-        ConfigLoader::$cacheFile = $this->FMAI->appRoot . '/Data/config';
-        $this->CFG = $this->FMAI->loadConfigure($this->FMAI->appRoot . '/Config/config.ini');
+        ConfigLoader::$cacheFile = self::$FMAI->appRoot . '/Data/config';
+        self::$CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
     }
 
     public function CLI() {
@@ -81,9 +92,9 @@ class AdminBase extends ClassAccessControl {
     }
 
     public function startSession() {
-        if (!empty($this->CFG->Admin->adminSessionName)) {
-            
-        }
+        $session = Session::singleton();
+        $session->name(self::$CFG->Admin->adminSessionName);
+        $session->start();
     }
 
     public function checkUserLogin() {

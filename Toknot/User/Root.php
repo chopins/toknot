@@ -13,7 +13,7 @@ namespace Toknot\User;
 use Toknot\User\UserClass;
 use Toknot\Config\ConfigLoader;
 
-final class Root extends UserClass {
+final class Root extends UserAccessControl {
 
     protected $userName = 'root';
     protected $uid = 0;

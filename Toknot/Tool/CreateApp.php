@@ -199,9 +199,9 @@ class Index extends ' . $base . '{
     public function writeAppBaseClass($path) {
         $phpCode = '<?php
 namespace ' . $this->appName . ';
-use Toknot\User\ClassUserControl;
+use Toknot\User\ClassAccessControl;
 
-class ' . $this->appName . 'Base extends ClassUserControl {
+class ' . $this->appName . 'Base extends ClassAccessControl {
 
     protected $FMAI;
     protected $CFG;

@@ -131,10 +131,8 @@ final class Application {
             throw new PHPVersionException();
         }
         StandardAutoloader::importToknotClass('Exception\StandardException');
-        set_error_handler(array($this, 'errorReportHandler'));
-
         set_exception_handler(array($this, 'uncaughtExceptionHandler'));
-
+        set_error_handler(array($this, 'errorReportHandler'));
         clearstatcache();
 
         if (DEVELOPMENT && self::checkXDebug() == false) {
@@ -168,7 +166,7 @@ final class Application {
             $_SERVER['SERVER_NAME'] = getenv('SERVER_NAME');
             $_SERVER['QUERY_STRING'] = getenv('QUERY_STRING');
         }
-        if(!isset($_SERVER['QUERY_STRING'])) {
+        if (!isset($_SERVER['QUERY_STRING'])) {
             $_SERVER['QUERY_STRING'] = getenv('QUERY_STRING');
         }
         if (!isset($_SERVER['REQUEST_TIME_FLOAT'])) {
@@ -311,12 +309,12 @@ final class Application {
     }
 
     public function tickTraceHandler() {
-        $testTrace = debug_backtrace(false, 2);
+        $testTrace = debug_backtrace();
         if (!isset($testTrace[1]['type']) || ($testTrace[1]['type'] != '->' && $testTrace[1]['type'] != '::')) {
             return;
         }
         $start = microtime(true);
-        $this->debugTrace = debug_backtrace(true, 10);
+        $this->debugTrace = $testTrace;
         $this->traceTime += microtime(true) - $start;
     }
 
@@ -410,7 +408,7 @@ final class Application {
 
     public function pageRunInfo() {
         $mem = self::getMemoryUsage();
-        if($this->traceTime <1) {
+        if ($this->traceTime < 1) {
             $this->traceTime = round($this->traceTime * 1000, 2) . ' ms';
         } else {
             $this->traceTime .= ' seconds';
