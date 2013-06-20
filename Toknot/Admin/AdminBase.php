@@ -39,6 +39,9 @@ class AdminBase extends ClassAccessControl {
         $this->loadAdminConfig();
         $this->initDatabase();
         $this->SESSION = $FMAI->startSession(self::$CFG->Admin->adminSessionName);
+ 
+        var_dump($this->SESSION['adminUser']);
+        
         $FMAI->registerAccessDeniedController('Toknot\Admin\Login');
 
         $user = $this->checkUserLogin();

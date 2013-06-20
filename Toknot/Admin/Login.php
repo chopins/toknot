@@ -30,9 +30,11 @@ class Login extends AdminBase {
             if (isset($_POST['week'])) {
                 $user->setLoginExpire('1w');
             }
-            $this->SESSION['adminUser'] = $user->getUserName();
+            //var_dump($_SESSION);
+            //$a = $this->SESSION['adminUser'];
+            //$this->SESSION['adminUser'] = $user->getUserName();
             //$this->setAdminLogin($user);
-            var_dump($_SESSION['adminUser']);
+            //var_dump($_SESSION['adminUser']);
         } else {
             $this->GET();
         }

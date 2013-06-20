@@ -148,8 +148,9 @@ class StringObject extends Object implements ArrayAccess {
         if($min <1) {
             throw new StandardException("StringObject::rand() 1 parameter must greater 1, $min given");
         }
-        $word = '1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKHJGFDSAZXCVBNM';
-        $randStr = str_shuffle($word);
+        //$word = str_repeat('1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKHJGFDSAZXCVBNM',$max);
+        $word = str_repeat('1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKHJGFDSAZXCVBNM',5);
+        $randStr = str_shuffle(str_shuffle($word));
         if ($max > 0) {
             $len = mt_rand($min, $max);
         } else {

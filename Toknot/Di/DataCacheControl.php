@@ -11,7 +11,6 @@
 namespace Toknot\Di;
 
 use Toknot\Di\FileObject;
-use Toknot\Exception\StandardException;
 
 class DataCacheControl {
 
@@ -68,23 +67,25 @@ class DataCacheControl {
      * 
      * @return int
      */
-    public function cacheTime() {
+    public function cacheTime($key = '') {
         if ($this->cacheType == self::CACHE_SERVER || empty($this->cacheHandle)) {
             return 0;
         }
-        if (file_exists($this->cacheHandle)) {
-            $file = FileObject::getRealPath(self::$appRoot, $this->cacheHandle . '.php');
+        $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
+
+        if (file_exists($file)) {
             return filemtime($file);
         } else {
             return 0;
         }
     }
+
     public static function createCachePath($path) {
-        $path = FileObject::getRealPath(self::$appRoot,$path);
-        if(file_exists($path)) {
+        $path = FileObject::getRealPath(self::$appRoot, $path);
+        if (file_exists($path)) {
             return;
         }
-        return mkdir($path,0777, true);
+        return mkdir($path, 0777, true);
     }
 
     /**
@@ -93,22 +94,7 @@ class DataCacheControl {
      * @param int $expire
      */
     public function useExpire($expire) {
-        if ($this->cacheType == self::CACHE_SERVER) {
-            if (!is_object($this->cacheHandle)) {
-                throw new StandardException('must set cache server instance');
-            }
-            $this->expire = $expire;
-            return;
-        }
-        $cacheTime = $this->cacheTime();
-        $nowTime = time();
-
-        //if cache time be expired
-        if ($nowTime - $cacheTime > $expire) {
-            $this->dataModifyTime = $nowTime;
-        } else {
-            $this->dataModifyTime = $cacheTime - 1;
-        }
+        $this->expire = $expire;
     }
 
     /**
@@ -124,10 +110,12 @@ class DataCacheControl {
             $this->cacheHandle->set($key, $data, time() + $this->expire);
             return true;
         }
+
         if (empty($this->cacheHandle)) {
             return false;
         }
-        if ($this->cacheTime() >= $this->dataModifyTime) {
+
+        if ($this->expire == 0 && $this->cacheTime($key) <= $this->dataModifyTime) {
             return false;
         }
         $dataString = '<?php return ' . var_export($data, true) . ';';
@@ -147,13 +135,17 @@ class DataCacheControl {
             $key = md5(self::$appRoot . "{$key}.php");
             return $this->cacheHandle->get($key);
         }
-
-        if ($this->cacheTime() <= $this->dataModifyTime) {
+        if ($this->expire > 0 && ($this->cacheTime($key) + $this->expire) < time()) {
+            return false;
+        } elseif ($this->expire == 0 && $this->cacheTime($key) <= $this->dataModifyTime) {
             return false;
         }
+  
         $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
         if (file_exists($file)) {
             return include_once $file;
+        } else {
+            return false;
         }
     }
 
@@ -172,14 +164,20 @@ class DataCacheControl {
             return unlink($file);
         }
     }
+
     public function exists($key = '') {
-        if($this->cacheType == self::CACHE_SERVER) {
+        if ($this->cacheType == self::CACHE_SERVER) {
             return $this->cacheHandle->exist($key);
         }
         $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
-
+        if ($this->expire > 0 && ($this->cacheTime($key) + $this->expire) < time()) {
+            return false;
+        } elseif ($this->expire == 0 && $this->cacheTime($key) <= $this->dataModifyTime) {
+            return false;
+        }
         return file_exists($file);
     }
+
 }
 
 ?>

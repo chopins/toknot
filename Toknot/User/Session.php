@@ -19,8 +19,8 @@ class Session extends ArrayObject {
 
     protected $havePHPSession = true;
     private $cacheInstance = null;
-    private static $fileStorePath = '';
-    public static $fileStore = true;
+    private $fileStorePath = '';
+            private$fileStore = true;
     private static $sessionStatus = false;
 
     /**
@@ -70,7 +70,7 @@ class Session extends ArrayObject {
      */
     public function __construct() {
         $class = __CLASS__;
-        if(is_object(self::$sessionInstance) && self::$sessionInstance instanceof $class) {
+        if (is_object(self::$sessionInstance) && self::$sessionInstance instanceof $class) {
             self::$sessionInstance = $this;
         }
         if (extension_loaded('session')) {
@@ -92,9 +92,9 @@ class Session extends ArrayObject {
 
     private function loadConfigure() {
         $CFG = ConfigLoader::CFG();
-        self::$fileStore = $CFG->Session->fileStoreSession;
+        $this->fileStore = $CFG->Session->fileStoreSession;
         self::$sessionName = $CFG->Session->sessionName;
-        self::$fileStorePath = $CFG->Session->fileStorePath;
+        $this->fileStorePath = $CFG->Session->fileStorePath;
         self::$maxLifeTime = $CFG->Session->maxLifeTime;
     }
 
@@ -116,6 +116,8 @@ class Session extends ArrayObject {
         if ($this->havePHPSession) {
             session_name(self::$sessionName);
             session_start();
+            $this->sessionId = session_id();
+            $this->interatorArray = $_SESSION;
         } else {
             self::$sessionStatus = true;
             $this->open(self::$storeHandle, self::$sessionName);
@@ -124,9 +126,11 @@ class Session extends ArrayObject {
     }
 
     public function regenerate_id() {
+        debug_print_backtrace();
         if ($this->sessionId) {
             $this->destroy($this->sessionId);
         }
+
         $this->sessionId = StringObject::rand(10);
         setcookie(self::$sessionName, $this->sessionId);
     }
@@ -139,12 +143,12 @@ class Session extends ArrayObject {
     }
 
     private function getValue($name) {
-        if($this->havePHPSession) {
+        if ($this->havePHPSession) {
             return $_SESSION[$name];
         }
         return $this->interatorArray[$name];
     }
-    
+
     public function setPropertie($name, $value) {
         $this->setValue($name, $value);
     }
@@ -160,11 +164,11 @@ class Session extends ArrayObject {
 
     public function open($dsn, $sessionName) {
         $this->path = $dsn . '.' . $sessionName;
-        if (self::$fileStore) {
-            if (!is_dir(self::$fileStorePath)) {
-                DataCacheControl::createCachePath(self::$fileStorePath);
+        if ($this->fileStore) {
+            if (!is_dir($this->fileStorePath)) {
+                DataCacheControl::createCachePath($this->fileStorePath);
             }
-            self::$storeHandle = self::$fileStorePath;
+            self::$storeHandle = $this->fileStorePath;
             $type = DataCacheControl::CACHE_FILE;
         } else {
             $type = DataCacheControl::CACHE_SERVER;
@@ -179,24 +183,25 @@ class Session extends ArrayObject {
     }
 
     public function read($sessionId) {
-        if (self::$fileStore) {
+        if ($this->fileStore) {
             $sessionId = DIRECTORY_SEPARATOR . $sessionId;
-            if (!$this->cacheInstance->exists($sessionId)) {
+            if (!$this->havePHPSession && !$this->cacheInstance->exists($sessionId)) {
                 $this->regenerate_id();
             }
         }
+
         $data = $this->cacheInstance->get($sessionId);
-        if ($this->havePHPSession) {
-            session_decode($data);
-            $this->interatorArray = $_SESSION;
-        } else {
+        if (!$data) {
+            $data = '';
+        }
+        if (!$this->havePHPSession) {
             $this->interatorArray = unserialize($data);
         }
         return $data;
     }
 
     public function write($sessionId, $data) {
-        if (self::$fileStore)
+        if ($this->fileStore)
             $sessionId = DIRECTORY_SEPARATOR . $sessionId;
         return $this->cacheInstance->save($data, $sessionId);
     }
@@ -207,8 +212,8 @@ class Session extends ArrayObject {
     }
 
     public function gc($lifetime) {
-        if (self::$fileStore) {
-            foreach (glob(self::$fileStorePath . DIRECTORY_SEPARATOR.'*') as $file) {
+        if ($this->fileStore) {
+            foreach (glob($this->fileStorePath . DIRECTORY_SEPARATOR . '*') as $file) {
                 if (file_exists($file) && filemtime($file) + $lifetime < time()) {
                     unlink($file);
                 }
@@ -224,8 +229,8 @@ class Session extends ArrayObject {
     public function __destruct() {
         if (!$this->havePHPSession) {
             $this->writeClose();
-            $rand = mt_rand(1, 10) %2;
-            if (date('i') == '00' ||$rand == 0) {
+            $rand = mt_rand(1, 10) % 2;
+            if (date('i') == '00' || $rand == 0) {
                 $this->gc(self::$maxLifeTime);
             }
         }
