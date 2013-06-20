@@ -214,5 +214,5 @@ class StringObject extends Object implements ArrayAccess {
     public function offsetUnset($offset) {
         $this->interatorArray = substr_replace($this->interatorArray, '', $offset, 1);
     }
-
+    
 }

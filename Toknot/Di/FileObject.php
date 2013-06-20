@@ -17,7 +17,8 @@ use \SplFileObject;
 class FileObject extends Object {
 
     private $path;
-    private $fp;
+    private $dir;
+    private $key = 0;
 
     public function __construct($path) {
         $this->path = $path;
@@ -26,14 +27,30 @@ class FileObject extends Object {
         }
     }
 
+    /**
+     * current path whether is directory
+     * 
+     * @return boolean
+     */
     public function isDir() {
         return is_dir($this->path);
     }
 
+    /**
+     * Get current path of parent directory
+     * 
+     * @return \Toknot\Di\FileObject
+     */
     public function parentDir() {
         return new FileObject(dirname($this->path));
     }
 
+    /**
+     * Create a child directory
+     * 
+     * @param string $path
+     * @throws FileIOException
+     */
     public function mkSubDir($path) {
         if ($this->path == null) {
             throw new FileIOException("must be exists path");
@@ -49,6 +66,12 @@ class FileObject extends Object {
         }
     }
 
+    /**
+     * Create a directory
+     * 
+     * @param string $path
+     * @return \Toknot\Di\FileObject|boolean
+     */
     public static function mkdir($path) {
         if (mkdir($path)) {
             return new static($path);
@@ -75,6 +98,13 @@ class FileObject extends Object {
         }
     }
 
+    /**
+     * The mode invoke SplFileObject
+     * 
+     * @param string $mode
+     * @return \SplFileObject
+     * @throws FileIOException
+     */
     public function open($mode) {
         if ($this->isDir()) {
             throw new FileIOException($this->path . ' is not file');
@@ -82,6 +112,16 @@ class FileObject extends Object {
         return new SplFileObject($this->path, $mode);
     }
 
+    /**
+     * The paramaters see PHP {@see file_put_contents()}, the difference is that the method 
+     * will do creation of nested directories
+     * 
+     * @param string $file file name
+     * @param string $data  data
+     * @param integer $flag 
+     * @return \Toknot\Di\FileObject
+     * @throws FileIOException
+     */
     public static function saveContent($file, $data, $flag = 0) {
         $path = dirname($file);
         if (!is_dir($path)) {
@@ -94,11 +134,33 @@ class FileObject extends Object {
         return new static($file);
     }
 
+    /**
+     * 	implement method of PHP {@see \Iterator}
+     */
     public function rewind() {
-        $dir = dir($this->path);
-        while (false !== ($name = $dir->read())) {
-            $this->interatorArray = new FileObject($this->path . DIRECTORY_SEPARATOR . $name);
-        }
+        $this->dir = dir($this->path);
+        $this->dir->rewind();
+        $this->key = 0;
+//        while (false !== ($name = $dir->read())) {
+//            $this->interatorArray = new FileObject($this->path . DIRECTORY_SEPARATOR . $name);
+//        }
+    }
+
+    public function current() {
+        $this->key++;
+        return $this->dir->read();
+    }
+
+    public function key() {
+        return $this->key;
+    }
+
+    public function next() {
+        //$this->dir->read();
+    }
+
+    public function valid() {
+        return true;
     }
 
     /**
@@ -148,5 +210,7 @@ class FileObject extends Object {
             return $appPath . DIRECTORY_SEPARATOR . $path;
         }
     }
-
+    public function count() {
+        return count(scandir($this->path));
+    }
 }
