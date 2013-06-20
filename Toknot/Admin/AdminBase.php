@@ -28,6 +28,7 @@ class AdminBase extends ClassAccessControl {
     protected static $CFG = null;
     protected $dbConnect = null;
     private static $adminConstruct = false;
+    protected $SESSION = null;
 
     public function __construct(FMAI $FMAI) {
         if (self::$adminConstruct) {
@@ -37,7 +38,7 @@ class AdminBase extends ClassAccessControl {
         self::$FMAI = $FMAI;
         $this->loadAdminConfig();
         $this->initDatabase();
-        $this->startSession();
+        $this->SESSION = $FMAI->startSession(self::$CFG->Admin->adminSessionName);
         $FMAI->registerAccessDeniedController('Toknot\Admin\Login');
 
         $user = $this->checkUserLogin();
@@ -89,12 +90,6 @@ class AdminBase extends ClassAccessControl {
 
     public function CLI() {
         $this->GET();
-    }
-
-    public function startSession() {
-        $session = Session::singleton();
-        $session->name(self::$CFG->Admin->adminSessionName);
-        $session->start();
     }
 
     public function checkUserLogin() {

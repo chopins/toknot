@@ -18,6 +18,7 @@ class FileObject extends Object {
 
     private $path;
     private $fp;
+
     public function __construct($path) {
         $this->path = $path;
         if (!file_exists($this->path)) {
@@ -28,6 +29,7 @@ class FileObject extends Object {
     public function isDir() {
         return is_dir($this->path);
     }
+
     public function parentDir() {
         return new FileObject(dirname($this->path));
     }
@@ -74,27 +76,76 @@ class FileObject extends Object {
     }
 
     public function open($mode) {
-        if($this->isDir()) {
+        if ($this->isDir()) {
             throw new FileIOException($this->path . ' is not file');
         }
         return new SplFileObject($this->path, $mode);
     }
-    public static function saveContent($file,$data) {
+
+    public static function saveContent($file, $data, $flag = 0) {
         $path = dirname($file);
-        if(!is_dir($path)) {
+        if (!is_dir($path)) {
             $r = mkdir($path, 0777, true);
-            if(!$r) {
+            if (!$r) {
                 throw new FileIOException("$file write fail or $path is not directory");
-            } 
+            }
         }
-        file_put_contents($file, $data);
+        file_put_contents($file, $data, $flag);
         return new static($file);
     }
 
     public function rewind() {
         $dir = dir($this->path);
         while (false !== ($name = $dir->read())) {
-            $this->interatorArray = new FileObject($this->path . '/' . $name);
+            $this->interatorArray = new FileObject($this->path . DIRECTORY_SEPARATOR . $name);
+        }
+    }
+
+    /**
+     * Get real path which is relative to $appPath of $path,
+     * 
+     * <code>
+     * //in unix-like os:
+     * $appPath = '/yourhome/path/appRoot';
+     * $path = 'mySubPath/file';
+     * $realPath = FileObject::getRealPath($appPath,$path);
+     * echo $realPath; //will print /yourhome/path/appRoot/mySubPath/file
+     * 
+     * $path = '/mySubPath/file';
+     * $realPath = FileObject::getRealPath($appPath,$path);
+     * echo $realPath; //will print /mySubPath/file
+     * 
+     * //in windows e.g1:
+     * $appPath = 'D:\path\appRoot';
+     * $appPath = 'mySubPath/file';
+     * $realPath = FileObject::getRealPath($appPath,$path);
+     * echo $realPath; //will print D:\path\appRoot\mySubPath\file
+     * 
+     * //in window e.g2:
+     * $appPath = 'D:\path\appRoot';
+     * $appPath = '/mySubPath/file';
+     * $realPath = FileObject::getRealPath($appPath,$path);
+     * echo $realPath; //will print D:\mySubPath\file
+     * </code>
+     * 
+     * @param string $appPath The path be relative, like current work path
+     * @param string $path 
+     * @return string
+     */
+    public static function getRealPath($appPath, $path) {
+        $first = substr($path, 0, 1);
+        $second = substr($path, 1, 1);
+        $appPath = strtr($appPath, '/', DIRECTORY_SEPARATOR);
+        if ($first == '/' || (preg_match('/[a-zA-Z]/', $first) && $second == ':')) {
+            if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN' && $first == '/') {
+                $winRoot = substr($appPath, 0, 2);
+                $path = $winRoot . $path;
+            }
+            $path = strtr($path, '/', DIRECTORY_SEPARATOR);
+            return $path;
+        } else {
+            $path = strtr($path, '/', DIRECTORY_SEPARATOR);
+            return $appPath . DIRECTORY_SEPARATOR . $path;
         }
     }
 

@@ -115,7 +115,7 @@ class Router implements RouterInterface {
             if (empty($_GET['c'])) {
                 $this->spacePath = $this->defaultClass;
             } else {
-                $this->spacePath = '\\' . str_replace('.', '\\', $_GET['c']);
+                $this->spacePath = '\\' . strtr($_GET['c'], '.', '\\');
             }
         } else {
             if (PHP_SAPI == 'cli') {
@@ -130,7 +130,7 @@ class Router implements RouterInterface {
             } else {
                 $urlPath = $_SERVER['REQUEST_URI'];
             }
-            $spacePath = str_replace('/', StandardAutoloader::NS_SEPARATOR, $urlPath);
+            $spacePath = strtr($urlPath, '/', StandardAutoloader::NS_SEPARATOR);
             $spacePath = $spacePath == StandardAutoloader::NS_SEPARATOR ? $this->defaultClass : $spacePath;
             if ($this->routerDepth > 0) {
                 $name = strtok($spacePath, StandardAutoloader::NS_SEPARATOR);

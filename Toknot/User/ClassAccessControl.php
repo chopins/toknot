@@ -19,11 +19,19 @@ class ClassAccessControl extends UserAccessControl {
 
     /**
      * 8 bit permission of current object instance
+     * owner get post update
+     * grouper get post
+     * nobody  get
      *
      * @var integer
      */
-    protected $permissions = 0777;
-    
+    protected $permissions = 0754;
+    protected $userName = 'root';
+    protected $gid = 0;
+    protected $group = 'root';
+    protected $uid = 0;
+
+
     /**
      * current object type of opreate data
      *

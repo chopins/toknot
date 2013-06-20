@@ -13,6 +13,7 @@ namespace Toknot\User;
 use Toknot\Di\ArrayObject;
 use Toknot\Di\DataCacheControl;
 use Toknot\Config\ConfigLoader;
+use Toknot\Di\StringObject;
 
 class Session extends ArrayObject {
 
@@ -37,13 +38,15 @@ class Session extends ArrayObject {
     private static $sessionName = 'TKSID';
     private $sessionId = '';
     private static $maxLifeTime = 3600;
+    private static $sessionInstance = null;
 
     public static function singleton() {
-        return parent::__singleton();
+        self::$sessionInstance = parent::__singleton();
+        return self::$sessionInstance;
     }
 
     /**
-     * construct a Session class
+     * construct a new Session class instance and cover old
      * 
      * <code>
      * 
@@ -54,7 +57,7 @@ class Session extends ArrayObject {
      * $session->start();
      * 
      * //set session value
-     * Session('username', 'username');
+     * $session('username', 'username');
      * 
      * //above same below if enable php session extension:
      * $_SESSION['username'] = 'username';
@@ -66,11 +69,14 @@ class Session extends ArrayObject {
      * @access protected
      */
     public function __construct() {
+        $class = __CLASS__;
+        if(is_object(self::$sessionInstance) && self::$sessionInstance instanceof $class) {
+            self::$sessionInstance = $this;
+        }
         if (extension_loaded('session')) {
             session_set_save_handler(array($this, 'open'), array($this, 'close'), array($this, 'read'), array($this, 'write'), array($this, 'destroy'), array($this, 'gc'));
             $this->havePHPSession = true;
         } else {
-//register_shutdown_function(array($this, 'writeClose'));
             $this->havePHPSession = false;
         }
         $this->loadConfigure();
@@ -121,7 +127,7 @@ class Session extends ArrayObject {
         if ($this->sessionId) {
             $this->destroy($this->sessionId);
         }
-        $this->sessionId = sha1(str_shuffle('~`@#$%^&*()_+-={}[];:"\'?/>.<,1234567890QWERTYUIOPLKJHGFDAZXCVBNMqwertyuioplkjhgfdsazxcvbnm'));
+        $this->sessionId = StringObject::rand(10);
         setcookie(self::$sessionName, $this->sessionId);
     }
 
@@ -133,7 +139,14 @@ class Session extends ArrayObject {
     }
 
     private function getValue($name) {
+        if($this->havePHPSession) {
+            return $_SESSION[$name];
+        }
         return $this->interatorArray[$name];
+    }
+    
+    public function setPropertie($name, $value) {
+        $this->setValue($name, $value);
     }
 
     public function __invoke($name) {
@@ -195,7 +208,7 @@ class Session extends ArrayObject {
 
     public function gc($lifetime) {
         if (self::$fileStore) {
-            foreach (glob(self::$fileStorePath . '/*') as $file) {
+            foreach (glob(self::$fileStorePath . DIRECTORY_SEPARATOR.'*') as $file) {
                 if (file_exists($file) && filemtime($file) + $lifetime < time()) {
                     unlink($file);
                 }
@@ -211,12 +224,11 @@ class Session extends ArrayObject {
     public function __destruct() {
         if (!$this->havePHPSession) {
             $this->writeClose();
-            $p = mt_rand(1, 100);
-            if ($p < 10) {
+            $rand = mt_rand(1, 10) %2;
+            if (date('i') == '00' ||$rand == 0) {
                 $this->gc(self::$maxLifeTime);
             }
         }
     }
 
 }
-

@@ -21,6 +21,9 @@ use Toknot\User\UserClass;
 use Toknot\User\UserAccessControl;
 use Toknot\Di\DataCacheControl;
 use Toknot\Di\ArrayObject;
+use Toknot\User\Session;
+use Toknot\Di\Log;
+use Toknot\Di\FileObject;
 
 /**
  * Framework Module Access Interfaces
@@ -70,6 +73,8 @@ final class FMAI extends Object {
         ConfigLoader::singleton();
         $this->appRoot = $appRoot;
         DataCacheControl::$appRoot = $appRoot;
+        Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
+        Log::$savePath = FileObject::getRealPath($appRoot, ConfigLoader::CFG()->Log->logSavePath);
         $this->D = new ArrayObject;
         //ConfigLoader::CFG()->AppRoot = $this->appRoot;
         date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
@@ -87,7 +92,6 @@ final class FMAI extends Object {
     }
 
     public function invokeBefore(&$invokeClassReflection) {
-        
         if ($this->requestMethod == 'GET' && $this->enableCache) {
             ViewCache::outPutCache();
             $this->cacheEffective = ViewCache::$cacheEffective;
@@ -97,7 +101,7 @@ final class FMAI extends Object {
             return true;
         }
     }
-    
+
     public function invokeAfter(&$invokeClassReflection) {
         
     }
@@ -113,6 +117,8 @@ final class FMAI extends Object {
     public function loadConfigure($ini, $iniCacheFile = '') {
         ConfigLoader::$cacheFile = $iniCacheFile;
         ConfigLoader::loadCFG($ini);
+        Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
+        Log::$savePath = FileObject::getRealPath($this->appRoot, ConfigLoader::CFG()->Log->logSavePath);
         date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
         return ConfigLoader::CFG();
     }
@@ -171,7 +177,7 @@ final class FMAI extends Object {
      * @return Toknot\Db\ActiveRecord
      */
     public function getActiveRecord() {
-        StandardAutoloader::importToknotModule('Db','DbCRUD');
+        StandardAutoloader::importToknotModule('Db', 'DbCRUD');
         return ActiveRecord::singleton();
     }
 
@@ -182,33 +188,27 @@ final class FMAI extends Object {
      */
     public function newTemplateView(& $CFG) {
         StandardAutoloader::importToknotClass('View\Renderer');
-        Renderer::$cachePath = $this->appRoot . $CFG->templateCompileFileSavePath;
+        Renderer::$cachePath = FileObject::getRealPath($this->appRoot, $CFG->templateCompileFileSavePath);
         Renderer::$fileExtension = $CFG->templateFileExtensionName;
-        Renderer::$scanPath = $this->appRoot . $CFG->templateFileScanPath;
-        Renderer::$htmlCachePath = $this->appRoot . $CFG->htmlStaticCachePath;
+        Renderer::$scanPath = FileObject::getRealPath($this->appRoot, $CFG->templateFileScanPath);
+        Renderer::$htmlCachePath = FileObject::getRealPath($this->appRoot, $CFG->htmlStaticCachePath);
         Renderer::$outCacheThreshold = $CFG->defaultPrintCacheThreshold;
         Renderer::$dataCachePath = $CFG->dataCachePath;
         return Renderer::singleton();
     }
-    public function setViewVar($name,$value) {
+
+    public function setViewVar($name, $value) {
         $this->D->$name = $value;
     }
+
     public function &__get($name) {
-        if($name == 'D') {
+        if ($name == 'D') {
             return $this->D;
         }
     }
 
     public function newXMLView() {
         return XML::singleton();
-    }
-
-    public function newJSONView() {
-        
-    }
-
-    public function newPictureView() {
-        
     }
 
     /**
@@ -250,9 +250,9 @@ final class FMAI extends Object {
     public function registerAccessDeniedController($controllerName) {
         $this->accessDeniedController = $controllerName;
     }
+
     public function redirectAccessDeniedController($class) {
-        if ($class instanceof \Toknot\User\ClassAccessControl 
-                && $this->getAccessStatus() === false) {
+        if ($class instanceof \Toknot\User\ClassAccessControl && $this->getAccessStatus() === false) {
             $accessDeniedController = $this->getAccessDeniedController();
             //header("Location:$accessDeniedController");
             $invokeObject = new $accessDeniedController($this);
@@ -294,7 +294,6 @@ final class FMAI extends Object {
                 $this->accessControlStatus = true;
                 break;
         }
-        
     }
 
     /**
@@ -305,6 +304,14 @@ final class FMAI extends Object {
      */
     public function setCurrentUser($id) {
         return UserClass::getInstanceByUid($id);
+    }
+
+    public function &startSession($name = null) {
+        $name = $name ? $name : ConfigLoader::CFG()->Session->sessionName;
+        $session = Session::singleton();
+        $session->name($name);
+        $session->start();
+        return $session;
     }
 
 }

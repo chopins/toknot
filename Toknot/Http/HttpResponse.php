@@ -392,7 +392,7 @@ class HttpResponse {
                             }
                             break;
                         default:
-                            $field_name = 'HTTP_' . str_replace('-', '_', strtoupper($field_name));
+                            $field_name = 'HTTP_' . strtr(strtoupper($field_name), '-', '_');
                             $_SERVER[$field_name] = $field_value;
                             break;
                     }

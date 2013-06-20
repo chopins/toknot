@@ -25,13 +25,14 @@ class Login extends AdminBase {
         $userName = $_POST['username'];
         $password = $_POST['password'];
         $user = UserClass::login($userName, $password);
+
         if ($user) {
             if (isset($_POST['week'])) {
                 $user->setLoginExpire('1w');
             }
-            if ($user) {
-                $this->setAdminLogin($user);
-            }
+            $this->SESSION['adminUser'] = $user->getUserName();
+            //$this->setAdminLogin($user);
+            var_dump($_SESSION['adminUser']);
         } else {
             $this->GET();
         }

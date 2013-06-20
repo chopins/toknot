@@ -33,7 +33,7 @@ class StandardAutoloader {
 //        if ($topNamespace != $lastPath)
 //            return false;
         $dir = dirname($dir);
-        $nsPath = str_replace(self::NS_SEPARATOR, DIRECTORY_SEPARATOR, $class);
+        $nsPath = strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         return $dir . DIRECTORY_SEPARATOR . $nsPath . '.php';
     }
 
@@ -52,7 +52,7 @@ class StandardAutoloader {
 
     public static function importToknotClass($class) {
         $toknotRoot = dirname(__DIR__);
-        $path = $toknotRoot . '/' . str_replace(self::NS_SEPARATOR, DIRECTORY_SEPARATOR, $class);
+        $path = $toknotRoot . DIRECTORY_SEPARATOR . strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         return require_once $path . '.php';
     }
 

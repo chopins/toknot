@@ -11,7 +11,7 @@
 namespace Toknot\Exception;
 
 use \ErrorException;
-use \ReflectionClass;
+use Toknot\Di\Log;
 
 /**
  * Toknot Statndrad Exception
@@ -25,21 +25,7 @@ class StandardException extends ErrorException {
     protected $isException = false;
     protected $exceptionMessage = null;
     public $traceArr = array();
-    protected $errcss = '<style>
-                        .ToKnotDebugArea {border:1px #CCCCCC solid;background-color:#EEEFFF;padding:0;font-family:Helvetica,arial,freesans,clean,sans-serif;}
-                        .ToKnotDebugArea ul {margin-top:0;}
-                        .ToKnotMessage {color:#666666;font-size:18px;font-weight:bold;padding:10px;margin:0px;background-color:#D6E685;border-bottom:1px solid #94DA3A;}
-                        .ToKnotCallFile {color:#6A8295;}
-                        .ToKnotAccess {color:#336258;}
-                        .ToKnotTraceItem{list-style-type:none;padding:10px;color:#0F4C9E;font-size:15px;}
-                        .ToKnotTraceItem li {padding:5px;}
-                        .ToKnotDebugArgs{text-decoration:underline;font-size:12px;margin:0 3px;}
-                        .ToKnotDebugArgs b {font-size:15;margin:0 3px;}
-                        .ToKnotDebugFunc{color:#176B4E;font-weight:normal;}
-                        .ToKnotDebugThrow{color:#D14836;font-weight:bold;background-color:#FFECCC;padding:8px;}
-                        .ToKnotDebugProcess {color:#333;font-size:12px;}
-                        </style>';
-
+   
     /**
      * construct StandardException
      * 
@@ -103,11 +89,10 @@ class StandardException extends ErrorException {
     }
 
     public function getDebugTraceAsString() {
-//        if ($this->isException == false)
-//            return $this->message;
+
         $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type">';
         if (PHP_SAPI != 'cli') {
-            $str .= $this->errcss;
+            $str .= Log::traceCss();
         } else {
             $str .= str_repeat('=', 20) . "\n";
         }
@@ -139,46 +124,17 @@ class StandardException extends ErrorException {
     }
 
     public function __toString() {
+        $traceInfo = $this->getDebugTraceAsString();
         if (DEVELOPMENT) {
-            return $this->getDebugTraceAsString();
+            return $traceInfo;
         } else {
             header('500 Internal Server Error');
+            Log::save($traceInfo);
             return '500 Internal Server Error';
         }
     }
 
     public function earch($traceArr) {
-        $str = '';
-        foreach ($traceArr as $key => $value) {
-            $str .= "<li>#{$key} ";
-            $str .= isset($value['file']) ? $value['file'] : '';
-            $str .= isset($value['line']) ? "({$value['line']}): " : '';
-            $str .= isset($value['class']) ? $value['class'] : '';
-            $str .= isset($value['type']) ? $value['type'] : '';
-            if ($value['function'] == 'unknown') {
-                $value['function'] = 'main';
-            }
-            $str .= isset($value['function']) ? "{$value['function']}(" : '';
-            if (isset($value['args'])) {
-                foreach ($value['args'] as $arg) {
-                    if (is_string($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs' title='String(" . strlen($arg) . ") ". $arg ."'><b>String(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
-                    } elseif (is_int($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs'><b>Integer(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
-                    } elseif (is_float($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs'><b>Float(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
-                    } elseif (is_array($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs' title='" . print_r($arg, true) . "'><b>Array()</b></span>";
-                    } elseif (is_object($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs' title='" . print_r($arg, true) . "'><b>Object(</b> " . get_class($arg) . " <b>)</b></span>";
-                    } elseif (is_resource($arg)) {
-                        $str .= "<span calss='ToKnotDebugArgs'" > print_r($arg, true) . '</span>';
-                    }
-                }
-            }
-            $str .= isset($value['function']) ? ")" : '';
-            $str .= "</li>\n";
-        }
-        return $str;
+        return Log::formatTrace($traceArr);
     }
 }

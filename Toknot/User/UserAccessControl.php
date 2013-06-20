@@ -31,16 +31,23 @@ abstract class UserAccessControl extends Object {
     /**
      * ID of group
      *
-     * @var mixed  May be array or string
+     * @var mixed  May be array or number
      */
     protected $gid = '';
-
+    
+    /**
+     * Name of group
+     *
+     * @var string May be array or string
+     */
+    protected $groupName = 'nobody';
+    
     /**
      * whether allow user login
      *
      * @var boolean
      */
-    protected $allUserLogin = true;
+    protected $allowUserLogin = true;
 
     /**
      * whether enable admin group, if true and group id equal 1, the user will is admin
@@ -86,10 +93,21 @@ abstract class UserAccessControl extends Object {
     /**
      * Get user Id number
      * 
+     * @access public
      * @return integer
      */
     final public function getUid() {
         return $this->uid;
+    }
+    
+    /**
+     * get name of use
+     * 
+     * @access public
+     * @return string
+     */
+    final public function getUserName() {
+        return $this->userName;
     }
 
     /**

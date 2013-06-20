@@ -15,6 +15,7 @@ use \BadMethodCallException;
 use \ReflectionExtension;
 use \ArrayAccess;
 use Toknot\Di\ArrayObject;
+use Toknot\Exception\StandardException;
 
 class StringObject extends Object implements ArrayAccess {
 
@@ -142,6 +143,21 @@ class StringObject extends Object implements ArrayAccess {
             return $str;
         }
     }
+
+    public static function rand($min, $max = 0) {
+        if($min <1) {
+            throw new StandardException("StringObject::rand() 1 parameter must greater 1, $min given");
+        }
+        $word = '1234567890qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKHJGFDSAZXCVBNM';
+        $randStr = str_shuffle($word);
+        if ($max > 0) {
+            $len = mt_rand($min, $max);
+        } else {
+            $len = $min;
+        }
+        return substr($randStr, 0, $len);
+    }
+
     public function valueOf() {
         return $this->interatorArray;
     }

@@ -73,14 +73,14 @@ class DataCacheControl {
             return 0;
         }
         if (file_exists($this->cacheHandle)) {
-            $file = self::$appRoot . $this->cacheHandle . '.php';
+            $file = FileObject::getRealPath(self::$appRoot, $this->cacheHandle . '.php');
             return filemtime($file);
         } else {
             return 0;
         }
     }
     public static function createCachePath($path) {
-        $path = self::$appRoot.$path;
+        $path = FileObject::getRealPath(self::$appRoot,$path);
         if(file_exists($path)) {
             return;
         }
@@ -120,7 +120,7 @@ class DataCacheControl {
      */
     public function save($data, $key = '') {
         if ($this->cacheType == self::CACHE_SERVER) {
-            $key = md5($this->appRoot . "{$key}.php");
+            $key = md5(self::$appRoot . "{$key}.php");
             $this->cacheHandle->set($key, $data, time() + $this->expire);
             return true;
         }
@@ -131,8 +131,8 @@ class DataCacheControl {
             return false;
         }
         $dataString = '<?php return ' . var_export($data, true) . ';';
-
-        FileObject::saveContent(self::$appRoot . "{$this->cacheHandle}{$key}.php", $dataString);
+        $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
+        FileObject::saveContent($file, $dataString, LOCK_EX);
         return true;
     }
 
@@ -151,7 +151,7 @@ class DataCacheControl {
         if ($this->cacheTime() <= $this->dataModifyTime) {
             return false;
         }
-        $file = self::$appRoot . "{$this->cacheHandle}{$key}.php";
+        $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
         if (file_exists($file)) {
             return include_once $file;
         }
@@ -167,16 +167,16 @@ class DataCacheControl {
         if ($this->cacheType == self::CACHE_SERVER) {
             return $this->cacheHandle->del($key);
         }
-        $file = self::$appRoot . "{$this->cacheHandle}{$key}.php";
+        $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
         if (file_exists($file)) {
-            return unlink(self::$appRoot . "{$this->cacheHandle}{$key}.php");
+            return unlink($file);
         }
     }
     public function exists($key = '') {
         if($this->cacheType == self::CACHE_SERVER) {
             return $this->cacheHandle->exist($key);
         }
-        $file = self::$appRoot . "{$this->cacheHandle}{$key}.php";
+        $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
 
         return file_exists($file);
     }

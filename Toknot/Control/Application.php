@@ -46,7 +46,16 @@ final class Application {
      * @access private 
      */
     private $standardAutoLoader = null;
-
+    
+    /**
+     * App root path
+     *
+     * @access private
+     * @static
+     * @var string
+     */
+    private static $appRoot = '';
+    
     /**
      * This is router class name, if do not use setUserRouter method set a router 
      * after new Application and before invoke run method, and will use toknot default router
@@ -286,6 +295,7 @@ final class Application {
             StandardAutoloader::importToknotClass('Control\FMAI');
             $this->addAppPath($appPath);
             $FMAI = FMAI::singleton($appPath);
+            self::$appRoot = $appPath;
             call_user_func_array(array($router, 'runtimeArgs'), $this->routerArgs);
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
@@ -437,6 +447,8 @@ final class Application {
             $this->pageRunInfo();
         }
     }
-
+    public static function getAppRoot() {
+        return self::$appRoot;
+    }
 }
 
