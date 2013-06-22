@@ -20,8 +20,11 @@ class MenuBox extends StringObject {
     public function setPropertie($propertie, $value) {
         $this->subNav[$propertie] = new MenuBox($value);
     }
+	public function getAllMenu() {
+		return array();
+	}
 
-    public function __get($name) {
+	public function __get($name) {
         if (isset($this->subNav[$name])) {
             return $this->subNav[$name];
         }
@@ -33,4 +36,3 @@ class MenuBox extends StringObject {
 
 }
 
-?>

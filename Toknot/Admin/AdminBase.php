@@ -18,7 +18,6 @@ use Toknot\User\Nobody;
 use Toknot\User\UserClass;
 use Toknot\Di\Version;
 use Toknot\User\UserAccessControl;
-use Toknot\User\Session;
 
 class AdminBase extends ClassAccessControl {
 
@@ -40,7 +39,6 @@ class AdminBase extends ClassAccessControl {
         $this->initDatabase();
         $this->SESSION = $FMAI->startSession(self::$CFG->Admin->adminSessionName);
  
-        var_dump($this->SESSION['adminUser']);
         
         $FMAI->registerAccessDeniedController('Toknot\Admin\Login');
 
@@ -49,6 +47,7 @@ class AdminBase extends ClassAccessControl {
 
         $this->commonTplVarSet();
         $FMAI->newTemplateView(self::$CFG->View);
+	return;
         if ($FMAI->redirectAccessDeniedController($this)) {
             exit();
         }
