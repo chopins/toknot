@@ -38,7 +38,7 @@ class CreateApp {
             $this->message('Generate hash salt');
             $salt = substr(str_shuffle('1234567890qwertyuiopasdfghjklzxcvbnm'), 0, 8);
             $algo = Toknot\User\Root::bestHashAlgos();
-            $password = Toknot\User\Root::getTextHashOutSalt($password, $algo, $salt);
+            $password = Toknot\User\Root::getTextHashCleanSalt($password, $algo, $salt);
             $this->message('Generate Root password hash string');
         }
 

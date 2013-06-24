@@ -15,31 +15,25 @@ use Toknot\User\UserClass;
 
 class Login extends AdminBase {
 
-    protected $permissions = 0777;
+	protected $permissions = 0777;
 
-    public function GET() {
-        self::$FMAI->display('login');
-    }
+	public function GET() {
+		self::$FMAI->display('login');
+	}
 
-    public function POST() {
-        $userName = $_POST['username'];
-        $password = $_POST['password'];
-        $user = UserClass::login($userName, $password);
-
-        if ($user) {
-            if (isset($_POST['week'])) {
-                $user->setLoginExpire('1w');
-            }
-            //var_dump($_SESSION);
-            //$a = $this->SESSION['adminUser'];
-            //$this->SESSION['adminUser'] = $user->getUserName();
-            //$this->setAdminLogin($user);
-            //var_dump($_SESSION['adminUser']);
-        } else {
-            $this->GET();
-        }
-    }
+	public function POST() {
+		$userName = $_POST['username'];
+		$password = $_POST['password'];
+		$user = UserClass::login($userName, $password);
+		if ($user) {
+			if (isset($_POST['week'])) {
+				$user->setLoginExpire('1w');
+			}
+			$this->setAdminLogin($user);
+		} else {
+		   echo 'Username or password error';	
+		}
+	}
 
 }
 
-?>

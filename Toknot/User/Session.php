@@ -213,7 +213,7 @@ class Session extends ArrayObject {
 
     public function gc($lifetime) {
         if ($this->fileStore) {
-            foreach (glob($this->fileStorePath . DIRECTORY_SEPARATOR . '*') as $file) {
+            foreach (glob($this->fileStorePath . DIRECTORY_SEPARATOR . '*.php') as $file) {
                 if (file_exists($file) && filemtime($file) + $lifetime < time()) {
                     unlink($file);
                 }
