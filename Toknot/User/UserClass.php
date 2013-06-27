@@ -573,4 +573,10 @@ class UserClass extends UserAccessControl {
 		return self::getInstanceByUid($this->uid);
 	}
 
+	/**
+	 * Delete current user object instance
+	 */
+	public function logout() {
+		unset($this);
+	}
 }

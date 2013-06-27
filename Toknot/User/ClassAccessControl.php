@@ -24,11 +24,37 @@ class ClassAccessControl extends UserAccessControl {
      * nobody  get
      *
      * @var integer
+	 * @access protected
      */
     protected $permissions = 0754;
+
+	/**
+	 * Name of the class owner
+	 * 
+	 * @var string
+	 * @access protected
+	 */
     protected $userName = 'root';
+
+	/**
+	 * Group id of the class
+	 *
+	 * @var integer 
+	 */
     protected $gid = 0;
+
+	/**
+	 * Group name of the class
+	 *
+	 * @var string
+	 */
     protected $group = 'root';
+
+	/**
+	 * uid of the class owner
+	 *
+	 * @var integer
+	 */
     protected $uid = 0;
 
 

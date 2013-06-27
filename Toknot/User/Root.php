@@ -13,6 +13,9 @@ namespace Toknot\User;
 use Toknot\User\UserClass;
 use Toknot\Config\ConfigLoader;
 
+/**
+ * Root User object
+ */
 final class Root extends UserAccessControl {
 
 	protected $userName = 'root';
@@ -67,7 +70,7 @@ final class Root extends UserAccessControl {
 	}
 
 	/**
-	 * Change current to root 
+	 * Change current user to root 
 	 * 
 	 * @param \Toknot\User\UserClass $user
 	 * @param string $password
@@ -84,6 +87,20 @@ final class Root extends UserAccessControl {
 		$rootObject = new static;
 		$rootObject->suUser = $user;
 		return $rootObject;
+	}
+	
+	/**
+	 * Delete Root object, if su to root, will return su from user object
+	 * 
+	 * @return Toknot\User\UserClass
+	 */
+	public function logout() {
+		if($this->suUser instanceof UserClass) {
+			$user = $this->suUser;
+			unset($this);
+			return $user;
+		}
+		unset($this);
 	}
 
 	/**

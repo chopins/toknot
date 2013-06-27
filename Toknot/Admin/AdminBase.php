@@ -19,15 +19,61 @@ use Toknot\User\UserClass;
 use Toknot\Di\Version;
 use Toknot\User\UserAccessControl;
 
+/**
+ * Admin module base class for user's admin application
+ */
 class AdminBase extends ClassAccessControl {
 
+	/**
+	 * the controller permission, 8bit number like uninx
+	 *
+	 * @var integer 
+	 * @access protected
+	 */
 	protected $permissions = 0770;
+
+	/**
+	 * {@see Toknot\Control\FMAI} instance
+	 *
+	 * @var Toknot\Control\FMAI
+	 * @access protected
+	 * @static
+	 */
 	protected static $FMAI = null;
+
+	/**
+	 * {@see Toknot\Db\ActiveRecord} instance
+	 *
+	 * @var Toknot\Db\ActiveRecord
+	 * @access protected
+	 */
 	protected $AR = null;
+
+	/**
+	 * Object of the configure data
+	 *
+	 * @var Toknot\Di\ArrayObject
+	 * @access protected
+	 * @static
+	 */
 	protected static $CFG = null;
+
+	/**
+	 * The database connect instance of {@see Toknot\Db\DatabaseObject}, 
+	 * if use multi-database, the property will is array store connect instance
+	 *
+	 * @var mixed
+	 */
 	protected $dbConnect = null;
-	private static $adminConstruct = false;
+
+	/**
+	 * {@see Toknot\User\Session} instance
+	 *
+	 * @var Toknot\User\Session
+	 */
 	protected $SESSION = null;
+	
+	private static $adminConstruct = false;
 
 	public function __construct(FMAI $FMAI) {
 		if (self::$adminConstruct) {
@@ -50,12 +96,18 @@ class AdminBase extends ClassAccessControl {
 			exit();
 		}
 	}
-
+	
+	/**
+	 * set view value
+	 */
 	public function commonTplVarSet() {
 		self::$FMAI->D->title = 'ToKnot Admin';
 		self::$FMAI->D->toknotVersion = Version::VERSION . '-' . Version::STATUS;
 	}
-
+	
+	/**
+	 * init database connect
+	 */
 	public function initDatabase() {
 		$this->AR = self::$FMAI->getActiveRecord();
 		$dbSectionName = self::$CFG->Admin->databaseOptionSectionName;
@@ -79,7 +131,12 @@ class AdminBase extends ClassAccessControl {
 			UserClass::$DBConnect = $this->dbConnect;
 		}
 	}
-
+	
+	/**
+	 * load admin application config
+	 * 
+	 * @throws FileIOException
+	 */
 	public function loadAdminConfig() {
 		if (!file_exists(self::$FMAI->appRoot . '/Config/config.ini')) {
 			throw new FileIOException('must create ' . self::$FMAI->appRoot . '/Config/config.ini');
@@ -87,11 +144,19 @@ class AdminBase extends ClassAccessControl {
 		ConfigLoader::$cacheFile = self::$FMAI->appRoot . '/Data/config';
 		self::$CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
 	}
-
+	
+	/**
+	 * if CLI run, redirect to GET
+	 */
 	public function CLI() {
 		$this->GET();
 	}
 
+	/**
+	 * Check current visiter whether logined
+	 * 
+	 * @return \Toknot\User\Nobody
+	 */
 	public function checkUserLogin() {
 		if (isset($_SESSION['adminUser']) && isset($_SESSION['Flag'])) {
 			$user = unserialize($_SESSION['adminUser']);
@@ -106,7 +171,12 @@ class AdminBase extends ClassAccessControl {
 		}
 		return new Nobody;
 	}
-
+	
+	/**
+	 * Set user login
+	 * 
+	 * @param \Toknot\User\UserAccessControl $user
+	 */
 	protected function setAdminLogin(UserAccessControl $user) {
 		$_SESSION['Flag'] = $user->generateUserFlag();
 		$_SESSION['adminUser'] = serialize($user);
@@ -115,7 +185,7 @@ class AdminBase extends ClassAccessControl {
 			setcookie('Flag', $_SESSION['Flag'], $user->loginExpire);
 			setcookie('TokenKey', $user->generateLoginKey(), $user->loginExpire);
 		} else {
-			setcookie('Flag',$_SESSION['Flag']);
+			setcookie('Flag', $_SESSION['Flag']);
 		}
 	}
 

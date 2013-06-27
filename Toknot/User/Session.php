@@ -84,20 +84,27 @@ class Session extends ArrayObject {
 		$this->loadConfigure();
 	}
 
-	public function checkAPC() {
+	private function checkAPC() {
 		if (extension_loaded('apc')) {
 			$apcVersion = phpversion('apc');
 			$c = version_compare($apcVersion, '2.0.0');
-			if($c < 0) {
+			if ($c < 0) {
 				throw new StandardException('Session Class only support greater than APC-2.0.0');
 			}
-			if(DEVELOPMENT) {
+			if (DEVELOPMENT) {
 				echo '<b style="color:red;">Warning : APC conflict with PHP Session handler,so Toknot\User\Session will clear apc system cache</b>';
 			}
 			apc_clear_cache();
 		}
 	}
 
+	/**
+	 * when do not use php sesion extension, the method can set session name like
+	 * php session function {@see session_name()}
+	 * 
+	 * @param string$name
+	 * @return string
+	 */
 	public function name($name = null) {
 		if ($name == null) {
 			return self::$sessionName;
@@ -119,6 +126,11 @@ class Session extends ArrayObject {
 		$this->close();
 	}
 
+	/**
+	 * Start session
+	 * 
+	 * @return null
+	 */
 	public function start() {
 		if (self::$sessionStatus) {
 			//trigger_error('Session started', E_USER_WARNING);
@@ -141,6 +153,10 @@ class Session extends ArrayObject {
 		}
 	}
 
+	/**
+	 * regenerate a session_id and delete old session store file, will not clear
+	 * $_SESSION data
+	 */
 	public function regenerate_id() {
 		if ($this->sessionId) {
 			$this->destroy($this->sessionId);
@@ -237,8 +253,15 @@ class Session extends ArrayObject {
 		return true;
 	}
 
+	/**
+	 * if not use php session extension, the method will unset current session data like
+	 * set $_SESSION = array()
+	 */
 	public function unsetSession() {
 		$this->interatorArray = array();
+		if (isset($_SESSION)) {
+			$_SESSION = array();
+		}
 	}
 
 	public function __destruct() {

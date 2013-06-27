@@ -299,6 +299,9 @@ abstract class UserAccessControl extends Object {
 
 	/**
 	 * Generate a seesion id that is hash string
+	 * 
+	 * @access public
+	 * @return string
 	 */
 	public function generateUserFlag() {
 		$userFlag = self::getUserRemoteAddress();
@@ -309,12 +312,24 @@ abstract class UserAccessControl extends Object {
 		$userFlag .= isset($_SERVER['HTTP_ACCEPT_ENCODING'])?$_SERVER['HTTP_ACCEPT_ENCODING']:'';
 		return self::hashPassword($userFlag);
 	}
-
+	
+	/**
+	 * check user flag whether valid
+	 * 
+	 * @param string $flag
+	 * @return boolean
+	 */
 	public function checkUserFlag($flag) {
 		return $this->generateUserFlag() == $flag;
 	}
 
-
+	/**
+	 * get use client ip
+	 * 
+	 * @return string
+	 * @access public
+	 * @static
+	 */
 	public static function getUserRemoteAddress() {
 		$ip = 'unknown';
 		$headers = array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR');

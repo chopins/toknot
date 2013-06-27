@@ -11,6 +11,9 @@ namespace Toknot\User;
 
 use Toknot\User\UserAccessControl;
 
+/**
+ * The Nobody class
+ */
 class Nobody extends UserAccessControl{
     protected $userName = 'nobody';
     protected $uid = -1;
