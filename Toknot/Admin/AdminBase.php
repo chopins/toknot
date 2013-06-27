@@ -95,7 +95,7 @@ class AdminBase extends ClassAccessControl {
 	public function checkUserLogin() {
 		if (isset($_SESSION['adminUser']) && isset($_SESSION['Flag'])) {
 			$user = unserialize($_SESSION['adminUser']);
-			if ($user->checkUserFlag()) {
+			if ($user->checkUserFlag($_SESSION['Flag'])) {
 				return $user;
 			}
 		} elseif (isset($_COOKIE['uid']) && isset($_COOKIE['Flag']) && isset($_COOKIE['TokenKey'])) {
@@ -108,12 +108,14 @@ class AdminBase extends ClassAccessControl {
 	}
 
 	protected function setAdminLogin(UserAccessControl $user) {
-		$_SESSION['Flag'] = $user->getUserFlag();
+		$_SESSION['Flag'] = $user->generateUserFlag();
 		$_SESSION['adminUser'] = serialize($user);
 		if ($user->loginExpire > 0) {
 			setcookie('uid', $user->getUid(), $user->loginExpire);
 			setcookie('Flag', $_SESSION['Flag'], $user->loginExpire);
 			setcookie('TokenKey', $user->generateLoginKey(), $user->loginExpire);
+		} else {
+			setcookie('Flag',$_SESSION['Flag']);
 		}
 	}
 

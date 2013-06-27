@@ -82,7 +82,7 @@ abstract class UserAccessControl extends Object {
 	 * The password salt string
 	 */
 
-	const PASSWORD_SALT = 'ToKnot-PHP-Framework-Password-Default-Salt';
+	const PASSWORD_SALT = 'ToKnotPHPFrameworkPasswordDefaultSalt';
 
 	/**
 	 * Get user Id number
@@ -300,24 +300,20 @@ abstract class UserAccessControl extends Object {
 	/**
 	 * Generate a seesion id that is hash string
 	 */
-	protected function generateUserFlag() {
-		$userFlag = self::getUserRemoteAddress() . $_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT'] . $_SERVER['HTTP_ACCEPT_CHARSET'] . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . $_SERVER['HTTP_ACCEPT_ENCODING'];
-		$str = self::hashPassword($this->userName . $this->uid . $this->gid . $userFlag);
-		$this->userFlag = self::hashPassword($str);
+	public function generateUserFlag() {
+		$userFlag = self::getUserRemoteAddress();
+		$userFlag .= isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']:'';
+		$userFlag .= isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : ''; 
+		$userFlag .= isset($_SERVER['HTTP_ACCEPT_CHARSET'])?$_SERVER['HTTP_ACCEPT_CHARSET']:'';
+		$userFlag .= isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])?$_SERVER['HTTP_ACCEPT_LANGUAGE']:'';
+		$userFlag .= isset($_SERVER['HTTP_ACCEPT_ENCODING'])?$_SERVER['HTTP_ACCEPT_ENCODING']:'';
+		return self::hashPassword($userFlag);
 	}
 
 	public function checkUserFlag($flag) {
 		return $this->generateUserFlag() == $flag;
 	}
 
-	/**
-	 * get session id of the CurrentUser object
-	 * 
-	 * @return string
-	 */
-	public function getUserFlag() {
-		return $this->userFlag;
-	}
 
 	public static function getUserRemoteAddress() {
 		$ip = 'unknown';

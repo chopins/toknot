@@ -21,7 +21,7 @@ final class Root extends UserAccessControl {
 	private static $allowLogin = false;
 	protected $groupName = 'root';
 	protected $gid = 0;
-	private $suUser = true;
+	private $suUser = null;
 	private $loginExpire = 0;
 
 	private function __construct() {
@@ -82,9 +82,7 @@ final class Root extends UserAccessControl {
 			return false;
 		}
 		$rootObject = new static;
-		$rootObject->suUser = true;
-		$rootObject->uid = $user->uid;
-		$rootObject->userName = $user->userName;
+		$rootObject->suUser = $user;
 		return $rootObject;
 	}
 
@@ -107,6 +105,9 @@ final class Root extends UserAccessControl {
 			return false;
 		}
 		return new static;
+	}
+	public function __wakeup() {
+		self::loadConfigure();
 	}
 
 }
