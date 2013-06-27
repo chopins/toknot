@@ -21,7 +21,7 @@ final class Root extends UserAccessControl {
 	private static $allowLogin = false;
 	protected $groupName = 'root';
 	protected $gid = 0;
-	private $suUser = false;
+	private $suUser = true;
 	private $loginExpire = 0;
 
 	private function __construct() {
@@ -31,8 +31,8 @@ final class Root extends UserAccessControl {
 		$this->userName = 'root';
 		$this->groupName = 'root';
 	}
-	public function setPropertie($propertie, $value) {
-		
+	public function __get($name) {
+		return $this->$name;
 	}
 
 	private static function loadConfigure() {
