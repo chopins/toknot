@@ -7,8 +7,8 @@
 
 	<title>File Toknot/Http/FastCGIServer.php | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?3855207076"></script>
+	<script type="text/javascript" src="resources/combined.js?934585053"></script>
+	<script type="text/javascript" src="elementlist.js?4171281783"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -22,6 +22,8 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
+				<li><a href="namespace-None.html">None</a>
+						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
@@ -129,7 +131,7 @@
 </span></span><span id="4" class="l"><a class="l" href="#4">  4: </a><span class="php-comment"> * Toknot (http://toknot.com)
 </span></span><span id="5" class="l"><a class="l" href="#5">  5: </a><span class="php-comment"> *
 </span></span><span id="6" class="l"><a class="l" href="#6">  6: </a><span class="php-comment"> * @copyright  Copyright (c) 2011 - 2013 Toknot.com
-</span></span><span id="7" class="l"><a class="l" href="#7">  7: </a><span class="php-comment"> * @license    http://opensource.org/licenses/bsd-license.php New BSD License
+</span></span><span id="7" class="l"><a class="l" href="#7">  7: </a><span class="php-comment"> * @license    http://toknot.com/LICENSE.txt New BSD License
 </span></span><span id="8" class="l"><a class="l" href="#8">  8: </a><span class="php-comment"> * @link       https://github.com/chopins/toknot
 </span></span><span id="9" class="l"><a class="l" href="#9">  9: </a><span class="php-comment"> */</span>
 </span><span id="10" class="l"><a class="l" href="#10"> 10: </a>
@@ -503,169 +505,170 @@
 </span><span id="378" class="l"><a class="l" href="#378">378: </a>
 </span><span id="379" class="l"><a class="l" href="#379">379: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIAccept" href="#_CGIAccept">CGIAccept</a>() {
 </span><span id="380" class="l"><a class="l" href="#380">380: </a>        <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::WORKER_ACCPT);
-</span><span id="381" class="l"><a class="l" href="#381">381: </a>        <span class="php-var">$this</span>-&gt;requestBacklog[] = @<span class="php-keyword2">stream_socket_accept</span>(<span class="php-var">$this</span>-&gt;socketFileDescriptor, <span class="php-num">5</span>);
-</span><span id="382" class="l"><a class="l" href="#382">382: </a>        <span class="php-var">$this</span>-&gt;process-&gt;processUnLock();
-</span><span id="383" class="l"><a class="l" href="#383">383: </a>        <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::WORKER_READ);
-</span><span id="384" class="l"><a class="l" href="#384">384: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;requestBacklog <span class="php-keyword1">as</span> <span class="php-var">$i</span> =&gt; <span class="php-var">$conn</span>) {
-</span><span id="385" class="l"><a class="l" href="#385">385: </a>            <span class="php-var">$keepAliveTime</span> = <span class="php-num">5</span>;
-</span><span id="386" class="l"><a class="l" href="#386">386: </a>            <span class="php-var">$delay</span> = <span class="php-num">1</span>;
-</span><span id="387" class="l"><a class="l" href="#387">387: </a>            <span class="php-keyword1">while</span> (!<span class="php-keyword2">feof</span>(<span class="php-var">$conn</span>)) {
-</span><span id="388" class="l"><a class="l" href="#388">388: </a>                <span class="php-var">$delay</span>++;
-</span><span id="389" class="l"><a class="l" href="#389">389: </a>                <span class="php-keyword1">if</span> (<span class="php-var">$delay</span> &gt; - <span class="php-var">$keepAliveTime</span>) {
-</span><span id="390" class="l"><a class="l" href="#390">390: </a>                    <span class="php-keyword1">break</span>;
-</span><span id="391" class="l"><a class="l" href="#391">391: </a>                }
-</span><span id="392" class="l"><a class="l" href="#392">392: </a>            }
-</span><span id="393" class="l"><a class="l" href="#393">393: </a>            <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::WORKER_WRIER);
-</span><span id="394" class="l"><a class="l" href="#394">394: </a>            <span class="php-var">$this</span>-&gt;returnServerStatus(<span class="php-num">200</span>);
-</span><span id="395" class="l"><a class="l" href="#395">395: </a>            <span class="php-var">$header</span> = <span class="php-var">$this</span>-&gt;responseStatus;
-</span><span id="396" class="l"><a class="l" href="#396">396: </a>            <span class="php-var">$header</span> .= <span class="php-quote">&quot;Connection: close\r\n\r\n&quot;</span>;
-</span><span id="397" class="l"><a class="l" href="#397">397: </a>            <span class="php-var">$header</span> .= <span class="php-quote">'hello world'</span>;
-</span><span id="398" class="l"><a class="l" href="#398">398: </a>            <span class="php-keyword2">fwrite</span>(<span class="php-var">$conn</span>, <span class="php-var">$header</span>);
-</span><span id="399" class="l"><a class="l" href="#399">399: </a>            <span class="php-keyword2">fclose</span>(<span class="php-var">$conn</span>);
-</span><span id="400" class="l"><a class="l" href="#400">400: </a>            <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::WORKER_IDLE);
-</span><span id="401" class="l"><a class="l" href="#401">401: </a>            <span class="php-keyword1">unset</span>(<span class="php-var">$this</span>-&gt;requestBacklog[<span class="php-var">$i</span>]);
-</span><span id="402" class="l"><a class="l" href="#402">402: </a>            <span class="php-comment">//$this-&gt;callApplicationRouter();</span>
-</span><span id="403" class="l"><a class="l" href="#403">403: </a>            debugPrint(<span class="php-quote">'request complete'</span>);
-</span><span id="404" class="l"><a class="l" href="#404">404: </a>        }
-</span><span id="405" class="l"><a class="l" href="#405">405: </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">true</span>;
-</span><span id="406" class="l"><a class="l" href="#406">406: </a>    }
-</span><span id="407" class="l"><a class="l" href="#407">407: </a>
-</span><span id="408" class="l"><a class="l" href="#408">408: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_callApplicationRouter" href="#_callApplicationRouter">callApplicationRouter</a>() {
-</span><span id="409" class="l"><a class="l" href="#409">409: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;applicationRouter <span class="php-keyword1">as</span> <span class="php-var">$router</span>) {
-</span><span id="410" class="l"><a class="l" href="#410">410: </a>            <span class="php-keyword2">call_user_func_array</span>(<span class="php-var">$router</span>[<span class="php-num">0</span>], <span class="php-var">$router</span>[<span class="php-num">1</span>]);
-</span><span id="411" class="l"><a class="l" href="#411">411: </a>        }
-</span><span id="412" class="l"><a class="l" href="#412">412: </a>    }
-</span><span id="413" class="l"><a class="l" href="#413">413: </a>
-</span><span id="414" class="l"><a class="l" href="#414">414: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIWorkerExit" href="#_CGIWorkerExit">CGIWorkerExit</a>() {
-</span><span id="415" class="l"><a class="l" href="#415">415: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;requestBacklog <span class="php-keyword1">as</span> <span class="php-var">$conn</span>) {
-</span><span id="416" class="l"><a class="l" href="#416">416: </a>            <span class="php-keyword1">if</span> (<span class="php-keyword2">is_resource</span>(<span class="php-var">$conn</span>)) {
-</span><span id="417" class="l"><a class="l" href="#417">417: </a>                <span class="php-keyword2">fclose</span>(<span class="php-var">$conn</span>);
-</span><span id="418" class="l"><a class="l" href="#418">418: </a>                <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::CMD_QUIT);
-</span><span id="419" class="l"><a class="l" href="#419">419: </a>                <span class="php-keyword2">fclose</span>(<span class="php-var">$this</span>-&gt;IPCSock);
-</span><span id="420" class="l"><a class="l" href="#420">420: </a>            }
-</span><span id="421" class="l"><a class="l" href="#421">421: </a>        }
-</span><span id="422" class="l"><a class="l" href="#422">422: </a>    }
-</span><span id="423" class="l"><a class="l" href="#423">423: </a>
-</span><span id="424" class="l"><a class="l" href="#424">424: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIWorkerProcessIPCWrite" href="#_CGIWorkerProcessIPCWrite">CGIWorkerProcessIPCWrite</a>(<span class="php-var">$status</span>) {
-</span><span id="425" class="l"><a class="l" href="#425">425: </a>        <span class="php-var">$pid</span> = <span class="php-keyword2">posix_getpid</span>();
-</span><span id="426" class="l"><a class="l" href="#426">426: </a>        <span class="php-var">$this</span>-&gt;process-&gt;IPCWrite(<span class="php-var">$this</span>-&gt;IPCSock, <span class="php-keyword1">array</span>(<span class="php-var">$pid</span>, <span class="php-var">$status</span>));
-</span><span id="427" class="l"><a class="l" href="#427">427: </a>    }
-</span><span id="428" class="l"><a class="l" href="#428">428: </a>
-</span><span id="429" class="l"><a class="l" href="#429">429: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIWorkerProcessIPCRead" href="#_CGIWorkerProcessIPCRead">CGIWorkerProcessIPCRead</a>() {
-</span><span id="430" class="l"><a class="l" href="#430">430: </a>        <span class="php-var">$cmd</span> = <span class="php-var">$this</span>-&gt;process-&gt;IPCRead(<span class="php-var">$this</span>-&gt;IPCSock);
-</span><span id="431" class="l"><a class="l" href="#431">431: </a>        <span class="php-keyword1">switch</span> (<span class="php-var">$cmd</span>) {
-</span><span id="432" class="l"><a class="l" href="#432">432: </a>            <span class="php-keyword1">case</span> self::CMD_QUIT:
-</span><span id="433" class="l"><a class="l" href="#433">433: </a>                <span class="php-var">$this</span>-&gt;CIGWorkerExit();
-</span><span id="434" class="l"><a class="l" href="#434">434: </a>                <span class="php-keyword1">break</span>;
-</span><span id="435" class="l"><a class="l" href="#435">435: </a>            <span class="php-keyword1">case</span> self::CMD_TERMINATE:
-</span><span id="436" class="l"><a class="l" href="#436">436: </a>                <span class="php-var">$this</span>-&gt;CGIWorkerExit();
-</span><span id="437" class="l"><a class="l" href="#437">437: </a>                <span class="php-keyword1">break</span>;
-</span><span id="438" class="l"><a class="l" href="#438">438: </a>            <span class="php-keyword1">default</span> :
-</span><span id="439" class="l"><a class="l" href="#439">439: </a>                <span class="php-keyword1">break</span>;
-</span><span id="440" class="l"><a class="l" href="#440">440: </a>        }
-</span><span id="441" class="l"><a class="l" href="#441">441: </a>    }
-</span><span id="442" class="l"><a class="l" href="#442">442: </a>
-</span><span id="443" class="l"><a class="l" href="#443">443: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_getWorkerList" href="#_getWorkerList">getWorkerList</a>() {
-</span><span id="444" class="l"><a class="l" href="#444">444: </a>        <span class="php-var">$workPidList</span> = <span class="php-var">$this</span>-&gt;process-&gt;getChildProcessList();
-</span><span id="445" class="l"><a class="l" href="#445">445: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$workPidList</span> <span class="php-keyword1">as</span> <span class="php-var">$pid</span> =&gt; <span class="php-var">$pinfo</span>) {
-</span><span id="446" class="l"><a class="l" href="#446">446: </a>            <span class="php-keyword1">if</span> (!<span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$pid</span>])) {
-</span><span id="447" class="l"><a class="l" href="#447">447: </a>                <span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$pid</span>] = self::WORKER_IDLE;
-</span><span id="448" class="l"><a class="l" href="#448">448: </a>                <span class="php-var">$this</span>-&gt;workProcessSockList[<span class="php-var">$pid</span>] = <span class="php-var">$pinfo</span>[<span class="php-num">0</span>][<span class="php-num">0</span>];
-</span><span id="449" class="l"><a class="l" href="#449">449: </a>                <span class="php-keyword2">fclose</span>(<span class="php-var">$pinfo</span>[<span class="php-num">0</span>][<span class="php-num">1</span>]);
-</span><span id="450" class="l"><a class="l" href="#450">450: </a>            }
-</span><span id="451" class="l"><a class="l" href="#451">451: </a>        }
-</span><span id="452" class="l"><a class="l" href="#452">452: </a>        <span class="php-var">$this</span>-&gt;currentProcessNum = <span class="php-keyword2">count</span>(<span class="php-var">$this</span>-&gt;workProcessPool);
-</span><span id="453" class="l"><a class="l" href="#453">453: </a>    }
-</span><span id="454" class="l"><a class="l" href="#454">454: </a>
-</span><span id="455" class="l"><a class="l" href="#455">455: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIMasterProcessLoopCallBack" href="#_CGIMasterProcessLoopCallBack">CGIMasterProcessLoopCallBack</a>(<span class="php-var">$read</span>) {
-</span><span id="456" class="l"><a class="l" href="#456">456: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$read</span> <span class="php-keyword1">as</span> <span class="php-var">$r</span>) {
-</span><span id="457" class="l"><a class="l" href="#457">457: </a>            <span class="php-var">$workerStatus</span> = <span class="php-var">$this</span>-&gt;process-&gt;IPCRead(<span class="php-var">$r</span>);
-</span><span id="458" class="l"><a class="l" href="#458">458: </a>            <span class="php-keyword1">if</span> (<span class="php-keyword2">is_array</span>(<span class="php-var">$workerStatus</span>)) {
-</span><span id="459" class="l"><a class="l" href="#459">459: </a>                <span class="php-keyword1">switch</span> (<span class="php-var">$workerStatus</span>[<span class="php-num">1</span>]) {
-</span><span id="460" class="l"><a class="l" href="#460">460: </a>                    <span class="php-keyword1">case</span> self::CMD_QUIT:
-</span><span id="461" class="l"><a class="l" href="#461">461: </a>                    <span class="php-keyword1">case</span> self::CMD_TERMINATE:
-</span><span id="462" class="l"><a class="l" href="#462">462: </a>                        <span class="php-keyword1">unset</span>(<span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$workerStatus</span>[<span class="php-num">0</span>]]);
-</span><span id="463" class="l"><a class="l" href="#463">463: </a>                        <span class="php-keyword2">fclose</span>(<span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$workerStatus</span>[<span class="php-num">0</span>]][<span class="php-quote">'socket'</span>]);
-</span><span id="464" class="l"><a class="l" href="#464">464: </a>                        <span class="php-var">$this</span>-&gt;currentProcessNum--;
-</span><span id="465" class="l"><a class="l" href="#465">465: </a>                        <span class="php-keyword1">break</span>;
-</span><span id="466" class="l"><a class="l" href="#466">466: </a>                    <span class="php-keyword1">case</span> self::WORKER_IDLE:
-</span><span id="467" class="l"><a class="l" href="#467">467: </a>                        <span class="php-var">$this</span>-&gt;idleNum++;
-</span><span id="468" class="l"><a class="l" href="#468">468: </a>                        <span class="php-keyword1">break</span>;
-</span><span id="469" class="l"><a class="l" href="#469">469: </a>                    <span class="php-keyword1">case</span> self::WORKER_ACCPT:
-</span><span id="470" class="l"><a class="l" href="#470">470: </a>                        <span class="php-var">$this</span>-&gt;idleNum--;
-</span><span id="471" class="l"><a class="l" href="#471">471: </a>                        <span class="php-keyword1">break</span>;
-</span><span id="472" class="l"><a class="l" href="#472">472: </a>                    <span class="php-keyword1">default</span> :
-</span><span id="473" class="l"><a class="l" href="#473">473: </a>                        <span class="php-keyword1">break</span>;
-</span><span id="474" class="l"><a class="l" href="#474">474: </a>                }
-</span><span id="475" class="l"><a class="l" href="#475">475: </a>                <span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$workerStatus</span>[<span class="php-num">0</span>]] = <span class="php-var">$workerStatus</span>[<span class="php-num">1</span>];
-</span><span id="476" class="l"><a class="l" href="#476">476: </a>                debugPrint(<span class="php-var">$this</span>-&gt;currentProcessNum);
-</span><span id="477" class="l"><a class="l" href="#477">477: </a>                <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;idleNum &lt;= <span class="php-num">0</span> &amp;&amp; <span class="php-var">$this</span>-&gt;currentProcessNum + <span class="php-num">1</span> &lt;= <span class="php-var">$this</span>-&gt;maxWorkNum) {
-</span><span id="478" class="l"><a class="l" href="#478">478: </a>                    <span class="php-var">$this</span>-&gt;process-&gt;createChildProcess(<span class="php-num">1</span>, <span class="php-keyword1">array</span>(<span class="php-var">$this</span>, <span class="php-quote">'CGIWorkProcessCallbackProxy'</span>));
-</span><span id="479" class="l"><a class="l" href="#479">479: </a>                    <span class="php-var">$this</span>-&gt;getWorkerList();
-</span><span id="480" class="l"><a class="l" href="#480">480: </a>                    <span class="php-var">$this</span>-&gt;idleNum++;
-</span><span id="481" class="l"><a class="l" href="#481">481: </a>                }
-</span><span id="482" class="l"><a class="l" href="#482">482: </a>            }
-</span><span id="483" class="l"><a class="l" href="#483">483: </a>            <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;masterExit) {
-</span><span id="484" class="l"><a class="l" href="#484">484: </a>                <span class="php-var">$this</span>-&gt;delayTime++;
-</span><span id="485" class="l"><a class="l" href="#485">485: </a>                <span class="php-var">$this</span>-&gt;CGIServerExit();
-</span><span id="486" class="l"><a class="l" href="#486">486: </a>                <span class="php-keyword1">continue</span>;
-</span><span id="487" class="l"><a class="l" href="#487">487: </a>            }
-</span><span id="488" class="l"><a class="l" href="#488">488: </a>        }
-</span><span id="489" class="l"><a class="l" href="#489">489: </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">true</span>;
-</span><span id="490" class="l"><a class="l" href="#490">490: </a>    }
-</span><span id="491" class="l"><a class="l" href="#491">491: </a>
-</span><span id="492" class="l"><a class="l" href="#492">492: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIMasterProcess" href="#_CGIMasterProcess">CGIMasterProcess</a>() {
-</span><span id="493" class="l"><a class="l" href="#493">493: </a>        <span class="php-var">$this</span>-&gt;delayTime = <span class="php-num">0</span>;
-</span><span id="494" class="l"><a class="l" href="#494">494: </a>        <span class="php-var">$this</span>-&gt;getWorkerList();
-</span><span id="495" class="l"><a class="l" href="#495">495: </a>        <span class="php-var">$this</span>-&gt;idleNum = <span class="php-keyword2">count</span>(<span class="php-var">$this</span>-&gt;workProcessPool);
-</span><span id="496" class="l"><a class="l" href="#496">496: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;enableEvIo) {
-</span><span id="497" class="l"><a class="l" href="#497">497: </a>            <span class="php-var">$evloop</span> = <span class="php-keyword1">new</span> \EvLoop(\Ev::recommendedBackends());
-</span><span id="498" class="l"><a class="l" href="#498">498: </a>        }
-</span><span id="499" class="l"><a class="l" href="#499">499: </a>        <span class="php-keyword1">while</span> (<span class="php-keyword1">true</span>) {
-</span><span id="500" class="l"><a class="l" href="#500">500: </a>            <span class="php-var">$write</span> = <span class="php-var">$except</span> = <span class="php-keyword1">array</span>();
-</span><span id="501" class="l"><a class="l" href="#501">501: </a>            <span class="php-var">$read</span> = <span class="php-var">$this</span>-&gt;workProcessSockList;
-</span><span id="502" class="l"><a class="l" href="#502">502: </a>            <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;enableEvIo) {
-</span><span id="503" class="l"><a class="l" href="#503">503: </a>                <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;workProcessSockList <span class="php-keyword1">as</span> <span class="php-var">$sock</span>) {
-</span><span id="504" class="l"><a class="l" href="#504">504: </a>                    <span class="php-var">$evloop</span>-&gt;io(<span class="php-var">$sock</span>, \Ev::READ, <span class="php-keyword1">function</span> (<span class="php-var">$w</span>) <span class="php-keyword1">use</span>(<span class="php-var">$evloop</span>, <span class="php-var">$read</span>) {
-</span><span id="505" class="l"><a class="l" href="#505">505: </a>                                <span class="php-var">$this</span>-&gt;CGIMasterProcessLoopCallBack(<span class="php-var">$read</span>);
-</span><span id="506" class="l"><a class="l" href="#506">506: </a>                                <span class="php-comment">//$w-&gt;stop();</span>
-</span><span id="507" class="l"><a class="l" href="#507">507: </a>                                <span class="php-comment">//$evloop-&gt;stop(\Ev::BREAK_ALL);</span>
-</span><span id="508" class="l"><a class="l" href="#508">508: </a>                                <span class="php-keyword1">return</span> <span class="php-keyword1">true</span>;
-</span><span id="509" class="l"><a class="l" href="#509">509: </a>                            });
-</span><span id="510" class="l"><a class="l" href="#510">510: </a>                }
-</span><span id="511" class="l"><a class="l" href="#511">511: </a>                <span class="php-var">$evloop</span>-&gt;run();
-</span><span id="512" class="l"><a class="l" href="#512">512: </a>                <span class="php-comment">//gc_collect_cycles();</span>
-</span><span id="513" class="l"><a class="l" href="#513">513: </a>            } <span class="php-keyword1">else</span> {
-</span><span id="514" class="l"><a class="l" href="#514">514: </a>                <span class="php-var">$chgNum</span> = <span class="php-keyword2">stream_select</span>(<span class="php-var">$read</span>, <span class="php-var">$write</span>, <span class="php-var">$except</span>, <span class="php-num">0</span>, <span class="php-num">2000000</span>);
-</span><span id="515" class="l"><a class="l" href="#515">515: </a>                <span class="php-keyword1">if</span> (<span class="php-var">$chgNum</span> &gt; <span class="php-num">0</span>) {
-</span><span id="516" class="l"><a class="l" href="#516">516: </a>                    <span class="php-var">$this</span>-&gt;CGIMasterProcessLoopCallBack(<span class="php-var">$read</span>);
-</span><span id="517" class="l"><a class="l" href="#517">517: </a>                }
-</span><span id="518" class="l"><a class="l" href="#518">518: </a>            }
-</span><span id="519" class="l"><a class="l" href="#519">519: </a>        }
-</span><span id="520" class="l"><a class="l" href="#520">520: </a>        pcntl_wait(<span class="php-var">$status</span>);
-</span><span id="521" class="l"><a class="l" href="#521">521: </a>    }
-</span><span id="522" class="l"><a class="l" href="#522">522: </a>
-</span><span id="523" class="l"><a class="l" href="#523">523: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIServerExit" href="#_CGIServerExit">CGIServerExit</a>() {
-</span><span id="524" class="l"><a class="l" href="#524">524: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;workProcessPool <span class="php-keyword1">as</span> <span class="php-var">$pid</span> =&gt; <span class="php-var">$pinfo</span>) {
-</span><span id="525" class="l"><a class="l" href="#525">525: </a>            <span class="php-var">$this</span>-&gt;process-&gt;IPCWrite(<span class="php-var">$pinfo</span>[<span class="php-quote">'socket'</span>], self::CMD_QUIT);
-</span><span id="526" class="l"><a class="l" href="#526">526: </a>        }
-</span><span id="527" class="l"><a class="l" href="#527">527: </a>        pcntl_sigtimedwait(SIGCHLD, <span class="php-var">$siginfo</span>, <span class="php-num">1</span>);
-</span><span id="528" class="l"><a class="l" href="#528">528: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;delayTime &gt; <span class="php-num">5</span>) {
-</span><span id="529" class="l"><a class="l" href="#529">529: </a>            <span class="php-var">$this</span>-&gt;process-&gt;registerChlidProcessSignalHandler();
-</span><span id="530" class="l"><a class="l" href="#530">530: </a>            <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;workProcessPool <span class="php-keyword1">as</span> <span class="php-var">$pid</span> =&gt; <span class="php-var">$pinfo</span>) {
-</span><span id="531" class="l"><a class="l" href="#531">531: </a>                <span class="php-keyword2">posix_kill</span>(<span class="php-var">$pid</span>, SIGKILL);
-</span><span id="532" class="l"><a class="l" href="#532">532: </a>                <span class="php-keyword2">fclose</span>(<span class="php-var">$pinfo</span>[<span class="php-quote">'socket'</span>]);
-</span><span id="533" class="l"><a class="l" href="#533">533: </a>            }
-</span><span id="534" class="l"><a class="l" href="#534">534: </a>        }
-</span><span id="535" class="l"><a class="l" href="#535">535: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;currentProcessNum &lt;= <span class="php-num">0</span> ||
-</span><span id="536" class="l"><a class="l" href="#536">536: </a>                <span class="php-keyword2">count</span>(<span class="php-var">$this</span>-&gt;process-&gt;getChildProcessList()) &lt;= <span class="php-num">0</span>) {
-</span><span id="537" class="l"><a class="l" href="#537">537: </a>            <span class="php-keyword2">fclose</span>(<span class="php-var">$this</span>-&gt;socketFileDescriptor);
-</span><span id="538" class="l"><a class="l" href="#538">538: </a>            <span class="php-comment">// exit(0);</span>
-</span><span id="539" class="l"><a class="l" href="#539">539: </a>        }
-</span><span id="540" class="l"><a class="l" href="#540">540: </a>    }
-</span><span id="541" class="l"><a class="l" href="#541">541: </a>
-</span><span id="542" class="l"><a class="l" href="#542">542: </a>}
-</span><span id="543" class="l"><a class="l" href="#543">543: </a></span></code></pre>
+</span><span id="381" class="l"><a class="l" href="#381">381: </a>        <span class="php-var">$this</span>-&gt;requestBacklog[] = @<span class="php-keyword2">stream_socket_accept</span>(<span class="php-var">$this</span>-&gt;socketFileDescriptor, <span class="php-num">5</span>, <span class="php-var">$clientAddress</span>);
+</span><span id="382" class="l"><a class="l" href="#382">382: </a>        <span class="php-var">$_SERVER</span>[<span class="php-quote">'REMOTE_ADDR'</span>] = <span class="php-var">$clientAddress</span>;
+</span><span id="383" class="l"><a class="l" href="#383">383: </a>        <span class="php-var">$this</span>-&gt;process-&gt;processUnLock();
+</span><span id="384" class="l"><a class="l" href="#384">384: </a>        <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::WORKER_READ);
+</span><span id="385" class="l"><a class="l" href="#385">385: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;requestBacklog <span class="php-keyword1">as</span> <span class="php-var">$i</span> =&gt; <span class="php-var">$conn</span>) {
+</span><span id="386" class="l"><a class="l" href="#386">386: </a>            <span class="php-var">$keepAliveTime</span> = <span class="php-num">5</span>;
+</span><span id="387" class="l"><a class="l" href="#387">387: </a>            <span class="php-var">$delay</span> = <span class="php-num">1</span>;
+</span><span id="388" class="l"><a class="l" href="#388">388: </a>            <span class="php-keyword1">while</span> (!<span class="php-keyword2">feof</span>(<span class="php-var">$conn</span>)) {
+</span><span id="389" class="l"><a class="l" href="#389">389: </a>                <span class="php-var">$delay</span>++;
+</span><span id="390" class="l"><a class="l" href="#390">390: </a>                <span class="php-keyword1">if</span> (<span class="php-var">$delay</span> &gt; - <span class="php-var">$keepAliveTime</span>) {
+</span><span id="391" class="l"><a class="l" href="#391">391: </a>                    <span class="php-keyword1">break</span>;
+</span><span id="392" class="l"><a class="l" href="#392">392: </a>                }
+</span><span id="393" class="l"><a class="l" href="#393">393: </a>            }
+</span><span id="394" class="l"><a class="l" href="#394">394: </a>            <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::WORKER_WRIER);
+</span><span id="395" class="l"><a class="l" href="#395">395: </a>            <span class="php-var">$this</span>-&gt;returnServerStatus(<span class="php-num">200</span>);
+</span><span id="396" class="l"><a class="l" href="#396">396: </a>            <span class="php-var">$header</span> = <span class="php-var">$this</span>-&gt;responseStatus;
+</span><span id="397" class="l"><a class="l" href="#397">397: </a>            <span class="php-var">$header</span> .= <span class="php-quote">&quot;Connection: close\r\n\r\n&quot;</span>;
+</span><span id="398" class="l"><a class="l" href="#398">398: </a>            <span class="php-var">$header</span> .= <span class="php-quote">'hello world'</span>;
+</span><span id="399" class="l"><a class="l" href="#399">399: </a>            <span class="php-keyword2">fwrite</span>(<span class="php-var">$conn</span>, <span class="php-var">$header</span>);
+</span><span id="400" class="l"><a class="l" href="#400">400: </a>            <span class="php-keyword2">fclose</span>(<span class="php-var">$conn</span>);
+</span><span id="401" class="l"><a class="l" href="#401">401: </a>            <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::WORKER_IDLE);
+</span><span id="402" class="l"><a class="l" href="#402">402: </a>            <span class="php-keyword1">unset</span>(<span class="php-var">$this</span>-&gt;requestBacklog[<span class="php-var">$i</span>]);
+</span><span id="403" class="l"><a class="l" href="#403">403: </a>            <span class="php-comment">//$this-&gt;callApplicationRouter();</span>
+</span><span id="404" class="l"><a class="l" href="#404">404: </a>            debugPrint(<span class="php-quote">'request complete'</span>);
+</span><span id="405" class="l"><a class="l" href="#405">405: </a>        }
+</span><span id="406" class="l"><a class="l" href="#406">406: </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">true</span>;
+</span><span id="407" class="l"><a class="l" href="#407">407: </a>    }
+</span><span id="408" class="l"><a class="l" href="#408">408: </a>
+</span><span id="409" class="l"><a class="l" href="#409">409: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_callApplicationRouter" href="#_callApplicationRouter">callApplicationRouter</a>() {
+</span><span id="410" class="l"><a class="l" href="#410">410: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;applicationRouter <span class="php-keyword1">as</span> <span class="php-var">$router</span>) {
+</span><span id="411" class="l"><a class="l" href="#411">411: </a>            <span class="php-keyword2">call_user_func_array</span>(<span class="php-var">$router</span>[<span class="php-num">0</span>], <span class="php-var">$router</span>[<span class="php-num">1</span>]);
+</span><span id="412" class="l"><a class="l" href="#412">412: </a>        }
+</span><span id="413" class="l"><a class="l" href="#413">413: </a>    }
+</span><span id="414" class="l"><a class="l" href="#414">414: </a>
+</span><span id="415" class="l"><a class="l" href="#415">415: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIWorkerExit" href="#_CGIWorkerExit">CGIWorkerExit</a>() {
+</span><span id="416" class="l"><a class="l" href="#416">416: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;requestBacklog <span class="php-keyword1">as</span> <span class="php-var">$conn</span>) {
+</span><span id="417" class="l"><a class="l" href="#417">417: </a>            <span class="php-keyword1">if</span> (<span class="php-keyword2">is_resource</span>(<span class="php-var">$conn</span>)) {
+</span><span id="418" class="l"><a class="l" href="#418">418: </a>                <span class="php-keyword2">fclose</span>(<span class="php-var">$conn</span>);
+</span><span id="419" class="l"><a class="l" href="#419">419: </a>                <span class="php-var">$this</span>-&gt;CGIWorkerProcessIPCWrite(self::CMD_QUIT);
+</span><span id="420" class="l"><a class="l" href="#420">420: </a>                <span class="php-keyword2">fclose</span>(<span class="php-var">$this</span>-&gt;IPCSock);
+</span><span id="421" class="l"><a class="l" href="#421">421: </a>            }
+</span><span id="422" class="l"><a class="l" href="#422">422: </a>        }
+</span><span id="423" class="l"><a class="l" href="#423">423: </a>    }
+</span><span id="424" class="l"><a class="l" href="#424">424: </a>
+</span><span id="425" class="l"><a class="l" href="#425">425: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIWorkerProcessIPCWrite" href="#_CGIWorkerProcessIPCWrite">CGIWorkerProcessIPCWrite</a>(<span class="php-var">$status</span>) {
+</span><span id="426" class="l"><a class="l" href="#426">426: </a>        <span class="php-var">$pid</span> = <span class="php-keyword2">posix_getpid</span>();
+</span><span id="427" class="l"><a class="l" href="#427">427: </a>        <span class="php-var">$this</span>-&gt;process-&gt;IPCWrite(<span class="php-var">$this</span>-&gt;IPCSock, <span class="php-keyword1">array</span>(<span class="php-var">$pid</span>, <span class="php-var">$status</span>));
+</span><span id="428" class="l"><a class="l" href="#428">428: </a>    }
+</span><span id="429" class="l"><a class="l" href="#429">429: </a>
+</span><span id="430" class="l"><a class="l" href="#430">430: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIWorkerProcessIPCRead" href="#_CGIWorkerProcessIPCRead">CGIWorkerProcessIPCRead</a>() {
+</span><span id="431" class="l"><a class="l" href="#431">431: </a>        <span class="php-var">$cmd</span> = <span class="php-var">$this</span>-&gt;process-&gt;IPCRead(<span class="php-var">$this</span>-&gt;IPCSock);
+</span><span id="432" class="l"><a class="l" href="#432">432: </a>        <span class="php-keyword1">switch</span> (<span class="php-var">$cmd</span>) {
+</span><span id="433" class="l"><a class="l" href="#433">433: </a>            <span class="php-keyword1">case</span> self::CMD_QUIT:
+</span><span id="434" class="l"><a class="l" href="#434">434: </a>                <span class="php-var">$this</span>-&gt;CIGWorkerExit();
+</span><span id="435" class="l"><a class="l" href="#435">435: </a>                <span class="php-keyword1">break</span>;
+</span><span id="436" class="l"><a class="l" href="#436">436: </a>            <span class="php-keyword1">case</span> self::CMD_TERMINATE:
+</span><span id="437" class="l"><a class="l" href="#437">437: </a>                <span class="php-var">$this</span>-&gt;CGIWorkerExit();
+</span><span id="438" class="l"><a class="l" href="#438">438: </a>                <span class="php-keyword1">break</span>;
+</span><span id="439" class="l"><a class="l" href="#439">439: </a>            <span class="php-keyword1">default</span> :
+</span><span id="440" class="l"><a class="l" href="#440">440: </a>                <span class="php-keyword1">break</span>;
+</span><span id="441" class="l"><a class="l" href="#441">441: </a>        }
+</span><span id="442" class="l"><a class="l" href="#442">442: </a>    }
+</span><span id="443" class="l"><a class="l" href="#443">443: </a>
+</span><span id="444" class="l"><a class="l" href="#444">444: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_getWorkerList" href="#_getWorkerList">getWorkerList</a>() {
+</span><span id="445" class="l"><a class="l" href="#445">445: </a>        <span class="php-var">$workPidList</span> = <span class="php-var">$this</span>-&gt;process-&gt;getChildProcessList();
+</span><span id="446" class="l"><a class="l" href="#446">446: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$workPidList</span> <span class="php-keyword1">as</span> <span class="php-var">$pid</span> =&gt; <span class="php-var">$pinfo</span>) {
+</span><span id="447" class="l"><a class="l" href="#447">447: </a>            <span class="php-keyword1">if</span> (!<span class="php-keyword1">isset</span>(<span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$pid</span>])) {
+</span><span id="448" class="l"><a class="l" href="#448">448: </a>                <span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$pid</span>] = self::WORKER_IDLE;
+</span><span id="449" class="l"><a class="l" href="#449">449: </a>                <span class="php-var">$this</span>-&gt;workProcessSockList[<span class="php-var">$pid</span>] = <span class="php-var">$pinfo</span>[<span class="php-num">0</span>][<span class="php-num">0</span>];
+</span><span id="450" class="l"><a class="l" href="#450">450: </a>                <span class="php-keyword2">fclose</span>(<span class="php-var">$pinfo</span>[<span class="php-num">0</span>][<span class="php-num">1</span>]);
+</span><span id="451" class="l"><a class="l" href="#451">451: </a>            }
+</span><span id="452" class="l"><a class="l" href="#452">452: </a>        }
+</span><span id="453" class="l"><a class="l" href="#453">453: </a>        <span class="php-var">$this</span>-&gt;currentProcessNum = <span class="php-keyword2">count</span>(<span class="php-var">$this</span>-&gt;workProcessPool);
+</span><span id="454" class="l"><a class="l" href="#454">454: </a>    }
+</span><span id="455" class="l"><a class="l" href="#455">455: </a>
+</span><span id="456" class="l"><a class="l" href="#456">456: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIMasterProcessLoopCallBack" href="#_CGIMasterProcessLoopCallBack">CGIMasterProcessLoopCallBack</a>(<span class="php-var">$read</span>) {
+</span><span id="457" class="l"><a class="l" href="#457">457: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$read</span> <span class="php-keyword1">as</span> <span class="php-var">$r</span>) {
+</span><span id="458" class="l"><a class="l" href="#458">458: </a>            <span class="php-var">$workerStatus</span> = <span class="php-var">$this</span>-&gt;process-&gt;IPCRead(<span class="php-var">$r</span>);
+</span><span id="459" class="l"><a class="l" href="#459">459: </a>            <span class="php-keyword1">if</span> (<span class="php-keyword2">is_array</span>(<span class="php-var">$workerStatus</span>)) {
+</span><span id="460" class="l"><a class="l" href="#460">460: </a>                <span class="php-keyword1">switch</span> (<span class="php-var">$workerStatus</span>[<span class="php-num">1</span>]) {
+</span><span id="461" class="l"><a class="l" href="#461">461: </a>                    <span class="php-keyword1">case</span> self::CMD_QUIT:
+</span><span id="462" class="l"><a class="l" href="#462">462: </a>                    <span class="php-keyword1">case</span> self::CMD_TERMINATE:
+</span><span id="463" class="l"><a class="l" href="#463">463: </a>                        <span class="php-keyword1">unset</span>(<span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$workerStatus</span>[<span class="php-num">0</span>]]);
+</span><span id="464" class="l"><a class="l" href="#464">464: </a>                        <span class="php-keyword2">fclose</span>(<span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$workerStatus</span>[<span class="php-num">0</span>]][<span class="php-quote">'socket'</span>]);
+</span><span id="465" class="l"><a class="l" href="#465">465: </a>                        <span class="php-var">$this</span>-&gt;currentProcessNum--;
+</span><span id="466" class="l"><a class="l" href="#466">466: </a>                        <span class="php-keyword1">break</span>;
+</span><span id="467" class="l"><a class="l" href="#467">467: </a>                    <span class="php-keyword1">case</span> self::WORKER_IDLE:
+</span><span id="468" class="l"><a class="l" href="#468">468: </a>                        <span class="php-var">$this</span>-&gt;idleNum++;
+</span><span id="469" class="l"><a class="l" href="#469">469: </a>                        <span class="php-keyword1">break</span>;
+</span><span id="470" class="l"><a class="l" href="#470">470: </a>                    <span class="php-keyword1">case</span> self::WORKER_ACCPT:
+</span><span id="471" class="l"><a class="l" href="#471">471: </a>                        <span class="php-var">$this</span>-&gt;idleNum--;
+</span><span id="472" class="l"><a class="l" href="#472">472: </a>                        <span class="php-keyword1">break</span>;
+</span><span id="473" class="l"><a class="l" href="#473">473: </a>                    <span class="php-keyword1">default</span> :
+</span><span id="474" class="l"><a class="l" href="#474">474: </a>                        <span class="php-keyword1">break</span>;
+</span><span id="475" class="l"><a class="l" href="#475">475: </a>                }
+</span><span id="476" class="l"><a class="l" href="#476">476: </a>                <span class="php-var">$this</span>-&gt;workProcessPool[<span class="php-var">$workerStatus</span>[<span class="php-num">0</span>]] = <span class="php-var">$workerStatus</span>[<span class="php-num">1</span>];
+</span><span id="477" class="l"><a class="l" href="#477">477: </a>                debugPrint(<span class="php-var">$this</span>-&gt;currentProcessNum);
+</span><span id="478" class="l"><a class="l" href="#478">478: </a>                <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;idleNum &lt;= <span class="php-num">0</span> &amp;&amp; <span class="php-var">$this</span>-&gt;currentProcessNum + <span class="php-num">1</span> &lt;= <span class="php-var">$this</span>-&gt;maxWorkNum) {
+</span><span id="479" class="l"><a class="l" href="#479">479: </a>                    <span class="php-var">$this</span>-&gt;process-&gt;createChildProcess(<span class="php-num">1</span>, <span class="php-keyword1">array</span>(<span class="php-var">$this</span>, <span class="php-quote">'CGIWorkProcessCallbackProxy'</span>));
+</span><span id="480" class="l"><a class="l" href="#480">480: </a>                    <span class="php-var">$this</span>-&gt;getWorkerList();
+</span><span id="481" class="l"><a class="l" href="#481">481: </a>                    <span class="php-var">$this</span>-&gt;idleNum++;
+</span><span id="482" class="l"><a class="l" href="#482">482: </a>                }
+</span><span id="483" class="l"><a class="l" href="#483">483: </a>            }
+</span><span id="484" class="l"><a class="l" href="#484">484: </a>            <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;masterExit) {
+</span><span id="485" class="l"><a class="l" href="#485">485: </a>                <span class="php-var">$this</span>-&gt;delayTime++;
+</span><span id="486" class="l"><a class="l" href="#486">486: </a>                <span class="php-var">$this</span>-&gt;CGIServerExit();
+</span><span id="487" class="l"><a class="l" href="#487">487: </a>                <span class="php-keyword1">continue</span>;
+</span><span id="488" class="l"><a class="l" href="#488">488: </a>            }
+</span><span id="489" class="l"><a class="l" href="#489">489: </a>        }
+</span><span id="490" class="l"><a class="l" href="#490">490: </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">true</span>;
+</span><span id="491" class="l"><a class="l" href="#491">491: </a>    }
+</span><span id="492" class="l"><a class="l" href="#492">492: </a>
+</span><span id="493" class="l"><a class="l" href="#493">493: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIMasterProcess" href="#_CGIMasterProcess">CGIMasterProcess</a>() {
+</span><span id="494" class="l"><a class="l" href="#494">494: </a>        <span class="php-var">$this</span>-&gt;delayTime = <span class="php-num">0</span>;
+</span><span id="495" class="l"><a class="l" href="#495">495: </a>        <span class="php-var">$this</span>-&gt;getWorkerList();
+</span><span id="496" class="l"><a class="l" href="#496">496: </a>        <span class="php-var">$this</span>-&gt;idleNum = <span class="php-keyword2">count</span>(<span class="php-var">$this</span>-&gt;workProcessPool);
+</span><span id="497" class="l"><a class="l" href="#497">497: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;enableEvIo) {
+</span><span id="498" class="l"><a class="l" href="#498">498: </a>            <span class="php-var">$evloop</span> = <span class="php-keyword1">new</span> \EvLoop(\Ev::recommendedBackends());
+</span><span id="499" class="l"><a class="l" href="#499">499: </a>        }
+</span><span id="500" class="l"><a class="l" href="#500">500: </a>        <span class="php-keyword1">while</span> (<span class="php-keyword1">true</span>) {
+</span><span id="501" class="l"><a class="l" href="#501">501: </a>            <span class="php-var">$write</span> = <span class="php-var">$except</span> = <span class="php-keyword1">array</span>();
+</span><span id="502" class="l"><a class="l" href="#502">502: </a>            <span class="php-var">$read</span> = <span class="php-var">$this</span>-&gt;workProcessSockList;
+</span><span id="503" class="l"><a class="l" href="#503">503: </a>            <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;enableEvIo) {
+</span><span id="504" class="l"><a class="l" href="#504">504: </a>                <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;workProcessSockList <span class="php-keyword1">as</span> <span class="php-var">$sock</span>) {
+</span><span id="505" class="l"><a class="l" href="#505">505: </a>                    <span class="php-var">$evloop</span>-&gt;io(<span class="php-var">$sock</span>, \Ev::READ, <span class="php-keyword1">function</span> (<span class="php-var">$w</span>) <span class="php-keyword1">use</span>(<span class="php-var">$evloop</span>, <span class="php-var">$read</span>) {
+</span><span id="506" class="l"><a class="l" href="#506">506: </a>                                <span class="php-var">$this</span>-&gt;CGIMasterProcessLoopCallBack(<span class="php-var">$read</span>);
+</span><span id="507" class="l"><a class="l" href="#507">507: </a>                                <span class="php-comment">//$w-&gt;stop();</span>
+</span><span id="508" class="l"><a class="l" href="#508">508: </a>                                <span class="php-comment">//$evloop-&gt;stop(\Ev::BREAK_ALL);</span>
+</span><span id="509" class="l"><a class="l" href="#509">509: </a>                                <span class="php-keyword1">return</span> <span class="php-keyword1">true</span>;
+</span><span id="510" class="l"><a class="l" href="#510">510: </a>                            });
+</span><span id="511" class="l"><a class="l" href="#511">511: </a>                }
+</span><span id="512" class="l"><a class="l" href="#512">512: </a>                <span class="php-var">$evloop</span>-&gt;run();
+</span><span id="513" class="l"><a class="l" href="#513">513: </a>                <span class="php-comment">//gc_collect_cycles();</span>
+</span><span id="514" class="l"><a class="l" href="#514">514: </a>            } <span class="php-keyword1">else</span> {
+</span><span id="515" class="l"><a class="l" href="#515">515: </a>                <span class="php-var">$chgNum</span> = <span class="php-keyword2">stream_select</span>(<span class="php-var">$read</span>, <span class="php-var">$write</span>, <span class="php-var">$except</span>, <span class="php-num">0</span>, <span class="php-num">2000000</span>);
+</span><span id="516" class="l"><a class="l" href="#516">516: </a>                <span class="php-keyword1">if</span> (<span class="php-var">$chgNum</span> &gt; <span class="php-num">0</span>) {
+</span><span id="517" class="l"><a class="l" href="#517">517: </a>                    <span class="php-var">$this</span>-&gt;CGIMasterProcessLoopCallBack(<span class="php-var">$read</span>);
+</span><span id="518" class="l"><a class="l" href="#518">518: </a>                }
+</span><span id="519" class="l"><a class="l" href="#519">519: </a>            }
+</span><span id="520" class="l"><a class="l" href="#520">520: </a>        }
+</span><span id="521" class="l"><a class="l" href="#521">521: </a>        pcntl_wait(<span class="php-var">$status</span>);
+</span><span id="522" class="l"><a class="l" href="#522">522: </a>    }
+</span><span id="523" class="l"><a class="l" href="#523">523: </a>
+</span><span id="524" class="l"><a class="l" href="#524">524: </a>    <span class="php-keyword1">private</span> <span class="php-keyword1">function</span> <a id="_CGIServerExit" href="#_CGIServerExit">CGIServerExit</a>() {
+</span><span id="525" class="l"><a class="l" href="#525">525: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;workProcessPool <span class="php-keyword1">as</span> <span class="php-var">$pid</span> =&gt; <span class="php-var">$pinfo</span>) {
+</span><span id="526" class="l"><a class="l" href="#526">526: </a>            <span class="php-var">$this</span>-&gt;process-&gt;IPCWrite(<span class="php-var">$pinfo</span>[<span class="php-quote">'socket'</span>], self::CMD_QUIT);
+</span><span id="527" class="l"><a class="l" href="#527">527: </a>        }
+</span><span id="528" class="l"><a class="l" href="#528">528: </a>        pcntl_sigtimedwait(SIGCHLD, <span class="php-var">$siginfo</span>, <span class="php-num">1</span>);
+</span><span id="529" class="l"><a class="l" href="#529">529: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;delayTime &gt; <span class="php-num">5</span>) {
+</span><span id="530" class="l"><a class="l" href="#530">530: </a>            <span class="php-var">$this</span>-&gt;process-&gt;registerChlidProcessSignalHandler();
+</span><span id="531" class="l"><a class="l" href="#531">531: </a>            <span class="php-keyword1">foreach</span> (<span class="php-var">$this</span>-&gt;workProcessPool <span class="php-keyword1">as</span> <span class="php-var">$pid</span> =&gt; <span class="php-var">$pinfo</span>) {
+</span><span id="532" class="l"><a class="l" href="#532">532: </a>                <span class="php-keyword2">posix_kill</span>(<span class="php-var">$pid</span>, SIGKILL);
+</span><span id="533" class="l"><a class="l" href="#533">533: </a>                <span class="php-keyword2">fclose</span>(<span class="php-var">$pinfo</span>[<span class="php-quote">'socket'</span>]);
+</span><span id="534" class="l"><a class="l" href="#534">534: </a>            }
+</span><span id="535" class="l"><a class="l" href="#535">535: </a>        }
+</span><span id="536" class="l"><a class="l" href="#536">536: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;currentProcessNum &lt;= <span class="php-num">0</span> ||
+</span><span id="537" class="l"><a class="l" href="#537">537: </a>                <span class="php-keyword2">count</span>(<span class="php-var">$this</span>-&gt;process-&gt;getChildProcessList()) &lt;= <span class="php-num">0</span>) {
+</span><span id="538" class="l"><a class="l" href="#538">538: </a>            <span class="php-keyword2">fclose</span>(<span class="php-var">$this</span>-&gt;socketFileDescriptor);
+</span><span id="539" class="l"><a class="l" href="#539">539: </a>            <span class="php-comment">// exit(0);</span>
+</span><span id="540" class="l"><a class="l" href="#540">540: </a>        }
+</span><span id="541" class="l"><a class="l" href="#541">541: </a>    }
+</span><span id="542" class="l"><a class="l" href="#542">542: </a>
+</span><span id="543" class="l"><a class="l" href="#543">543: </a>}
+</span><span id="544" class="l"><a class="l" href="#544">544: </a></span></code></pre>
 
 	<div id="footer">
 		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

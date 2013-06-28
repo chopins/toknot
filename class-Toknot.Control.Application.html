@@ -6,8 +6,8 @@
 
 	<title>Class Toknot\Control\Application | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?3855207076"></script>
+	<script type="text/javascript" src="resources/combined.js?934585053"></script>
+	<script type="text/javascript" src="elementlist.js?4171281783"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,6 +21,8 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
+				<li><a href="namespace-None.html">None</a>
+						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
@@ -79,6 +81,7 @@
 			<h3>Classes</h3>
 			<ul>
 				<li class="active"><a href="class-Toknot.Control.Application.html">Application</a></li>
+				<li><a href="class-Toknot.Control.FMAI.html">FMAI</a></li>
 				<li><a href="class-Toknot.Control.Router.html">Router</a></li>
 				<li><a href="class-Toknot.Control.StandardAutoloader.html">StandardAutoloader</a></li>
 			</ul>
@@ -169,12 +172,12 @@ class="php-quote">'/path/AppPath'</span>);
 
 
 	<div class="info">
-		
+		<b>Final</b><br />
 		
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Control.html">Control</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Control.Application.html#23-328" title="Go to source code">Toknot/Control/Application.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Control.Application.html#23-453" title="Go to source code">Toknot/Control/Application.php</a><br />
 	</div>
 
 
@@ -192,7 +195,7 @@ class="php-quote">'/path/AppPath'</span>);
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#62-102" title="Go to source code">__construct</a>( <span>array <var>$argv</var> = <span class="php-keyword1">array</span>()</span>, <span>integer <var>$argc</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#73-116" title="Go to source code">__construct</a>( <span>array <var>$argv</var> = <span class="php-keyword1">array</span>()</span>, <span>integer <var>$argc</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -282,7 +285,7 @@ class="php-comment">//print number of args</span>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setRouterArgs">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#161-171" title="Go to source code">setRouterArgs</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#190-200" title="Go to source code">setRouterArgs</a>( )</code>
 
 		<div class="description short">
 			
@@ -321,7 +324,7 @@ that is $routerMode, $routerDepth, $notFound, $methodNotAllowed</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_run">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#173-284" title="Go to source code">run</a>( <span>string <var>$appNameSpace</var></span>, <span>string <var>$appPath</var></span>, <span>string <var>$defaultInvoke</var> = <span class="php-quote">'\Index'</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#202-319" title="Go to source code">run</a>( <span>string <var>$appNameSpace</var></span>, <span>string <var>$appPath</var></span>, <span>string <var>$defaultInvoke</var> = <span class="php-quote">'\Index'</span></span> )</code>
 
 		<div class="description short">
 			
@@ -329,7 +332,7 @@ that is $routerMode, $routerDepth, $notFound, $methodNotAllowed</p>
 <code><a href="class-Toknot.Control.RouterInterface.html">Toknot\Control\RouterInterface</a></code> of all method, Toknot Freamework default
 invoke class under application of Controller Dicetory, scan file path is under
 $appPath parameter set path(like: /path/appPath/Controller). The class be invoke
-by toknot of router invoke method with passed instance of Toknot \Toknot\Control\FMAI, you can receive the object of instance when class
+by toknot of router invoke method with passed instance of Toknot <code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code>, you can receive the object of instance when class
 construct</p>
 
 		</div>
@@ -340,7 +343,7 @@ construct</p>
 <code><a href="class-Toknot.Control.RouterInterface.html">Toknot\Control\RouterInterface</a></code> of all method, Toknot Freamework default
 invoke class under application of Controller Dicetory, scan file path is under
 $appPath parameter set path(like: /path/appPath/Controller). The class be invoke
-by toknot of router invoke method with passed instance of Toknot \Toknot\Control\FMAI, you can receive the object of instance when class
+by toknot of router invoke method with passed instance of Toknot <code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code>, you can receive the object of instance when class
 construct</p>
 
 <p>Usual use toknot of router, run framework like below:</p>
@@ -426,11 +429,11 @@ class="php-keyword1">new</span> Application;
 <span
 class="php-comment">//set index page without TopNamespace and ControllerNamespace</span>
 <span
-class="php-comment">//set router mode is get query mode</span>
+class="php-comment">//set router mode is PATH query mode</span>
 <span
 class="php-comment">//set router namespace level is 2</span>
 <span
-class="php-var">$app</span>-&gt;setRouterArgs(Router::ROUTER_GET_QUERY, <span
+class="php-var">$app</span>-&gt;setRouterArgs(Router::ROUTER_PATH, <span
 class="php-num">2</span>);
 
 <span class="php-var">$app</span>-&gt;run(<span
@@ -468,6 +471,64 @@ can not contain application top namespace and Controller layer namespace</dd>
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="tickTraceHandler" id="_tickTraceHandler">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_tickTraceHandler">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#321-329" title="Go to source code">tickTraceHandler</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="uncaughtExceptionHandler" id="_uncaughtExceptionHandler">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_uncaughtExceptionHandler">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#331-343" title="Go to source code">uncaughtExceptionHandler</a>( <span>mixed <var>$e</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="errorReportHandler" id="_errorReportHandler">
 
 		<td class="attributes"><code>
@@ -479,7 +540,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorReportHandler">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#286-294" title="Go to source code">errorReportHandler</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#345-353" title="Go to source code">errorReportHandler</a>( )</code>
 
 		<div class="description short">
 			
@@ -512,7 +573,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setUserRouter">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#296-308" title="Go to source code">setUserRouter</a>( <span>string <var>$routerName</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#355-367" title="Go to source code">setUserRouter</a>( <span>string <var>$routerName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -537,6 +598,180 @@ can not contain application top namespace and Controller layer namespace</dd>
 				<div class="list">
 					<code><code><a href="class-Toknot.Exception.BadNamespaceException.html">Toknot\Exception\BadNamespaceException</a></code></code><br />
 				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="errorExitReportHandler" id="_errorExitReportHandler">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_errorExitReportHandler">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#387-406" title="Go to source code">errorExitReportHandler</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getMemoryUsage" id="_getMemoryUsage">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getMemoryUsage">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#408-417" title="Go to source code">getMemoryUsage</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="pageRunInfo" id="_pageRunInfo">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_pageRunInfo">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#419-436" title="Go to source code">pageRunInfo</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="checkXDebug" id="_checkXDebug">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_checkXDebug">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#438-443" title="Go to source code">checkXDebug</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="__destruct" id="___destruct">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___destruct">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#445-449" title="Go to source code">__destruct</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getAppRoot" id="_getAppRoot">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getAppRoot">#</a>
+		<code><a href="source-class-Toknot.Control.Application.html#450-452" title="Go to source code">getAppRoot</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
 
 
 

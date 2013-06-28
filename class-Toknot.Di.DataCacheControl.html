@@ -6,8 +6,8 @@
 
 	<title>Class Toknot\Di\DataCacheControl | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?1925257259"></script>
-	<script type="text/javascript" src="elementlist.js?3855207076"></script>
+	<script type="text/javascript" src="resources/combined.js?934585053"></script>
+	<script type="text/javascript" src="elementlist.js?4171281783"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,6 +21,8 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
+				<li><a href="namespace-None.html">None</a>
+						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
@@ -81,8 +83,10 @@
 				<li><a href="class-Toknot.Di.ArrayObject.html">ArrayObject</a></li>
 				<li class="active"><a href="class-Toknot.Di.DataCacheControl.html">DataCacheControl</a></li>
 				<li><a href="class-Toknot.Di.FileObject.html">FileObject</a></li>
+				<li><a href="class-Toknot.Di.Log.html">Log</a></li>
 				<li><a href="class-Toknot.Di.Object.html">Object</a></li>
 				<li><a href="class-Toknot.Di.StringObject.html">StringObject</a></li>
+				<li><a href="class-Toknot.Di.Version.html">Version</a></li>
 			</ul>
 
 
@@ -143,7 +147,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Di.html">Di</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Di.DataCacheControl.html#16-148" title="Go to source code">Toknot/Di/DataCacheControl.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Di.DataCacheControl.html#15-181" title="Go to source code">Toknot/Di/DataCacheControl.php</a><br />
 	</div>
 
 
@@ -161,7 +165,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Di.DataCacheControl.html#61-69" title="Go to source code">__construct</a>( <span>string <var>$cacheFile</var></span>, <span>integer <var>$modifyTime</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-Toknot.Di.DataCacheControl.html#54-63" title="Go to source code">__construct</a>( <span>string <var>$cacheHandle</var></span>, <span>integer <var>$modifyTime</var> = <span class="php-num">0</span></span>, <span>mixed <var>$cacheType</var> = <code><a href="class-Toknot.Di.DataCacheControl.html#CACHE_FILE">Toknot\Di\DataCacheControl::<b>CACHE_FILE</b></a></code></span> )</code>
 
 		<div class="description short">
 			
@@ -173,10 +177,12 @@
 
 				<h4>Parameters</h4>
 				<div class="list"><dl>
-					<dt><var>$cacheFile</var></dt>
+					<dt><var>$cacheHandle</var></dt>
 					<dd><code>string</code><br>$cacheFile</dd>
 					<dt><var>$modifyTime</var></dt>
 					<dd><code>integer</code><br>$modifyTime option, if use expire time, pass it</dd>
+					<dt><var>$cacheType</var></dt>
+					<dd></dd>
 				</dl></div>
 
 
@@ -197,7 +203,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_cacheTime">#</a>
-		<code><a href="source-class-Toknot.Di.DataCacheControl.html#71-86" title="Go to source code">cacheTime</a>( )</code>
+		<code><a href="source-class-Toknot.Di.DataCacheControl.html#65-81" title="Go to source code">cacheTime</a>( <span>mixed <var>$key</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -223,6 +229,35 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="createCachePath" id="_createCachePath">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_createCachePath">#</a>
+		<code><a href="source-class-Toknot.Di.DataCacheControl.html#83-89" title="Go to source code">createCachePath</a>( <span>mixed <var>$path</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="useExpire" id="_useExpire">
 
 		<td class="attributes"><code>
@@ -234,7 +269,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_useExpire">#</a>
-		<code><a href="source-class-Toknot.Di.DataCacheControl.html#88-110" title="Go to source code">useExpire</a>( <span>integer <var>$expire</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.DataCacheControl.html#91-98" title="Go to source code">useExpire</a>( <span>integer <var>$expire</var></span> )</code>
 
 		<div class="description short">
 			
@@ -272,7 +307,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save">#</a>
-		<code><a href="source-class-Toknot.Di.DataCacheControl.html#112-130" title="Go to source code">save</a>( <span>array <var>$data</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.DataCacheControl.html#100-125" title="Go to source code">save</a>( <span>mixed <var>$data</var></span>, <span>string <var>$key</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -289,7 +324,9 @@
 				<h4>Parameters</h4>
 				<div class="list"><dl>
 					<dt><var>$data</var></dt>
-					<dd><code>array</code><br>$data</dd>
+					<dd><code>mixed</code><br>$data</dd>
+					<dt><var>$key</var></dt>
+					<dd><code>string</code><br>$key If not use file store, must set</dd>
 				</dl></div>
 
 				<h4>Returns</h4>
@@ -306,7 +343,7 @@
 	<tr data-order="get" id="_get">
 
 		<td class="attributes"><code>
-			 public static
+			 public 
 			boolean|array
 			
 			</code>
@@ -314,7 +351,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_get">#</a>
-		<code><a href="source-class-Toknot.Di.DataCacheControl.html#132-146" title="Go to source code">get</a>( )</code>
+		<code><a href="source-class-Toknot.Di.DataCacheControl.html#127-150" title="Go to source code">get</a>( <span>string <var>$key</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -328,11 +365,87 @@
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$key</var></dt>
+					<dd><code>string</code><br>$key data key</dd>
+				</dl></div>
 
 				<h4>Returns</h4>
 				<div class="list">
 					<code>boolean|array</code><br>if cache data is old return false<br />
 				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="del" id="_del">
+
+		<td class="attributes"><code>
+			 public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_del">#</a>
+		<code><a href="source-class-Toknot.Di.DataCacheControl.html#152-166" title="Go to source code">del</a>( <span>sting <var>$key</var> = <span class="php-quote">''</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Delete cache data</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Delete cache data</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$key</var></dt>
+					<dd><code>sting</code><br>$key</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="exists" id="_exists">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_exists">#</a>
+		<code><a href="source-class-Toknot.Di.DataCacheControl.html#168-179" title="Go to source code">exists</a>( <span>mixed <var>$key</var> = <span class="php-quote">''</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
 
 
 
@@ -355,7 +468,7 @@
 
 		<td class="attributes"><code>string</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.Di.DataCacheControl.html#59" title="Go to source code"><b>CACHE_FILE</b></a>
+				<a href="source-class-Toknot.Di.DataCacheControl.html#51" title="Go to source code"><b>CACHE_FILE</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-quote">'1001'</span></code></td>
 		<td class="description"><div>
@@ -375,7 +488,7 @@
 
 		<td class="attributes"><code>string</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.Di.DataCacheControl.html#60" title="Go to source code"><b>CACHE_SERVER</b></a>
+				<a href="source-class-Toknot.Di.DataCacheControl.html#52" title="Go to source code"><b>CACHE_SERVER</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-quote">'1002'</span></code></td>
 		<td class="description"><div>
@@ -398,33 +511,6 @@
 
 	<table class="summary" id="properties">
 	<caption>Properties summary</caption>
-	<tr data-order="file" id="$file">
-		<td class="attributes"><code>
-			public  
-			string
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.Di.DataCacheControl.html#18-23" title="Go to source code"><var>$file</var></a>
-		</td>
-		<td class="value"><code><span class="php-quote">''</span></code></td>
-		<td class="description"><div>
-			<a href="#$file" class="anchor">#</a>
-
-			<div class="description short">
-				
-<p>Data cache file name, without extension name</p>
-
-			</div>
-
-			<div class="description detailed hidden">
-				
-<p>Data cache file name, without extension name</p>
-
-
-			</div>
-		</div></td>
-	</tr>
 	<tr data-order="dataModifyTime" id="$dataModifyTime">
 		<td class="attributes"><code>
 			public  
@@ -432,7 +518,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Di.DataCacheControl.html#25-30" title="Go to source code"><var>$dataModifyTime</var></a>
+				<a href="source-class-Toknot.Di.DataCacheControl.html#27-32" title="Go to source code"><var>$dataModifyTime</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">0</span></code></td>
 		<td class="description"><div>
@@ -459,7 +545,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Di.DataCacheControl.html#32-39" title="Go to source code"><var>$appRoot</var></a>
+				<a href="source-class-Toknot.Di.DataCacheControl.html#34-41" title="Go to source code"><var>$appRoot</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">''</span></code></td>
 		<td class="description"><div>
@@ -474,64 +560,6 @@
 			<div class="description detailed hidden">
 				
 <p>if cache type be seted CACHE_FILE, must set and is application root path</p>
-
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="cacheType" id="$cacheType">
-		<td class="attributes"><code>
-			public  
-			integer
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.Di.DataCacheControl.html#41-46" title="Go to source code"><var>$cacheType</var></a>
-		</td>
-		<td class="value"><code><code><a href="class-Toknot.Di.DataCacheControl.html#CACHE_FILE">Toknot\Di\DataCacheControl::<b>CACHE_FILE</b></a></code></code></td>
-		<td class="description"><div>
-			<a href="#$cacheType" class="anchor">#</a>
-
-			<div class="description short">
-				
-<p>Set use cache type</p>
-
-			</div>
-
-			<div class="description detailed hidden">
-				
-<p>Set use cache type</p>
-
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="cacheServerInstance" id="$cacheServerInstance">
-		<td class="attributes"><code>
-			public  
-			object
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.Di.DataCacheControl.html#48-56" title="Go to source code"><var>$cacheServerInstance</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">null</span></code></td>
-		<td class="description"><div>
-			<a href="#$cacheServerInstance" class="anchor">#</a>
-
-			<div class="description short">
-				
-<p>if set cache type is server cache, must set, the object be supposed set($key,
-$data, $expire) and get($key) method, and set method should recvie array type
-parameter for $data, get method should return a array or boolean</p>
-
-			</div>
-
-			<div class="description detailed hidden">
-				
-<p>if set cache type is server cache, must set, the object be supposed set($key,
-$data, $expire) and get($key) method, and set method should recvie array type
-parameter for $data, get method should return a array or boolean</p>
 
 
 			</div>
