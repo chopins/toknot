@@ -23,14 +23,24 @@ class MenuBox extends StringObject {
 	public function getAllMenu() {
 		return array();
 	}
+    public function addControllerForm() {
+		
+	}
+	public function buildController() {
+
+	}
 
 	public function __get($name) {
         if (isset($this->subNav[$name])) {
             return $this->subNav[$name];
         }
     }
+	public function createMenuTable($tableName) {
+		$sql = "";
+		
+	}
 
-    public function display() {
+	public function display() {
         
     }
 

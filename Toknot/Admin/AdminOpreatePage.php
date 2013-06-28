@@ -10,8 +10,15 @@
 
 namespace Toknot\Admin;
 
-class TableList {
-    //put your code here
+class AdminOpreatePage {
+	public function createForm() {
+
+	}
+	public function createRecordTable() {
+	}
+	public function saveData() {
+		   
+	}
 }
 
 ?>

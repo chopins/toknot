@@ -16,6 +16,7 @@ use Toknot\Exception\BadClassCallException;
 use Toknot\Control\FMAI;
 use \ReflectionClass;
 use Toknot\Control\StandardAutoloader;
+use Toknot\Di\FileObject;
 
 class Router implements RouterInterface {
 
@@ -192,8 +193,11 @@ class Router implements RouterInterface {
         $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}";
         $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
         $classExist = false;
-        if (file_exists($classFile)) {
-            include_once $classFile;
+		$caseClassFile =FileObject::fileExistCase($classFile); 
+        if ($caseClassFile) {
+            include_once $caseClassFile;
+			$this->spacePath = strtok(basename($caseClassFile),'.');
+        	$invokeClass = "{$this->routerNameSpace}\Controller\\{$this->spacePath}";
             $classExist = class_exists($invokeClass, false);
         }
         if (!$classExist) {
@@ -201,7 +205,7 @@ class Router implements RouterInterface {
             if (is_dir($dir) && $this->defaultClass != null) {
                 $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}\{$this->defaultClass}";
                 $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
-                if (file_exists($classFile)) {
+                if (is_file($classFile)) {
                     include $classFile;
                 }
                 if (!class_exists($invokeClass, false)) {
@@ -227,7 +231,7 @@ class Router implements RouterInterface {
                     if ($this->methodNotAllowedController === null) {
                         $invokeClass = "{$this->routerNameSpace}\{$this->methodNotAllowedController}";
                         $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
-                        if (file_exists($classFile)) {
+                        if (is_file($classFile)) {
                             include $classFile;
                         }
                         if (!class_exists($invokeClass, false)) {
