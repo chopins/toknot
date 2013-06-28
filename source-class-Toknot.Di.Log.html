@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+	<meta name="robots" content="noindex" />
+
+	<title>File Toknot/Di/Log.php | toknot</title>
+
+	<script type="text/javascript" src="resources/combined.js?934585053"></script>
+	<script type="text/javascript" src="elementlist.js?4171281783"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li><a href="namespace-None.html">None</a>
+						</li>
+				<li><a href="namespace-PHP.html">PHP</a>
+						</li>
+				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
+				<li><a href="namespace-Toknot.Config.html">Config</a>
+						</li>
+				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Db.html">Db<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Db.Driver.html">Driver</a>
+						</li>
+				<li><a href="namespace-Toknot.Db.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li class="active"><a href="namespace-Toknot.Di.html">Di</a>
+						</li>
+				<li><a href="namespace-Toknot.Exception.html">Exception</a>
+						</li>
+				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Image.html">Image<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Image.CartoonImage.html">CartoonImage</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Process.Eception.html">Eception</a>
+						</li>
+				<li><a href="namespace-Toknot.Process.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Tool.html">Tool</a>
+						</li>
+				<li><a href="namespace-Toknot.User.html">User</a>
+						</li>
+				<li><a href="namespace-Toknot.View.html">View</a>
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-Toknot.Di.ArrayObject.html">ArrayObject</a></li>
+				<li><a href="class-Toknot.Di.DataCacheControl.html">DataCacheControl</a></li>
+				<li><a href="class-Toknot.Di.FileObject.html">FileObject</a></li>
+				<li class="active"><a href="class-Toknot.Di.Log.html">Log</a></li>
+				<li><a href="class-Toknot.Di.Object.html">Object</a></li>
+				<li><a href="class-Toknot.Di.StringObject.html">StringObject</a></li>
+				<li><a href="class-Toknot.Di.Version.html">Version</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-Toknot.Di.html" title="Summary of Toknot\Di"><span>Namespace</span></a>
+			</li>
+			<li>
+				<a href="class-Toknot.Di.Log.html" title="Summary of Toknot\Di\Log"><span>Class</span></a>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<pre><code><span id="1" class="l"><a class="l" href="#1"> 1: </a><span class="xlang">&lt;?php</span>
+</span><span id="2" class="l"><a class="l" href="#2"> 2: </a>
+</span><span id="3" class="l"><a class="l" href="#3"> 3: </a><span class="php-comment">/**
+</span></span><span id="4" class="l"><a class="l" href="#4"> 4: </a><span class="php-comment"> * Toknot (http://toknot.com)
+</span></span><span id="5" class="l"><a class="l" href="#5"> 5: </a><span class="php-comment"> *
+</span></span><span id="6" class="l"><a class="l" href="#6"> 6: </a><span class="php-comment"> * @copyright  Copyright (c) 2011 - 2013 Toknot.com
+</span></span><span id="7" class="l"><a class="l" href="#7"> 7: </a><span class="php-comment"> * @license    http://toknot.com/LICENSE.txt New BSD License
+</span></span><span id="8" class="l"><a class="l" href="#8"> 8: </a><span class="php-comment"> * @link       https://github.com/chopins/toknot
+</span></span><span id="9" class="l"><a class="l" href="#9"> 9: </a><span class="php-comment"> */</span>
+</span><span id="10" class="l"><a class="l" href="#10">10: </a>
+</span><span id="11" class="l"><a class="l" href="#11">11: </a><span class="php-keyword1">namespace</span> Toknot\Di;
+</span><span id="12" class="l"><a class="l" href="#12">12: </a>
+</span><span id="13" class="l"><a class="l" href="#13">13: </a><span class="php-keyword1">class</span> <span class="php-keyword2">Log</span> {
+</span><span id="14" class="l"><a class="l" href="#14">14: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-var"><a id="$savePath" href="#$savePath">$savePath</a></span> = <span class="php-quote">''</span>;
+</span><span id="15" class="l"><a class="l" href="#15">15: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-var"><a id="$enableSaveLog" href="#$enableSaveLog">$enableSaveLog</a></span> = <span class="php-keyword1">false</span>;
+</span><span id="16" class="l"><a class="l" href="#16">16: </a>
+</span><span id="17" class="l"><a class="l" href="#17">17: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_printTrace" href="#_printTrace">printTrace</a>() {
+</span><span id="18" class="l"><a class="l" href="#18">18: </a>        <span class="php-var">$trace</span> = <span class="php-keyword2">debug_backtrace</span>();
+</span><span id="19" class="l"><a class="l" href="#19">19: </a>        <span class="php-keyword1">print</span> self::traceCss();
+</span><span id="20" class="l"><a class="l" href="#20">20: </a>        <span class="php-keyword1">print</span> self::formatTrace(<span class="php-var">$trace</span>);
+</span><span id="21" class="l"><a class="l" href="#21">21: </a>    }
+</span><span id="22" class="l"><a class="l" href="#22">22: </a>    
+</span><span id="23" class="l"><a class="l" href="#23">23: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_save" href="#_save">save</a>(<span class="php-var">$traceInfo</span>) {
+</span><span id="24" class="l"><a class="l" href="#24">24: </a>        <span class="php-keyword1">if</span>(!self::<span class="php-var">$enableSaveLog</span> || <span class="php-keyword1">empty</span>(self::<span class="php-var">$savePath</span>)) {
+</span><span id="25" class="l"><a class="l" href="#25">25: </a>            <span class="php-keyword1">return</span>;
+</span><span id="26" class="l"><a class="l" href="#26">26: </a>        }
+</span><span id="27" class="l"><a class="l" href="#27">27: </a>        <span class="php-var">$day</span> = <span class="php-keyword2">date</span>(<span class="php-quote">'Y-m-d'</span>);
+</span><span id="28" class="l"><a class="l" href="#28">28: </a>        <span class="php-var">$time</span> = <span class="php-keyword2">date</span>(<span class="php-quote">'Y-m-d H:i:s'</span>);
+</span><span id="29" class="l"><a class="l" href="#29">29: </a>        <span class="php-var">$message</span> = <span class="php-quote">&quot;</span><span class="php-var">$time</span><span class="php-quote"> [</span><span class="php-var">{$_SERVER['REMOTE_ADDR']}</span><span class="php-quote">]:</span><span class="php-var">{$_SERVER['REQUEST_METHOD']}</span><span class="php-quote"> </span><span class="php-var">{$_SERVER['REQUEST_URI']}</span><span class="php-quote">&quot;</span>;
+</span><span id="30" class="l"><a class="l" href="#30">30: </a>        <span class="php-var">$traceInfo</span> = <span class="php-var">$message</span> . <span class="php-keyword2">strip_tags</span>(<span class="php-var">$traceInfo</span>);
+</span><span id="31" class="l"><a class="l" href="#31">31: </a>        <span class="php-var">$traceInfo</span> = <span class="php-quote">&quot;\r\n&quot;</span>;
+</span><span id="32" class="l"><a class="l" href="#32">32: </a>        FileObject::saveContent(self::<span class="php-var">$savePath</span>.DIRECTORY_SEPARATOR.<span class="php-var">$day</span>, <span class="php-var">$traceInfo</span>, FILE_APPEND);
+</span><span id="33" class="l"><a class="l" href="#33">33: </a>    }
+</span><span id="34" class="l"><a class="l" href="#34">34: </a>
+</span><span id="35" class="l"><a class="l" href="#35">35: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_formatTrace" href="#_formatTrace">formatTrace</a>(<span class="php-var">$traceArr</span>) {
+</span><span id="36" class="l"><a class="l" href="#36">36: </a>        <span class="php-var">$str</span> = <span class="php-quote">''</span>;
+</span><span id="37" class="l"><a class="l" href="#37">37: </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$traceArr</span> <span class="php-keyword1">as</span> <span class="php-var">$key</span> =&gt; <span class="php-var">$value</span>) {
+</span><span id="38" class="l"><a class="l" href="#38">38: </a>            <span class="php-var">$str</span> .= <span class="php-quote">&quot;&lt;li&gt;#</span><span class="php-var">{$key}</span><span class="php-quote"> &quot;</span>;
+</span><span id="39" class="l"><a class="l" href="#39">39: </a>            <span class="php-var">$str</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$value</span>[<span class="php-quote">'file'</span>]) ? <span class="php-var">$value</span>[<span class="php-quote">'file'</span>] : <span class="php-quote">''</span>;
+</span><span id="40" class="l"><a class="l" href="#40">40: </a>            <span class="php-var">$str</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$value</span>[<span class="php-quote">'line'</span>]) ? <span class="php-quote">&quot;(</span><span class="php-var">{$value['line']}</span><span class="php-quote">): &quot;</span> : <span class="php-quote">''</span>;
+</span><span id="41" class="l"><a class="l" href="#41">41: </a>            <span class="php-var">$str</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$value</span>[<span class="php-quote">'class'</span>]) ? <span class="php-var">$value</span>[<span class="php-quote">'class'</span>] : <span class="php-quote">''</span>;
+</span><span id="42" class="l"><a class="l" href="#42">42: </a>            <span class="php-var">$str</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$value</span>[<span class="php-quote">'type'</span>]) ? <span class="php-var">$value</span>[<span class="php-quote">'type'</span>] : <span class="php-quote">''</span>;
+</span><span id="43" class="l"><a class="l" href="#43">43: </a>            <span class="php-keyword1">if</span> (<span class="php-var">$value</span>[<span class="php-quote">'function'</span>] == <span class="php-quote">'unknown'</span>) {
+</span><span id="44" class="l"><a class="l" href="#44">44: </a>                <span class="php-var">$value</span>[<span class="php-quote">'function'</span>] = <span class="php-quote">'main'</span>;
+</span><span id="45" class="l"><a class="l" href="#45">45: </a>            }
+</span><span id="46" class="l"><a class="l" href="#46">46: </a>            <span class="php-var">$str</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$value</span>[<span class="php-quote">'function'</span>]) ? <span class="php-quote">&quot;</span><span class="php-var">{$value['function']}</span><span class="php-quote">(&quot;</span> : <span class="php-quote">''</span>;
+</span><span id="47" class="l"><a class="l" href="#47">47: </a>            <span class="php-keyword1">if</span> (<span class="php-keyword1">isset</span>(<span class="php-var">$value</span>[<span class="php-quote">'args'</span>])) {
+</span><span id="48" class="l"><a class="l" href="#48">48: </a>                <span class="php-keyword1">foreach</span> (<span class="php-var">$value</span>[<span class="php-quote">'args'</span>] <span class="php-keyword1">as</span> <span class="php-var">$arg</span>) {
+</span><span id="49" class="l"><a class="l" href="#49">49: </a>                    <span class="php-keyword1">if</span> (<span class="php-keyword2">is_string</span>(<span class="php-var">$arg</span>)) {
+</span><span id="50" class="l"><a class="l" href="#50">50: </a>                        <span class="php-var">$str</span> .= <span class="php-quote">&quot;&lt;span class='ToKnotDebugArgs' title='String(&quot;</span> . <span class="php-keyword2">strlen</span>(<span class="php-var">$arg</span>) . <span class="php-quote">&quot;) &quot;</span> . <span class="php-var">$arg</span> . <span class="php-quote">&quot;'&gt;&lt;b&gt;String(&lt;/b&gt;&quot;</span> . <span class="php-keyword2">substr</span>(<span class="php-var">$arg</span>, <span class="php-num">0</span>, <span class="php-num">100</span>) . <span class="php-quote">&quot;&lt;b&gt;)&lt;/b&gt;&lt;/span&gt;&quot;</span>;
+</span><span id="51" class="l"><a class="l" href="#51">51: </a>                    } <span class="php-keyword1">elseif</span> (<span class="php-keyword2">is_int</span>(<span class="php-var">$arg</span>)) {
+</span><span id="52" class="l"><a class="l" href="#52">52: </a>                        <span class="php-var">$str</span> .= <span class="php-quote">&quot;&lt;span class='ToKnotDebugArgs'&gt;&lt;b&gt;Integer(&lt;/b&gt;&quot;</span> . <span class="php-keyword2">substr</span>(<span class="php-var">$arg</span>, <span class="php-num">0</span>, <span class="php-num">100</span>) . <span class="php-quote">&quot;&lt;b&gt;)&lt;/b&gt;&lt;/span&gt;&quot;</span>;
+</span><span id="53" class="l"><a class="l" href="#53">53: </a>                    } <span class="php-keyword1">elseif</span> (<span class="php-keyword2">is_float</span>(<span class="php-var">$arg</span>)) {
+</span><span id="54" class="l"><a class="l" href="#54">54: </a>                        <span class="php-var">$str</span> .= <span class="php-quote">&quot;&lt;span class='ToKnotDebugArgs'&gt;&lt;b&gt;Float(&lt;/b&gt;&quot;</span> . <span class="php-keyword2">substr</span>(<span class="php-var">$arg</span>, <span class="php-num">0</span>, <span class="php-num">100</span>) . <span class="php-quote">&quot;&lt;b&gt;)&lt;/b&gt;&lt;/span&gt;&quot;</span>;
+</span><span id="55" class="l"><a class="l" href="#55">55: </a>                    } <span class="php-keyword1">elseif</span> (<span class="php-keyword2">is_array</span>(<span class="php-var">$arg</span>)) {
+</span><span id="56" class="l"><a class="l" href="#56">56: </a>                        <span class="php-var">$str</span> .= <span class="php-quote">&quot;&lt;span class='ToKnotDebugArgs' title='&quot;</span> . <span class="php-keyword2">print_r</span>(<span class="php-var">$arg</span>, <span class="php-keyword1">true</span>) . <span class="php-quote">&quot;'&gt;&lt;b&gt;Array()&lt;/b&gt;&lt;/span&gt;&quot;</span>;
+</span><span id="57" class="l"><a class="l" href="#57">57: </a>                    } <span class="php-keyword1">elseif</span> (<span class="php-keyword2">is_object</span>(<span class="php-var">$arg</span>)) {
+</span><span id="58" class="l"><a class="l" href="#58">58: </a>                        <span class="php-var">$str</span> .= <span class="php-quote">&quot;&lt;span class='ToKnotDebugArgs' title='&quot;</span> . <span class="php-keyword2">print_r</span>(<span class="php-var">$arg</span>, <span class="php-keyword1">true</span>) . <span class="php-quote">&quot;'&gt;&lt;b&gt;Object(&lt;/b&gt; &quot;</span> . <span class="php-keyword2">get_class</span>(<span class="php-var">$arg</span>) . <span class="php-quote">&quot; &lt;b&gt;)&lt;/b&gt;&lt;/span&gt;&quot;</span>;
+</span><span id="59" class="l"><a class="l" href="#59">59: </a>                    } <span class="php-keyword1">elseif</span> (<span class="php-keyword2">is_resource</span>(<span class="php-var">$arg</span>)) {
+</span><span id="60" class="l"><a class="l" href="#60">60: </a>                        <span class="php-var">$str</span> .= <span class="php-quote">&quot;&lt;span calss='ToKnotDebugArgs'&quot;</span> &gt; <span class="php-keyword2">print_r</span>(<span class="php-var">$arg</span>, <span class="php-keyword1">true</span>) . <span class="php-quote">'&lt;/span&gt;'</span>;
+</span><span id="61" class="l"><a class="l" href="#61">61: </a>                    }
+</span><span id="62" class="l"><a class="l" href="#62">62: </a>                }
+</span><span id="63" class="l"><a class="l" href="#63">63: </a>            }
+</span><span id="64" class="l"><a class="l" href="#64">64: </a>            <span class="php-var">$str</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$value</span>[<span class="php-quote">'function'</span>]) ? <span class="php-quote">&quot;)&quot;</span> : <span class="php-quote">''</span>;
+</span><span id="65" class="l"><a class="l" href="#65">65: </a>            <span class="php-var">$str</span> .= <span class="php-quote">&quot;&lt;/li&gt;\n&quot;</span>;
+</span><span id="66" class="l"><a class="l" href="#66">66: </a>        }
+</span><span id="67" class="l"><a class="l" href="#67">67: </a>        <span class="php-keyword1">return</span> <span class="php-var">$str</span>;
+</span><span id="68" class="l"><a class="l" href="#68">68: </a>    }
+</span><span id="69" class="l"><a class="l" href="#69">69: </a>
+</span><span id="70" class="l"><a class="l" href="#70">70: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_traceCss" href="#_traceCss">traceCss</a>() {
+</span><span id="71" class="l"><a class="l" href="#71">71: </a>        <span class="php-keyword1">return</span> <span class="php-quote">'&lt;style&gt;
+</span></span><span id="72" class="l"><a class="l" href="#72">72: </a><span class="php-quote">                .ToKnotDebugArea {border:1px #CCCCCC solid;background-color:#EEEFFF;padding:0;font-family:Helvetica,arial,freesans,clean,sans-serif;}
+</span></span><span id="73" class="l"><a class="l" href="#73">73: </a><span class="php-quote">                .ToKnotDebugArea ul {margin-top:0;}
+</span></span><span id="74" class="l"><a class="l" href="#74">74: </a><span class="php-quote">                .ToKnotMessage {color:#666666;font-size:18px;font-weight:bold;padding:10px;margin:0px;background-color:#D6E685;border-bottom:1px solid #94DA3A;}
+</span></span><span id="75" class="l"><a class="l" href="#75">75: </a><span class="php-quote">                .ToKnotCallFile {color:#6A8295;}
+</span></span><span id="76" class="l"><a class="l" href="#76">76: </a><span class="php-quote">                .ToKnotAccess {color:#336258;}
+</span></span><span id="77" class="l"><a class="l" href="#77">77: </a><span class="php-quote">                .ToKnotTraceItem{list-style-type:none;padding:10px;color:#0F4C9E;font-size:15px;}
+</span></span><span id="78" class="l"><a class="l" href="#78">78: </a><span class="php-quote">                .ToKnotTraceItem li {padding:5px;}
+</span></span><span id="79" class="l"><a class="l" href="#79">79: </a><span class="php-quote">                .ToKnotDebugArgs{text-decoration:underline;font-size:12px;margin:0 3px;}
+</span></span><span id="80" class="l"><a class="l" href="#80">80: </a><span class="php-quote">                .ToKnotDebugArgs b {font-size:15;margin:0 3px;}
+</span></span><span id="81" class="l"><a class="l" href="#81">81: </a><span class="php-quote">                .ToKnotDebugFunc{color:#176B4E;font-weight:normal;}
+</span></span><span id="82" class="l"><a class="l" href="#82">82: </a><span class="php-quote">                .ToKnotDebugThrow{color:#D14836;font-weight:bold;background-color:#FFECCC;padding:8px;}
+</span></span><span id="83" class="l"><a class="l" href="#83">83: </a><span class="php-quote">                .ToKnotDebugProcess {color:#333;font-size:12px;}
+</span></span><span id="84" class="l"><a class="l" href="#84">84: </a><span class="php-quote">                &lt;/style&gt;'</span>;
+</span><span id="85" class="l"><a class="l" href="#85">85: </a>    }
+</span><span id="86" class="l"><a class="l" href="#86">86: </a>
+</span><span id="87" class="l"><a class="l" href="#87">87: </a>}
+</span><span id="88" class="l"><a class="l" href="#88">88: </a>
+</span><span id="89" class="l"><a class="l" href="#89">89: </a><span class="xlang">?&gt;</span>
+</span><span id="90" class="l"><a class="l" href="#90">90: </a></span></code></pre>
+
+	<div id="footer">
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>
