@@ -8,6 +8,12 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
+
+/**
+ * Create a application, the script is a guide that help you create a application
+ * of base directory struncture and create some code of php
+ * just run the script, like : php CreateApp.php
+ */
 class CreateApp {
 
     public $workDir = '';
