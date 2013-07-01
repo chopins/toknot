@@ -65,9 +65,29 @@ final class Application {
      * @access private
      */
     private $routerName = '\Toknot\Control\Router';
+
+	/**
+	 * @access private
+	 * @var array
+	 */
     private $routerArgs = array();
+
+	/**
+	 * @access private
+	 * @var array
+	 */
     private $debugTrace = array();
+
+	/**
+	 * @access private
+	 * @var float
+	 */
     private $traceTime = 0;
+
+	/**
+	 * @access private 
+	 * @var float
+	 */
     private $scriptStartTime = 0;
 
     /**

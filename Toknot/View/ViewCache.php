@@ -25,8 +25,8 @@ class ViewCache extends Object {
     }
 
     public static function outPutCache() {
-        self::$cacheEffective = call_user_func(array(self::$renderer,self::$displayMethod), 
-                            self::$cacheFile);
+		$displayMethod = self::$displayMethod;
+		self::$cacheEffective = self::$renderer->$displayMethod(self::$cacheFile);
     }
     public static function setRenderer(& $object) {
         self::$renderer = $object;

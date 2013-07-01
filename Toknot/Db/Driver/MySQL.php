@@ -117,9 +117,8 @@ class MySQL {
     public function execute($params) {
         if ($this->useMySQLi) {
             $c = count($params);
-            $type = sprintf("%'s{$c}s", 's');
-            array_unshift($params, $type);
-            call_user_func_array(array($this->useMySQLi,'bind_param'), $params);
+            $type = str_repeat('s', $c);
+			$this->mysqliStmt->bind_param($type,$params);
             $es = $this->mysqliStmt->execute();
             if (!$es) {
                 throw new DatabaseException(self::$link->error, self::$link->errno);
