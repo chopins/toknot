@@ -16,6 +16,7 @@ use \ReflectionExtension;
 use \ArrayAccess;
 use Toknot\Di\ArrayObject;
 use Toknot\Exception\StandardException;
+use \ReflectionFunction;
 
 class StringObject extends Object implements ArrayAccess {
 
@@ -101,7 +102,7 @@ class StringObject extends Object implements ArrayAccess {
         }
     }
 
-    public static function hasMethod($name) {
+    public static function supportMethod($name) {
         return in_array($name, self::supportStringMethod());
     }
 
@@ -134,7 +135,8 @@ class StringObject extends Object implements ArrayAccess {
             throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
 
         array_unshift($arguments, $this->interatorArray);
-        $str = call_user_func_array($stringFunction, $arguments);
+		$refFunction = new ReflectionFunction($stringFunction);
+		$str = $refFunction->invokeArgs($arguments);
         if (is_string($str)) {
             return new StringObject($str);
         } elseif (is_array($str)) {

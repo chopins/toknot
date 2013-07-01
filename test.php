@@ -1,43 +1,82 @@
 <?php
-
-class B {
-
-	const D = 'test';
-
-	private $a = 'my test';
-	static $s = 'my static';
-
-	public function p() {
-		var_dump(self::D);
-	}
-
-}
-
-class A {
-	const B = 3;
-	var $s = null;
+class test {
 	public function __construct() {
-		session_set_save_handler(array($this, 'open'), array($this, 'close'), array($this, 'read'), array($this, 'write'), array($this, 'destroy'), array($this, 'gc'));
 	}
-	public function open() {
-		$this->s = new B;
-	}
-	public function start() {
-		session_start();
-	}
-	public function close() {
-	}
-
-	public function read() {
-	}
-	public function destroy() {
-	}
-	public function gc() {
-	}
-	public function write() {
-		$this->s->p();
+	public function t() {
+		
 	}
 }
+echo 'ReflectionArray:';
+$start = microtime(true);
+$i = 0;
+while($i<10000) {
 
-$obj = new A;
-$obj->start();
+    $r = new ReflectionClass('test');
+	$a = $r->newInstanceArgs(array(1));
+
+	$a->t(1);
+
+	
+	$i++;
+}
+
+
+$t = microtime(true) - $start;
+echo $t;
+echo "\n";
+
+echo 'Reflection:';
+$start = microtime(true);
+$i = 0;
+while($i<10000) {
+
+    $r = new ReflectionClass('test');
+	$a = $r->newInstance(1);
+
+	call_user_func(array($a, 't'));
+
+	
+	$i++;
+}
+
+
+$t = microtime(true) - $start;
+echo $t;
+echo "\n";
+
+
+echo 'new:';
+$start = microtime(true);
+$i = 0;
+while ($i<10000) {
+	$a = new test(1);
+	$r = new ReflectionMethod($a,'t');
+	$r->invokeArgs($a, array(1));
+	$i++;
+}
+$t = microtime(true) - $start;
+echo $t;
+
+echo "\n";
+echo 'eval:';
+$i = 0;
+$start = microtime(true);
+while ($i<10000) {
+	eval('$a = new test(1);');
+
+	$i++;
+}
+
+$t = microtime(true) - $start;
+echo $t;
+echo "\n";
+echo 'variable:';
+$i = 0;
+$start  = microtime(true);
+while ($i<10000) {
+	$class = 'test';
+	$a = new $class(1);
+	$i++;
+}
+$t = microtime(true) - $start;
+echo $t;

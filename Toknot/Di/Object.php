@@ -15,6 +15,7 @@ use \ReflectionMethod;
 use \ReflectionProperty;
 use \Iterator;
 use \Countable;
+use \ReflectionClass;
 
 abstract class Object implements Iterator, Countable {
 
@@ -57,51 +58,14 @@ abstract class Object implements Iterator, Countable {
 		}
 		$argc = func_num_args();
 		if ($argc > 0) {
-			$__args = func_get_args();
-			$__argsString = '';
-			for ($i = 0; $i < $argc; $i++) {
-				$__argsString .= "\$__args[$i],";
-			}
-			$__argsString = rtrim($__argsString, ',');
-			eval("self::\$instance['{$className}'] = new {$className}({$__argsString});");
+			$args = func_get_args();
+			self::$instance[$className] = new $className($args);		
 		} else {
 			self::$instance[$className] = new $className;
 		}
 		return self::$instance[$className];
 	}
 
-	/**
-	 * Create a new instance of Current class, recived a array for parameters are passed to 
-	 * __construct 
-	 * 
-	 * 
-	 * @param array $args
-	 * @return object
-	 */
-	final public static function newInstanceArgs($args = array()) {
-		$argc = count($args);
-		if ($argc > 0) {
-			$argsString = '';
-			foreach ($args as $k => $v) {
-				$argsString .= "\$args[$k],";
-			}
-			$argsString = rtrim($argsString, ',');
-			eval("\$_ins = new static($argsString)");
-			return $_ins;
-		} else {
-			return new static;
-		}
-	}
-
-	/**
-	 * Create a new instance of current class,the given parameters are passed to the class
-	 * __construnct
-	 * 
-	 * @return object
-	 */
-	final public static function newInstance() {
-		return self::newInstanceArgs(func_get_args());
-	}
 
 	/**
 	 * __set 
