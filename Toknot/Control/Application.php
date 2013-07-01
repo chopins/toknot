@@ -294,7 +294,7 @@ final class Application {
             $router = new $this->routerName;
             StandardAutoloader::importToknotClass('Control\FMAI');
             $this->addAppPath($appPath);
-            $FMAI = FMAI::singleton($appPath);
+            $FMAI = FMAI::singleton($appNameSpace,$appPath);
             self::$appRoot = $appPath;
             call_user_func_array(array($router, 'runtimeArgs'), $this->routerArgs);
             $router->routerSpace($appNameSpace);

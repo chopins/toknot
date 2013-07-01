@@ -55,11 +55,12 @@ final class FMAI extends Object {
     protected $accessControlStatus = true;
     private $accessDeniedController = null;
     public $appRoot = '';
-    public $enableCache = false;
+	private $appNamespace = '';
+	public $enableCache = false;
     public $cacheEffective = false;
 
-    public static function singleton($appRoot) {
-        return parent::__singleton($appRoot);
+    public static function singleton($appNamespace, $appRoot) {
+        return parent::__singleton($appNamespace,$appRoot);
     }
 
     /**
@@ -68,10 +69,11 @@ final class FMAI extends Object {
      * The method will load framework default configure file
      * 
      */
-    protected function __construct($appRoot) {
+    protected function __construct($appNamespace,$appRoot) {
         StandardAutoloader::importToknotClass('Config\ConfigLoader');
         ConfigLoader::singleton();
         $this->appRoot = $appRoot;
+		$this->appNamespace = $appNamespace;
         DataCacheControl::$appRoot = $appRoot;
         Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
         Log::$savePath = FileObject::getRealPath($appRoot, ConfigLoader::CFG()->Log->logSavePath);
@@ -197,6 +199,12 @@ final class FMAI extends Object {
         return Renderer::singleton();
     }
 
+	/**
+	 * Set template variable
+	 * 
+	 * @param string $name
+	 * @param mixed $value
+	 */
     public function setViewVar($name, $value) {
         $this->D->$name = $value;
     }
@@ -250,21 +258,39 @@ final class FMAI extends Object {
     public function registerAccessDeniedController($controllerName) {
         $this->accessDeniedController = $controllerName;
     }
-
-    public function redirectAccessDeniedController($class) {
+	
+	/**
+	 * Redirect to Denided contriller
+	 * 
+	 * @param \Toknot\User\ClassAccessControl $class
+	 * @return boolean
+	 */
+    public function redirectAccessDeniedController($class, $queryString = '') {
         if ($class instanceof \Toknot\User\ClassAccessControl && $this->getAccessStatus() === false) {
             $accessDeniedController = $this->getAccessDeniedController();
             //header("Location:$accessDeniedController");
-            $invokeObject = new $accessDeniedController($this);
-            $method = $this->requestMethod;
-            $invokeObject->$method();
+			$this->redirectController($accessDeniedController, $queryString);
             return true;
         } else {
             return false;
         }
     }
 
-    /**
+	/**
+	 * Redirect to a controller, must contain namespace
+	 * 
+	 * @param string $class The class name without Controller of level namespace
+	 * @param string $queryString redirect url params sting
+	 * @access public
+	 */
+	public function redirectController($class, $queryString = '') {
+	    $class = str_replace($this->appNamespace.'\Controller', '', $class);
+		$url = strtr($class,'\\', '/');
+		header("Location:$url?$queryString");
+		exit;
+	}
+
+	/**
      * Get current registered controller name of access denied 
      * 
      * @return string
@@ -314,4 +340,7 @@ final class FMAI extends Object {
         return $session;
     }
 
+	public function getAppNamespace() {
+		return $this->appNamespace;
+	}
 }

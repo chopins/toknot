@@ -85,14 +85,14 @@ class AdminBase extends ClassAccessControl {
 		$this->initDatabase();
 		$this->SESSION = $FMAI->startSession(self::$CFG->Admin->adminSessionName);
 
-		$FMAI->registerAccessDeniedController('Toknot\Admin\Login');
+		$FMAI->registerAccessDeniedController('\User\Login');
 
 		$user = $this->checkUserLogin();
 		$FMAI->checkAccess($this, $user);
 
 		$this->commonTplVarSet();
 		$FMAI->newTemplateView(self::$CFG->View);
-		if ($FMAI->redirectAccessDeniedController($this)) {
+		if ($FMAI->redirectAccessDeniedController($this, 'act=login')) {
 			exit();
 		}
 	}

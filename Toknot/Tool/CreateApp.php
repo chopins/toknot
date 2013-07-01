@@ -84,6 +84,9 @@ class CreateApp {
         $this->writeIndex($dir . '/WebRoot');
         if (!$this->isAdmin) {
             $this->writeAppBaseClass($dir);
+			mkdir($dir.'/Controller/User');
+			$this->message("Create $dir/Controller/User");
+			$this->writeAdminAppUserController($dir.'/Controller/User');
         }
         $this->message("Create $dir/View");
         mkdir($dir . '/View');
@@ -129,8 +132,28 @@ class CreateApp {
             return $password;
         }
     }
+	public function writeAdminAppUserController($path) {
+		$phpCode = <<<EOS
+<?php
+namespace {$this->appName}\Controller\User;
 
-    public function createAppRootDir($isCurrent) {
+use Toknot\Admin\Login;
+
+class Login extends Login {
+}
+EOS;
+		file_put_contents($path.'/Login.php', $phpCode);
+		$phpCode = <<<EOS
+<?php
+namespace {$this->appName}\Controller\User;
+use Toknot\Admin\Logout;
+class Logout extends Logout {
+}
+EOS;
+		file_put_contents("$path/Logout.php", $phpCode);
+	}
+
+	public function createAppRootDir($isCurrent) {
         if ($isCurrent == 'yes') {
             $topnamespace = '';
             while (empty($topnamespace)) {
@@ -181,34 +204,40 @@ class CreateApp {
     }
 
     public function writeIndexController($path) {
-        $use = $this->isAdmin ? 'Toknot\Admin\Admin' : "{$this->appName}\{$this->appName}Base";
+        $use = $this->isAdmin ? 'Toknot\Admin\Admin' : "{$this->appName}\{$this->appName}";
         $base = $this->isAdmin ? 'AdminBase' : "{$this->appName}Base";
-        $phpCode = '<?php
-namespace ' . $this->appName . '\Controller;
+        $phpCode = <<<EOS
+<?php
+namespace  {$this->appName}\Controller;
             
-use ' . $use . 'Base;
+use {$use}Base;
 
-class Index extends ' . $base . '{
+class Index extends {$base}{
+EOS;
+		$phpCode .= <<<'EOS'
     public $perms = 0777;
 
     public function GET() {
         //$database = $this->AR->connect();
         print "hello world";
 
-        //$this->display(\'index\');
+        //$this->display('index');
     }
- }';
+ }
+EOS;
         $this->message("Create $path/Index.php");
         file_put_contents("$path/Index.php", $phpCode);
     }
 
     public function writeAppBaseClass($path) {
-        $phpCode = '<?php
+        $phpCode = <<<EOS
+<?php
 namespace ' . $this->appName . ';
 use Toknot\User\ClassAccessControl;
 
 class ' . $this->appName . 'Base extends ClassAccessControl {
-
+EOS;
+		$phpCode .= <<<'EOS'
     protected $FMAI;
     protected $CFG;
     protected $AppPath;
@@ -235,7 +264,8 @@ class ' . $this->appName . 'Base extends ClassAccessControl {
         $this->GET();
     }
 
-}';
+}
+EOS;
         $this->message("Create $path/{$this->appName}Base.php");
         file_put_contents("$path/{$this->appName}Base.php", $phpCode);
     }
@@ -254,6 +284,7 @@ require_once "' . $toknot . '";
 $app = new Application;
 $app->setRouterArgs(Router::ROUTER_PATH, 2);
 $app->run("' . $namespace . '",dirname(__DIR__));';
+		
         $this->message("Create $path/index.php");
         file_put_contents($path . '/index.php', $phpCode);
     }
