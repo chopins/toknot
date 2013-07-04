@@ -283,11 +283,15 @@ final class Application {
      * $app->run('\AppTopNamespace', '/path/AppPath', '\Index');
      * </code>
      * 
-     * @param string $appNameSpace  Application of Namespace with top without full namespace
-     * @param string $appPath   Application of directory with full path, and not is Controller layer full path
-     * @param string $defaultInvoke  The parameter of default invoke class for router when no request uri,
-     *                                if it is not set,will throw BadClassCallException when user request site root 
-     *                                and no query,The class name of default with not full namespace
+     * @param string $appNameSpace  Application of Namespace with top without 
+	 * 								 full namespace, the suffix without DIRECTORY_SEPARATOR
+     * @param string $appPath   Application of directory with full path, 
+	 * 							and not is Controller layer full path
+     * @param string $defaultInvoke  The parameter of default invoke class for 
+	 * 								  router when no request uri,
+     *                                if it is not set,will throw BadClassCallException
+	 * 								  when user request site root and no query,
+	 * 								  The class name of default with not full namespace
      *                                class name can not contain application top namespace and
      *                                Controller layer namespace
      * @throws BadNamespaceException
@@ -296,6 +300,8 @@ final class Application {
      */
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
         $root = substr($appNameSpace, 0, 1);
+		$appNameSpace = rtrim($appNameSpace, '\\');
+		$appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
         try {
             if ($root != '\\') {
                 throw new BadNamespaceException($appNameSpace);

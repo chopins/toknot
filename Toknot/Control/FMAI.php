@@ -286,7 +286,10 @@ final class FMAI extends Object {
 	public function redirectController($class, $queryString = '') {
 	    $class = str_replace($this->appNamespace.'\Controller', '', $class);
 		$url = strtr($class,'\\', '/');
-		header("Location:$url?$queryString");
+		if(!empty($queryString)) {
+			$queryString = "?$queryString";
+		}
+		header("Location:$url{$queryString}");
 		exit;
 	}
 

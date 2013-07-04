@@ -30,6 +30,7 @@ class Login extends AdminBase {
 				$user->setLoginExpire('1w');
 			}
 			$this->setAdminLogin($user);
+			self::$FMAI->redirectController('\Index');
 		} else {
 		   echo 'Username or password error';	
 		}

@@ -137,9 +137,9 @@ class CreateApp {
 <?php
 namespace {$this->appName}\Controller\User;
 
-use Toknot\Admin\Login;
+use Toknot\Admin\Login as AdminLogin;
 
-class Login extends Login {
+class Login extends AdminLogin {
 }
 EOS;
 		file_put_contents($path . '/Login.php', $phpCode);

@@ -49,6 +49,7 @@ class StandardAutoloader {
 //            return false;
 		$dir = dirname($dir);
 		$nsPath = strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
+		$nsPath = ltrim($nsPath,'/');
 		return $dir . DIRECTORY_SEPARATOR . $nsPath . '.php';
 	}
 

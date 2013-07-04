@@ -196,8 +196,9 @@ class Router implements RouterInterface {
 		$caseClassFile =FileObject::fileExistCase($classFile); 
         if ($caseClassFile) {
             include_once $caseClassFile;
-			$this->spacePath = strtok(basename($caseClassFile),'.');
-        	$invokeClass = "{$this->routerNameSpace}\Controller\\{$this->spacePath}";
+			$invokeClass = str_replace($this->routerPath, '', $caseClassFile);
+			$invokeClass = strtr($invokeClass,'/','\\');
+			$invokeClass = $this->routerNameSpace . strtok($invokeClass, '.');
             $classExist = class_exists($invokeClass, false);
         }
         if (!$classExist) {
