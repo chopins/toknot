@@ -182,7 +182,7 @@ abstract class Object implements Iterator, Countable{
 	}
 
 	public function valid() {
-		$key = $this->key();
+		$key = key($this->interatorArray);
 		return isset($this->interatorArray[$key]);
 	}
 

@@ -92,7 +92,7 @@ class AdminBase extends ClassAccessControl {
 
 		$this->commonTplVarSet();
 		$FMAI->newTemplateView(self::$CFG->View);
-		if ($FMAI->redirectAccessDeniedController($this, 'act=login')) {
+		if ($FMAI->redirectAccessDeniedController($this)) {
 			exit();
 		}
 	}

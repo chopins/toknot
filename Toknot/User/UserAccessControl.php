@@ -139,14 +139,14 @@ abstract class UserAccessControl extends Object {
 	 * @static
 	 */
 	public static function bestHashAlgos() {
-		if (CRYPT_BLOWFISH) {
-			return 'BLOWFISH';
-		}
 		if (CRYPT_SHA256) {
 			return 'SHA256';
 		}
 		if (CRYPT_SHA512) {
 			return 'SHA512';
+		}
+		if (CRYPT_BLOWFISH) {
+			return 'BLOWFISH';
 		}
 		return 'SHA1';
 	}
@@ -165,7 +165,7 @@ abstract class UserAccessControl extends Object {
 	 *                         will use to the nearest limit.
 	 * @return string the hashed string and salt, like {@see crypt()) of PHP
 	 */
-	public static function getTextHash($password, $algo, $salt = '', $rounds = 5000) {
+	public static function getTextHash($password, $algo, $salt = '', $rounds = 500) {
 		if (!preg_match('/^[0-9A-Za-z]+$/', $salt)) {
 			return false;
 		}
@@ -305,14 +305,14 @@ abstract class UserAccessControl extends Object {
 	 */
 	public function generateUserFlag() {
 		$userFlag = self::getUserRemoteAddress();
-		$userFlag .= isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']:'';
-		$userFlag .= isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : ''; 
-		$userFlag .= isset($_SERVER['HTTP_ACCEPT_CHARSET'])?$_SERVER['HTTP_ACCEPT_CHARSET']:'';
-		$userFlag .= isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])?$_SERVER['HTTP_ACCEPT_LANGUAGE']:'';
-		$userFlag .= isset($_SERVER['HTTP_ACCEPT_ENCODING'])?$_SERVER['HTTP_ACCEPT_ENCODING']:'';
+		$userFlag .= isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+		$userFlag .= isset($_SERVER['HTTP_ACCEPT']) ? $_SERVER['HTTP_ACCEPT'] : '';
+		$userFlag .= isset($_SERVER['HTTP_ACCEPT_CHARSET']) ? $_SERVER['HTTP_ACCEPT_CHARSET'] : '';
+		$userFlag .= isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '';
+		$userFlag .= isset($_SERVER['HTTP_ACCEPT_ENCODING']) ? $_SERVER['HTTP_ACCEPT_ENCODING'] : '';
 		return self::hashPassword($userFlag);
 	}
-	
+
 	/**
 	 * check user flag whether valid
 	 * 

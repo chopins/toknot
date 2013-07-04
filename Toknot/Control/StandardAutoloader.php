@@ -97,11 +97,11 @@ class StandardAutoloader {
 	public static function importToknotModule($module, $first = null) {
 		$toknotRoot = dirname(__DIR__);
 		$path = $toknotRoot . '/' . $module;
-		$dir = dir($path);
 		if ($first) {
 			include_once "{$path}/{$first}.php";
 		}
-		while (false !== ($file = $dir->read())) {
+		$fileList = scandir($path);
+		foreach($fileList as $file) {
 			if ($file == '.' || $file == '..' || $file == "{$first}.php") {
 				continue;
 			}
@@ -109,6 +109,7 @@ class StandardAutoloader {
 				include_once $path . '/' . $file;
 			}
 		}
+	
 	}
 
 	/**
