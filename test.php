@@ -6,6 +6,10 @@ class test {
 		
 	}
 }
+function  aaa() {
+
+}
+echo serialize($af);
 echo 'ReflectionArray:';
 $start = microtime(true);
 $i = 0;
@@ -33,7 +37,7 @@ while($i<10000) {
     $r = new ReflectionClass('test');
 	$a = $r->newInstance(1);
 
-	call_user_func(array($a, 't'));
+	call_user_func(array($a, 't'), array(1));
 
 	
 	$i++;

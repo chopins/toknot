@@ -69,14 +69,14 @@ final class FMAI extends Object {
      * The method will load framework default configure file
      * 
      */
-    protected function __construct($args) {
+    protected function __construct($appNamespace, $appRoot) {
         StandardAutoloader::importToknotClass('Config\ConfigLoader');
         ConfigLoader::singleton();
-        $this->appRoot = $args[1];
-		$this->appNamespace = $args[0];
-        DataCacheControl::$appRoot = $args[1];
+        $this->appRoot = $appRoot;
+		$this->appNamespace = $appNamespace;
+        DataCacheControl::$appRoot = $appRoot;
         Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
-        Log::$savePath = FileObject::getRealPath($args[1], ConfigLoader::CFG()->Log->logSavePath);
+        Log::$savePath = FileObject::getRealPath($appRoot, ConfigLoader::CFG()->Log->logSavePath);
         $this->D = new ArrayObject;
         //ConfigLoader::CFG()->AppRoot = $this->appRoot;
         date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);

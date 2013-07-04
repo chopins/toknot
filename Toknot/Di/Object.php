@@ -15,9 +15,8 @@ use \ReflectionMethod;
 use \ReflectionProperty;
 use \Iterator;
 use \Countable;
-use \ReflectionClass;
 
-abstract class Object implements Iterator, Countable {
+abstract class Object implements Iterator, Countable{
 
 	/**
 	 * For iterator of propertie list
@@ -26,7 +25,7 @@ abstract class Object implements Iterator, Countable {
 	 * @access protected
 	 */
 	protected $interatorArray = array();
-
+	
 	/**
 	 * whether object instance propertie change status
 	 *
@@ -59,13 +58,37 @@ abstract class Object implements Iterator, Countable {
 		$argc = func_num_args();
 		if ($argc > 0) {
 			$args = func_get_args();
-			self::$instance[$className] = new $className($args);		
+			self::$instance[$className] = self::constructArgs($argc,$args, $className);
 		} else {
 			self::$instance[$className] = new $className;
 		}
 		return self::$instance[$className];
 	}
-
+	
+	final private static function constructArgs($argc, $args,$className) {
+		if($argc === 1) {	
+			return new $className($args[0]);
+		} elseif($argc === 2) {
+			return new $className($args[0], $args[1]);
+		} elseif ($argc === 3) {
+			return new $className($args[0], $args[1], $args[2]);
+		} elseif ($argc === 4) {
+			return new $className($args[0], $args[1], $args[2], $args[3]);
+		}elseif ($argc === 5) {
+			return new $className($args[0], $args[1], $args[2], $args[3], $args[4]);
+		}elseif ($argc === 6) {
+			return new $className($args[0], $args[1], $args[2], $args[3], $args[4], $args[5]);
+		} else{
+			$argStr = '';
+			foreach ($args as $k=>$v) {
+				$argStr .= "\$args[$k],";
+			}
+			$argStr = rtrim($argStr, ',');
+			$ins = null;
+			eval("\$ins = new {$className}($argStr);");
+			return $ins;
+		}
+	}
 
 	/**
 	 * __set 
@@ -165,6 +188,12 @@ abstract class Object implements Iterator, Countable {
 
 	public function count() {
 		return count($this->interatorArray);
+	}
+	
+	public static function newInstanceWithoutConstruct() {
+		$className = get_called_class();
+		$ser = sprintf('O:%d:"%s":0:{}',  strlen($className),$className);
+		return unserialize($ser);
 	}
 
 }
