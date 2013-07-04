@@ -1,9 +1,10 @@
-function updateTimeBar(serverTime) {
+function updateTimeBar() {
 	var timeBar = TK.$('time-bar');
-	timeBar.innerHTML = TK.date(serverTime);
+	var localTime = TK.time();
+	timeBar.innerHTML = TK.date(localTime);
 	var setTime = function() {
-		serverTime = serverTime + 1000;
-		timeBar.innerHTML = TK.date(serverTime);
+		localTime = localTime + 1000;
+		timeBar.innerHTML = TK.date(localTime, true);
 		setTimeout(setTime, 1000);
 	};
 	setTimeout(setTime, 1000);
@@ -47,6 +48,7 @@ TK.ready(function() {
 
 		}
 	};
-	$(document.body).addListener(method.router, 'click');
+	//$(document.body).addListener(method.router, 'click');
 	method.router('URIHash');
+	updateTimeBar();
 });

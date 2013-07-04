@@ -41,7 +41,7 @@ if (typeof TK == 'undefined') {
 			throw new Error(str);
 		};
 		console.log = function(str) {
-		};
+			};
 	}
 	;
 	navigator.IE = typeof ActiveXObject == 'undefined' ? false : true;
@@ -54,7 +54,10 @@ if (typeof TK == 'undefined') {
 		timeoutHandle: [],
 		cache: {},
 		maxZIndex: 0,
-		keyList: {keyup: [], keydown: []},
+		keyList: {
+			keyup: [], 
+			keydown: []
+		},
 		//document鼠标点击事件回调函数列表
 		bodyMouseEventCallFuncitonList: {
 			mousedown: [[], [], [], []],
@@ -80,9 +83,17 @@ if (typeof TK == 'undefined') {
 				return '';
 			return scripts[cidx].src.substring(0, shash + 1);
 		},
-		inputType: {INPUT_TEXT: 1, INPUT_PASSWORD: 2, INPUT_CHECKBOX: 3,
-			INPUT_RADIO: 4, INPUT_TEXTAREA: 5, INPUT_BUTTON: 6, INPUT_SUBMIT: 7,
-			INPUT_IMAGE: 8, INPUT_SELECT: 9},
+		inputType: {
+			INPUT_TEXT: 1, 
+			INPUT_PASSWORD: 2, 
+			INPUT_CHECKBOX: 3,
+			INPUT_RADIO: 4, 
+			INPUT_TEXTAREA: 5, 
+			INPUT_BUTTON: 6, 
+			INPUT_SUBMIT: 7,
+			INPUT_IMAGE: 8, 
+			INPUT_SELECT: 9
+		},
 		require : function(fs,bodyEnd) {
 			return TK.loadJSFile(fs,bodyEnd);	
 		},
@@ -184,7 +195,10 @@ if (typeof TK == 'undefined') {
 		scrollOffset: function() {
 			var YOffset = window.pageYOffset ? window.pageYOffset : TK.doc.body.scrollTop;
 			var XOffset = window.pageXOffset ? window.pageXOffset : TK.doc.body.scrollLeft;
-			return {x: XOffset, y: YOffset};
+			return {
+				x: XOffset, 
+				y: YOffset
+			};
 		},
 		//窗口滚动事件
 		windowScrollCallback: function(e) {
@@ -289,7 +303,8 @@ if (typeof TK == 'undefined') {
 		},
 		//鼠标点击事件注册原型
 		addMouseEventController: function(type) {
-			return {left: function(func) {
+			return {
+				left: function(func) {
 					TK.addMouseClickCallFunction(func, type, 0);
 				},
 				right: function(func) {
@@ -467,7 +482,12 @@ if (typeof TK == 'undefined') {
 						y += obj.offsetTop;
 						obj = obj.parentOffset;
 					}
-					return {'x': x, 'y': y, 'h': height, 'w': width};
+					return {
+						'x': x, 
+						'y': y, 
+						'h': height, 
+						'w': width
+					};
 				},
 				copyNode: function(deep) {
 					return TK.$(this.cloneNode(deep));
@@ -676,7 +696,10 @@ if (typeof TK == 'undefined') {
 							TK.windowScrollEventCallFunctionList.push(call_action);
 							return;
 						case 'resize':
-							var l = {func: call_action, obj: this};
+							var l = {
+								func: call_action, 
+								obj: this
+							};
 							if (window.top == window.self) {
 								TK.windowResizeCallFunctionList.push(l);
 							} else if (window.top.X) {
@@ -1003,9 +1026,16 @@ if (typeof TK == 'undefined') {
 				resize: function(sens, spec) {
 					var resizeNodeObj = {};
 					resizeNodeObj.node = this;
-					resizeNodeObj.cursorList = {ltc: 'nw-resize', lbc: 'sw-resize', l: 'w-resize',
-						rbc: 'se-resize', rtc: 'ne-resize', r: 'e-resize',
-						t: 'n-resize', b: 's-resize'};
+					resizeNodeObj.cursorList = {
+						ltc: 'nw-resize', 
+						lbc: 'sw-resize', 
+						l: 'w-resize',
+						rbc: 'se-resize', 
+						rtc: 'ne-resize', 
+						r: 'e-resize',
+						t: 'n-resize', 
+						b: 's-resize'
+					};
 					resizeNodeObj.sens = sens ? sens : 10;
 					resizeNodeObj.startResize = false;
 					var setMouseCursor = function(e) {
@@ -1206,7 +1236,12 @@ if (typeof TK == 'undefined') {
 			waitTime: 10000,
 			outObj: [],
 			formObj: null,
-			messageList: {start: '', complete: '', still: '', current: ''},
+			messageList: {
+				start: '', 
+				complete: '', 
+				still: '', 
+				current: ''
+			},
 			message: null,
 			messageNode: null,
 			showTime: 2000,
@@ -1225,7 +1260,7 @@ if (typeof TK == 'undefined') {
 			},
 			setUrl: function(url) {
 				if (url.substr(0, 4).toLowerCase() != 'http://' &&
-						url.substr(0, 5).toLowerCase() != 'https://') {
+					url.substr(0, 5).toLowerCase() != 'https://') {
 					var protocol = window.location.protocol == "https:" ? 'https' : 'http';
 					url = protocol + '://' + TK.Ajax.defaultDomain + url;
 				}
@@ -1447,8 +1482,8 @@ if (typeof TK == 'undefined') {
 						}
 						if (TK.Ajax.openInstance[openId].method == 'TRACE') {
 							TK.Ajax.openInstance[openId].callFunc(
-									TK.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders(),
-									TK.Ajax.openInstance[openId].XMLHttp.responseText);
+								TK.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders(),
+								TK.Ajax.openInstance[openId].XMLHttp.responseText);
 							return;
 						}
 						if (TK.Ajax.openInstance[openId].XMLHttp.status == 200) {
@@ -1474,7 +1509,7 @@ if (typeof TK == 'undefined') {
 							}
 							if (TK.Ajax.openInstance[openId].callFunc) {
 								TK.Ajax.openInstance[openId].callFunc(reData);
-								/*try { TK.Ajax.openInstance[openId].callFunc(reData); 
+							/*try { TK.Ajax.openInstance[openId].callFunc(reData); 
 								 } catch(e) {
 								 console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
 								 }*/
@@ -1857,19 +1892,37 @@ if (typeof TK == 'undefined') {
 		 * @returns {string}
 		 */
 		preZero: function(num, bit) {
+			bit = bit || 2;
 			var max = 10 ^ (bit - 1);
 			bit = bit - num.toString().length;
 			var str = TK.repeat('0', bit);
 			return num < max ? str + num : num;
 		},
-		date: function(time) {
-			var d = time ? new Date(time) : new Date;
-			var month = TK.preZero(d.getMonth() + 1);
-			var date = TK.preZero(d.getDate());
-			var hours = TK.preZero(d.getHours());
-			var minutes = TK.preZero(d.getMinutes());
-			var seconds = TK.preZero(d.getSeconds());
-			return d.getFullYear() + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':' + seconds;
+		dateStatic : [0],
+		date: function(time, cache) {
+			var seconds = '00';
+			if(TK.dateStatic[0] == 0) {
+				var d = time ? new Date(time) : new Date;
+				var month = TK.preZero(d.getMonth() + 1);
+				var date = TK.preZero(d.getDate());
+				var hours = TK.preZero(d.getHours());
+				var minutes = TK.preZero(d.getMinutes());
+				var sec = d.getSeconds();
+				seconds = TK.preZero(sec);
+				TK.dateStatic[0] = 59 - sec;
+				TK.dateStatic[1] = d.getFullYear() + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':';
+			} else {
+				if(cache) {
+					TK.dateStatic[0]--;
+					sec = 59 - TK.dateStatic[0];
+				} else {
+					var d = time ? new Date(time) : new Date;
+					var sec = d.getSeconds();
+					TK.dateStatic[0] = 59 - sec;
+				}
+				seconds = TK.preZero(sec);
+			}
+			return  TK.dateStatic[1] + seconds;
 		},
 		localDate: function() {
 			var d = new Date();
@@ -1984,7 +2037,7 @@ if (typeof TK == 'undefined') {
 					inputItem.innerHTML = inputList[i].value;
 				} else if (inputList[i].type == 'select') {
 					inputItem = TK.selectDiv(inputList[i].value, inputList[i].name,
-							'', '', inputList[i].cls);
+						'', '', inputList[i].cls);
 				} else {
 					var inputItem = input.copyNode(true);
 					inputItem.setAttribute('type', inputList[i].type);
@@ -2225,7 +2278,10 @@ if (typeof TK == 'undefined') {
 		pageShowSize: function() {
 			var h = navigator.IE ? window.screen.availHeight : document.documentElement.clientHeight;
 			var w = navigator.IE ? window.screen.availWidth : document.documentElement.clientWidth;
-			return {h: h, w: w};
+			return {
+				h: h, 
+				w: w
+			};
 		},
 		getCache: function(hay, need) {
 			for (var i in TK.cache[hay]) {
@@ -2252,7 +2308,10 @@ if (typeof TK == 'undefined') {
 		 */
 		mousePos: function(e) {
 			e = typeof event == 'undefined' ? e : event;
-			return {x: e.clientX, y: e.clientY};
+			return {
+				x: e.clientX, 
+				y: e.clientY
+				};
 		},
 		/**
 		 * 获取兼容性透明度设置样式 
@@ -2365,7 +2424,9 @@ if (typeof TK == 'undefined') {
 				formData[key] = textarea.value;
 			}
 			formData = JSON.stringify(formData);
-			return {data: formData};
+			return {
+				data: formData
+			};
 		},
 		/**
 		 * 自动提交表单,本方法只能提交form标签表单 
@@ -2554,7 +2615,7 @@ if (typeof TK == 'undefined') {
 			var searchNear = function(arr, na) {
 				for (var k in arr) {
 					if (arr[k][0] + 5 > na[0] && arr[k][0] - 5 < na[0] &&
-							arr[k][1] + 5 > na[1] && arr[k][1] - 5 < na[1]) {
+						arr[k][1] + 5 > na[1] && arr[k][1] - 5 < na[1]) {
 						return k;
 					}
 				}

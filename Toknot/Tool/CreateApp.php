@@ -215,7 +215,8 @@ use {$use}Base;
 class Index extends {$base}{
 EOS;
 		$phpCode .= <<<'EOS'
-    public $perms = 0777;
+ 	
+    public $perms = 0770;
 
     public function GET() {
         //$database = $this->AR->connect();
