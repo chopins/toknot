@@ -16,7 +16,7 @@ use \ReflectionProperty;
 use \Iterator;
 use \Countable;
 
-abstract class Object implements Iterator, Countable{
+abstract class Object implements Iterator, Countable {
 
 	/**
 	 * For iterator of propertie list
@@ -25,7 +25,7 @@ abstract class Object implements Iterator, Countable{
 	 * @access protected
 	 */
 	protected $interatorArray = array();
-	
+
 	/**
 	 * whether object instance propertie change status
 	 *
@@ -41,6 +41,8 @@ abstract class Object implements Iterator, Countable{
 	 * @access private 
 	 */
 	private static $instance = array();
+	private $counter = 0;
+	private $countNumber = 0;
 
 	/**
 	 * provide singleton pattern for Object child class
@@ -58,29 +60,29 @@ abstract class Object implements Iterator, Countable{
 		$argc = func_num_args();
 		if ($argc > 0) {
 			$args = func_get_args();
-			self::$instance[$className] = self::constructArgs($argc,$args, $className);
+			self::$instance[$className] = self::constructArgs($argc, $args, $className);
 		} else {
 			self::$instance[$className] = new $className;
 		}
 		return self::$instance[$className];
 	}
-	
-	final private static function constructArgs($argc, $args,$className) {
-		if($argc === 1) {	
+
+	final private static function constructArgs($argc, $args, $className) {
+		if ($argc === 1) {
 			return new $className($args[0]);
-		} elseif($argc === 2) {
+		} elseif ($argc === 2) {
 			return new $className($args[0], $args[1]);
 		} elseif ($argc === 3) {
 			return new $className($args[0], $args[1], $args[2]);
 		} elseif ($argc === 4) {
 			return new $className($args[0], $args[1], $args[2], $args[3]);
-		}elseif ($argc === 5) {
+		} elseif ($argc === 5) {
 			return new $className($args[0], $args[1], $args[2], $args[3], $args[4]);
-		}elseif ($argc === 6) {
+		} elseif ($argc === 6) {
 			return new $className($args[0], $args[1], $args[2], $args[3], $args[4], $args[5]);
-		} else{
+		} else {
 			$argStr = '';
-			foreach ($args as $k=>$v) {
+			foreach ($args as $k => $v) {
 				$argStr .= "\$args[$k],";
 			}
 			$argStr = rtrim($argStr, ',');
@@ -167,6 +169,12 @@ abstract class Object implements Iterator, Countable{
 		$constantsList = $ref->getConstants();
 		$this->interatorArray = array_merge($constantsList, $propertiesList);
 		reset($this->interatorArray);
+		$this->resetCount();
+	}
+
+	protected function resetCount() {
+		$this->counter = 0;
+		$this->countNumber = count($this->interatorArray);
 	}
 
 	public function current() {
@@ -178,21 +186,28 @@ abstract class Object implements Iterator, Countable{
 	}
 
 	public function next() {
+		$this->counter++;
 		next($this->interatorArray);
 	}
 
 	public function valid() {
-		$key = key($this->interatorArray);
-		return isset($this->interatorArray[$key]);
+		if ($this->countNumber == 0) {
+			return false;
+		}
+		if ($this->countNumber <= $this->counter) {
+			return false;
+		}
+		return true;
 	}
 
 	public function count() {
-		return count($this->interatorArray);
+		$this->rewind();
+		return $this->countNumber;
 	}
-	
+
 	public static function newInstanceWithoutConstruct() {
 		$className = get_called_class();
-		$ser = sprintf('O:%d:"%s":0:{}',  strlen($className),$className);
+		$ser = sprintf('O:%d:"%s":0:{}', strlen($className), $className);
 		return unserialize($ser);
 	}
 

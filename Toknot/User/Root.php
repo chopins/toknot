@@ -33,6 +33,7 @@ final class Root extends UserAccessControl {
 		$this->gid = 0;
 		$this->userName = 'root';
 		$this->groupName = 'root';
+		$this->loginExpire = 0;
 	}
 	public function __get($name) {
 		return $this->$name;

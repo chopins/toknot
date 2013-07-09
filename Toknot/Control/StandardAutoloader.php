@@ -100,14 +100,12 @@ class StandardAutoloader {
 		if ($first) {
 			include_once "{$path}/{$first}.php";
 		}
-		$fileList = scandir($path);
+		$fileList = glob("$path/*.php");
 		foreach($fileList as $file) {
-			if ($file == '.' || $file == '..' || $file == "{$first}.php") {
+			if ($file == "{$path}/{$first}.php") {
 				continue;
 			}
-			if (is_file($path . '/' . $file)) {
-				include_once $path . '/' . $file;
-			}
+			include_once $file;
 		}
 	
 	}

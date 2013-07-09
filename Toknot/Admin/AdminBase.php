@@ -75,6 +75,8 @@ class AdminBase extends ClassAccessControl {
 	
 	private static $adminConstruct = false;
 
+	private $currentUser = null;
+
 	public function __construct(FMAI $FMAI) {
 		if (self::$adminConstruct) {
 			return;
@@ -88,6 +90,7 @@ class AdminBase extends ClassAccessControl {
 		$FMAI->registerAccessDeniedController('\User\Login');
 
 		$user = $this->checkUserLogin();
+		$this->currentUser = $user;
 		$FMAI->checkAccess($this, $user);
 
 		$this->commonTplVarSet();
@@ -103,6 +106,7 @@ class AdminBase extends ClassAccessControl {
 	public function commonTplVarSet() {
 		self::$FMAI->D->title = 'ToKnot Admin';
 		self::$FMAI->D->toknotVersion = Version::VERSION . '-' . Version::STATUS;
+		self::$FMAI->D->currentUser = $this->currentUser;
 	}
 	
 	/**

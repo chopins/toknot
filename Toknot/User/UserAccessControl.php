@@ -347,5 +347,7 @@ abstract class UserAccessControl extends Object {
 		preg_match("/[\d\.]{7,15}/", $ip, $ipm);
 		return isset($ipm[0]) ? $ipm[0] : 'unknown';
 	}
-
+	public function __toString() {
+		return $this->userName;
+	}
 }

@@ -15,7 +15,7 @@ use Toknot\User\Root;
 use Toknot\User\Nobody;
 use Toknot\Exception\StandardException;
 
-class ClassAccessControl extends UserAccessControl {
+abstract class ClassAccessControl extends UserAccessControl {
 
     /**
      * 8 bit permission of current object instance
@@ -157,4 +157,7 @@ class ClassAccessControl extends UserAccessControl {
         return $this->checkPermes($user, 07);
     }
 
+	public function __toString() {
+		return get_called_class();
+	}
 }
