@@ -9,6 +9,9 @@
  */
 namespace Toknot\Di;
 
+/**
+ * Toknot Framework Version message
+ */
 final class Version {
     const VERSION = '2.0';
     const STATUS = 'dev';

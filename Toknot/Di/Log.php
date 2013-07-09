@@ -11,15 +11,39 @@
 namespace Toknot\Di;
 
 class Log {
+
+	/**
+	 * log file save path
+	 *
+	 * @var string
+	 * @access public
+	 * @static
+	 */
     public static $savePath = '';
+
+	/**
+	 * whether enable save the log info
+	 *
+	 * @var boolean
+	 * @access public
+	 * @static
+	 */
     public static $enableSaveLog = false;
 
+	/**
+	 * print debug backtrace
+	 */
     public static function printTrace() {
         $trace = debug_backtrace();
         print self::traceCss();
         print self::formatTrace($trace);
     }
     
+	/**
+	 * save trace info to log file
+	 * 
+	 * @param string $traceInfo
+	 */
     public static function save($traceInfo) {
         if(!self::$enableSaveLog || empty(self::$savePath)) {
             return;
@@ -32,6 +56,12 @@ class Log {
         FileObject::saveContent(self::$savePath.DIRECTORY_SEPARATOR.$day, $traceInfo, FILE_APPEND);
     }
 
+	/**
+	 * backtrace trans to html
+	 * 
+	 * @param array $traceArr
+	 * @return string
+	 */
     public static function formatTrace($traceArr) {
         $str = '';
         foreach ($traceArr as $key => $value) {
@@ -67,6 +97,11 @@ class Log {
         return $str;
     }
 
+	/**
+	 * Toknot trace web page style
+	 * 
+	 * @return string
+	 */
     public static function traceCss() {
         return '<style>
                 .ToKnotDebugArea {border:1px #CCCCCC solid;background-color:#EEEFFF;padding:0;font-family:Helvetica,arial,freesans,clean,sans-serif;}

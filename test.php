@@ -1,86 +1,46 @@
 <?php
-class test {
-	public function __construct() {
+
+function strrand($min, $max = 0, $all = false) {
+	if ($min < 1) {
+		throw new StandardException("StringObject::rand() 1 parameter must greater 1, $min given");
 	}
-	public function t() {
-		
+	if ($max > 0) {
+		$len = mt_rand($min, $max);
+	} else {
+		$len = $min;
 	}
-}
-function  aaa() {
-
-}
-echo serialize($af);
-echo 'ReflectionArray:';
-$start = microtime(true);
-$i = 0;
-while($i<10000) {
-
-    $r = new ReflectionClass('test');
-	$a = $r->newInstanceArgs(array(1));
-
-	$a->t(1);
-
-	
-	$i++;
+	$char = '0987654321qwertyuiopasdfghjklmnbvcxzQWERTYUIUIOPLKJHGFDSAZXCVBNM';
+	$len = 61;
+	if ($all) {
+		$char .= '~`!@#$%^&*()_+-={}|[]\\:";\',./<>?';
+		$len = 93;
+	}
+	$randStr = '';
+	for ($i = 0; $i < $len; $i++) {
+		$randStr = $char[mt_rand(0, $len)];
+	}
+	return $randStr;
 }
 
-
-$t = microtime(true) - $start;
-echo $t;
-echo "\n";
-
-echo 'Reflection:';
-$start = microtime(true);
-$i = 0;
-while($i<10000) {
-
-    $r = new ReflectionClass('test');
-	$a = $r->newInstance(1);
-
-	call_user_func(array($a, 't'), array(1));
-
-	
-	$i++;
+function genRandomString($len) {
+	$chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz-=/?~!@#$%^&*()";
+	$charsLen = strlen($chars) - 1;
+	$output = "";
+	for ($i = 0; $i < $len; $i++) {
+		$output .= $chars[mt_rand(0, $charsLen)];
+	}
+	return $output;
 }
 
-
-$t = microtime(true) - $start;
-echo $t;
-echo "\n";
-
-
-echo 'new:';
-$start = microtime(true);
-$i = 0;
-while ($i<10000) {
-	$a = new test(1);
-	$r = new ReflectionMethod($a,'t');
-	$r->invokeArgs($a, array(1));
-	$i++;
+$startTime = microtime(true);
+for ($i = 0; $i < 10000; $i++) {
+	strrand(8);
 }
-$t = microtime(true) - $start;
-echo $t;
-
-echo "\n";
-echo 'eval:';
-$i = 0;
-$start = microtime(true);
-while ($i<10000) {
-	eval('$a = new test(1);');
-
-	$i++;
+echo microtime(true) - $startTime;
+echo '|';
+$startTime = microtime(true);
+for ($i = 0; $i < 10000; $i++) {
+	genRandomString(8);
 }
 
-$t = microtime(true) - $start;
-echo $t;
-echo "\n";
-echo 'variable:';
-$i = 0;
-$start  = microtime(true);
-while ($i<10000) {
-	$class = 'test';
-	$a = new $class(1);
-	$i++;
-}
-$t = microtime(true) - $start;
-echo $t;
+echo microtime(true) - $startTime;
