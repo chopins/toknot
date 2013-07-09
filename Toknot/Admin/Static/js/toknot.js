@@ -359,13 +359,13 @@ if (typeof TK == 'undefined') {
 		 * HTML DOM 元素访问函数
 		 *
 		 * @argument {mixed} ele 元素标识,目前支持以下标识:
-		 *              #className   #跟随元素样式名，返回拥有该样式的所有对象的数组
-		 *              @tagName     @跟随元素标签名，返回所有拥有该标签的对象的数组
+		 *              .className   #跟随元素样式名，返回拥有该样式的所有对象的数组
+		 *              @tagName    @跟随元素标签名，返回所有拥有该标签的对象的数组
 		 *              %name        %跟随元素的name属性值，返回所有拥有该name值的对象的数组
 		 *              id           传入没有上面前缀字符的字符串时作为元素ID范围，返回该ID指向对象
 		 *              ELEMENT_NODE 传入一个元素对象时，将返回TK.$(ELEMENT_NODE)对象
 		 *
-		 * @return TK.$(ele) 返回一个封装否的元素对象
+		 * @return TK.$(ele) 返回一个封装的元素对象
 		 *
 		 * 方法列表
 		 * TK.$(ele).getIframeBody() 获取iframe元素引用页面的body对象

@@ -24,7 +24,8 @@ class StandardException extends ErrorException {
     protected $errline = '';
     protected $isException = false;
     protected $exceptionMessage = null;
-    public $traceArr = array();
+	private $fatalError = false;
+	public $traceArr = array();
    
     /**
      * construct StandardException
@@ -46,13 +47,19 @@ class StandardException extends ErrorException {
     }
 
     static public function errorReportHandler($argv) {
-        throw new StandardException($argv[1], $argv[0], $argv[2], $argv[3]);
+		$object = new StandardException($argv[1], $argv[0], $argv[2], $argv[3]); 
+		if(DEVELOPMENT == true || $object->fatalError == true) {
+        	throw $object;
+		} else {
+			echo $object;	
+		}
     }
 
     public function getErrorType($code) {
         switch ($code) {
             case E_USER_ERROR:
                 $type = 'Fatal Error';
+				$this->fatalError = true;
                 break;
             case E_USER_WARNING:
             case E_WARNING:
@@ -63,26 +70,29 @@ class StandardException extends ErrorException {
             case E_NOTICE:
             case @E_STRICT:
                 $type = 'Notice';
-                $this->isException = true;
                 break;
             case @E_RECOVERABLE_ERROR:
                 $type = 'Catchable';
                 break;
             case E_COMPILE_ERROR:
                 $type = 'PHP Compile Error';
+				$this->fatalError = true;
                 break;
             case E_ERROR:
                 $type = 'PHP Fatal Error';
+				$this->fatalError = true;
                 break;
             case E_PARSE:
                 $type = 'PHP Parse Error';
+				$this->fatalError = true;
                 break;
             case E_CORE_ERROR:
                 $type = 'PHP Core Error';
+				$this->fatalError = true;
                 break;
             default:
-                $type = __CLASS__;
-                $this->isException = true;
+                $type = get_called_class();
+				$this->fatalError = true;
                 break;
         }
         $this->message = "<b>$type : </b>" . $this->message;

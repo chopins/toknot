@@ -75,7 +75,7 @@ class AdminBase extends ClassAccessControl {
 	
 	private static $adminConstruct = false;
 
-	private $currentUser = null;
+	protected $currentUser = null;
 
 	public function __construct(FMAI $FMAI) {
 		if (self::$adminConstruct) {

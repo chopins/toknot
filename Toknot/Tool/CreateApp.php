@@ -8,6 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
+namespace Toknot\Tool;
 /**
  * Create a application, the script is a guide that help you create a application
  * of base directory struncture and create some code of php
@@ -216,13 +217,13 @@ class Index extends {$base}{
 EOS;
 		$phpCode .= <<<'EOS'
  	
-    public $perms = 0770;
+    protected $permissions = 0770;
 
     public function GET() {
         //$database = $this->AR->connect();
         print "hello world";
 
-        //$this->display('index');
+        //self::$FMAI->display('index');
     }
  }
 EOS;
@@ -239,12 +240,12 @@ use Toknot\User\ClassAccessControl;
 class ' . $this->appName . 'Base extends ClassAccessControl {
 EOS;
 		$phpCode .= <<<'EOS'
-    protected $FMAI;
-    protected $CFG;
+    protected static $FMAI;
+    protected static $CFG;
     protected $AppPath;
     protected $AR;
     protected $view;
-    protected $prems;
+    protected $permissions;
     protected $classGroup;
     public function __construct($FMAI) {
         $this->FMAI = $FMAI;

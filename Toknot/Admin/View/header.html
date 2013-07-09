@@ -11,5 +11,8 @@
             <div class="time-bar" id="time-bar"></div>
             <div class="user-nav">Languaage</div>
             <div class="user-nav">{$currentUser}</div>
+			{if $currentUser->userName == 'root'}
+            <div class="user-nav">Add Controller</div>
+			{/if}
         </div>
         <div class="main-warpper">

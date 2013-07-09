@@ -12,6 +12,7 @@ namespace Toknot\User;
 
 use Toknot\User\UserClass;
 use Toknot\Config\ConfigLoader;
+use Toknot\Exception\BadPropertyGetException;
 
 /**
  * Root User object
@@ -36,6 +37,9 @@ final class Root extends UserAccessControl {
 		$this->loginExpire = 0;
 	}
 	public function __get($name) {
+		if($name == 'password') {
+			throw new BadPropertyGetException(__CLASS__,$name);
+		}
 		return $this->$name;
 	}
 
