@@ -1,23 +1,39 @@
 {inc header}
-<div class="main-box">
 <div class="menu-nav">
 	<div class="nav-tree">
+		{if $currentUser->userName == 'root'}
+            <div class="opreate-btn add-con-color icon-add"><span>Add Controller</span></div>
+			{/if}
 		<ul class="nav-tree-ul">
 			{foreach $navList as $key=>$nav}
-			<li class="nav-tree-ul-li"><div class="nav-cat">User Manage</div>
+			<li class="nav-tree-ul-li"><div class="icon-right nav-cat">User Manage</div>
 				<ul class="sub-nav-tree">
 					<li class="sub-nav-tree-li">User List</li>
 					<li class="sub-nav-tree-li">Add User</li>
 				</ul>
 			</li>
 			{/foreach}
-			<li class="nav-tree-ul-li"><div class="nav-cat">Manage Log</div>
+			<li class="nav-tree-ul-li"><div class="icon-right nav-cat">User Manage</div>
+				<ul class="sub-nav-tree">
+					<li class="sub-nav-tree-li">User List</li>
+					<li class="sub-nav-tree-li">Add User</li>
+				</ul>
+			</li>
+			<li class="nav-tree-ul-li"><div class="icon-right nav-cat">Manage Log</div>
 				<ul class="sub-nav-tree"><li class="sub-nav-tree-li">Log Lists</li></ul>
 			</li>
 		</ul>
 	</div>
-
 </div>
-	<div class="page-box"></div>
-</div>
+	<div class="page-box">
+		<div class="table">
+		<div class="table-title">
+			<div class="title-item">Field Name</div>
+			<div class="title-item">Field Name</div>
+			<div class="title-item">Field Name</div>
+			<div class="title-item">Field Name</div>
+			<div class="title-item">Field Name</div>
+		</div>
+		</div>
+	</div>
 {inc footer}

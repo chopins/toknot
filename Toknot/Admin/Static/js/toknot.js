@@ -249,6 +249,7 @@ if (typeof TK == 'undefined') {
 			e = e || event, k = e.keyCode, fL = TK.keyList[e.type];
 			for (var key in fL)
 				key != '' && k == key && fL[k](e);
+			if(fL['any']) fL['any'](e);
 		},
 		addKeyListener: function(key, func, type) {
 			TK.keyList[type][key] = func;
@@ -285,6 +286,9 @@ if (typeof TK == 'undefined') {
 				},
 				right: function(func) {
 					obj.key(39, func);
+				},
+				any : function(func) {
+					obj.key('any', func);
 				},
 				key: obj.key
 			};
@@ -687,16 +691,16 @@ if (typeof TK == 'undefined') {
 					}
 				},
 				addListener: function(e, call_action) {
-					//console.warn('addEventListener Element '+ this + ' Function is ' + call_action);
 					call_action.handObj = this;
 					var iserr = false;
+					var l = null;
 					switch (e) {
 						case 'scroll':
 							this.scrollOffset = TK.scrollOffset();
 							TK.windowScrollEventCallFunctionList.push(call_action);
 							return;
 						case 'resize':
-							var l = {
+							l = {
 								func: call_action, 
 								obj: this
 							};
@@ -707,7 +711,7 @@ if (typeof TK == 'undefined') {
 							}
 							return;
 						case 'error':
-							var iserr = true;
+							iserr = true;
 						case 'load':
 							if (navigator.IE && this.tag == 'script') {
 								this.onreadystatechange = function(e) {
@@ -725,7 +729,7 @@ if (typeof TK == 'undefined') {
 					}
 					if (typeof TK.eventList[e] == 'undefined')
 						TK.eventList[e] = [];
-					var l = TK.eventList[e].push(call_action) - 1;
+					l = TK.eventList[e].push(call_action) - 1;
 					if (this.addEventListener) {
 						this.addEventListener(e, TK.eventList[e][l], false);
 					} else if (this.attachEvent) {

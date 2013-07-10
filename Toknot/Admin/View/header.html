@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>{$title}</title>
@@ -8,11 +9,23 @@
     </head>
     <body>
         <div class="top-panel">
-            <div class="time-bar" id="time-bar"></div>
+			<div class="tk-logo">ToKnot Admin</div>
+            <div class="user-nav" id="time-bar"></div>
             <div class="user-nav">Languaage</div>
             <div class="user-nav">{$currentUser}</div>
-			{if $currentUser->userName == 'root'}
-            <div class="user-nav">Add Controller</div>
+			
+			{if $act == 'list'}
+			<div class="opreate-btn"><span class="icon-add">Add</span></div>
+			<div class="opreate-btn"><span class="icon-edit">Edit</span></div>
+			<div class="opreate-btn"><span class="icon-delete">Delete</span></div>
+			<div class="opreate-btn"><span>
+					<input type="text" /> Search</span>
+			</div>
 			{/if}
-        </div>
-        <div class="main-warpper">
+			{if $act == 'edit'}
+			<div class="opreate-btn"><span>Retrun</span></div>
+			<div class="opreate-btn"><span>Save</span></div>
+			{/if}
+			
+		</div>
+		<div class="main-warpper">
