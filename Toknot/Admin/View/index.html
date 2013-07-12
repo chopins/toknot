@@ -2,38 +2,68 @@
 <div class="menu-nav">
 	<div class="nav-tree">
 		{if $currentUser->userName == 'root'}
-            <div class="opreate-btn add-con-color icon-add"><span>Add Controller</span></div>
-			{/if}
+		<div class="opreate-btn add-con-color icon-plus"><span>Add Controller</span></div>
+		{/if}
 		<ul class="nav-tree-ul">
 			{foreach $navList as $key=>$nav}
-			<li class="nav-tree-ul-li"><div class="icon-right nav-cat">User Manage</div>
+			<li class="nav-tree-ul-li"><div class="icon-right-open nav-cat">User Manage</div>
 				<ul class="sub-nav-tree">
 					<li class="sub-nav-tree-li">User List</li>
 					<li class="sub-nav-tree-li">Add User</li>
 				</ul>
 			</li>
 			{/foreach}
-			<li class="nav-tree-ul-li"><div class="icon-right nav-cat">User Manage</div>
+			<li class="nav-tree-ul-li"><div class="icon-right-open nav-cat">User Manage</div>
 				<ul class="sub-nav-tree">
 					<li class="sub-nav-tree-li">User List</li>
 					<li class="sub-nav-tree-li">Add User</li>
 				</ul>
 			</li>
-			<li class="nav-tree-ul-li"><div class="icon-right nav-cat">Manage Log</div>
+			<li class="nav-tree-ul-li"><div class="icon-right-open nav-cat">Manage Log</div>
 				<ul class="sub-nav-tree"><li class="sub-nav-tree-li">Log Lists</li></ul>
 			</li>
 		</ul>
 	</div>
 </div>
-	<div class="page-box">
-		<div class="table">
-		<div class="table-title">
-			<div class="title-item">Field Name</div>
-			<div class="title-item">Field Name</div>
-			<div class="title-item">Field Name</div>
-			<div class="title-item">Field Name</div>
-			<div class="title-item">Field Name</div>
-		</div>
-		</div>
-	</div>
+<div class="page-box">
+	<table class="table"  cellspacing="0" cellpadding="0">
+		<thead class="table-title">
+			<tr>
+				<th class="table-title-item table-title-checkbox"><span class="icon-minus checkbox"></span></th>
+				<th class="table-title-item">Field Name</th>
+				<th class="table-title-item">Field Name</th>
+				<th class="table-title-item">Field Name</th>
+				<th class="table-title-item">Field Name</th>
+				<th class="table-title-item">Field Name</th>
+			</tr>
+		</thead>
+		<tbody>	
+		<tr class="table-data-line">
+			<td class="table-data-item"><span class="icon-ok checkbox"></span></td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>	
+		</tr>
+		<tr class="table-data-line" >
+			<td class="table-data-item"><span class="icon-ok checkbox"></span></td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>	
+		</tr>
+		<tr class="table-data-line">
+			<td class="table-data-item"><span class="checkbox"></span></td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>
+			<td class="table-data-item">Field Name</td>	
+		</tr>
+		</tbody>
+	</table>
+</div>
+<div style="clear: both;"></div>
 {inc footer}

@@ -15,11 +15,12 @@
             <div class="user-nav">{$currentUser}</div>
 			
 			{if $act == 'list'}
-			<div class="opreate-btn"><span class="icon-add">Add</span></div>
-			<div class="opreate-btn"><span class="icon-edit">Edit</span></div>
-			<div class="opreate-btn"><span class="icon-delete">Delete</span></div>
-			<div class="opreate-btn"><span>
-					<input type="text" /> Search</span>
+			<div class="opreate-btn"><span class="icon-plus"></span><span>Add</span></div>
+			<div class="opreate-btn"><span class="icon-pencil"></span>Edit</div>
+			<div class="opreate-btn"><span class="icon-trash"></span>Delete</div>
+			<div class="opreate-btn">
+					<input type="text" class="search-text"/>
+					<span class="icon-search">Search</span>
 			</div>
 			{/if}
 			{if $act == 'edit'}
