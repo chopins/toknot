@@ -11,17 +11,12 @@
         <div class="top-panel">
 			<div class="tk-logo">ToKnot Admin</div>
             <div class="user-nav" id="time-bar"></div>
-            <div class="user-nav">Languaage</div>
-            <div class="user-nav">{$currentUser}</div>
+            <div class="user-nav icon-after-down-micro">Languaage</div>
+            <div class="user-nav icon-after-down-micro">{$currentUser}</div>
 			
 			{if $act == 'list'}
 			<div class="opreate-btn"><span class="icon-plus"></span><span>Add</span></div>
-			<div class="opreate-btn"><span class="icon-pencil"></span>Edit</div>
 			<div class="opreate-btn"><span class="icon-trash"></span>Delete</div>
-			<div class="opreate-btn">
-					<input type="text" class="search-text"/>
-					<span class="icon-search">Search</span>
-			</div>
 			{/if}
 			{if $act == 'edit'}
 			<div class="opreate-btn"><span>Retrun</span></div>

@@ -2,20 +2,22 @@
 <div class="menu-nav">
 	<div class="nav-tree">
 		{if $currentUser->userName == 'root'}
-		<div class="opreate-btn add-con-color icon-plus"><span>Add Controller</span></div>
+		<div class="opreate-btn add-con-color icon-plus"><span>Add Manage</span></div>
 		{/if}
 		<ul class="nav-tree-ul">
 			{foreach $navList as $key=>$nav}
 			<li class="nav-tree-ul-li"><div class="icon-right-open nav-cat">User Manage</div>
 				<ul class="sub-nav-tree">
-					<li class="sub-nav-tree-li">User List</li>
+					<li class="sub-nav-tree-li current-nav-page">User List</li>
 					<li class="sub-nav-tree-li">Add User</li>
 				</ul>
 			</li>
 			{/foreach}
-			<li class="nav-tree-ul-li"><div class="icon-right-open nav-cat">User Manage</div>
+			<li class="nav-tree-ul-li"><div class="icon-down-open nav-cat">User Manage</div>
 				<ul class="sub-nav-tree">
-					<li class="sub-nav-tree-li">User List</li>
+					<li class="sub-nav-tree-li current-nav-page">User List
+						<i class="icon-right-open"></i>
+					</li>
 					<li class="sub-nav-tree-li">Add User</li>
 				</ul>
 			</li>
@@ -30,40 +32,41 @@
 		<thead class="table-title">
 			<tr>
 				<th class="table-title-item table-title-checkbox"><span class="icon-minus checkbox"></span></th>
-				<th class="table-title-item">Field Name</th>
-				<th class="table-title-item">Field Name</th>
-				<th class="table-title-item">Field Name</th>
-				<th class="table-title-item">Field Name</th>
-				<th class="table-title-item">Field Name</th>
+				<th class="table-title-item icon-after-down-micro">User Name</th>
+				<th class="table-title-item icon-after-down-micro">Group</th>
+				<th class="table-title-item icon-after-down-micro">Nick</th>
+				<th class="table-title-item icon-after-down-micro">Field Name</th>
+				<th class="table-title-item icon-after-down-micro">Field Name</th>
 			</tr>
 		</thead>
 		<tbody>	
-		<tr class="table-data-line">
-			<td class="table-data-item"><span class="icon-ok checkbox"></span></td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>	
-		</tr>
-		<tr class="table-data-line" >
-			<td class="table-data-item"><span class="icon-ok checkbox"></span></td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>	
-		</tr>
-		<tr class="table-data-line">
-			<td class="table-data-item"><span class="checkbox"></span></td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>
-			<td class="table-data-item">Field Name</td>	
-		</tr>
+			<tr class="table-data-line">
+				<td class="table-data-item"><span class="icon-ok checkbox"></span></td>
+				<td class="table-data-item">User1</td>
+				<td class="table-data-item">Group1</td>
+				<td class="table-data-item">Field Name</td>
+				<td class="table-data-item">Field Name</td>
+				<td class="table-data-item">Field Name</td>	
+			</tr>
+			<tr class="table-data-line" >
+				<td class="table-data-item"><span class="icon-ok checkbox"></span></td>
+				<td class="table-data-item">User2</td>
+				<td class="table-data-item">Field Name</td>
+				<td class="table-data-item">Field Name</td>
+				<td class="table-data-item">Field Name</td>
+				<td class="table-data-item">Field Name</td>	
+			</tr>
+			<tr class="table-data-line">
+				<td class="table-data-item"><span class="checkbox"></span></td>
+				<td class="table-data-item">User3</td>
+				<td class="table-data-item">Field Name</td>
+				<td class="table-data-item">Field Name</td>
+				<td class="table-data-item">Field Name</td>
+				<td class="table-data-item">Field Name</td>	
+			</tr>
 		</tbody>
 	</table>
+
 </div>
 <div style="clear: both;"></div>
 {inc footer}
