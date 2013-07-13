@@ -4,10 +4,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="generator" content="ApiGen 2.8.0" />
 
-	<title>Class Toknot\Di\StringObject</title>
+	<title>Class Toknot\Di\StringObject | ToknotV2</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="resources/combined.js?1490177688"></script>
+	<script type="text/javascript" src="elementlist.js?2686112496"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,8 +21,6 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
-				<li><a href="namespace-None.html">None</a>
-						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
@@ -132,6 +130,11 @@
 	<h1>Class StringObject</h1>
 
 
+	<div class="description">
+	
+<p>String object</p>
+
+	</div>
 
 	<dl class="tree">
 		<dd style="padding-left:0px">
@@ -172,7 +175,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Di.html">Di</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Di.StringObject.html#20-219" title="Go to source code">Di/StringObject.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Di.StringObject.html#21-258" title="Go to source code">Toknot/Di/StringObject.php</a><br />
 	</div>
 
 
@@ -190,7 +193,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#97-102" title="Go to source code">__construct</a>( <span>mixed <var>$string</var> = <span class="php-quote">''</span></span> )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#106-111" title="Go to source code">__construct</a>( <span>mixed <var>$string</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -208,28 +211,41 @@
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="hasMethod" id="_hasMethod">
+	<tr data-order="supportMethod" id="_supportMethod">
 
 		<td class="attributes"><code>
 			 public static
-			
+			boolean
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_hasMethod">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#104-106" title="Go to source code">hasMethod</a>( <span>mixed <var>$name</var></span> )</code>
+		<a class="anchor" href="#_supportMethod">#</a>
+		<code><a href="source-class-Toknot.Di.StringObject.html#113-121" title="Go to source code">supportMethod</a>( <span>string <var>$name</var></span> )</code>
 
 		<div class="description short">
 			
+<p>check the method whether be support by StringObject class</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>check the method whether be support by StringObject class</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$name</var></dt>
+					<dd><code>string</code><br>$name</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br />
+				</div>
 
 
 
@@ -241,24 +257,32 @@
 
 		<td class="attributes"><code>
 			 public static
-			
+			array
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_supportStringMethod">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#108-130" title="Go to source code">supportStringMethod</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#123-150" title="Go to source code">supportStringMethod</a>( )</code>
 
 		<div class="description short">
 			
+<p>Get StringObject support method</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Get StringObject support method</p>
 
 
 
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br />
+				</div>
 
 
 
@@ -277,7 +301,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___call">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#132-145" title="Go to source code">__call</a>( <span>mixed <var>$stringFunction</var></span>, <span>mixed <var>$arguments</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#152-166" title="Go to source code">__call</a>( <span>mixed <var>$stringFunction</var></span>, <span>mixed <var>$arguments</var></span> )</code>
 
 		<div class="description short">
 			
@@ -299,25 +323,48 @@
 
 		<td class="attributes"><code>
 			 public static
-			
+			string
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rand">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#147-160" title="Go to source code">rand</a>( <span>mixed <var>$min</var></span>, <span>mixed <var>$max</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#168-199" title="Go to source code">rand</a>( <span>integer <var>$min</var></span>, <span>integer <var>$max</var> = <span class="php-num">0</span></span>, <span>boolean <var>$all</var> = <span class="php-keyword1">false</span></span> )</code>
 
 		<div class="description short">
 			
+<p>generate random string, if not given $max and greater then 0, will return
+fixed length random string</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>generate random string, if not given $max and greater then 0, will return
+fixed length random string</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$min</var></dt>
+					<dd><code>integer</code><br>$min The random string least length</dd>
+					<dt><var>$max</var></dt>
+					<dd><code>integer</code><br>$max The random string max length, default is 0</dd>
+					<dt><var>$all</var></dt>
+					<dd><code>boolean</code><br>$all Whether the random string contians all printable char</dd>
+				</dl></div>
 
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Exception.StandardException.html">Toknot\Exception\StandardException</a></code></code><br />
+				</div>
 
 
 
@@ -335,7 +382,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_valueOf">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#162-164" title="Go to source code">valueOf</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#201-203" title="Go to source code">valueOf</a>( )</code>
 
 		<div class="description short">
 			
@@ -364,7 +411,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___toString">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#166-168" title="Go to source code">__toString</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#205-207" title="Go to source code">__toString</a>( )</code>
 
 		<div class="description short">
 			
@@ -393,7 +440,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_count">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#170-172" title="Go to source code">count</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#209-211" title="Go to source code">count</a>( )</code>
 
 		<div class="description short">
 			
@@ -424,7 +471,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_strlen">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#174-176" title="Go to source code">strlen</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#213-215" title="Go to source code">strlen</a>( )</code>
 
 		<div class="description short">
 			
@@ -453,7 +500,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_rewind">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#178-180" title="Go to source code">rewind</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#217-219" title="Go to source code">rewind</a>( )</code>
 
 		<div class="description short">
 			
@@ -484,7 +531,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_current">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#182-184" title="Go to source code">current</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#221-223" title="Go to source code">current</a>( )</code>
 
 		<div class="description short">
 			
@@ -515,7 +562,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_key">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#186-188" title="Go to source code">key</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#225-227" title="Go to source code">key</a>( )</code>
 
 		<div class="description short">
 			
@@ -546,7 +593,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_next">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#190-192" title="Go to source code">next</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#229-231" title="Go to source code">next</a>( )</code>
 
 		<div class="description short">
 			
@@ -577,7 +624,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_valid">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#194-197" title="Go to source code">valid</a>( )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#233-236" title="Go to source code">valid</a>( )</code>
 
 		<div class="description short">
 			
@@ -608,7 +655,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_offsetExists">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#199-201" title="Go to source code">offsetExists</a>( <span>mixed <var>$offset</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#238-240" title="Go to source code">offsetExists</a>( <span>mixed <var>$offset</var></span> )</code>
 
 		<div class="description short">
 			
@@ -639,7 +686,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_offsetGet">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#203-205" title="Go to source code">offsetGet</a>( <span>mixed <var>$offset</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#242-244" title="Go to source code">offsetGet</a>( <span>mixed <var>$offset</var></span> )</code>
 
 		<div class="description short">
 			
@@ -670,7 +717,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_offsetSet">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#207-213" title="Go to source code">offsetSet</a>( <span>mixed <var>$offset</var></span>, <span>mixed <var>$value</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#246-252" title="Go to source code">offsetSet</a>( <span>mixed <var>$offset</var></span>, <span>mixed <var>$value</var></span> )</code>
 
 		<div class="description short">
 			
@@ -701,7 +748,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_offsetUnset">#</a>
-		<code><a href="source-class-Toknot.Di.StringObject.html#215-217" title="Go to source code">offsetUnset</a>( <span>mixed <var>$offset</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.StringObject.html#254-256" title="Go to source code">offsetUnset</a>( <span>mixed <var>$offset</var></span> )</code>
 
 		<div class="description short">
 			
@@ -731,7 +778,8 @@
 			<a href="class-Toknot.Di.Object.html#___singleton">__singleton()</a>, 
 			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
 			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
-			<a href="class-Toknot.Di.Object.html#_newInstance">newInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
 			<a href="class-Toknot.Di.Object.html#_setPropertie">setPropertie()</a>
 		</code></td>
 	</tr>
@@ -752,11 +800,11 @@
 	<tr data-order="interatorArray" id="$interatorArray">
 		<td class="attributes"><code>
 			protected  
-			array
+			string
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Di.StringObject.html#22" title="Go to source code"><var>$interatorArray</var></a>
+				<a href="source-class-Toknot.Di.StringObject.html#26-31" title="Go to source code"><var>$interatorArray</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">''</span></code></td>
 		<td class="description"><div>
@@ -764,14 +812,10 @@
 
 			<div class="description short">
 				
-<p>For iterator of propertie list</p>
-
 			</div>
 
 			<div class="description detailed hidden">
 				
-<p>For iterator of propertie list</p>
-
 
 			</div>
 		</div></td>
@@ -786,7 +830,7 @@
 </div>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		ToknotV2 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>

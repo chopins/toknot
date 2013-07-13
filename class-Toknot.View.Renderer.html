@@ -4,10 +4,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="generator" content="ApiGen 2.8.0" />
 
-	<title>Class Toknot\View\Renderer</title>
+	<title>Class Toknot\View\Renderer | ToknotV2</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="resources/combined.js?1490177688"></script>
+	<script type="text/javascript" src="elementlist.js?2686112496"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,8 +21,6 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
-				<li><a href="namespace-None.html">None</a>
-						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
@@ -161,7 +159,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.View.html">View</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.View.Renderer.html#19-250" title="Go to source code">View/Renderer.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.View.Renderer.html#20-254" title="Go to source code">Toknot/View/Renderer.php</a><br />
 	</div>
 
 
@@ -304,7 +302,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_display">#</a>
-		<code><a href="source-class-Toknot.View.Renderer.html#122-173" title="Go to source code">display</a>( <span>mixed <var>$tplName</var></span> )</code>
+		<code><a href="source-class-Toknot.View.Renderer.html#122-177" title="Go to source code">display</a>( <span>mixed <var>$tplName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -333,7 +331,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_importFile">#</a>
-		<code><a href="source-class-Toknot.View.Renderer.html#247-249" title="Go to source code">importFile</a>( <span>mixed <var>$file</var></span> )</code>
+		<code><a href="source-class-Toknot.View.Renderer.html#250-252" title="Go to source code">importFile</a>( <span>mixed <var>$file</var></span> )</code>
 
 		<div class="description short">
 			
@@ -364,8 +362,9 @@
 			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
 			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
 			<a href="class-Toknot.Di.Object.html#_key">key()</a>, 
-			<a href="class-Toknot.Di.Object.html#_newInstance">newInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
 			<a href="class-Toknot.Di.Object.html#_next">next()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
 			<a href="class-Toknot.Di.Object.html#_rewind">rewind()</a>, 
 			<a href="class-Toknot.Di.Object.html#_setPropertie">setPropertie()</a>, 
 			<a href="class-Toknot.Di.Object.html#_valid">valid()</a>
@@ -385,7 +384,7 @@
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.View.Renderer.html#83-86" title="Go to source code"><b>CACHE_FLAG_HTML</b></a>
+				<a href="source-class-Toknot.View.Renderer.html#84-87" title="Go to source code"><b>CACHE_FLAG_HTML</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">1</span></code></td>
 		<td class="description"><div>
@@ -409,7 +408,7 @@
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.View.Renderer.html#88-91" title="Go to source code"><b>CACHE_FLAG_DATA</b></a>
+				<a href="source-class-Toknot.View.Renderer.html#89-92" title="Go to source code"><b>CACHE_FLAG_DATA</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">2</span></code></td>
 		<td class="description"><div>
@@ -431,26 +430,6 @@ data</p>
 			</div>
 		</div></td>
 	</tr>
-	<tr data-order="CACHE_USE_SUCC" id="CACHE_USE_SUCC">
-
-		<td class="attributes"><code>integer</code></td>
-		<td class="name"><code>
-				<a href="source-class-Toknot.View.Renderer.html#92" title="Go to source code"><b>CACHE_USE_SUCC</b></a>
-		</code></td>
-		<td class="value"><code><span class="php-num">200</span></code></td>
-		<td class="description"><div>
-			<a href="#CACHE_USE_SUCC" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
 	</table>
 
 
@@ -465,7 +444,7 @@ data</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#23-30" title="Go to source code"><var>$fileExtension</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#24-31" title="Go to source code"><var>$fileExtension</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">'htm'</span></code></td>
 		<td class="description"><div>
@@ -492,7 +471,7 @@ data</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#32-39" title="Go to source code"><var>$scanPath</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#33-40" title="Go to source code"><var>$scanPath</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">''</span></code></td>
 		<td class="description"><div>
@@ -519,7 +498,7 @@ data</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#41-48" title="Go to source code"><var>$cachePath</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#42-49" title="Go to source code"><var>$cachePath</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">''</span></code></td>
 		<td class="description"><div>
@@ -548,7 +527,7 @@ Application of Data View path</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#50-55" title="Go to source code"><var>$enableCache</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#51-56" title="Go to source code"><var>$enableCache</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">false</span></code></td>
 		<td class="description"><div>
@@ -577,7 +556,7 @@ Renderer::$htmlCachePath</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#57-63" title="Go to source code"><var>$htmlCachePath</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#58-64" title="Go to source code"><var>$htmlCachePath</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">null</span></code></td>
 		<td class="description"><div>
@@ -604,7 +583,7 @@ Renderer::$htmlCachePath</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#64" title="Go to source code"><var>$dataCachePath</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#65" title="Go to source code"><var>$dataCachePath</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">null</span></code></td>
 		<td class="description"><div>
@@ -627,7 +606,7 @@ Renderer::$htmlCachePath</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#66-73" title="Go to source code"><var>$outCacheThreshold</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#67-74" title="Go to source code"><var>$outCacheThreshold</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">2</span></code></td>
 		<td class="description"><div>
@@ -658,7 +637,7 @@ file</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.View.Renderer.html#75-80" title="Go to source code"><var>$cacheFlag</var></a>
+				<a href="source-class-Toknot.View.Renderer.html#76-81" title="Go to source code"><var>$cacheFlag</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">1</span></code></td>
 		<td class="description"><div>
@@ -696,7 +675,7 @@ file</p>
 </div>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		ToknotV2 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>

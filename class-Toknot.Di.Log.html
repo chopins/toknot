@@ -4,10 +4,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="generator" content="ApiGen 2.8.0" />
 
-	<title>Class Toknot\Di\Log</title>
+	<title>Class Toknot\Di\Log | ToknotV2</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="resources/combined.js?1490177688"></script>
+	<script type="text/javascript" src="elementlist.js?2686112496"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,8 +21,6 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
-				<li><a href="namespace-None.html">None</a>
-						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
@@ -147,7 +145,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Di.html">Di</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Di.Log.html#13-87" title="Go to source code">Di/Log.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Di.Log.html#13-122" title="Go to source code">Toknot/Di/Log.php</a><br />
 	</div>
 
 
@@ -165,14 +163,18 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_printTrace">#</a>
-		<code><a href="source-class-Toknot.Di.Log.html#17-21" title="Go to source code">printTrace</a>( )</code>
+		<code><a href="source-class-Toknot.Di.Log.html#33-40" title="Go to source code">printTrace</a>( )</code>
 
 		<div class="description short">
 			
+<p>print debug backtrace</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>print debug backtrace</p>
+
 
 
 
@@ -194,16 +196,25 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_save">#</a>
-		<code><a href="source-class-Toknot.Di.Log.html#23-33" title="Go to source code">save</a>( <span>mixed <var>$traceInfo</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.Log.html#42-57" title="Go to source code">save</a>( <span>string <var>$traceInfo</var></span> )</code>
 
 		<div class="description short">
 			
+<p>save trace info to log file</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>save trace info to log file</p>
 
 
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$traceInfo</var></dt>
+					<dd><code>string</code><br>$traceInfo</dd>
+				</dl></div>
 
 
 
@@ -216,24 +227,37 @@
 
 		<td class="attributes"><code>
 			 public static
-			
+			string
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_formatTrace">#</a>
-		<code><a href="source-class-Toknot.Di.Log.html#35-68" title="Go to source code">formatTrace</a>( <span>mixed <var>$traceArr</var></span> )</code>
+		<code><a href="source-class-Toknot.Di.Log.html#59-98" title="Go to source code">formatTrace</a>( <span>array <var>$traceArr</var></span> )</code>
 
 		<div class="description short">
 			
+<p>backtrace trans to html</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>backtrace trans to html</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$traceArr</var></dt>
+					<dd><code>array</code><br>$traceArr</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
 
 
 
@@ -245,24 +269,32 @@
 
 		<td class="attributes"><code>
 			 public static
-			
+			string
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_traceCss">#</a>
-		<code><a href="source-class-Toknot.Di.Log.html#70-85" title="Go to source code">traceCss</a>( )</code>
+		<code><a href="source-class-Toknot.Di.Log.html#100-120" title="Go to source code">traceCss</a>( )</code>
 
 		<div class="description short">
 			
+<p>Toknot trace web page style</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Toknot trace web page style</p>
 
 
 
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
 
 
 
@@ -292,7 +324,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Di.Log.html#14" title="Go to source code"><var>$savePath</var></a>
+				<a href="source-class-Toknot.Di.Log.html#15-22" title="Go to source code"><var>$savePath</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">''</span></code></td>
 		<td class="description"><div>
@@ -300,10 +332,14 @@
 
 			<div class="description short">
 				
+<p>log file save path</p>
+
 			</div>
 
 			<div class="description detailed hidden">
 				
+<p>log file save path</p>
+
 
 			</div>
 		</div></td>
@@ -315,7 +351,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Di.Log.html#15" title="Go to source code"><var>$enableSaveLog</var></a>
+				<a href="source-class-Toknot.Di.Log.html#24-31" title="Go to source code"><var>$enableSaveLog</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">false</span></code></td>
 		<td class="description"><div>
@@ -323,10 +359,14 @@
 
 			<div class="description short">
 				
+<p>whether enable save the log info</p>
+
 			</div>
 
 			<div class="description detailed hidden">
 				
+<p>whether enable save the log info</p>
+
 
 			</div>
 		</div></td>
@@ -341,7 +381,7 @@
 </div>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		ToknotV2 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>

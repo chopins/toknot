@@ -4,10 +4,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="generator" content="ApiGen 2.8.0" />
 
-	<title>Class Toknot\Control\FMAI</title>
+	<title>Class Toknot\Control\FMAI | ToknotV2</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="resources/combined.js?1490177688"></script>
+	<script type="text/javascript" src="elementlist.js?2686112496"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,8 +21,6 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
-				<li><a href="namespace-None.html">None</a>
-						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
@@ -171,7 +169,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Control.html">Control</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Control.FMAI.html#28-317" title="Go to source code">Control/FMAI.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Control.FMAI.html#29-485" title="Go to source code">Toknot/Control/FMAI.php</a><br />
 	</div>
 
 
@@ -189,7 +187,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_singleton">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#61-63" title="Go to source code">singleton</a>( <span>mixed <var>$appRoot</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#122-124" title="Go to source code">singleton</a>( <span>mixed <var>$appNamespace</var></span>, <span>mixed <var>$appRoot</var></span> )</code>
 
 		<div class="description short">
 			
@@ -218,7 +216,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#65-81" title="Go to source code">__construct</a>( <span>mixed <var>$appRoot</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#126-143" title="Go to source code">__construct</a>( <span>mixed <var>$appNamespace</var></span>, <span>mixed <var>$appRoot</var></span> )</code>
 
 		<div class="description short">
 			
@@ -255,20 +253,26 @@ framework default configure file</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setURIOutRouterPath">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#83-88" title="Go to source code">setURIOutRouterPath</a>( <span>string <var>$uri</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#145-153" title="Go to source code">setURIOutRouterPath</a>( <span>string <var>$uri</var></span>, <span>mixed <var>$method</var></span> )</code>
 
 		<div class="description short">
 			
+<p>Router set URI string that without router map part</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Router set URI string that without router map part</p>
+
 
 
 				<h4>Parameters</h4>
 				<div class="list"><dl>
 					<dt><var>$uri</var></dt>
 					<dd><code>string</code><br>$uri</dd>
+					<dt><var>$method</var></dt>
+					<dd></dd>
 				</dl></div>
 
 
@@ -282,24 +286,32 @@ framework default configure file</p>
 
 		<td class="attributes"><code>
 			 public 
-			
+			string
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getURIOutRouterPath">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#90-92" title="Go to source code">getURIOutRouterPath</a>( )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#155-162" title="Go to source code">getURIOutRouterPath</a>( )</code>
 
 		<div class="description short">
 			
+<p>Get URI without router map part</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Get URI without router map part</p>
 
 
 
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
 
 
 
@@ -318,7 +330,7 @@ framework default configure file</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_invokeBefore">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#94-103" title="Go to source code">invokeBefore</a>( <span>mixed <var>&amp; $invokeClassReflection</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#164-184" title="Go to source code">invokeBefore</a>( <span><code><a href="class-ReflectionClass.html">ReflectionClass</a></code> <var>$reflection</var></span> )</code>
 
 		<div class="description short">
 			
@@ -347,7 +359,7 @@ framework default configure file</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_invokeAfter">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#105-107" title="Go to source code">invokeAfter</a>( <span>mixed <var>&amp; $invokeClassReflection</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#186-197" title="Go to source code">invokeAfter</a>( )</code>
 
 		<div class="description short">
 			
@@ -376,7 +388,7 @@ framework default configure file</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_loadConfigure">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#109-124" title="Go to source code">loadConfigure</a>( <span>string <var>$ini</var></span>, <span>string <var>$iniCacheFile</var> = <span class="php-quote">''</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#199-214" title="Go to source code">loadConfigure</a>( <span>string <var>$ini</var></span>, <span>string <var>$iniCacheFile</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -421,12 +433,12 @@ file relative to your application root directory</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_enableHTMLCache">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#126-157" title="Go to source code">enableHTMLCache</a>( <span>mixed <var>&amp; $CFG</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#216-248" title="Go to source code">enableHTMLCache</a>( <span>mixed <var>&amp; $CFG</var></span> )</code>
 
 		<div class="description short">
 			
-<p>enable HTML cache opreate, the cache will use Toknot\View\Renderer class
-provided of cache opreate Toknot\View\Renderer::dispaly when twice
+<p>enable HTML cache opreate, the cache will use <code><a href="class-Toknot.View.Renderer.html">Toknot\View\Renderer</a></code>
+class provided of cache opreate Toknot\View\Renderer::dispaly when twice
 request interval time less one threshold could output the first save html file,
 so <code><a href="class-Toknot.View.ViewCache.html#_registerDisplayHandle">Toknot\View\ViewCache::registerDisplayHandle()</a></code> register what is Toknot\View\Renderer::dispaly</p>
 
@@ -434,8 +446,8 @@ so <code><a href="class-Toknot.View.ViewCache.html#_registerDisplayHandle">Tokno
 
 		<div class="description detailed hidden">
 			
-<p>enable HTML cache opreate, the cache will use Toknot\View\Renderer class
-provided of cache opreate Toknot\View\Renderer::dispaly when twice
+<p>enable HTML cache opreate, the cache will use <code><a href="class-Toknot.View.Renderer.html">Toknot\View\Renderer</a></code>
+class provided of cache opreate Toknot\View\Renderer::dispaly when twice
 request interval time less one threshold could output the first save html file,
 so <code><a href="class-Toknot.View.ViewCache.html#_registerDisplayHandle">Toknot\View\ViewCache::registerDisplayHandle()</a></code> register what is Toknot\View\Renderer::dispaly</p>
 
@@ -492,7 +504,7 @@ class="php-quote">'index'</span>);
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setCacheFile">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#159-172" title="Go to source code">setCacheFile</a>( <span>string <var>$file</var></span>, <span>mixed <var>$flag</var> = Toknot\Control\Renderer::CACHE_FLAG_HTML</span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#250-263" title="Go to source code">setCacheFile</a>( <span>string <var>$file</var></span>, <span>mixed <var>$flag</var> = Toknot\Control\Renderer::CACHE_FLAG_HTML</span> )</code>
 
 		<div class="description short">
 			
@@ -535,7 +547,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getActiveRecord">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#174-182" title="Go to source code">getActiveRecord</a>( )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#265-273" title="Go to source code">getActiveRecord</a>( )</code>
 
 		<div class="description short">
 			
@@ -572,7 +584,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newTemplateView">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#184-198" title="Go to source code">newTemplateView</a>( <span>mixed <var>&amp; $CFG</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#275-289" title="Go to source code">newTemplateView</a>( <span>mixed <var>&amp; $CFG</var></span> )</code>
 
 		<div class="description short">
 			
@@ -609,16 +621,27 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setViewVar">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#200-202" title="Go to source code">setViewVar</a>( <span>mixed <var>$name</var></span>, <span>mixed <var>$value</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#291-299" title="Go to source code">setViewVar</a>( <span>string <var>$name</var></span>, <span>mixed <var>$value</var></span> )</code>
 
 		<div class="description short">
 			
+<p>Set template variable</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Set template variable</p>
 
 
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$name</var></dt>
+					<dd><code>string</code><br>$name</dd>
+					<dt><var>$value</var></dt>
+					<dd><code>mixed</code><br>$value</dd>
+				</dl></div>
 
 
 
@@ -631,24 +654,37 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="attributes"><code>
 			 public 
-			
+			mixed
 			&amp;
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___get">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#204-208" title="Go to source code">__get</a>( <span>mixed <var>$name</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#301-313" title="Go to source code">__get</a>( <span>string <var>$name</var></span> )</code>
 
 		<div class="description short">
 			
+<p>Readonly property support</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Readonly property support</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$name</var></dt>
+					<dd><code>string</code><br>$name</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>mixed</code><br />
+				</div>
 
 
 
@@ -667,7 +703,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newXMLView">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#210-212" title="Go to source code">newXMLView</a>( )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#315-317" title="Go to source code">newXMLView</a>( )</code>
 
 		<div class="description short">
 			
@@ -696,7 +732,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_display">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#214-224" title="Go to source code">display</a>( <span>string <var>$tplName</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#319-329" title="Go to source code">display</a>( <span>string <var>$tplName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -734,7 +770,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getParam">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#226-234" title="Go to source code">getParam</a>( <span>integer <var>$index</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#331-339" title="Go to source code">getParam</a>( <span>integer <var>$index</var></span> )</code>
 
 		<div class="description short">
 			
@@ -776,7 +812,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getAccessStatus">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#236-243" title="Go to source code">getAccessStatus</a>( )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#341-348" title="Go to source code">getAccessStatus</a>( )</code>
 
 		<div class="description short">
 			
@@ -813,7 +849,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_registerAccessDeniedController">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#245-252" title="Go to source code">registerAccessDeniedController</a>( <span>string <var>$controllerName</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#350-357" title="Go to source code">registerAccessDeniedController</a>( <span>string <var>$controllerName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -840,7 +876,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="redirectAccessDeniedController" id="_redirectAccessDeniedController">
+	<tr data-order="registerInvokeBeforeHandler" id="_registerInvokeBeforeHandler">
 
 		<td class="attributes"><code>
 			 public 
@@ -850,17 +886,148 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_redirectAccessDeniedController">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#254-265" title="Go to source code">redirectAccessDeniedController</a>( <span>mixed <var>$class</var></span> )</code>
+		<a class="anchor" href="#_registerInvokeBeforeHandler">#</a>
+		<code><a href="source-class-Toknot.Control.FMAI.html#359-366" title="Go to source code">registerInvokeBeforeHandler</a>( <span>callable <var>&amp; $callable</var></span> )</code>
 
 		<div class="description short">
 			
+<p>Register a callable that it be call when before invoke controller method</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Register a callable that it be call when before invoke controller method</p>
 
 
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$callable</var></dt>
+					<dd><code>callable</code><br>$callable function or method of object</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="registerInvokeAfterHandler" id="_registerInvokeAfterHandler">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_registerInvokeAfterHandler">#</a>
+		<code><a href="source-class-Toknot.Control.FMAI.html#368-375" title="Go to source code">registerInvokeAfterHandler</a>( <span>callable <var>&amp; $callable</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Register a callable that it be call when after invoke cotroller method</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Register a callable that it be call when after invoke cotroller method</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$callable</var></dt>
+					<dd><code>callable</code><br>$callable</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="redirectAccessDeniedController" id="_redirectAccessDeniedController">
+
+		<td class="attributes"><code>
+			 public 
+			boolean
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_redirectAccessDeniedController">#</a>
+		<code><a href="source-class-Toknot.Control.FMAI.html#377-392" title="Go to source code">redirectAccessDeniedController</a>( <span><code><a href="class-Toknot.User.ClassAccessControl.html">Toknot\User\ClassAccessControl</a></code> <var>$class</var></span>, <span>mixed <var>$queryString</var> = <span class="php-quote">''</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Redirect to Denided contriller</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Redirect to Denided contriller</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$class</var></dt>
+					<dd><code><code><a href="class-Toknot.User.ClassAccessControl.html">Toknot\User\ClassAccessControl</a></code></code><br>$class</dd>
+					<dt><var>$queryString</var></dt>
+					<dd></dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>boolean</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="redirectController" id="_redirectController">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_redirectController">#</a>
+		<code><a href="source-class-Toknot.Control.FMAI.html#394-409" title="Go to source code">redirectController</a>( <span>string <var>$class</var></span>, <span>string <var>$queryString</var> = <span class="php-quote">''</span></span> )</code>
+
+		<div class="description short">
+			
+<p>Redirect to a controller, must contain namespace</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Redirect to a controller, must contain namespace</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$class</var></dt>
+					<dd><code>string</code><br>$class The class name without Controller of level namespace</dd>
+					<dt><var>$queryString</var></dt>
+					<dd><code>string</code><br>$queryString redirect url params sting</dd>
+				</dl></div>
 
 
 
@@ -880,7 +1047,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getAccessDeniedController">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#267-274" title="Go to source code">getAccessDeniedController</a>( )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#411-418" title="Go to source code">getAccessDeniedController</a>( )</code>
 
 		<div class="description short">
 			
@@ -917,7 +1084,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_checkAccess">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#276-297" title="Go to source code">checkAccess</a>( <span><code><a href="class-Toknot.User.ClassAccessControl.html">Toknot\User\ClassAccessControl</a></code> <var>$clsObj</var></span>, <span><code><a href="class-Toknot.User.UserAccessControl.html">Toknot\User\UserAccessControl</a></code> <var>$user</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#420-441" title="Go to source code">checkAccess</a>( <span><code><a href="class-Toknot.User.ClassAccessControl.html">Toknot\User\ClassAccessControl</a></code> <var>$clsObj</var></span>, <span><code><a href="class-Toknot.User.UserAccessControl.html">Toknot\User\UserAccessControl</a></code> <var>$user</var></span> )</code>
 
 		<div class="description short">
 			
@@ -957,7 +1124,7 @@ set template file name like use <code><a href="class-Toknot.Control.FMAI.html#_d
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setCurrentUser">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#299-307" title="Go to source code">setCurrentUser</a>( <span>integer <var>$id</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#443-451" title="Go to source code">setCurrentUser</a>( <span>integer <var>$id</var></span> )</code>
 
 		<div class="description short">
 			
@@ -994,24 +1161,111 @@ instead</p>
 
 		<td class="attributes"><code>
 			 public 
-			
+			<code><a href="class-Toknot.User.Session.html">Toknot\User\Session</a></code>
 			&amp;
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_startSession">#</a>
-		<code><a href="source-class-Toknot.Control.FMAI.html#309-315" title="Go to source code">startSession</a>( <span>mixed <var>$name</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.FMAI.html#453-465" title="Go to source code">startSession</a>( <span>type <var>$name</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
+<p>Start toknot session object</p>
+
 		</div>
 
 		<div class="description detailed hidden">
 			
+<p>Start toknot session object</p>
 
 
 
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$name</var></dt>
+					<dd><code>type</code><br>$name</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.User.Session.html">Toknot\User\Session</a></code></code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getAppNamespace" id="_getAppNamespace">
+
+		<td class="attributes"><code>
+			 public 
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getAppNamespace">#</a>
+		<code><a href="source-class-Toknot.Control.FMAI.html#467-474" title="Go to source code">getAppNamespace</a>( )</code>
+
+		<div class="description short">
+			
+<p>Get Application are registed root namespace</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Get Application are registed root namespace</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getCurrentExecTime" id="_getCurrentExecTime">
+
+		<td class="attributes"><code>
+			 public static
+			float
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getCurrentExecTime">#</a>
+		<code><a href="source-class-Toknot.Control.FMAI.html#476-483" title="Go to source code">getCurrentExecTime</a>( )</code>
+
+		<div class="description short">
+			
+<p>get php script exec time</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>get php script exec time</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>float</code><br />
+				</div>
 
 
 
@@ -1032,8 +1286,9 @@ instead</p>
 			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
 			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
 			<a href="class-Toknot.Di.Object.html#_key">key()</a>, 
-			<a href="class-Toknot.Di.Object.html#_newInstance">newInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
 			<a href="class-Toknot.Di.Object.html#_next">next()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
 			<a href="class-Toknot.Di.Object.html#_rewind">rewind()</a>, 
 			<a href="class-Toknot.Di.Object.html#_setPropertie">setPropertie()</a>, 
 			<a href="class-Toknot.Di.Object.html#_valid">valid()</a>
@@ -1053,106 +1308,6 @@ instead</p>
 
 	<table class="summary" id="properties">
 	<caption>Properties summary</caption>
-	<tr data-order="requestMethod" id="$requestMethod">
-		<td class="attributes"><code>
-			public  
-			string
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.Control.FMAI.html#42-47" title="Go to source code"><var>$requestMethod</var></a>
-		</td>
-		<td class="value"><code><span class="php-quote">'GET'</span></code></td>
-		<td class="description"><div>
-			<a href="#$requestMethod" class="anchor">#</a>
-
-			<div class="description short">
-				
-<p>Current HTTP request method</p>
-
-			</div>
-
-			<div class="description detailed hidden">
-				
-<p>Current HTTP request method</p>
-
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="uriOutRouterPath" id="$uriOutRouterPath">
-		<td class="attributes"><code>
-			protected  
-			array
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.Control.FMAI.html#49-54" title="Go to source code"><var>$uriOutRouterPath</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">array</span>()</code></td>
-		<td class="description"><div>
-			<a href="#$uriOutRouterPath" class="anchor">#</a>
-
-			<div class="description short">
-				
-<p>In path mode, URI path without router controller path</p>
-
-			</div>
-
-			<div class="description detailed hidden">
-				
-<p>In path mode, URI path without router controller path</p>
-
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="accessControlStatus" id="$accessControlStatus">
-		<td class="attributes"><code>
-			protected  
-			boolean
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.Control.FMAI.html#55" title="Go to source code"><var>$accessControlStatus</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">true</span></code></td>
-		<td class="description"><div>
-			<a href="#$accessControlStatus" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="appRoot" id="$appRoot">
-		<td class="attributes"><code>
-			public  
-			string
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.Control.FMAI.html#57" title="Go to source code"><var>$appRoot</var></a>
-		</td>
-		<td class="value"><code><span class="php-quote">''</span></code></td>
-		<td class="description"><div>
-			<a href="#$appRoot" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
-
-			</div>
-		</div></td>
-	</tr>
 	<tr data-order="enableCache" id="$enableCache">
 		<td class="attributes"><code>
 			public  
@@ -1160,7 +1315,7 @@ instead</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Control.FMAI.html#58" title="Go to source code"><var>$enableCache</var></a>
+				<a href="source-class-Toknot.Control.FMAI.html#116-120" title="Go to source code"><var>$enableCache</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">false</span></code></td>
 		<td class="description"><div>
@@ -1168,33 +1323,14 @@ instead</p>
 
 			<div class="description short">
 				
+<p>Whether enable HTML cache</p>
+
 			</div>
 
 			<div class="description detailed hidden">
 				
+<p>Whether enable HTML cache</p>
 
-			</div>
-		</div></td>
-	</tr>
-	<tr data-order="cacheEffective" id="$cacheEffective">
-		<td class="attributes"><code>
-			public  
-			boolean
-		</code></td>
-
-		<td class="name">
-				<a href="source-class-Toknot.Control.FMAI.html#59" title="Go to source code"><var>$cacheEffective</var></a>
-		</td>
-		<td class="value"><code><span class="php-keyword1">false</span></code></td>
-		<td class="description"><div>
-			<a href="#$cacheEffective" class="anchor">#</a>
-
-			<div class="description short">
-				
-			</div>
-
-			<div class="description detailed hidden">
-				
 
 			</div>
 		</div></td>
@@ -1217,7 +1353,7 @@ instead</p>
 </div>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		ToknotV2 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>
