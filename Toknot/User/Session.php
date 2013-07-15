@@ -228,6 +228,7 @@ class Session extends ArrayObject {
 	public function write($sessionId, $data) {
 		if ($this->fileStore)
 			$sessionId = DIRECTORY_SEPARATOR . $sessionId;
+
 		return $this->cacheInstance->save($data, $sessionId);
 	}
 

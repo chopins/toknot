@@ -19,6 +19,7 @@ class Login extends AdminBase {
 
 	public function GET() {
 		self::$FMAI->D->act = 'login';
+		self::$FMAI->D->message = '';
 		self::$FMAI->display('login');
 	}
 
@@ -33,7 +34,9 @@ class Login extends AdminBase {
 			$this->setAdminLogin($user);
 			self::$FMAI->redirectController('\Index');
 		} else {
-		   echo 'Username or password error';	
+			self::$FMAI->D->act = 'login';
+			self::$FMAI->D->message = 'Username or password error';
+			self::$FMAI->display('login');
 		}
 	}
 
