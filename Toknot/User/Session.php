@@ -14,7 +14,6 @@ use Toknot\Di\ArrayObject;
 use Toknot\Di\DataCacheControl;
 use Toknot\Config\ConfigLoader;
 use Toknot\Di\StringObject;
-use Toknot\Exception\StandardException;
 
 class Session extends ArrayObject {
 
@@ -86,13 +85,8 @@ class Session extends ArrayObject {
 
 	private function checkAPC() {
 		if (extension_loaded('apc')) {
-			$apcVersion = phpversion('apc');
-			$c = version_compare($apcVersion, '2.0.0');
-			if ($c < 0) {
-				throw new StandardException('Session Class only support greater than APC-2.0.0');
-			}
 			if (DEVELOPMENT) {
-				echo '<b style="color:red;">Warning : APC conflict with PHP Session handler,so Toknot\User\Session will clear apc system cache</b>';
+				echo '<b style="color:red;border:1px solid blue;">Warning : APC conflict with PHP Session handler,so Toknot\User\Session will clear apc system cache, recommend Opcache extension instead</b>';
 			}
 			apc_clear_cache();
 		}
@@ -271,6 +265,8 @@ class Session extends ArrayObject {
 			if (date('i') == '00' || $rand == 0) {
 				$this->gc(self::$maxLifeTime);
 			}
+		} else {
+			session_write_close();
 		}
 	}
 

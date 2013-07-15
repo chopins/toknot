@@ -106,7 +106,6 @@ class DataCacheControl {
 	 */
 	public function save($data, $key = '') {
 		if ($this->cacheType == DataCacheControl::CACHE_SERVER) {
-			echo 'here';
 			$key = md5(self::$appRoot . "{$key}.php");
 			$this->cacheHandle->set($key, $data, time() + $this->expire);
 			return true;
