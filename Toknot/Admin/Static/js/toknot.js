@@ -480,11 +480,12 @@ if (typeof TK == 'undefined') {
 					var height = this.offsetHeight;
 					var width = this.offsetWidth;
 					var obj = this;
-					obj = obj.parentOffset;
+					obj = obj.offsetParent;
+					
 					while (obj) {
 						x += obj.offsetLeft;
 						y += obj.offsetTop;
-						obj = obj.parentOffset;
+						obj = obj.offsetParent;
 					}
 					return {
 						'x': x, 
@@ -855,26 +856,33 @@ if (typeof TK == 'undefined') {
 					this.toPos(mousePos.x + this.mousePopNearX + scroll.x, mousePos.y + this.mousePopNearY + scroll.y);
 				},
 				//元素跟随指定对象
-				byNodePop: function(byObj, direct) {
+				byNodePop: function(byObj, direct, show) {
 					if (!byObj.getPos)
 						byObj = TK.$(byObj);
 					var pop = this;
-					var overpop = false;
+				
 					var setPos = function(direct) {
 						var pos = byObj.getPos();
 						var popPos = pop.getPos();
+						var left = 0;	
 						switch (direct) {
-							case 1: //位于下侧
+							case 1: //位于下侧靠左
 								pop.toPos(pos.x, pos.y + pos.h);
 								return;
-							case 3: //右侧内
+							case 2: //位于下侧靠右
+								pop.toPos(pos.x + pos.w - popPos.w, pos.y + pos.h);
+								return;
+							case 3: //左侧居上
+								pop.toPos(pos.x,pos.y);
+								return;
+							case 4: //右侧居内
 								var w = pop.getStyle('width').replace(/[A-za-z]+/i, '');
-								var left = pos.x + pos.w * 1 - w;
+								left = pos.x + pos.w * 1 - w;
 								pop.toPos(pos.x + pos.w - w, pos.y);
 								return;
-							default:  //默认位于右侧
+							default:  //默认位于右侧居上
 								var pagePos = TK.pageShowSize();
-								var left = pos.x + pos.w;
+								left = pos.x + pos.w;
 								if (pos.x + pos.w + popPos.w > pagePos.w) {
 									left = pos.x - popPos.w;
 								}
@@ -899,7 +907,6 @@ if (typeof TK == 'undefined') {
 						}
 						pop.style.display = 'none';
 					};
-					//    this.style.display = 'block';
 					TK.mouseover(pmof, byObj);
 					setPos(direct);
 				},

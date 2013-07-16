@@ -39,6 +39,10 @@ class Login extends AdminBase {
 			self::$FMAI->display('login');
 		}
 	}
+	public function logout() {
+		$this->currentUser->logout();
+		$this->SESSION->unsetSession();
+	}
 
 }
 

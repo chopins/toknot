@@ -428,7 +428,8 @@ class UserClass extends UserAccessControl {
 	}
 
 	/**
-	 * add user by user info data, the key name of data is same the user table of column name
+	 * add user by user info data, the key name of data is same the user table 
+	 * of column name
 	 * 
 	 * @param array $data
 	 * @return Toknot\User\UserClass|boolean
@@ -463,10 +464,14 @@ class UserClass extends UserAccessControl {
 	 * get password sting texture
 	 * 
 	 * @param string $password
-	 * @return integer value is {@see CurrentUser::PASSWD_ALL_NUMBER},{@see CurrentUser::PASSWD_SHORT6}
-	 *                  {@see CurrentUser::PASSWD_NUMBER_SORT},{@see CurrentUser::PASSWD_ABC_SORT},
-	 *                  {@see CurrentUser::PASSWD_ABC_KEYBOARD_SORT},{@see CurrentUser::PASSWD_ALL_LOWER},
-	 *                  {@see CurrentUser::PASSWD_ALL_UPPER},{@see CurrentUser::PASSWD_ALL_ABC}
+	 * @return integer value is {@see CurrentUser::PASSWD_ALL_NUMBER},
+	 * 					{@see CurrentUser::PASSWD_SHORT6}
+	 *                  {@see CurrentUser::PASSWD_NUMBER_SORT},
+	 * 					{@see CurrentUser::PASSWD_ABC_SORT},
+	 *                  {@see CurrentUser::PASSWD_ABC_KEYBOARD_SORT},
+	 * 					{@see CurrentUser::PASSWD_ALL_LOWER},
+	 *                  {@see CurrentUser::PASSWD_ALL_UPPER},
+	 * 					{@see CurrentUser::PASSWD_ALL_ABC}
 	 *                  {@see CurrentUser::PASSWD_ORDERLESS}
 	 */
 	public static function getPasswordTexture($password) {
