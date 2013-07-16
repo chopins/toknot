@@ -131,7 +131,10 @@ class FileObject extends Object {
 				throw new FileIOException("$file write fail or $path is not directory");
 			}
 		}
-		file_put_contents($file, $data, $flag);
+		$res = file_put_contents($file, $data, $flag);
+		if($res === false) {
+			return false;
+		}
 		return new static($file);
 	}
 

@@ -9,7 +9,21 @@ var init = {
 			setTimeout(setTime, 1000);
 		};
 		setTimeout(setTime, 1000);
+	},
+	bindMenuList : function() {
+		TK.$('user-menu').byNodePop(TK.$('user-name'),1);
+	},
+	bindEvent : function() {
+		$(document.body).addListener('click', clickEvent.eventRouter);	
 	}
+};
+
+var clickEvent = {
+	eventRouter : function(e) {
+		var element = TK.getEventNode(e);
+		
+	}
+	
 };
 
 var TKRouter = {

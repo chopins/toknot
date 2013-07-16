@@ -11,9 +11,16 @@
         <div class="top-panel">
             <div class="tk-logo">ToKnot</div>
             <div class="user-nav" id="time-bar"></div>
-            <div class="user-nav icon-after-down-micro">Languaage</div>
-            <div class="user-nav icon-after-down-micro">{$currentUser}</div>
-
+            <!--<div class="user-nav icon-after-down-micro">Languaage</div>-->
+            <div class="user-nav {if (string)$currentUser != 'nobody'}icon-after-down-micro{/if}" id="user-name">{$currentUser}</div>
+			{if (string)$currentUser != 'nobody'}
+			<div class="pop-menu" style="display: none;" id="user-menu">
+				<ul>	
+					<li><a href="/User/profile">Profile</a></li>	
+					<li><a href="/User/Logout">Logout</a></li>	
+				</ul>
+			</div>
+			{/if}
             {if $act == 'list'}
             <div class="opreate-btn"><span class="icon-plus"></span><span>Add</span></div>
             <div class="opreate-btn"><span class="icon-trash"></span>Delete</div>
