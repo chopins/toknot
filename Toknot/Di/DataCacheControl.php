@@ -71,7 +71,7 @@ class DataCacheControl {
 		if ($this->cacheType == self::CACHE_SERVER || empty($this->cacheHandle)) {
 			return 0;
 		}
-		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
+		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
 
 		if (file_exists($file)) {
 			return filemtime($file);
@@ -106,7 +106,7 @@ class DataCacheControl {
 	 */
 	public function save($data, $key = '') {
 		if ($this->cacheType == DataCacheControl::CACHE_SERVER) {
-			$key = md5(self::$appRoot . "{$key}.php");
+			$key = md5(self::$appRoot .$key);
 			$this->cacheHandle->set($key, $data, time() + $this->expire);
 			return true;
 		}
@@ -117,9 +117,15 @@ class DataCacheControl {
 		if ($this->expire == 0 && $this->cacheTime($key) <= $this->dataModifyTime) {
 			return false;
 		}
-		$dataString = '<?php return ' . var_export($data, true) . ';';
-		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
-		FileObject::saveContent($file, $dataString, LOCK_EX);
+
+
+		$dataString = serialize($data);
+		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
+		$fileObject = FileObject::saveContent($file, $dataString);
+		
+		if($fileObject === false) {
+			return false;
+		}
 		return true;
 	}
 
@@ -131,7 +137,7 @@ class DataCacheControl {
 	 */
 	public function get($key = '') {
 		if ($this->cacheType == self::CACHE_SERVER) {
-			$key = md5(self::$appRoot . "{$key}.php");
+			$key = md5(self::$appRoot .$key);
 			return $this->cacheHandle->get($key);
 		}
 		if ($this->expire > 0 && ($this->cacheTime($key) + $this->expire) < time()) {
@@ -140,9 +146,10 @@ class DataCacheControl {
 			return false;
 		}
 
-		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
+		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
+		
 		if (file_exists($file)) {
-			return include_once $file;
+			return unserialize(file_get_contents($file));	
 		} else {
 			return false;
 		}
@@ -158,7 +165,7 @@ class DataCacheControl {
 		if ($this->cacheType == self::CACHE_SERVER) {
 			return $this->cacheHandle->del($key);
 		}
-		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
+		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
 		if (file_exists($file)) {
 			return unlink($file);
 		}
@@ -168,7 +175,7 @@ class DataCacheControl {
 		if ($this->cacheType == self::CACHE_SERVER) {
 			return $this->cacheHandle->exist($key);
 		}
-		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
+		$file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
 		if ($this->expire > 0 && ($this->cacheTime($key) + $this->expire) < time()) {
 			return false;
 		} elseif ($this->expire == 0 && $this->cacheTime($key) <= $this->dataModifyTime) {

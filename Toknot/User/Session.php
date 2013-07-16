@@ -214,7 +214,6 @@ class Session extends ArrayObject {
 				$this->regenerate_id();
 			}
 		}
-
 		$data = $this->cacheInstance->get($sessionId);
 		if (!$data) {
 			$data = '';
@@ -266,8 +265,6 @@ class Session extends ArrayObject {
 			if (date('i') == '00' || $rand == 0) {
 				$this->gc(self::$maxLifeTime);
 			}
-		} else {
-			session_write_close();
 		}
 	}
 
