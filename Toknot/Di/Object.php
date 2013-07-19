@@ -67,6 +67,15 @@ abstract class Object implements Iterator, Countable {
 		return self::$instance[$className];
 	}
 
+	final public static function getInstance() {
+		$className = get_called_class();
+		if (isset(self::$instance[$className])) {
+			return self::$instance[$className];
+		} else {
+			return null;
+		}
+	}
+
 	final private static function constructArgs($argc, $args, $className) {
 		if ($argc === 1) {
 			return new $className($args[0]);

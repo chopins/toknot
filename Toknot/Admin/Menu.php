@@ -11,8 +11,11 @@
 namespace Toknot\Admin;
 
 use Toknot\Di\StringObject;
+use Toknot\Config\ConfigLoader;
+use Toknot\Di\FileObject;
+use Toknot\Control\FMAI;
 
-class MenuBox extends StringObject {
+class Menu extends StringObject {
 
     public $control = null;
     public $subNav = array();
@@ -21,7 +24,18 @@ class MenuBox extends StringObject {
         $this->subNav[$propertie] = new MenuBox($value);
     }
 	public function getAllMenu() {
-		return array();
+		$FMAI = FMAI::getInstance();
+		$file = FileObject::getRealPath($FMAI->appRoot, './Config/managelist.ini');
+		$manageList = ConfigLoader::loadCfg($file);	
+		foreach($manageList as &$manage) {
+			if(isset($manage['sub'])) {
+				foreach($manage['sub'] as $sub) {
+					$manage['sub'] = explode('|', $sub);
+				}
+			}
+		}
+		var_dump($manageList);
+		return $manageList;
 	}
     public function addControllerForm() {
 		

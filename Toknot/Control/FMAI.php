@@ -206,7 +206,7 @@ final class FMAI extends Object {
 	 */
 	public function loadConfigure($ini, $iniCacheFile = '') {
 		ConfigLoader::$cacheFile = $iniCacheFile;
-		ConfigLoader::loadCFG($ini);
+		ConfigLoader::importCfg($ini);
 		Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
 		Log::$savePath = FileObject::getRealPath($this->appRoot, ConfigLoader::CFG()->Log->logSavePath);
 		date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);

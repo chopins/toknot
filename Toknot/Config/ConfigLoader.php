@@ -22,7 +22,7 @@ final class ConfigLoader extends Object {
     protected function __construct() {
         $file = __DIR__ . '/default.ini';
         self::$_CFG = new ArrayObject;
-        self::loadCfg($file);
+        self::importCfg($file);
     }
 
     public static function singleton() {
@@ -46,12 +46,12 @@ final class ConfigLoader extends Object {
     }
 
     /**
-     * load configuration file
+     * import application configuration file
      * 
      * @access public
      * @return void
      */
-    public static function loadCfg($file) {
+    public static function importCfg($file) {
         if (file_exists($file)) {
             $cacheControl = new DataCacheControl(self::$cacheFile, filemtime($file));
             $cache = $cacheControl->get();
@@ -68,5 +68,14 @@ final class ConfigLoader extends Object {
         return self::$_CFG;
     }
 
+	/**
+	 * Load  ini file
+	 * 
+	 * @param string $file
+	 * @return array
+	 */
+	public static function loadCfg($file) {
+		return parse_ini_file($file, true);
+	}
 }
 

@@ -182,24 +182,15 @@ class Renderer extends Object {
 		//transfrom foreach statement
 		$content = preg_replace_callback('/\{foreach\040+\$(\S+)\040+as\040+([\$a-zA-Z0-9_=>\040]+)}(.*)\{\/foreach\}/ims', function($matches) {
 					$matches[1] = str_replace('.', '->', $matches[1]);
-					$str = "<?php foreach(\$this->varList->$matches[1] as $matches[2]) { ?>";
 					if (preg_match('/\$([a-zA-Z0-9_]+)\040*=>\040*\$([a-zA-Z0-9_]+)/i', $matches[2], $setValue)) {
-						$varName = $setValue[2];
-						$keyName = $setValue[1];
+						$varName = "\$this->varList->{$setValue[2]}";
+						$keyName = "\$this->varList->{$setValue[1]}=>";
 					} elseif (preg_match('/\$([a-zA-Z0-9_]+)/i', $matches[2], $setValue)) {
-						$varName = $setValue[1];
-						$keyName = null;
+						$varName = "\$this->varList->{$setValue[2]}";
+						$keyName = '';
 					}
-					$str .= preg_replace_callback('/\{\$([a-zA-Z0-9_]+)\}/', function($matches) use ($varName, $keyName) {
-								if ($matches[1] == $varName) {
-									$str = "<?php echo \${$varName};?>";
-								} elseif ($matches[1] == $keyName) {
-									$str = "<?php echo \${$keyName};?>";
-								} else {
-									$str = $matches[0];
-								}
-								return $str;
-							}, $matches[3]);
+					$str = "<?php foreach(\$this->varList->$matches[1] as $keyName $varName) { ?>";
+					
 					$str .= '<?php }?>';
 					return $str;
 				}, $content);
@@ -242,7 +233,7 @@ class Renderer extends Object {
 				}, $content);
 
 		//clean the whitespace from beginning and end of line and html comment
-		$content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
+		//$content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
 
 		FileObject::saveContent($transfromFile, $content);
 	}
