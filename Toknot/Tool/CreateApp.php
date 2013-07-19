@@ -8,7 +8,6 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Tool;
 /**
  * Create a application, the script is a guide that help you create a application
  * of base directory struncture and create some code of php
