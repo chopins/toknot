@@ -2,32 +2,36 @@
 <div class="menu-nav">
 	<div class="nav-tree">
 		{if $currentUser->userName == 'root'}
-		<div class="opreate-btn add-con-color icon-plus"><span>Add Manage</span></div>
+		<div class="opreate-btn add-con-color icon-plus" id="add-manage-btn"><span>Add Manage</span></div>
 		{/if}
-		<ul class="nav-tree-ul">
+		<div class="icon-right-open nav-cat current-nav-page" hassub="no" id="left-index-nav" action="/Index">Index<i class="icon-right-open"></i></div>
+		<ul class="nav-tree-ul" id="left-nav-tree">
 			{foreach $navList as $key=>$nav}
 			<li class="nav-tree-ul-li"><div class="icon-right-open nav-cat">User Manage</div>
 				<ul class="sub-nav-tree">
-					<li class="sub-nav-tree-li current-nav-page">User List</li>
+					<li class="sub-nav-tree-li">User List</li>
 					<li class="sub-nav-tree-li">Add User</li>
 				</ul>
 			</li>
 			{/foreach}
 			<li class="nav-tree-ul-li"><div class="icon-down-open nav-cat">User Manage</div>
 				<ul class="sub-nav-tree">
-					<li class="sub-nav-tree-li current-nav-page">User List
-						<i class="icon-right-open"></i>
+					<li class="sub-nav-tree-li" action="/User/All">User List
 					</li>
-					<li class="sub-nav-tree-li">Add User</li>
+					<li class="sub-nav-tree-li" action="/User/Add">Add User</li>
 				</ul>
 			</li>
-			<li class="nav-tree-ul-li"><div class="icon-right-open nav-cat">Manage Log</div>
+			<li class="nav-tree-ul-li"><div class="icon-down-open nav-cat">Manage Log</div>
 				<ul class="sub-nav-tree"><li class="sub-nav-tree-li">Log Lists</li></ul>
 			</li>
 		</ul>
 	</div>
 </div>
-<div class="page-box">
+<div class="page-box" id="right-page-box" add="/Index/Add">
+	<script type="text/javascript">
+		clickEvent.deleteFunction = function() {alert('delete')};
+		clickEvent.saveFunction = function() {alert('save')};
+	</script>
 	<div class="pop-menu" style="display: none;" id="list-title-pop">
 		<ul>
 			<li>= <input type="text" /></li>

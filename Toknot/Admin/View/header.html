@@ -8,7 +8,7 @@
         <script src="/static/js/admin.js" type="text/javascript"></script>
     </head>
     <body>
-        <div class="top-panel">
+        <div class="top-panel" id="top-panel">
             <div class="tk-logo">ToKnot</div>
             <div class="user-nav" id="time-bar"></div>
             <!--<div class="user-nav icon-after-down-micro">Languaage</div>-->
@@ -16,19 +16,23 @@
 			{if (string)$currentUser != 'nobody'}
 			<div class="pop-menu" style="display: none;" id="user-menu">
 				<ul>	
-					<li><a href="/User/profile">Profile</a></li>	
-					<li><a href="/User/Logout">Logout</a></li>	
+					<li class="icon-cog"><span action="/User/Profile">Profile</span></li>	
+					<li><span action="/User/Logout" refresh="true">Logout</span></li>	
 				</ul>
 			</div>
 			{/if}
             {if $act == 'list'}
-            <div class="opreate-btn"><span class="icon-plus"></span><span>Add</span></div>
-            <div class="opreate-btn"><span class="icon-trash"></span>Delete</div>
+            <div class="opreate-btn" action="add">
+				<span class="icon-plus"></span><span>Add</span></div>
+            <div class="opreate-btn" action="delete">
+				<span class="icon-trash"></span><span>Delete</span></div>
             {/if}
-            {if $act == 'edit'}
-            <div class="opreate-btn"><span>Retrun</span></div>
-            <div class="opreate-btn"><span>Save</span></div>
-            {/if}
+            <!--{if $act == 'edit'}-->
+            <div class="opreate-btn" action="return">
+				<span class="icon-left-open"></span><span>Return</span></div>
+            <div class="opreate-btn" action="save"> 
+				<span class="icon-floppy"></span><span>Save</span></div>
+            <!--{/if}-->
 
         </div>
         <div class="main-warpper">

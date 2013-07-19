@@ -103,20 +103,20 @@ class Log {
 	 * @return string
 	 */
     public static function traceCss() {
-        return '<style>
-                .ToKnotDebugArea {border:1px #CCCCCC solid;background-color:#EEEFFF;padding:0;font-family:Helvetica,arial,freesans,clean,sans-serif;}
-                .ToKnotDebugArea ul {margin-top:0;}
-                .ToKnotMessage {color:#666666;font-size:18px;font-weight:bold;padding:10px;margin:0px;background-color:#D6E685;border-bottom:1px solid #94DA3A;}
-                .ToKnotCallFile {color:#6A8295;}
-                .ToKnotAccess {color:#336258;}
-                .ToKnotTraceItem{list-style-type:none;padding:10px;color:#0F4C9E;font-size:15px;}
-                .ToKnotTraceItem li {padding:5px;}
-                .ToKnotDebugArgs{text-decoration:underline;font-size:12px;margin:0 3px;}
-                .ToKnotDebugArgs b {font-size:15;margin:0 3px;}
-                .ToKnotDebugFunc{color:#176B4E;font-weight:normal;}
-                .ToKnotDebugThrow{color:#D14836;font-weight:bold;background-color:#FFECCC;padding:8px;}
-                .ToKnotDebugProcess {color:#333;font-size:12px;}
-                </style>';
+        return '<style type="text/css">
+.ToKnotDebugArea {border:1px #CCCCCC solid;background-color:#EEEFFF;padding:0;font-family:Helvetica,arial,freesans,clean,sans-serif;}
+.ToKnotDebugArea ul {margin-top:0;}
+.ToKnotMessage {color:#666666;font-size:18px;font-weight:bold;padding:10px;margin:0px;background-color:#D6E685;border-bottom:1px solid #94DA3A;}
+.ToKnotCallFile {color:#6A8295;}
+.ToKnotAccess {color:#336258;}
+.ToKnotTraceItem{list-style-type:none;padding:10px;color:#0F4C9E;font-size:15px;}
+.ToKnotTraceItem li {padding:5px;}
+.ToKnotDebugArgs{text-decoration:underline;font-size:12px;margin:0 3px;}
+.ToKnotDebugArgs b {font-size:15;margin:0 3px;}
+.ToKnotDebugFunc{color:#176B4E;font-weight:normal;}
+.ToKnotDebugThrow{color:#D14836;font-weight:bold;background-color:#FFECCC;padding:8px;}
+.ToKnotDebugProcess {color:#333;font-size:12px;}
+</style>';
     }
 
 }

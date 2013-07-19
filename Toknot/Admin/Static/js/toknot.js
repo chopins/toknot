@@ -588,9 +588,20 @@ if (typeof TK == 'undefined') {
 				},
 				//移除指定样式名
 				removeClass: function(cls) {
+					if(this.className == cls) {
+						return this.className = '';
+					}
 					if (this.hasClass(cls)) {
 						var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
 						this.className = this.className.replace(reg, '');
+					}
+				},
+				replaceClass : function(oldCls, newCls) {
+					if(this.hasClass(oldCls)) {
+						var reg = new RegExp('(\\s|^)'+oldCls + '(\\s|$)');
+						this.className = this.className.replace(reg,' '+newCls+' ').trim();
+					} else {
+						this.addClass(newCls);
 					}
 				},
 				//添加一个样式名
@@ -1235,7 +1246,7 @@ if (typeof TK == 'undefined') {
 		 */
 		Ajax: {
 			XMLHttp: null,
-			dataType: 'json',
+			dataType: 'json', //text, json, xml
 			charset: 'utf-8',
 			MimeType: 'text/html;charset=utf-8',
 			url: null,
@@ -1247,6 +1258,7 @@ if (typeof TK == 'undefined') {
 			waitTime: 10000,
 			outObj: [],
 			formObj: null,
+			reponseContentType : null,
 			messageList: {
 				start: '', 
 				complete: '', 
@@ -1266,7 +1278,6 @@ if (typeof TK == 'undefined') {
 				} else {
 					mime = 'text/xml';
 				}
-				;
 				TK.Ajax.MimeType = mime + ';charset=' + TK.Ajax.charset;
 			},
 			setUrl: function(url) {
@@ -1275,7 +1286,6 @@ if (typeof TK == 'undefined') {
 					var protocol = window.location.protocol == "https:" ? 'https' : 'http';
 					url = protocol + '://' + TK.Ajax.defaultDomain + url;
 				}
-				;
 				TK.Ajax.url = url.strpos('?') != false ? url + '&is_ajax=1' : url + '?is_ajax=1';
 				TK.Ajax.url += '&t=' + (new Date().getTime());
 			},
@@ -1341,8 +1351,9 @@ if (typeof TK == 'undefined') {
 				}
 			},
 			socket: function(url, openFunc, receiveFunc) {
+				var socket = null;
 				if (navigator.FIREFOX && typeof(WebSocket) == 'undefined') {
-					var socket = new MozWebSocket(url);
+					socket = new MozWebSocket(url);
 				} else if (typeof(WebSocket) == 'undefined') {
 					return false;
 				}
@@ -1350,7 +1361,7 @@ if (typeof TK == 'undefined') {
 					var protocol = window.location.protocol == "https:" ? 'wss' : 'ws';
 					url = protocol + '://' + TK.Ajax.defaultDomain + url;
 				}
-				var socket = new WebSocket(url);
+				socket = new WebSocket(url);
 				socket.onopen = openFunc;
 				socket.onmessage = receiveFunc;
 				return socket;
@@ -1472,10 +1483,12 @@ if (typeof TK == 'undefined') {
 						TK.clearTimeout(TK.Ajax.openInstance[openId].outObj);
 						TK.clearTimeout(TK.Ajax.statusObj);
 						TK.Ajax.complete();
+						
 						if (TK.Ajax.openInstance[openId].method == 'HEAD') {
 							if (TK.Ajax.openInstance[openId].XMLHttp.status == 0) {
 								return TK.Ajax.openInstance[openId].callFunc(0);
 							}
+
 							var headerStr = TK.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders();
 							var headerArr = headerStr.split("\r\n");
 							var header = [];
@@ -1488,34 +1501,36 @@ if (typeof TK == 'undefined') {
 									header[fv[0].trim()] = fv[1].trim();
 								}
 							}
+							
 							TK.Ajax.openInstance[openId].callFunc(header);
-							return;
+							return null;
 						}
 						if (TK.Ajax.openInstance[openId].method == 'TRACE') {
 							TK.Ajax.openInstance[openId].callFunc(
 								TK.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders(),
 								TK.Ajax.openInstance[openId].XMLHttp.responseText);
-							return;
+							return null;
 						}
 						if (TK.Ajax.openInstance[openId].XMLHttp.status == 200) {
+							var reData = null;
 							switch (TK.Ajax.dataType.toLowerCase()) {
 								case 'xml':
-									var reData = TK.Ajax.openInstance[openId].XMLHttp.responseXML;
+									reData = TK.Ajax.openInstance[openId].XMLHttp.responseXML;
 									break;
 								case 'json':
-									var reData = TK.Ajax.openInstance[openId].XMLHttp.responseText;
+									reData = TK.Ajax.openInstance[openId].XMLHttp.responseText;
 									if (reData != '') {
 										try {
-											var reData = JSON.parse(reData);
+											reData = JSON.parse(reData);
 										}
 										catch (e) {
 											console.warn('Ajax JSON Parse Error: ' + e + ' in File ' + e.fileName + ' Line ' + e.lineNumber);
-											return;
+											return null;
 										}
 									}
 									break;
 								default:
-									var reData = TK.Ajax.openInstance[openId].XMLHttp.responseText;
+									reData = TK.Ajax.openInstance[openId].XMLHttp.responseText;
 									break;
 							}
 							if (TK.Ajax.openInstance[openId].callFunc) {
@@ -2322,7 +2337,7 @@ if (typeof TK == 'undefined') {
 			return {
 				x: e.clientX, 
 				y: e.clientY
-				};
+			};
 		},
 		/**
 		 * 获取兼容性透明度设置样式 

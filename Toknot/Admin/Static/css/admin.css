@@ -36,7 +36,7 @@
 body {margin: 0;padding: 0;font-family: "MuseoSans-700","Helvetica Neue",Helvetica,Arial,sans-serif;font-size: 16px;background-color: #E6EDF6;}
 .top-panel {background-color: #333333;color: #FFFFFF;height: 40px;line-height: 40px;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);padding: 0 11px 0;cursor:default;position: fixed;top:0;width: 100%;padding: 0 10px 0;}
 
-.opreate-btn{display:inline-block;height: 26px;font-weight: bold;background-color: #555555;margin: 5px;line-height: 26px; border-radius: 2px; padding: 2px 8px;cursor:default;font-size: 13px;}
+.opreate-btn{display:inline-block;height: 26px;font-weight: bold;background-color: #555555;margin: 5px;line-height: 26px; border-radius: 2px; padding: 2px 8px;cursor:default;font-size: 13px;-moz-user-select:none;-webkit-user-select:none;}
 .opreate-btn span {line-height: 26px;height: 26px;display: inline-block;}
 .opreate-btn:before{margin-right:5px;}
 .opreate-btn span:before{margin-right:5px;}
@@ -49,7 +49,7 @@ body {margin: 0;padding: 0;font-family: "MuseoSans-700","Helvetica Neue",Helveti
 .login-box {background: none repeat scroll 0 0 #444444;border: 1px solid #BCD7F9;border-radius: 10px 10px 10px 10px;padding: 10px 20px;width: 600px;margin: 50px auto;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);color: #CCCCCC;}
 .login-box h2 {text-align: center;}
 .login-form {color: #E6EDF6;}
-.login-button {margin-left: 150px;height: 30px;border-radius: 3px;border: 1px solid #3079ED;background-color: #4D90FE;color: #EEEEEE;font-weight: bold;}
+.login-button {margin-left: 150px;height: 30px;border-radius: 3px;border: 1px solid #3079ED;background-color: #4D90FE;color: #EEEEEE;font-weight: bold;line-height:30px;}
 .login-form p {display: block;text-align: center;}
 .login-form span {display: inline-block;width: 100px;text-align: justify;font-weight: bold;}
 .login-text{height: 30px;border: 1px solid #CCCCCC;border-radius: 3px;padding:3px;box-shadow: 1px 1px 3px #C3C3C3 inset;}
@@ -62,7 +62,7 @@ body {margin: 0;padding: 0;font-family: "MuseoSans-700","Helvetica Neue",Helveti
 
 .nav-tree {cursor: default;}
 .nav-tree-ul,.nav-tree-ul-li,.sub-nav-tree,.sub-nav-tree-li{list-style: none;}
-.nav-tree-ul {padding:0;font-size: 14px;min-height: 360px;}
+.nav-tree-ul {padding:0;font-size: 14px;min-height: 360px;margin:0;}
 .sub-nav-tree {padding:0px;}
 .sub-nav-tree-li {padding:3px 0px 3px 35px;}
 .nav-cat {font-weight: bold;padding:3px 0px 3px 10px;color:#666666;font-size:15px;}
@@ -84,5 +84,9 @@ body {margin: 0;padding: 0;font-family: "MuseoSans-700","Helvetica Neue",Helveti
 .current-nav-page {background-color:#CCCCCC;line-height:18px;}
 .current-nav-page i {font-style:normal;font-size:10px;float:right;}
 .pop-menu{background-color:#FFFFFF;border: 1px solid #888888;color:#000000;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);}
-.pop-menu ul{list-style: none;padding:5px;margin:0;}
-.pop-menu ul li {padding:5px;line-height: 15px; font-size:15px;}
+.pop-menu ul{list-style: none;padding:0px;margin:0;}
+.pop-menu ul li {padding:10px;line-height: 15px; font-size:15px;}
+.pop-menu ul li:hover{background-color: #EEEEEE;}
+.pop-menu ul li:before{margin-right:15px;}
+
+
