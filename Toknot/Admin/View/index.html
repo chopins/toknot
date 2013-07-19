@@ -7,28 +7,18 @@
 		<div class="icon-right-open nav-cat current-nav-page" hassub="no" id="left-index-nav" action="/Index">Index<i class="icon-right-open"></i></div>
 		<ul class="nav-tree-ul" id="left-nav-tree">
 			{foreach $navList as $key=>$nav}
-			{$nav.action}
 			<li class="nav-tree-ul-li">
-				<div class="icon-down-open nav-cat" {if $nav.action}action="{$nav.action}"{/if} {if !$nav.hassub}hassub="no"{/if}>{$nav[name]}</div>
-				{if isset($nav[sub])}
+				<div class="icon-down-open nav-cat" {if $nav.action}action="{$nav.action}"{/if} {if !$nav.hassub}hassub="no"{/if}>{$nav.name}</div>
+				{if isset($nav.sub)}
 				<ul class="sub-nav-tree">
-					{foreach $nav[sub] as $sub}
+					{foreach $nav.sub as $sub}
 					<li class="sub-nav-tree-li" action="{$sub[0]}">{$sub[1]}</li>
 					{/foreach}
 				</ul>
 				{/if}
 			</li>
 			{/foreach}
-			<li class="nav-tree-ul-li"><div class="icon-down-open nav-cat">User Manage</div>
-				<ul class="sub-nav-tree">
-					<li class="sub-nav-tree-li" action="/User/All">User List
-					</li>
-					<li class="sub-nav-tree-li" action="/User/Add">Add User</li>
-				</ul>
-			</li>
-			<li class="nav-tree-ul-li"><div class="icon-down-open nav-cat">Manage Log</div>
-				<ul class="sub-nav-tree"><li class="sub-nav-tree-li">Log Lists</li></ul>
-			</li>
+			
 		</ul>
 	</div>
 </div>

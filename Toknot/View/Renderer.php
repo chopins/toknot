@@ -180,21 +180,21 @@ class Renderer extends Object {
 		$content = file_get_contents($tplFile);
 
 		//transfrom foreach statement
-		$content = preg_replace_callback('/\{foreach\040+\$(\S+)\040+as\040+([\$a-zA-Z0-9_=>\040]+)}(.*)\{\/foreach\}/ims', function($matches) {
+		$content = preg_replace_callback('/\{foreach\040+\$(\S+)\040+as\040+([\$a-zA-Z0-9_=>\040]+)}/is', function($matches) {
 					$matches[1] = str_replace('.', '->', $matches[1]);
 					if (preg_match('/\$([a-zA-Z0-9_]+)\040*=>\040*\$([a-zA-Z0-9_]+)/i', $matches[2], $setValue)) {
 						$varName = "\$this->varList->{$setValue[2]}";
 						$keyName = "\$this->varList->{$setValue[1]}=>";
 					} elseif (preg_match('/\$([a-zA-Z0-9_]+)/i', $matches[2], $setValue)) {
-						$varName = "\$this->varList->{$setValue[2]}";
+						$varName = "\$this->varList->{$setValue[1]}";
 						$keyName = '';
 					}
 					$str = "<?php foreach(\$this->varList->$matches[1] as $keyName $varName) { ?>";
-					
-					$str .= '<?php }?>';
+
 					return $str;
 				}, $content);
-
+        $content = preg_replace('{/foreach}', '<?php }?>', $content);
+				
 
 		//transfrom variable
 		$content = preg_replace_callback('/\{\$([\.a-zA-Z0-9_\[\]]+)\}/i', function($matches) {
