@@ -1116,17 +1116,18 @@ if (typeof TK == 'undefined') {
 							var width = resizeNodeObj.startPos.w;
 							var height = resizeNodeObj.startPos.h;
 							var moveToY = resizeNodeObj.startPos.y;
+		
 							if (mouseX == 1) {
-								var width = resizeNodeObj.startPos.w - offsetX;
-								var moveToX = resizeNodeObj.startPos.x + offsetX;
+								width = resizeNodeObj.startPos.w - offsetX;
+								moveToX = resizeNodeObj.startPos.x + offsetX;
 							} else if (mouseX == 2) {
-								var width = resizeNodeObj.startPos.w + offsetX;
+								width = resizeNodeObj.startPos.w + offsetX;
 							}
 							if (mouseY == 1) {
-								var height = resizeNodeObj.startPos.h - offsetY;
-								var moveToY = resizeNodeObj.startPos.y + offsetY;
+								height = resizeNodeObj.startPos.h - offsetY;
+								moveToY = resizeNodeObj.startPos.y + offsetY;
 							} else if (mouseY == 2) {
-								var height = resizeNodeObj.startPos.h + offsetY;
+								height = resizeNodeObj.startPos.h + offsetY;
 							}
 							resizeNodeObj.node.style.top = moveToY + 'px';
 							resizeNodeObj.node.style.height = height + 'px';
@@ -2054,18 +2055,19 @@ if (typeof TK == 'undefined') {
 			box.appendChild(msgDiv);
 			var input = TK.createNode('input');
 			var button = TK.createNode('button');
+			var inputItem = null;
 			for (var i in inputList) {
 				if (isNaN(i))
 					continue;
 				if (inputList[i].type == 'textarea') {
-					var inputItem = TK.createNode('textarea');
+					inputItem = TK.createNode('textarea');
 					inputItem.setAttribute('name', inputList[i].name);
 					inputItem.innerHTML = inputList[i].value;
 				} else if (inputList[i].type == 'select') {
 					inputItem = TK.selectDiv(inputList[i].value, inputList[i].name,
 						'', '', inputList[i].cls);
 				} else {
-					var inputItem = input.copyNode(true);
+					inputItem = input.copyNode(true);
 					inputItem.setAttribute('type', inputList[i].type);
 					inputItem.setAttribute('name', inputList[i].name);
 					inputItem.setAttribute('value', inputList[i].value);
