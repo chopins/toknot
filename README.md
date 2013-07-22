@@ -1,9 +1,7 @@
-##Toknot 2.0-dev
+##Toknot 2.0-beta
 
 ####About
 ToKnot is php MVC framework
-
-__The project is still under heavy development__
 
 ####License
 The PHP framework is under New BSD License (http://toknot.com/LICENSE.txt)
