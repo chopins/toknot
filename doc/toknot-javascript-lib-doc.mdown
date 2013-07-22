@@ -209,7 +209,7 @@
 
 * `TK.hiddenPageCover()`  隐藏遮照层
 
-* `TK.drawRect(x, y, w, h, color)  画一个矩形
+* `TK.drawRect(x, y, w, h, color)`  画一个矩形
 
 * `TK.drawLineTrends(style, initData, padding)` 创建基于canvas 元素的趋势图表
 
@@ -218,9 +218,9 @@
 
 * `TK.getCookie(cn)`	获取一个cookie 值 
 
-* `TK.getFormInputData(frm, disable_no_name) 获取指定元素对象所包含的所有input或相关表单数据 
+* `TK.getFormInputData(frm, disable_no_name)` 获取指定元素对象所包含的所有input或相关表单数据 
 
-* `TK.submitForm(ele, callFunc, validFunc) 自动提交表单,本方法只能提交form标签表单
+* `TK.submitForm(ele, callFunc, validFunc)` 自动提交表单,本方法只能提交form标签表单
 
 * `TK.time()` 获取当前时间戳,1970-1-1 00:00:00 到当前的秒数
 
@@ -228,7 +228,7 @@
 
 * `TK.preZero(num, bit)` 添加前导零
 
-* `TK.date(time, cache)  获取 YYYY-mm-dd HH:ii:ss 格式时间, 如果设置time,将获取该时间的日期,如果cache为true,每次调用将只更新一秒的时间
+* `TK.date(time, cache)`  获取 YYYY-mm-dd HH:ii:ss 格式时间, 如果设置time,将获取该时间的日期,如果cache为true,每次调用将只更新一秒的时间
 
 * `TK.rand()` 获取一个10位数的随机数
 
