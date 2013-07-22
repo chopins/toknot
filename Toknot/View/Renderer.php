@@ -193,7 +193,7 @@ class Renderer extends Object {
 
 					return $str;
 				}, $content);
-        $content = preg_replace('{/foreach}', '<?php }?>', $content);
+        $content = str_replace('{/foreach}', '<?php }?>', $content);
 				
 
 		//transfrom variable
@@ -233,7 +233,7 @@ class Renderer extends Object {
 				}, $content);
 
 		//clean the whitespace from beginning and end of line and html comment
-		//$content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
+		$content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
 
 		FileObject::saveContent($transfromFile, $content);
 	}

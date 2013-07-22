@@ -19,7 +19,7 @@ var init = {
 		TK.$('user-menu').byNodePop(TK.$('user-name'),1);
 	},
 	bindEvent : function() {
-		TK.$('add-manage-btn').addListener('click', clickEvent.showAddManagePage);	
+//		TK.$('add-manage-btn').addListener('click', clickEvent.showAddManagePage);	
 		TK.$('left-nav-tree').addListener('click',clickEvent.manageMenuAction);
 		TK.$('user-menu').addListener('click',clickEvent.userMenuAction);
 		TK.$('top-panel').addListener('click',clickEvent.globalBtnAction);

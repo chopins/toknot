@@ -83,6 +83,7 @@ class CreateApp {
 		$this->writeIndex($dir . '/WebRoot');
 		if (!$this->isAdmin) {
 			$this->writeAppBaseClass($dir);
+			$this->writeManageListConfig($dir);
 		}
 		$this->message("Create $dir/View");
 		mkdir($dir . '/View');
@@ -102,6 +103,36 @@ class CreateApp {
 		$this->message('Create Success', 'green');
 		$this->message('You should configure ' . $dir . '/Config/config.ini');
 		$this->message("Configure your web root to $dir/WebRoot and visit your Application on browser");
+	}
+	public function writeManageListConfig($dir) {
+		$configure = <<<EOF
+; this is manage list configure of Toknot Admin
+
+;one section is a manage category
+[User]
+
+;category name
+name = UserManage
+
+;wheteher has sub item
+hassub = true
+
+;the category name whether has action jump
+action = false
+
+;sub is the category child item list
+;one item contain action and show name and use | split
+sub[] = '/User/All|User List'
+sub[] = '/User/Add|Add User'
+
+[Log]
+name = Manage Log
+hassub = true
+action = false
+sub[] = '/Manage/All|Logs List'
+
+EOF;
+		file_put_contents($dir . '/Config/managelist.ini', $configure);
 	}
 
 	public function versionInfo() {
