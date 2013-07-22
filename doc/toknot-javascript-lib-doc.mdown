@@ -166,19 +166,21 @@
 		    * cls: string   提示信息样式名 
 		    * visibility : boolean  隐藏后是否保留提示信息位置 
 		* `box.submitInput(url, func, validFunc)` 提交表单	
-		 	* url   : string    提交表单URL
-		 	* func  : function  表单提交返回回调函数
-	                       		回调函数原型样式：
-	     	                    callbackFunciton(returnData)
-		                                   returnData : JSON  Ajax返回数据
-		 
-		     * validFunc : function  表单数据检测回调函数
-		                          回调函数原型样式：
-		                           callbackFunciton(formData, box)
-		                               returnData : JSON 表单数据 
-		                                                 KEY值为input name值
-		                              box        : ELEMENT_NODE 控件对象
-		                              return boolean 返回false将阻止表单提交,true提交表单
+			* url   : string    提交表单URL
+
+			* func  : function  表单提交返回回调函数,回调函数原型样式：
+					callbackFunciton(returnData) 
+					returnData : JSON  Ajax返回数据
+
+			* validFunc : function  表单数据检测回调函数
+
+					回调函数原型样式：
+					callbackFunciton(formData, box)
+					returnData : JSON 表单数据 
+										   KEY值为input name值
+					box        : ELEMENT_NODE 控件对象
+					return boolean 返回false将阻止表单提交,true提交表单
+
 
 * `TK.selectDiv(optionList, name, func, def, cls)` 创建一个下来列表控件
 	* `optionList` 列表数据,其中一个元素类似下面:
