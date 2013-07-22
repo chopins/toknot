@@ -86,19 +86,22 @@
 * `TK.scrollOffset()` 返回当前滚动条坐标对象,对象类似 `{x:0,y:0}`
 * `TK.carousel(data, obj, type,eff, cls, waitTime)` 创建一个幻灯片控件,返回控件元素对象
 	* `data`	JSON	轮换元素数据,类似如下
+
 				{'label' : string  该轮换项标签
 		         'link'  : string  链接URL
 		         'img'   : string  轮换项图片地址
 		        }
+
 	* `obj` 本控件摆放位置元素
 	* `type` 1为数字列表点击切换,2前进后退切换,3,文字切换,4缩略图列表点击切换
 	* `eff` 轮换效果, 1为渐变轮换,2滑动切换
     * `cls` 控件内元素样式名前缀, 实际元素会加上以下名字:
-			CarouselMainBox : 控件样式
-			CarouselListDiv : 展示元素清单样式
-			CarouselPreDiv  : 上一个按钮样式
-			CarouselNextDiv : 下一个按钮样式
-			CarouselCurrentSelect : 当前选中元素指示样式
+		* CarouselMainBox : 控件样式
+		* CarouselListDiv : 展示元素清单样式
+		* CarouselPreDiv  : 上一个按钮样式
+		* CarouselNextDiv : 下一个按钮样式
+		* CarouselCurrentSelect : 当前选中元素指示样式
+
 	* `waitTime` 滚动间隔时间
 * `TK.msgBox(msg, cls, zIndex, waitTime)` 创建一个简单的具有时效性的信息控件,返回控件所在DIV对象
 	* `msg` 信息内容
@@ -109,22 +112,27 @@
 	* `tit` 控件标题信息
 	* `msg` 控件提示信息
 	* `func` 确定按钮后执行的操作
+
 			 回调函数原型样式:
 			 callbackFunciton(event, button);
 				event  : EventObject   点击事件
 				button : boolean       等于true
+
 	* `cls` 控件内元素样式名前缀,内部实际会跟随以下名字:
-			TitleDiv  : 标题栏样式
-			MainDiv   : 控件中间主题部分样式
-			ButtonDiv : 按钮所在元素样式
-  	* `cover` 是否显示cover层,默认不显示，true为显示
+		* TitleDiv  : 标题栏样式
+		* MainDiv   : 控件中间主题部分样式
+		* ButtonDiv : 按钮所在元素样式 
+	
+	* `cover` 是否显示cover层,默认不显示，true为显示
 	* `zIndex` 控件 z-index 值,如果没有设置将为当前页面最上面
+
 * `TK.confirmBox(tit, msg, func, cls, cover, zIndex)`  创建一个拥有确定与取消按钮的信息提示控件
 	* 参数与`TK.alertBox()`相同, 只是func 的接收参数中button值在点击取消时为false,确定为true
 * `TK.inputBox(tit, msg, inputList, buttonList, cls, cover, zIndex)`创建一个具有表单功能的控件
 	* `tit` 控件标题信息
 	* `msg`  默认提示信息
 	* `inputList` 表单内input元素清单,select元素将会使用selectDiv控件替代,值为一个数组,下面为其中一个input元素:
+
 					{'label' : string   input元素标签
 					 'type'  : string   input元素类型
 					 'name'  : string   input元素name值
@@ -133,19 +141,22 @@
 							  			内部实际会跟随以下名字：
 										ItemDiv   : input元素的上一级Div样式
 										ItemLabel : input元素的label元素样式
+
 	* `buttonList` 按钮清单，这里的按钮不是button类型input标签,值为数组,下面为其中一个元素组成:
+
 				 {'label' : string   按钮显示名字,innerHTML值
 					'value' : string   按钮值,attributes属性
 					'cls'   : string   按钮样式
 					'call'  : string/function   按钮点击回调函数名
 					'url'   : string   表单提交URL
 				 }
+
 	* `cls`  控件内元素样式名前缀,内部实际会跟随以下名字:
-		   	TitleDiv  : 标题栏样式
-			MainDiv   : 控件中间主题部分样式
-			ButtonDiv : 按钮所在元素样式	
-			MsgDiv    : 提示信息样式名
-			CloseDiv  : 关闭按钮样式名
+		* TitleDiv  : 标题栏样式
+		* MainDiv   : 控件中间主题部分样式
+		* ButtonDiv : 按钮所在元素样式	
+		* MsgDiv    : 提示信息样式名
+		* CloseDiv  : 关闭按钮样式名
 	* `cover`  是否显示cover层，true为显示，默认不显示
 	* `zIndex`  控件z-index 值，默认在页面最上面
 	* 返回一个扩展后元素对象,用下列方法:
@@ -224,4 +235,4 @@
 
 ###7. TK.$() 方法
 
-###8.TK.Ajax 属性
+###8.TK.Ajax 属性 
