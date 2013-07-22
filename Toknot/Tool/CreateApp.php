@@ -223,7 +223,7 @@ EOS;
 					continue;
 				}
 				$file = $source . '/' . $f;
-				$this->message($file);
+				$this->message("copy $file");
 				$destfile = $dest . '/' . $f;
 				if (is_dir($file)) {
 					$this->copyDir($file, $destfile);
@@ -277,12 +277,13 @@ EOS;
 	public function writeAppBaseClass($path) {
 		$phpCode = <<<EOS
 <?php
-namespace ' . $this->appName . ';
+namespace {$this->appName};
 use Toknot\User\ClassAccessControl;
 
-class ' . $this->appName . 'Base extends ClassAccessControl {
+class {$this->appName}Base extends ClassAccessControl {
 EOS;
 		$phpCode .= <<<'EOS'
+
     protected static $FMAI;
     protected static $CFG;
     protected $AppPath;
@@ -292,7 +293,7 @@ EOS;
     protected $classGroup;
     public function __construct($FMAI) {
         $this->FMAI = $FMAI;
-        $this->CFG = $this->FMAI->loadConfigure($FMAI->appRoot . \'/Config/config.ini\');
+        $this->CFG = $this->FMAI->loadConfigure($FMAI->appRoot . '/Config/config.ini');
         
         $this->AR = $this->FMAI->getActiveRecord();
 
@@ -351,14 +352,14 @@ $app->run("' . $namespace . '",dirname(__DIR__));';
 				break;
 		}
 		if ($number) {
-			echo "\e[1;{$number}m";
+			echo "\033[1;{$number}m";
 		}
 		echo "$str";
 		if ($newLine) {
 			echo "\r\n";
 		}
 		if ($number) {
-			echo "\e[0m";
+			echo "\033[0m";
 		}
 	}
 
