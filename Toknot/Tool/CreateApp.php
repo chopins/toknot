@@ -235,13 +235,14 @@ EOS;
 	}
 
 	public function writeIndexController($path) {
-		$use = $this->isAdmin ? 'Toknot\Admin\Admin' : "{$this->appName}\{$this->appName}";
+		$use = $this->isAdmin ? 'Toknot\Admin\Admin' : "{$this->appName}\\{$this->appName}";
 		$base = $this->isAdmin ? 'AdminBase' : "{$this->appName}Base";
 		$phpCode = <<<EOS
 <?php
 namespace  {$this->appName}\Controller;
             
 use {$use}Base;
+
 EOS;
 if($this->isAdmin) {
 	$phpCode .= 'use Toknot\Admin\Menu;';

@@ -16,55 +16,33 @@ User                用户组件
 View                页面渲染相关        
 ```
 --------------------     
-2.创建一个应用程序的文件夹，如下所示  
-    `mkdir /home/MyApp`
+2.创建一个应用程序使用如下命令
+    `php /home/Toknot/Tool/CreateApp.php`
+
+  该脚本会创建应用程序基本目录结构,并且会创建一些简单的示例代码,
+  如果你创建的是后台管理程序,改脚本还会创建后台页面框架结构,你只需要完成每一项管理功能即可
+  创建后的目录结构如下:
+```
+Config					配置文件所在文件夹
+Controller				业务控制器目录
+Data					数据文件或者临时数据目录
+View					页面显示模板文件目录
+WebRoot					HTTP Web 根目录
+{$AppName}Base.php		应用程序基础类,{$AppName}为应用名字
+```
 --------------------     
-3.然后在`/home/MyApp`目录下面分别创建如下文件夹
-```
-Config          配置文件,建议  
-Controller      应用控制器文件夹，必须  
-Data            应用程序数据存放文件夹，建议  
-View            页面HTML模板文件存放位置，建议  
-WebRoot         web站点入口文件存放位置，建议  
-Model           模块文件夹,建议  
-```
+3.应用创建成功后需要修改配置
+  应用的所有配置配置信息都位于 Config/config.ini
+  Admin应用的管理项配置位于  Config/managelist.ini
+
+  这两个文件在运行CreateApp.php时将会被自动创建,只需要修改项目选项即可
 -----------------
-4.进入`/home/MyApp/WebRoot`文件夹创建`index.php`文件(建议的文件名)， 在该文件中创建如下代码  
-
-```php
-use Toknot\Control\Application;
-require_once '/home/Toknot/Control/Application.php';
-
-//开发时定义此常量，该常量默认为 true, 因此产品时需要在此定义为false
-define('DEVELOPMENT', true);
-$app = new Application;
-$app->run('\MyApp',dirname(__DIR__));
-```  
-从上面的例子，可以看到，我们使用了`MyApp`这个命名空间，这个名字与`/home/MyApp`文件夹名字相同。  
-因为这是框架约定的命名空间的规则：即命名空间的名字与类所在文件夹的名字相同
-关于`Toknot\Control\Application`的相关信息见http://toknot.com/toknot/class-Toknot.Control.Application.html
+4.命名空间, 应用的的顶级命名空间名字必须与应用所在文件夹的名字相同,大小写相同
+框架约定的命名空间的规则：即命名空间的名字与类所在文件夹的名字相同
 
 ----------------
-5.进入`/home/MyApp/Controller`文件夹，创建`Index.php`文件, 输入如下代码:
-```php
-namespace MyApp\Controller;
-class Index {
-    public $FMAI = null;
-    public function __construct($FMAI) {
-        $this->FMAI = $FMAI;
-    }
-
-    public function GET() {
-        print 'hello world';
-    }
-
-    public function POST() {
-        print 'This POST method request';
-    }
-``` 
-上面例子可以看到,`Index.php`文件中的类名是与文件名相同的，这是框架默认路由器规定的  
-
-而用户控制器的构造函数将会接收到了一个FMAI类的实例，这个类提供框架各个组件的标准访问方法，该类所拥有的方法可以建框架类参考http://toknot.com/toknot/class-Toknot.Control.FMAI.html    
+5.进入`/home/MyApp/Controller`文件夹，修改Index.php
+用户控制器的构造函数将会接收到了一个FMAI类的实例，这个类提供框架各个组件的标准访问方法，该类所拥有的方法可以建框架类参考http://toknot.com/toknot/class-Toknot.Control.FMAI.html    
 
 如果web服务器已经配置，你可以通过访问`http://localhost/`看到打印了 'hello world' 的页面    
 
@@ -204,7 +182,7 @@ domain = MyApp
    上面配置假设存放在 `$ini` 表示的文件名中，可以通过下面的方式加载:
 
 ```php
-$confg = ConfigLoader::loadCFG($ini);
+$confg = ConfigLoader::importCFG($ini);
 
 //下面是访问配置我文件中的`Database`块下面的`dsn`项
 $dsn = $confg->Database->dsn;
