@@ -83,7 +83,6 @@ class CreateApp {
 		$this->writeIndex($dir . '/WebRoot');
 		if (!$this->isAdmin) {
 			$this->writeAppBaseClass($dir);
-			$this->writeManageListConfig($dir);
 		}
 		$this->message("Create $dir/View");
 		mkdir($dir . '/View');
@@ -93,6 +92,7 @@ class CreateApp {
 			$this->writeAdminAppUserController($dir.'/Controller/User');
 			$this->copyDir($this->toknotDir . '/Admin/View', $dir . '/View');
 			$this->copyDir($this->toknotDir . '/Admin/Static', $dir . '/WebRoot/static');
+			$this->writeManageListConfig($dir);
 		}
 		$this->message("Create $dir/Data/View");
 		mkdir($dir . '/Data/View', 0777, true);
@@ -242,7 +242,11 @@ EOS;
 namespace  {$this->appName}\Controller;
             
 use {$use}Base;
-
+EOS;
+if($this->isAdmin) {
+	$phpCode .= 'use Toknot\Admin\Menu;';
+}
+$phpCode .= <<<EOS
 class Index extends {$base}{
 EOS;
 		$phpCode .= <<<'EOS'
@@ -252,7 +256,16 @@ EOS;
     public function GET() {
         //$database = $this->AR->connect();
         print "hello world";
-
+EOS;
+if($this->isAdmin) {
+$phpCode .= <<<'EOS'
+   		$menu = new Menu;
+   		self::$FMAI->D->navList = $menu->getAllMenu();
+		self::$FMAI->D->act = 'list';
+        self::$FMAI->display('index');
+EOS;
+}
+$phpCode .= <<<'EOS'
         //self::$FMAI->display('index');
     }
  }
