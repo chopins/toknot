@@ -16,11 +16,11 @@ User                用户组件
 View                页面渲染相关        
 ```
 --------------------     
-2.创建一个应用程序使用如下命令
-    `php /home/Toknot/Tool/CreateApp.php`
+2.创建一个应用程序使用如下命令  
+`php /home/Toknot/Tool/CreateApp.php`
 
-  该脚本会创建应用程序基本目录结构,并且会创建一些简单的示例代码,
-  如果你创建的是后台管理程序,改脚本还会创建后台页面框架结构,你只需要完成每一项管理功能即可
+  该脚本会创建应用程序基本目录结构,并且会创建一些简单的示例代码,   
+  如果你创建的是后台管理程序,该脚本还会创建后台页面框架结构,你只需要完成每一项管理功能即可   
   创建后的目录结构如下:
 ```
 Config					配置文件所在文件夹
@@ -31,17 +31,18 @@ WebRoot					HTTP Web 根目录
 {$AppName}Base.php		应用程序基础类,{$AppName}为应用名字
 ```
 --------------------     
-3.应用创建成功后需要修改配置
-  应用的所有配置配置信息都位于 Config/config.ini
-  Admin应用的管理项配置位于  Config/managelist.ini
+3.应用创建成功后需要修改配置   
+  应用的所有配置配置信息都位于 Config/config.ini   
+  Admin应用的管理项配置位于  Config/managelist.ini  
+这两个文件在运行CreateApp.php时将会被自动创建,只需要修改项目选项即可
 
-  这两个文件在运行CreateApp.php时将会被自动创建,只需要修改项目选项即可
 -----------------
-4.命名空间, 应用的的顶级命名空间名字必须与应用所在文件夹的名字相同,大小写相同
+4.命名空间   
+应用的的顶级命名空间名字必须与应用所在文件夹的名字相同,大小写相同  
 框架约定的命名空间的规则：即命名空间的名字与类所在文件夹的名字相同
 
 ----------------
-5.进入`/home/MyApp/Controller`文件夹，修改Index.php
+5.进入`/home/MyApp/Controller`文件夹，修改Index.php  
 用户控制器的构造函数将会接收到了一个FMAI类的实例，这个类提供框架各个组件的标准访问方法，该类所拥有的方法可以建框架类参考http://toknot.com/toknot/class-Toknot.Control.FMAI.html    
 
 如果web服务器已经配置，你可以通过访问`http://localhost/`看到打印了 'hello world' 的页面    
