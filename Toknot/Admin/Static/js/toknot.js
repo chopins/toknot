@@ -75,9 +75,9 @@ if (typeof TK == 'undefined') {
 		},
 		FIREFOX: /.*{firefox}\/([\w.]+).*/.test(this.ugent),
 		WEBKIT: /(Webkit)/i.test(this.ugent),
-		jsPath: function() {
+		jsPath: function(cidx) {
 			var scripts = TK.doc.scripts;
-			var cidx = scripts.length - 1;
+			if(!cidx) cidx = scripts.length - 1;
 			var shash = scripts[cidx].src.lastIndexOf("/");
 			if (shash < 0)
 				return '';
@@ -215,7 +215,7 @@ if (typeof TK == 'undefined') {
 		},
 		//添加鼠标移动事件函数
 		addMouseMoveCallFunction: function(func, type) {
-			TK.bodyMouseEventCallFuncitonList[type].push(func);
+			return TK.bodyMouseEventCallFuncitonList[type].push(func);
 		},
 		//添加document鼠标点击事件
 		addMouseClickCallFunction: function(func, type, button) {
@@ -223,7 +223,7 @@ if (typeof TK == 'undefined') {
 				type = click;
 			if (!button)
 				button = 3;
-			TK.bodyMouseEventCallFuncitonList[type][button].push(func);
+			return TK.bodyMouseEventCallFuncitonList[type][button].push(func);
 		},
 		//document鼠标移动事件回调函数
 		mouseMoveEventFunction: function(e) {
@@ -309,25 +309,47 @@ if (typeof TK == 'undefined') {
 		addMouseEventController: function(type) {
 			return {
 				left: function(func) {
-					TK.addMouseClickCallFunction(func, type, 0);
+					return TK.addMouseClickCallFunction(func, type, 0) - 1;
 				},
 				right: function(func) {
-					TK.addMouseClickCallFunction(func, type, 2);
+					return TK.addMouseClickCallFunction(func, type, 2) -1;
 				},
 				middle: function(func) {
-					TK.addMouseClickCallFunction(func, type, 1);
+					return TK.addMouseClickCallFunction(func, type, 1) -1;
 				},
 				any: function(func) {
-					TK.addMouseClickCallFunction(func, type, 3);
+					return TK.addMouseClickCallFunction(func, type, 3) -1;
 				}
 			};
 		},
+		delMouseEventFunction : function(type, idx,button) {
+			if(type == 'mouseover' || type == 'mouseout') {
+				delete TK.bodyMouseEventCallFuncitonList[type][idx];
+			} else {
+				switch(button) {
+					case 'left':
+					button = 0;
+					break;
+					case 'right':
+					button = 2;
+					break;
+					case 'middle':
+					button = 1;
+					break;
+					case 'any':
+					default:
+					button = 3;
+					break;
+				}
+				delete TK.bodyMouseEventCallFuncitonList[type][button][idx];
+			}	
+		},
 		mouseover: function(func, eventObj) {
 			func.eventObj = eventObj;
-			TK.addMouseMoveCallFunction(func, 'mouseover');
+			return TK.addMouseMoveCallFunction(func, 'mouseover') -1;
 		},
 		mouseout: function(func, eventObj) {
-			TK.addMouseMoveCallFunction(func, 'mouseout', eventObj);
+			return TK.addMouseMoveCallFunction(func, 'mouseout', eventObj)-1;
 		},
 		mousedown: function() {
 			return TK.addMouseEventController('mousedown');
@@ -2276,7 +2298,7 @@ if (typeof TK == 'undefined') {
 			var obj = navigator.IE ? event.srcElement : arguments[0].target;
 			return TK.$(obj);
 		},
-		getFocusNode: function(e) {
+		getFocusNode: function() {
 			var obj = TK.doc.activeElement;
 			return obj ? TK.$(obj) : false;
 		},
@@ -2750,7 +2772,7 @@ if (typeof TK == 'undefined') {
 			}
 			return null;
 		},
-		version: 0.5
+		version: 0.6
 	};
 	window.onbeforeunload = TK.unloadExec;
 	if(typeof $ == 'undefined') {

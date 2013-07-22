@@ -42,7 +42,5 @@ see (http://toknot.com/toknot/)
 
 7. change `/your-app-path/Config/config.ini`
 
-8. more usage see demo https://github.com/chopins/toknot/tree/master/demos
-
 ####Previous Versions
 The ToKnot Freamwork v1 visit https://github.com/chopins/toknot/tree/V1
