@@ -169,6 +169,7 @@
 			* url   : string    提交表单URL
 
 			* func  : function  表单提交返回回调函数,回调函数原型样式：
+
 					callbackFunciton(returnData) 
 					returnData : JSON  Ajax返回数据
 
