@@ -195,11 +195,13 @@
 
 * `TK.selectDiv(optionList, name, func, def, cls)` 创建一个下来列表控件
 	* `optionList` 列表数据,其中一个元素类似下面:
-					单个选项所需要的数据:
-		                           {'label'    : string  选项显示名
-		                            'value'    : mixed   选项值
-		                           'disabled' : boolean true时该项不可选，默认可选
-		                            }
+
+			单个选项所需要的数据:
+			{'label'    : string  选项显示名
+			 'value'    : mixed   选项值
+			'disabled' : boolean true时该项不可选，默认可选
+			 }
+
 	* `name`  控件在表单内的name值
 	* `func`  更换选择项后回调函数,可选,回调函数原型样式：callbackFunciton(value),value为选择的值
 	* `def`   默认项数据, 数据样式与optionList单项一样,可选
