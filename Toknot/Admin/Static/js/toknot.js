@@ -537,7 +537,7 @@ if (typeof TK == 'undefined') {
 							list[list.length] = childList[t];
 					return list;
 				},
-				//根据指定属性及属性值找上级元素,直到到达body为止
+				//根据指定属性及属性值找上级元素,最多查找到body
 				getParentNodeByAttr: function(attr, value) {
 					if (this.parentNode && this.parentNode.nodeType == Node.ELEMENT_NODE) {
 						if (this.parentNode.getAttribute(attr) == value)
@@ -581,7 +581,7 @@ if (typeof TK == 'undefined') {
 					}
 					return this.appendChild(new_node);
 				},
-				//根据标签名查找上级元素,直到到达body
+				//根据标签名查找上级元素,最多查找到body
 				getParentNodeByTag: function(tagName) {
 					if (this.parentNode) {
 						if (this.parentNode.tagName.toUpperCase() == 'HTML')
@@ -889,7 +889,7 @@ if (typeof TK == 'undefined') {
 					this.toPos(mousePos.x + this.mousePopNearX + scroll.x, mousePos.y + this.mousePopNearY + scroll.y);
 				},
 				//元素跟随指定对象
-				byNodePop: function(byObj, direct, show) {
+				byNodePop: function(byObj, direct) {
 					if (!byObj.getPos)
 						byObj = TK.$(byObj);
 					var pop = this;
@@ -944,10 +944,10 @@ if (typeof TK == 'undefined') {
 					setPos(direct);
 				},
 				//放大图片
-				maxImg: function(cls, bsrc) {
+				maxImg: function(cls, bsrc,altShow, altClose) {
 					if (this.tag != 'img')
 						return;
-					this.setAttribute('title', '点击图片查看大图');
+					this.setAttribute('title', altShow);
 					this.addListener('click', function(e) {
 						var pPos = TK.pageShowSize();
 						var src = bsrc ? bsrc : TK.getEventNode(e).src;
@@ -955,7 +955,7 @@ if (typeof TK == 'undefined') {
 						bg.addClass(cls);
 						var img = TK.createNode('img');
 						img.setAttribute('src', src);
-						img.setAttribute('title', '点击关闭查看大图');
+						img.setAttribute('title', altClose);
 						var hide = function(e) {
 							bg.destroy();
 							img.destroy();
@@ -1277,7 +1277,6 @@ if (typeof TK == 'undefined') {
 			data: null,
 			callFunc: [],
 			defaultDomain: window.location.host,
-			rewriteTag: '/?',
 			waitTime: 10000,
 			outObj: [],
 			formObj: null,
@@ -1348,15 +1347,16 @@ if (typeof TK == 'undefined') {
 				TK.Ajax.callServer(callFunc);
 			},
 			jsonp: function(url, callFunc) {
+				var openId = TK.Ajax.openInstanceId;
 				TK.Ajax.setUrl(url);
 				TK.Ajax.url += '&jsonp=TK.Ajax.callback';
 				TK.Ajax.openInstance[openId] = {};
 				TK.Ajax.openInstance[openId].url = TK.Ajax.url;
 				if (callFunc)
 					TK.Ajax.openInstance[openId].callFunc = callFunc;
-				TK.Ajax.openInstanceId++;
 				TK.Ajax.openInstance[openId].js = TK.loadJSFile(TK.Ajax.url, true);
-				TK.Ajax.openInstanceId[openId].js.addListener('error', TK.Ajax.jsonperror);
+				TK.Ajax.openInstance[openId].js.addListener('error', TK.Ajax.jsonperror);
+				TK.Ajax.openInstanceId++;
 			},
 			jsonperror: function(e) {
 				var js = TK.getEventNode(e);

@@ -1,5 +1,5 @@
 ##Toknot javascript 库文档 
-本文档为 Toknot/Admin/Static/js/toknot.js 文档
+本文档为 Toknot/Admin/Static/js/toknot.js 的类参考
 
 ###1.扩展的 String 对象的函数
 
@@ -26,7 +26,16 @@
 * `TK.WEBKIT`   如果用户代理是webkit 为true 
 * `TK.IEV`	IE版本,大约判断
 * `TK.Ajax` 	Ajax 相关对象 * `TK.version`  TK 版本
-* `TK.inputType`  input 类型对象
+* `TK.inputType`  input 类型对象,该对象有如下属性:
+	* INPUT_TEXT: 1, 普通文本框
+	* INPUT_PASSWORD: 2, 密码输入框
+	* INPUT_CHECKBOX: 3, 多选框
+	* INPUT_RADIO: 4, 单选框
+	* INPUT_TEXTAREA: 5, 大块文本输入框
+	* INPUT_BUTTON: 6, 普通按钮
+	* INPUT_SUBMIT: 7, 提交表单按钮
+	* INPUT_IMAGE: 8, 图片按钮
+	* INPUT_SELECT: 9, 列表选择框
 
 ###4.基类 TK 包含事件相关的方法
 
@@ -234,8 +243,150 @@
 
 * `TK.localDate()` 获取 YYYY-mm-dd HH:ii:ss 格式本地时间
 
-* `TK.$(ele)` 扩展Element对象方法, 如果全局范围内没有定义 windows.$, 将会创建 window.$ 并指向本方法,详细见 第7大类
+* `TK.$(element)` 扩展Element对象方法, 如果全局范围内没有定义 windows.$, 将会创建 window.$ 并指向本方法,详细见 [第7大类](#7-tk-方法)
 
-###7. TK.$() 方法
+###7. TK.$(element) 和 $(element) 方法
+   element 参数形式如下:
 
-###8.TK.Ajax 属性 
+* 以`.`开头是样式名
+* 以`@`开头是标签名
+* 以`%`开头是标签name属性名
+* 不以上面的开头的字符串是元素ID名
+* 也可以是Element对象
+* 如果是数组,数组的每一个元素必须是Element对象
+
+本方法将返回一个扩展后的Element对象,该对象除拥有DOM默认定义的Element对象外,还拥有下面的属性或方法:
+
+* 属性
+	* `TK.$(element).inputType`	如果元素是input标签,将有此属性,值根据input标签type属性决定,等于`TK.inputType`属性定义
+	* `TK.$(element).tag` 小写的标签名
+
+* 方法
+	* `TK.$(element).getIframeBody()` 获取iframe标签内嵌HTML页面的Body对象,element为iframe标签的相关值
+	* `TK.$(element).getPos()` 获取元素的坐标信息,返回一个对象,如下  
+
+			{   
+			x:0,  //横向坐标   
+			x:0,	//纵向坐标  
+			w:0,  //宽度  
+			h:0,  //高度  
+			}  
+	
+	* `TK.$(element).copyNode(deep)` 复制一个标签, deep 为是否递归复制 
+
+	* `TK.$(element).getNodeByCls(cls)` 根据样式名找子元素,返回一个数组
+
+	* `TK.$(element).getChildNodeByAttr(attr,value)` 根据指定属性及属性值找子元素,返回一个数组
+
+	* `TK.$(element).getParentNodeByAttr(attr,value)`根据指定属性及属性值找上级元素,最多查找到body
+	* `TK.$(element).getFirstNode()` 获取第一个 ELEMENT_NODE 子元素,忽略文本或注释等节点
+
+	* `TK.$(element).getLastNode()`	获取最后一个 ELEMENT_NODE 子元素
+
+    * `TK.$(element).isNodeChild(parentNode)` 检测当前元素是否是参数指定元素的子元素,是返回true,否则false
+
+	* `TK.$(element).unshiftChild(new_node)` 在第一个子元素前插入一个新节点
+
+	* `TK.$(element).getParentNodeByTag(tagName)` 根据标签名查找上级元素,最多查找到body
+
+	* `TK.$(element).getSubNodeByTag(tagName)` 根据标签名查找子元素,返回一个数组
+
+	* `TK.$(element).hasClass(cls)` 检查是否有指定样式名
+
+	* `TK.$(element).removeClass(cls)` 移除指定样式名
+
+	* `TK.$(element).replaceClass(oldCls, newCls)` 替换指定样式为新样式
+
+	* `TK.$(element).addClass(cls)` 添加一个样式名
+
+	* `TK.$(element).setClass(cls)` 设置样式名，会替换原有所有的样式
+
+	* `TK.$(element).setCss(value)` 设置style属性值，会替换原有所有style值
+
+	* `TK.$(element).getStyle(ns)` 获取元素style属性中指定名字的样式值
+
+	* `TK.$(element).convStyleName(ns)` 将style中的样式名转换为JS style 对象的属性名格式
+
+	* `TK.$(element).setStyle(ns, value)` 设置一个style样式值
+
+	* `TK.$(element).setOnTop()` 绝对定位时，让元素位于顶部
+
+	* `TK.$(element).setZIndex(idx)` 设置元素z-index值
+
+	* `TK.$(element).nextNode()` 元素下一个 ELEMENT_NODE 元素节点
+
+	* `TK.$(element).previousNode()` 元素上一个 ELEMENT_NODE 元素节点
+
+	* `TK.$(element).delListener(e, call_action)` 删除指定事件
+
+	* `TK.$(element).addListener(e, call_action)` 添加事件,本方法在JS原生相关函数上增加了以下事件支持:
+		* scroll	页面滚动事件
+		* resize	页面尺寸改变时间
+		* load		页面加载事件
+
+	* `TK.$(element).getChilds()` 获取所有子节点,只会获取 ELEMENT_NODE 节点,并且递归获取所有子节点的子节点
+
+	* `TK.$(element).submitForm(func, enter)` 让节点具备提交 form 表单的功能, 参数 func 为表单 Ajax 提交后的回调函数,具体见`TK.submitForm()`, enter参赛为是否激活 Enter 按键提交
+
+	* `TK.$(element).toCenter(eff, spec)` 让元素对象居中,eff为1时平滑移动,否则瞬间移动到指定位置,spec为true标识是否在页面滚动时居中
+
+	* `TK.$(element).mousePop(e)` 元素跟随鼠标,此方法需要用作鼠标事件触发时
+
+	* `TK.$(element).byNodePop(byObj, direct)` 元素跟随指定对象, direct可以为以下值:
+		* 1 位于下侧靠左
+		* 2 位于下侧靠右
+		* 3 左侧居上
+		* 4 右侧居内
+		* 默认位于右侧居上
+
+	* `TK.$(element).maxImg(cls, bsrc,altShow, altClose)` 放大图片,点击本元素后会方法指定图片,点击放大后的图片会关闭放大效果,参数说明:
+		* cls 为图片放大后的图片标签的样式
+		* bsrc 为需要方法的图标标签对象,如果为false,将为当前元素
+		* altShow 未当前元素的 title 提示信息,比如为点击放大
+		* altClose 未放大后的图片 title 提示信息,点击关闭
+
+	* `TK.$(element).toPos(x, y)` 将元素移动到指定坐标
+
+	* `TK.$(element).move(down, spec)` 元素可移动，down为鼠标按下该元素时可移动,spec为只能在该元素范围内移动, 当调用本函数后,即激活了元素的可移动属性
+
+	* `TK.$(element).maxsize(spec, part, type)` 双击时放大对象，spec为只能放大到该元素范围，part为点击对象,type为true时为单击，否则为双击
+
+	* `TK.$(element).resize(sens, spec)` 使元素可修改尺寸,spec为只能在该元素范围内，sens为鼠标灵敏度
+
+	* `TK.$(element).close(spec)` 隐藏元素，spec为点击该元素隐藏
+
+	* `TK.$(element).hide(visibility)` 隐藏元素，visibility为隐藏后是否保留位置
+
+	* `TK.$(element).show(visibility)` 显示元素,visibility为隐藏后是否保留位置
+
+	* `TK.$(element).destroy()` 销毁本元素
+
+	* `TK.$(element).getCursorOffset()` 获取当前输入区，光标偏移量
+
+	* `TK.$(element).setCursorOffset(offset, start)` 设置光标偏移量
+
+
+###8.TK.Ajax 对象
+* 属性
+	* `TK.Ajax.dataType` 设置返回的数据类型,值可能为text, json, xml
+	* `TK.Ajax.charset`	 设置返回的数据编码
+	* `TK.Ajax.waitTime` 超时时间,单位:毫秒
+	* `TK.Ajax.messageNode` 为Ajax显示状态信息的节点
+	* `TK.Ajax.messageList` 为Ajax各个状态时的信息, 格式如下
+			{
+			start: '', //开始时
+			complete: '', //完成时
+			still: '', //持续进行时
+			current: ''
+			}
+
+* 方法
+	* `TK.Ajax.get(url, callFunc)` GET方法请求
+	* `TK.Ajax.post(url, data, callFunc)` POST方法请求
+	* `TK.Ajax.head(url,callFunc)` HEAD方法请求
+	* `TK.Ajax.put(url, data, callFunc)` PUT 方法请求
+	* `TK.Ajax.options(url ,callFunc)`OPTIONS 方法请求
+	* `TK.Ajax.del(url,callFunc)`  DELETE方法请求
+	* `TK.Ajax.trace(url,callFunc)` TRACE方法请求 
+	* `TK.Ajax.file(formObj, callFunc)` 上传文件,formObj 为 ELEMENT_NODE 上传文件表单
+	* `TK.Ajax.jsonp(url,callFunc)`  JSONP请求, 服务器端只需要输出调用`TK.Ajax.callback(reData)` 的 js 即可
