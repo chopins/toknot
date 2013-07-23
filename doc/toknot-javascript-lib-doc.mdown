@@ -55,7 +55,7 @@
 
 * `TK.keyUp()`	 键盘弹起事件,与`TK.keyDown()`类似返回类似对象,包含的方法名相同
 
-* `TK.delKeyListener(key,type) 删除键盘事件, key为按键对应的code, 使用any时使用any 字符串 
+* `TK.delKeyListener(key,type)` 删除键盘事件, key为按键对应的code, 使用any时使用any 字符串 
 
 * `TK.mouseout(function, elementObject)`  鼠标移出 elementObject 触发 function,多次添加不会被覆盖,会返回该事件函数索引ID 
 
@@ -150,6 +150,7 @@
 							  			内部实际会跟随以下名字：
 										ItemDiv   : input元素的上一级Div样式
 										ItemLabel : input元素的label元素样式
+					}
 
 	* `buttonList` 按钮清单，这里的按钮不是button类型input标签,值为数组,下面为其中一个元素组成:
 
@@ -373,6 +374,7 @@
 	* `TK.Ajax.waitTime` 超时时间,单位:毫秒
 	* `TK.Ajax.messageNode` 为Ajax显示状态信息的节点
 	* `TK.Ajax.messageList` 为Ajax各个状态时的信息, 格式如下
+
 			{
 			start: '', //开始时
 			complete: '', //完成时
