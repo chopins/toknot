@@ -8,4 +8,4 @@
 * [js文档](https://github.com/chopins/toknot/blob/master/doc/toknot-javascript-lib-doc.mdown)
 
 ###Run Process 
-![Process](https://raw.github.com/chopins/toknot/master/doc/toknot-run-flow-chart.svg "process")
+![Process](https://raw.github.com/chopins/toknot/master/doc/toknot-run-flow-chart.png "process")
