@@ -1,0 +1,55 @@
+###Toknot 模板语法文档
+
+####模板表达式标记:
+* 起始标记 `{`
+* 结束标记 `}`
+
+
+####Toknot支持下列流程控制结构:
+
+* `foreach`
+    * 开始标记`{foreach expression}`, 内部表达式expression与PHP foreach 结构一样
+    * 结束标记`{/foreach}`
+
+* `if elseif else`
+    * 开始标记`{if expression}`，表达式expression与PHP if结构一样,例如：`{if $a=$b}`,`{if is_nan($a)}`
+    * 控制结构`{elseif expression}` 或者 `{else}`
+    * 结束标记`{/if}`
+* `inc` 包含一个模板，参数与FMAI::display()方法一样,不包含扩展名
+    * 单一标记`{inc filename}`, `{inc dir/filename}`
+
+* `func` 调用一个函数，这个函数必须是已经定义了的PHP函数，函数的参数必须是已经定义了的模板变量，函数结果会被输出(echo)
+    * 单一标记`{func function($arg)}`
+
+* `set` 定义一个模板变量
+    * 单一标记`{set $var='value'}`
+
+####输出一改变量，类似下面:
+
+    {$value}
+
+####变量访问数组类型模板变量:
+* 字符串类型key: `$array.key`
+* 数字类型key: `$array[key]`
+* 字符串类型key，key为变量表示:`$array.$key`
+
+####一个完整的模板例子如下:
+```HTML
+{inc header}
+<ul class="nav-tree-ul" id="left-nav-tree">
+{foreach $navList as $key=>$nav}
+<li class="nav-tree-ul-li">
+    <div class="icon-down-open nav-cat"
+        {if $nav.action}action="{$nav.action}"{/if}
+        {if !$nav.hassub}hassub="no"{/if}>{$nav.name}</div>
+    {if isset($nav.sub)}
+    <ul class="sub-nav-tree">
+        {foreach $nav.sub as $sub}
+        <li class="sub-nav-tree-li" action="{$sub[0]}">{$sub[1]}</li>
+        {/foreach}
+    </ul>
+    {/if}
+</li>
+{/foreach}
+<ul>
+```
