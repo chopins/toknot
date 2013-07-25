@@ -102,7 +102,8 @@ server {
 
 ---------------
 
-7.对于PHP应用通常是需要链接数据库和使用模板的，下面改造了`/home/MyApp/Controller/Index.php`文件，使其支持：
+7.对于PHP应用通常是需要链接数据库和使用模板的，下面改造了`/home/MyApp/Controller/Index.php`文件
+    http://localhost/Index 将被映射到 `/home/MyApp/Controller/Index.php` 的 `Index` 控制器上，当GET方法请求时调用`Index::GET()`,POST方法请求时调用`Index::POST()`
 ```php
 namespace MyApp\Controller;
 use MyApp\MyAppBase;
