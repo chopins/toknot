@@ -83,7 +83,7 @@ __注意模板中的字符串变量其实是 [Toknot\Di\StringObject](http://tok
 * 数字类型key: `$array[key]`
 * 字符串类型key，key为变量表示:`$array.$key`
 
-__注意模板中的数组变量其实是 [Toknot\Di\ArrayObject](http://toknot.com/toknot/class-Toknot.Di.ArrayObject.html) 对象实例
+__注意模板中的数组变量其实是 [Toknot\Di\ArrayObject](http://toknot.com/toknot/class-Toknot.Di.ArrayObject.html) 对象实例__
 
 ####一个完整的模板例子如下:
 ```HTML
