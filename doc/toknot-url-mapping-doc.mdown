@@ -43,7 +43,7 @@ $app = new Application($argv,$argc);
 ```
 也就是在实例化[Toknot\Control\Application](http://toknot.com/toknot/class-Toknot.Control.Application.html)是传递`$argv`和`$argc`参数
 
-目前，对于URL映射是****不区分大小写****的, 也就是说下的几种URL将会访问相同的控制器
+目前，对于URL映射是 __不区分大小写__ 的, 也就是说下的几种URL将会访问相同的控制器
 
 	http://localhost/User/Login
 	http://localhost/USER/loGiN
