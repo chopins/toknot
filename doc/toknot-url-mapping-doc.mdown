@@ -43,7 +43,7 @@ $app = new Application($argv,$argc);
 ```
 也就是在实例化[Toknot\Control\Application](http://toknot.com/toknot/class-Toknot.Control.Application.html)是传递`$argv`和`$argc`参数
 
-目前，对于URL映射是**不区分大小写**的, 也就是说下的几种URL将会访问相同的控制器
+目前，对于URL映射是 __不区分大小写__ 的, 也就是说下的几种URL将会访问相同的控制器
 
 	http://localhost/User/Login
 	http://localhost/USER/loGiN
@@ -57,9 +57,9 @@ Toknot默认路由器参数如下：
 
 2. `$routeDepth` URL映射控制器的最大层数，这个值如果为0，映射模式将变成从顶级开始，最先找到模式，例如：控制器文件夹下存在一个`/home/MyApp/Controller/User/Login.php`文件，并且同时存在`/home/MyApp/Controller/User.php`，那么在最先找到模式下，`http://localhost/User/Login`将只会被映射到`/home/MyApp/Controller/User.php`，后面的`Login`将会被忽略，而当作参数所以**不要在相同文件夹创建同名的文件夹和PHP文件**
 
-3. `$notFound` 定义一个Not Found控制器，这个控制器类似WEB Server的404文件，此控制器当URL指向控制器不存在时被调用，注意**开发模式下（唯一常量`DEVELOPMENT`为`true`），不会调用此控制器**,这个参数只应当是相对于应用的根命名空间，例如值为`Block\NotFoundController`时被调用的将会是`\MyApp\Block\NotFoundController`
+3. `$notFound` 定义一个Not Found控制器，这个控制器类似WEB Server的404文件，此控制器当URL指向控制器不存在时被调用，注意 __开发模式下（唯一常量`DEVELOPMENT`为`true`），不会调用此控制器__ ,这个参数只应当是相对于应用的根命名空间，例如值为`Block\NotFoundController`时被调用的将会是`\MyApp\Block\NotFoundController`
 
-4. `$methodNotAllowed` 类似于`$notFound`，这个参数是设置405状态是调用的类，就是当控制器不存在一个HTTP请求方法对应的方法时，这个类的同名方法会被调用，**开发模式下（唯一常量`DEVELOPMENT`为`true`），不会调用此控制器**
+4. `$methodNotAllowed` 类似于`$notFound`，这个参数是设置405状态是调用的类，就是当控制器不存在一个HTTP请求方法对应的方法时，这个类的同名方法会被调用， __开发模式下（唯一常量`DEVELOPMENT`为`true`），不会调用此控制器__ 
 
 上面提到了HTTP请求的URL路径中，没有被用的到的部分会被忽略，但是在应用内还是能够被访问到，只不过是按`/`分割成了参数，你可以通过[Toknot\Control\FMAI::c](http://toknot.com/toknot/class-Toknot.Control.FMAI.html)来获取，该方法的参数只有一个：$index 参数在分割URL后的索引位置，当然是不包括已经作为映射控制器的部分，例如：
 
