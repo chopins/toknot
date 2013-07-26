@@ -193,7 +193,25 @@ class Router implements RouterInterface {
 		$invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}";
 		$classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
 		$classExist = false;
-		$caseClassFile = FileObject::fileExistCase($classFile);
+		
+		//not case sensitive check file whether exist
+		if($this->routerDepth >0) {
+			$caseClassFile = FileObject::fileExistCase($classFile);
+		} else {
+			//if not set routerDepth, controller is first finded class, suffix of url
+			//will be ignored and push to paramers
+			$classFile = "{$this->routerNameSpace}\Controller";
+			$classPart = explode(StandardAutoloader::NS_SEPARATOR, $this->spacePath);
+			foreach($classPart as $key =>$part) {
+				$classFile = "$classFile/$part";
+				$caseClassFile = FileObject::fileExistCase($classFile);
+				if($caseClassFile) {
+					$this->suffixPart = array_slice($classPart, $key + 1);
+					break;
+				}
+			}
+		}
+		
 		if ($caseClassFile) {
 			include_once $caseClassFile;
 			$invokeClass = str_replace($this->routerPath, '', $caseClassFile);
@@ -201,7 +219,12 @@ class Router implements RouterInterface {
 			$invokeClass = $this->routerNameSpace . strtok($invokeClass, '.');
 			$classExist = class_exists($invokeClass, false);
 		}
+		
+		//if url mapped controller not exist
 		if (!$classExist) {
+			//The url mapping to a namespace but not a controller class, will invoke 
+			//the namespace of under default controller class, it like index.html for
+			//web server
 			$dir = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
 			if (is_dir($dir) && $this->defaultClass != null) {
 				$invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}\{$this->defaultClass}";
@@ -216,6 +239,7 @@ class Router implements RouterInterface {
 				$this->invokeNotFoundController($invokeClass);
 			}
 		}
+		
 		$invokeClassReflection = new ReflectionClass($invokeClass);
 
 		$FMAI->setURIOutRouterPath($this->suffixPart, $method);
