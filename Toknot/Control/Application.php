@@ -322,7 +322,7 @@ final class Application {
             $this->addAppPath($appPath);
             $FMAI = FMAI::singleton($appNameSpace,$appPath);
             self::$appRoot = $appPath;
-			call_user_func(array($router,'runtimeArgs'), $this->routerArgs);
+			call_user_func_array(array($router,'runtimeArgs'), $this->routerArgs);
 			
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
