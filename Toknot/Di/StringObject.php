@@ -12,11 +12,9 @@ namespace Toknot\Di;
 
 use Toknot\Di\Object;
 use \BadMethodCallException;
-use \ReflectionExtension;
 use \ArrayAccess;
 use Toknot\Di\ArrayObject;
 use Toknot\Exception\StandardException;
-use \ReflectionFunction;
 
 /**
  * String object
@@ -126,8 +124,7 @@ class StringObject extends Object implements ArrayAccess {
 	 * @return array
 	 */
 	public static function supportStringMethod() {
-		$ref = new ReflectionExtension('standard');
-		$functionList = $ref->getFunctions();
+		$functionList = get_extension_funcs('standard');
 		$supprot = array();
 		foreach ($functionList as $funcRef) {
 			if ($funcRef->getNumberOfRequiredParameters() < 1) {
@@ -154,8 +151,7 @@ class StringObject extends Object implements ArrayAccess {
 			throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
 
 		array_unshift($arguments, $this->interatorArray);
-		$refFunction = new ReflectionFunction($stringFunction);
-		$str = $refFunction->invokeArgs($arguments);
+		$str = call_user_func_array($stringFunction, $arguments);
 		if (is_string($str)) {
 			return new StringObject($str);
 		} elseif (is_array($str)) {

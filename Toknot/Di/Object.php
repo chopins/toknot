@@ -76,7 +76,7 @@ abstract class Object implements Iterator, Countable {
 		}
 	}
 
-	final private static function constructArgs($argc, $args, $className) {
+	final public static function constructArgs($argc, $args, $className) {
 		if ($argc === 1) {
 			return new $className($args[0]);
 		} elseif ($argc === 2) {

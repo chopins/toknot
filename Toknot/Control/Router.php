@@ -14,7 +14,6 @@ use Toknot\Control\RouterInterface;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
 use Toknot\Control\FMAI;
-use \ReflectionClass;
 use Toknot\Control\StandardAutoloader;
 use Toknot\Di\FileObject;
 
@@ -240,12 +239,11 @@ class Router implements RouterInterface {
 			}
 		}
 		
-		$invokeClassReflection = new ReflectionClass($invokeClass);
 
 		$FMAI->setURIOutRouterPath($this->suffixPart, $method);
-
-		$invokeObject = $invokeClassReflection->newInstance($FMAI);
-		if (!$invokeClassReflection->hasMethod($method)) {
+		
+		$invokeObject = new $invokeClass($FMAI);
+		if (!method_exists($invokeClass,$method)) {
 			if (DEVELOPMENT) {
 				throw new StandardException("Not Support Request Method ($method)");
 			} else {
@@ -264,7 +262,7 @@ class Router implements RouterInterface {
 				}
 			}
 		}
-		$stat = $FMAI->invokeBefore($invokeClassReflection);
+		$stat = $FMAI->invokeBefore($invokeObject);
 		if ($stat === true) {
 			$invokeObject->$method();
 		}

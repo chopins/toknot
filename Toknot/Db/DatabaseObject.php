@@ -11,7 +11,6 @@
 namespace Toknot\Db;
 
 use Toknot\Db\DbCRUD;
-use \ReflectionClass;
 use Toknot\Db\DbTableObject;
 use Toknot\Db\DbTableJoinObject;
 use \InvalidArgumentException;
@@ -140,8 +139,7 @@ final class DatabaseObject extends DbCRUD {
                 throw new InvalidArgumentException();
             }
         }
-        $ref = new ReflectionClass('Toknot\Db\DbTableJoinObject');
-        return $ref->newInstanceArgs($argv);
+		return $this->constructArgs($argc, $argv, 'Toknot\Db\DbTableJoinObject');
     }
 
     public function createTable() {

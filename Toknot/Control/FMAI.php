@@ -24,7 +24,7 @@ use Toknot\Di\ArrayObject;
 use Toknot\User\Session;
 use Toknot\Di\Log;
 use Toknot\Di\FileObject;
-use \ReflectionClass;
+
 
 /**
  * Framework Module Access Interfaces
@@ -92,10 +92,10 @@ final class FMAI extends Object {
 	/**
 	 * current access controller
 	 *
-	 * @var ReflectionClass 
+	 * @var Object 
 	 * @access readonly
 	 */
-	private $controllerReflection = null;
+	private $controller = null;
 
 	/**
 	 * the Application root directory path
@@ -161,14 +161,16 @@ final class FMAI extends Object {
 		return $this->uriOutRouterPath;
 	}
 
-	public function invokeBefore(ReflectionClass $reflection) {
+	public function invokeBefore(&$controller) {
+		$this->controller = $controller;
+		
 		if ($this->requestMethod == 'GET' && $this->enableCache) {
 			ViewCache::outPutCache();
 			if (ViewCache::$cacheEffective == ViewCache::CACHE_USE_SUCC) {
 				return false;
 			}
 		}
-		$this->controllerReflection = $reflection;
+		
 		if ($this->invokeBeforeHandler !== null) {
 			if (is_array($this->invokeAfterHandler)) {
 				$obj = $this->invokeAfterHandler[0];
@@ -305,7 +307,7 @@ final class FMAI extends Object {
 	 * @return mixed
 	 */
 	public function &__get($name) {
-		$readOnlyList = array('D', 'controllerReflection', 'appRoot',
+		$readOnlyList = array('D', 'controller', 'appRoot',
 			'appNamespace', 'requestMethod');
 		if (in_array($name, $readOnlyList)) {
 			return $this->$name;
