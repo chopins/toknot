@@ -1,4 +1,4 @@
-###connact on weibo
+###connact at weibo
 http://www.weibo.com/colors
 
 ###ToKnot English Tutorials
