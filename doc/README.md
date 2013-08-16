@@ -22,6 +22,7 @@ ToKnot 增加了三种类型， 字符串对象，数组对象和文件对象
     支持数组访问
     支持count函数
 
+
 ###ToKnot English Tutorials
  so far no
 
@@ -35,3 +36,6 @@ ToKnot 增加了三种类型， 字符串对象，数组对象和文件对象
 
 ###Run Process
 ![Process](https://raw.github.com/chopins/toknot/master/doc/toknot-run-flow-chart.png "process")
+
+###connact at weibo
+http://www.weibo.com/colors
