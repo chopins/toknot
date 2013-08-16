@@ -146,7 +146,7 @@ class StringObject extends Object implements ArrayAccess {
 		return $supprot;
 	}
 
-	public function __call($stringFunction, $arguments) {
+	public function __callStatic($stringFunction, $arguments) {
 		if (!in_array($stringFunction, self::$supportStringMethodList))
 			throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
 
@@ -251,4 +251,8 @@ class StringObject extends Object implements ArrayAccess {
 		$this->interatorArray = substr_replace($this->interatorArray, '', $offset, 1);
 	}
 
+}
+
+function _s($str = '') {
+	return new StringObject($str);
 }

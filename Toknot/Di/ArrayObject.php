@@ -167,3 +167,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
 		$this->resetCount();
 	}
 }
+
+function _l(array $array) {
+	return new ArrayObject($array);
+}
