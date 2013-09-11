@@ -11,14 +11,14 @@
 namespace Toknot\Admin;
 
 class AdminOpreatePage {
-	public function createForm() {
+    public function createForm() {
 
-	}
-	public function createRecordTable() {
-	}
-	public function saveData() {
-		   
-	}
+    }
+    public function createRecordTable() {
+    }
+    public function saveData() {
+           
+    }
 }
 
 ?>

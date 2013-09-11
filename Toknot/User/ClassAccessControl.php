@@ -24,37 +24,37 @@ abstract class ClassAccessControl extends UserAccessControl {
      * nobody  get
      *
      * @var integer
-	 * @access protected
+     * @access protected
      */
     protected $permissions = 0754;
 
-	/**
-	 * Name of the class owner
-	 * 
-	 * @var string
-	 * @access protected
-	 */
+    /**
+     * Name of the class owner
+     * 
+     * @var string
+     * @access protected
+     */
     protected $userName = 'root';
 
-	/**
-	 * Group id of the class
-	 *
-	 * @var integer 
-	 */
+    /**
+     * Group id of the class
+     *
+     * @var integer 
+     */
     protected $gid = 0;
 
-	/**
-	 * Group name of the class
-	 *
-	 * @var string
-	 */
+    /**
+     * Group name of the class
+     *
+     * @var string
+     */
     protected $group = 'root';
 
-	/**
-	 * uid of the class owner
-	 *
-	 * @var integer
-	 */
+    /**
+     * uid of the class owner
+     *
+     * @var integer
+     */
     protected $uid = 0;
 
 
@@ -157,7 +157,7 @@ abstract class ClassAccessControl extends UserAccessControl {
         return $this->checkPermes($user, 07);
     }
 
-	public function __toString() {
-		return get_called_class();
-	}
+    public function __toString() {
+        return get_called_class();
+    }
 }

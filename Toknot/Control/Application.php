@@ -66,28 +66,28 @@ final class Application {
      */
     private $routerName = '\Toknot\Control\Router';
 
-	/**
-	 * @access private
-	 * @var array
-	 */
+    /**
+     * @access private
+     * @var array
+     */
     private $routerArgs = array();
 
-	/**
-	 * @access private
-	 * @var array
-	 */
+    /**
+     * @access private
+     * @var array
+     */
     private $debugTrace = array();
 
-	/**
-	 * @access private
-	 * @var float
-	 */
+    /**
+     * @access private
+     * @var float
+     */
     private $traceTime = 0;
 
-	/**
-	 * @access private 
-	 * @var float
-	 */
+    /**
+     * @access private 
+     * @var float
+     */
     private $scriptStartTime = 0;
 
     /**
@@ -283,14 +283,14 @@ final class Application {
      * </code>
      * 
      * @param string $appNameSpace  Application of Namespace with top without 
-	 * 								 full namespace, the suffix without DIRECTORY_SEPARATOR
+     *                                  full namespace, the suffix without DIRECTORY_SEPARATOR
      * @param string $appPath   Application of directory with full path, 
-	 * 							and not is Controller layer full path
+     *                             and not is Controller layer full path
      * @param string $defaultInvoke  The parameter of default invoke class for 
-	 * 								  router when no request uri,
+     *                                   router when no request uri,
      *                                if it is not set,will throw BadClassCallException
-	 * 								  when user request site root and no query,
-	 * 								  The class name of default with not full namespace
+     *                                   when user request site root and no query,
+     *                                   The class name of default with not full namespace
      *                                class name can not contain application top namespace and
      *                                Controller layer namespace
      * @throws BadNamespaceException
@@ -299,8 +299,8 @@ final class Application {
      */
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
         $root = substr($appNameSpace, 0, 1);
-		$appNameSpace = rtrim($appNameSpace, '\\');
-		$appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
+        $appNameSpace = rtrim($appNameSpace, '\\');
+        $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
         try {
             if ($root != '\\') {
                 throw new BadNamespaceException($appNameSpace);
@@ -322,8 +322,8 @@ final class Application {
             $this->addAppPath($appPath);
             $FMAI = FMAI::singleton($appNameSpace,$appPath);
             self::$appRoot = $appPath;
-			call_user_func_array(array($router,'runtimeArgs'), $this->routerArgs);
-			
+            call_user_func_array(array($router,'runtimeArgs'), $this->routerArgs);
+            
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
             $router->routerRule();

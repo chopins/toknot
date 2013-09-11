@@ -68,14 +68,14 @@ final class ConfigLoader extends Object {
         return self::$_CFG;
     }
 
-	/**
-	 * Load  ini file
-	 * 
-	 * @param string $file
-	 * @return array
-	 */
-	public static function loadCfg($file) {
-		return parse_ini_file($file, true);
-	}
+    /**
+     * Load  ini file
+     * 
+     * @param string $file
+     * @return array
+     */
+    public static function loadCfg($file) {
+        return parse_ini_file($file, true);
+    }
 }
 

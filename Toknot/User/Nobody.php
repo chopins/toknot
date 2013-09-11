@@ -18,9 +18,9 @@ class Nobody extends UserAccessControl{
     protected $userName = 'nobody';
     protected $uid = -1;
     protected $gid = -1;
-	public function __get($name) {
-		return $this->$name;
-	}
+    public function __get($name) {
+        return $this->$name;
+    }
 }
 
 ?>

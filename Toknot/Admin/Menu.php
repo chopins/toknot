@@ -20,19 +20,19 @@ class Menu extends Object {
     public $control = null;
     public $subNav = array();
 
-	public function getAllMenu() {
-		$FMAI = FMAI::getInstance();
-		$file = FileObject::getRealPath($FMAI->appRoot, './Config/managelist.ini');
-		$manageList = ConfigLoader::loadCfg($file);	
-		foreach($manageList as &$manage) {
-			if(isset($manage['sub'])) {
-				foreach($manage['sub'] as $key=> $sub) {
-					$manage['sub'][$key] = explode('|', $sub);
-				}
-			}
-		}
-		return $manageList;
-	}
+    public function getAllMenu() {
+        $FMAI = FMAI::getInstance();
+        $file = FileObject::getRealPath($FMAI->appRoot, './Config/managelist.ini');
+        $manageList = ConfigLoader::loadCfg($file);    
+        foreach($manageList as &$manage) {
+            if(isset($manage['sub'])) {
+                foreach($manage['sub'] as $key=> $sub) {
+                    $manage['sub'][$key] = explode('|', $sub);
+                }
+            }
+        }
+        return $manageList;
+    }
   
 
 }

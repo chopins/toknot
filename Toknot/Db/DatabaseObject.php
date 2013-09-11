@@ -139,7 +139,7 @@ final class DatabaseObject extends DbCRUD {
                 throw new InvalidArgumentException();
             }
         }
-		return $this->constructArgs($argc, $argv, 'Toknot\Db\DbTableJoinObject');
+        return $this->constructArgs($argc, $argv, 'Toknot\Db\DbTableJoinObject');
     }
 
     public function createTable() {
