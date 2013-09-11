@@ -61,7 +61,7 @@ $database = $AR->connect();
 
     showTableList   获取表列表
     tableJOIN       创建连表对象
-    createTable     创建一个数据库
+    createTable     创建一个数据库表
 
 [DatabaseObject](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)对象实例的一个可访问属性即映射一个表实例([DbTableObject](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)的实例)
 
@@ -120,7 +120,7 @@ while($row = $database->theTable->fetch()) {
 //全部获取
 $all = $database->theTable->fetchAll();
 ```
-上面的方法非常复杂的查询非常有用.[DatabaseObject::exec()](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)与
+上面的方法在非常复杂的查询时非常有用.[DatabaseObject::exec()](http://toknot.com/toknot/class-Toknot.Db.DatabaseObject.html)与
 [DbTableObject::exec()](http://toknot.com/toknot/class-Toknot.Db.DbTableObject.html)方法都是继承于[DbCRUD::exec()](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)方法
 
 [DbCRUD](http://toknot.com/toknot/class-Toknot.Db.DbCRUD.html)还提供了可传参数到SQL中的CRUD操作方法，传参数的方法和[PDO](php.net/PDO)类似
