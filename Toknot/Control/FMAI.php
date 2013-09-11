@@ -14,7 +14,6 @@ use Toknot\Di\Object;
 use Toknot\View\Renderer;
 use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
-use Toknot\View\XML;
 use Toknot\View\ViewCache;
 use Toknot\User\ClassAccessControl;
 use Toknot\User\UserClass;
@@ -312,10 +311,6 @@ final class FMAI extends Object {
 		if (in_array($name, $readOnlyList)) {
 			return $this->$name;
 		}
-	}
-
-	public function newXMLView() {
-		return XML::singleton();
 	}
 
 	/**
