@@ -118,7 +118,7 @@ class Router implements RouterInterface {
 				$this->spacePath = '\\' . strtr($_GET['c'], '.', '\\');
 			}
 		} else {
-			if (PHP_SAPI == 'cli') {
+			if (empty($_SERVER['REQUEST_METHOD']) && PHP_SAPI == 'cli') {
 				if (isset($_SERVER['argv'][1])) {
 					$_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
 				} else {

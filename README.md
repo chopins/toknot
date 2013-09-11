@@ -34,13 +34,19 @@ see (http://toknot.com/toknot/)
 
 3. edit /your-app-path/Config/config.ini
 
-4. if be created general application, your should change /rootpath/appName/{APP-NAME}Base.php for your application
+4. if be created general application, your should change /your-app-path/{APP-NAME}Base.php for your application
 
 5. into /your-app-path/Controller change Index.php or create other controller file of php
 
 6. use HTML template, create template file under `/your-app-path/View`
 
 7. change `/your-app-path/Config/config.ini`
+
+8. if your PHP verision higher than 5.4.0, In command line execute below code:
+    $ cd /your-app-path/WebRoot
+    $ php -S localhost:8000 index.php -t static/
+
+开放教程见(https://github.com/chopins/toknot/tree/master/doc)
 
 ####Previous Versions
 The ToKnot Freamwork v1 visit https://github.com/chopins/toknot/tree/V1

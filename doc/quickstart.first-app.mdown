@@ -59,6 +59,12 @@ WebRoot                 HTTP Web 根目录
 ```
 --------------
 6.配置Web服务器
+PHP 5.4.0 以上的开放环境只需要执行如下命令即可:
+```
+$ cd /home/MyApp/WebRoot
+$ php -S localhost:8000 index.php -t static/
+```  
+
 Web服务器普通配置情况下，可以通过类似下面的方式访问控制器:
    `http://localhost/index.php?c=Index`
    `http://localhost/index.php?c=User.Login`
@@ -128,7 +134,7 @@ class Index extends  MyAppBase{
 
         //支持HTTP POST 请求的方法
       public function POST() {
-        }
+      }
 
         //支持HTTP PUT 请求的方法
       public function PUT() {
@@ -136,7 +142,7 @@ class Index extends  MyAppBase{
 
       //CLI 模式下运行一改控制器，将会调用本方法
       public function CLI() {
-        }
+      }
 }
 ```
    从上面的代码我们可以看到我们增加了一个`MyApp\MyAppBase`类，这个类主要作为应用的基本类，帮助完成一些控制器都需要初始化的东西，
