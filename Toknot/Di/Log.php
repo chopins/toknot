@@ -38,14 +38,14 @@ class Log {
         print self::traceCss();
         print self::formatTrace($trace);
     }
-    
+
     /**
      * save trace info to log file
-     * 
+     *
      * @param string $traceInfo
      */
     public static function save($traceInfo) {
-        if(!self::$enableSaveLog || empty(self::$savePath)) {
+        if (!self::$enableSaveLog || empty(self::$savePath)) {
             return;
         }
         $day = date('Y-m-d');
@@ -53,12 +53,12 @@ class Log {
         $message = "$time [{$_SERVER['REMOTE_ADDR']}]:{$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']}";
         $traceInfo = $message . strip_tags($traceInfo);
         $traceInfo = "\r\n";
-        FileObject::saveContent(self::$savePath.DIRECTORY_SEPARATOR.$day, $traceInfo, FILE_APPEND);
+        FileObject::saveContent(self::$savePath . DIRECTORY_SEPARATOR . $day, $traceInfo, FILE_APPEND);
     }
 
     /**
      * backtrace trans to html
-     * 
+     *
      * @param array $traceArr
      * @return string
      */
@@ -99,7 +99,7 @@ class Log {
 
     /**
      * Toknot trace web page style
-     * 
+     *
      * @return string
      */
     public static function traceCss() {
