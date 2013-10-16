@@ -47,7 +47,7 @@ class ActiveQuery {
         return self::$dbDriverType;
     }
     public static function parseSQLiteColumn($sql) {
-        $feildInfo = strtok($sql, '(');
+        strtok($sql, '(');
         $feildInfo = strtok(')');
         $columnList = array();
         $columnList[] = strtok($feildInfo, ' ');
@@ -97,8 +97,7 @@ class ActiveQuery {
             return $sql;
         }
         foreach ($params as &$v) {
-            $v = addslashes($v);
-            $v = "'$v'";
+            $v = "'" . addslashes($v) . "'";
         }
         return str_replace('?', $params, $sql);
     }
@@ -213,4 +212,11 @@ class ActiveQuery {
         return "INSERT INTO $tableName ($field) VALUES($values)";
     }
 
+    public static function updateDecrement($field, $num = 1) {
+        return " $field = IF(($field - $num),($field-$num),0)";
+    }
+
+    public static function updateIncrement($field, $num = 1) {
+        return " $field = $field + $num";
+    }
 }
