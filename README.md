@@ -8,6 +8,8 @@ The PHP framework is under New BSD License (http://toknot.com/LICENSE.txt)
 
 The demos is under GNU GPL version 3 or later <http://opensource.org/licenses/gpl-3.0.html>
 
+####[中文教程](http://toknot.com/category/tutorials/)
+
 ####API and Class Reference
 see (http://toknot.com/toknot/)
 
@@ -46,7 +48,6 @@ see (http://toknot.com/toknot/)
     $ cd /your-app-path/WebRoot
     $ php -S localhost:8000 index.php -t static/
 
-开放教程见(https://github.com/chopins/toknot/tree/master/doc)
 
 ####Previous Versions
 The ToKnot Freamwork v1 visit https://github.com/chopins/toknot/tree/V1
