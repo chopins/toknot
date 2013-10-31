@@ -3,14 +3,22 @@
 
 class BaiduPCS {
 
-    private $transprot = 'https://';
+    private $transprot = 'ssl://';
     private $accessToken = '';
     private $url = '';
     private $ch = null;
     private $oauth_file = '';
+    private $uploadSize = 0;
+    private $splitUpload = true;
+    private $splitSize = 0;
+    private $filesize = 0;
+    private $ffp = null;
+    private $writeStatus = 0;
 
-    const CLIENT_ID = 'mvC5MuV9kduAabHYXGku5VSF';
-    const SECRET_KEY = 'cDiWiGkuLfB3siK4dyQZiWWlWOGPLrp5';
+    const CLIENT_ID = '';
+    const SECRET_KEY = '';
+    const APP_ROOT = '/apps/app5';
+    const DEFAULT_SPLIT_SIZE = '1000M';
 
     public function __construct($argv, $argc) {
         if ($argc <= 1) {
@@ -52,6 +60,9 @@ class BaiduPCS {
                 case 'quota':
                     $this->quota();
                     return;
+                case 'ls':
+                    $this->ls($argv[2]);
+                    return;
             }
         }
         return $this->help();
@@ -71,22 +82,22 @@ class BaiduPCS {
         echo <<<EOF
 Usage：baidupcs command [option]
      command：
-        upload [option] localpath remote
+        upload [option] localpath remote 上传文件
             option:
-                  -o 
-                  -n
-                  -p
-                  -l
-        download [option] remote localpath
+                  -o 覆盖
+                  -n 不覆盖，并新命名
+                  -p 分片大小
+                  -l 跟踪软链接
+        download [option] remote localpath 下载文件
              option:
-                  -o
-                  -n
-        quota   
-        mkdir
-        mv
-        rm
-        cp
-        ls
+                  -o 覆盖本地同名文件
+                  -n 不覆盖
+        quota   查新配额
+        mkdir   新建文件夹
+        mv      移动文件
+        rm      删除文件
+        cp      复制文件
+        ls      文件列表
             option:
                 -l
                 -r
@@ -94,40 +105,41 @@ EOF;
         echo "\r\n";
     }
 
-    public function httpInit() {
-        $this->ch = curl_init();
-        $set = array(CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_DNS_USE_GLOBAL_CACHE => 1,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_LOW_SPEED_LIMIT => 256,
-            CURLOPT_LOW_SPEED_TIME => 5
-        );
-        curl_setopt_array($this->ch, $set);
-        if (file_exists('~/.baidupcs')) {
-            $oauth = file_get_contents($this->oauth_file);
-            $ret = json_decode($oauth, true);
-            $mtime = filemtime($this->oauth_file) + $ret['expires_in'];
-            if ($mtime < time()) {
-                return $this->oauth();
-            }
-            $this->accessToken = $ret['access_token'];
-        } else {
-            $this->oauth();
-        }
+    public function ls($remotepath) {
+        $this->oauth();
+        $port = $this->transprot == 'ssl://' ? 443 : 80;
+        $host = "pcs.baidu.com";
+        $query = http_build_query(array('method' => 'list',
+            'access_token' => $this->accessToken,
+            'path' => $remotepath));
+        $this->url = "/rest/2.0/pcs/quota?{$query}";
+        $ret = $this->httpRequest($host, $port);
+        var_dump($ret);
     }
 
     public function quota() {
-        $this->httpInit();
-        $url = "{$this->transprot}pcs.baidu.com";
+        $this->oauth();
+
+        $host = "pcs.baidu.com";
+        $port = $this->transprot == 'ssl://' ? 443 : 80;
         $query = http_build_query(array('method' => 'info', 'access_token' => $this->accessToken));
-        $this->url = "{$url}/rest/2.0/pcs/quota?{$query}";
-        $ret = $this->httpRequest();
-        print($ret);
+        $this->url = "/rest/2.0/pcs/quota?{$query}";
+        $ret = $this->httpRequest($host, $port);
+        if (!empty($ret)) {
+            $retData = json_decode($ret);
+            if (isset($retData['error'])) {
+                $this->oauthError($retData);
+            } else {
+                $quota = $this->sizeFormat($retData['quota']);
+                $used = $this->sizeFormat($retData['used']);
+                $this->errMessage("总量: {$quota}\r\n已使用: {$used}\r\n");
+            }
+        }
     }
 
     public function doUpload($localfile, $remotepath, $option) {
-        $this->httpInit();
+        $this->oauth();
+
         $localfile = realpath($localfile);
         if (!$localfile) {
             return $this->errMessage("{$localfile}文件不存在");
@@ -139,30 +151,124 @@ EOF;
             $ondup = 'newcopy';
         }
 
-        $url = "{$this->transprot}c.pcs.baidu.com";
+        $host = "c.pcs.baidu.com";
+        $this->filesize = $fileSize = filesize($localfile);
+        $this->splitSize = $this->sizeCovert(isset($option['-p']) ? $option['-p'] : self::DEFAULT_SPLIT_SIZE);
+        $splitNum = 1;
+        if ($this->splitSize < $fileSize) {
+            $queryParamString = http_build_query(array('method' => 'upload',
+                'access_token' => $this->accessToken,
+                'type' => 'tmpfile'
+            ));
+            $this->splitUpload = true;
+            $blockList = array();
+            $splitNum = ceil($fileSize / $this->splitSize);
+        } else {
+            $this->splitSize = $fileSize;
+            $queryParamString = http_build_query(array('method' => 'upload',
+                'access_token' => $this->accessToken,
+                'path' => self::APP_ROOT . $remotepath,
+                'ondup' => $ondup
+            ));
+            $this->splitUpload = false;
+        }
+        $this->url = "/rest/2.0/pcs/file?{$queryParamString}";
 
-        $queryParamString = http_build_query(array('method' => 'upload',
-            'access_token' => $this->accessToken,
-            'path' => $remotepath,
-            'ondup' => $ondup
-        ));
-        $this->url = "{$url}/rest/2.0/pcs/file?{$queryParamString}";
-        curl_setopt($this->ch, CURLOPT_UPLOAD, 1);
-        curl_setopt($this->ch, CURLOPT_POST, 1);
-        $filesize = filesize($localfile);
-        curl_setopt($this->ch, CURLOPT_HTTPHEADER, array("Content-length: {$filesize}"));
-        $formdata = array('name' => 'file', 'file' => "@{$localfile}");
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $formdata);
+        $port = $this->transprot == 'ssl://' ? 443 : 80;
+        $this->errMessage($this->splitSize);
+        for ($i = 0; $i < $splitNum; $i++) {
+            $this->errMessage("第{$i}片;共{$splitNum}片");
+            $ret = $this->httpPost($host, $port, $localfile);
+            if (!$ret) {
+                if ($this->writeStatus == 'reset') {
+                    $i--;
+                    continue;
+                }
+            }
+            $retData = json_decode($ret, true);
+            if (isset($retData['error'])) {
+                return $this->oauthError($retData);
+            } else {
+                if ($this->splitUpload) {
+                    $blockList[] = $retData['md5'];
+                }
+            }
+        }
+        if ($this->splitUpload) {
+            $queryParamString = http_build_query(array('method' => 'createsuperfile',
+                'access_token' => $this->accessToken,
+                'path' => self::APP_ROOT . $remotepath,
+                'ondup' => $ondup
+            ));
+            print_r($blockList);
+            $postData = '{ "block_list":' . json_encode($blockList) . '}';
+            $this->errMessage('合并文件');
+            $ret = $this->httpPost($host, $port, $postData, false);
+            $retData = json_decode($ret, true);
+            if (isset($retData['error'])) {
+                return $this->oauthError($retData);
+            }
+            print_r($retData);
+        }
+        $this->errMessage('Upload Success');
+    }
+
+    public function sizeFormat($size) {
+        if ($size > 1099511627776) {
+            return round($size / 1099511627776, 2) . 'T';
+        } elseif ($size > 1073741824) {
+            return round($size / 1073741824, 2) . 'G';
+        } elseif ($size > 1048576) {
+            return round($size / 1048576, 2) . 'M';
+        } elseif ($size > 1024) {
+            return round($size / 1024, 2) . 'K';
+        }
+    }
+
+    public function sizeCovert($size) {
+        $min = 5120;
+        if (!is_numeric($size)) {
+            $uint = strtolower(substr($size, -1));
+            $num = substr($size, 0, -1);
+            if (!is_numeric($num)) {
+                $this->errMessage('分割尺寸错误,使用默认');
+                return $this->sizeCovert(self::DEFAULT_SPLIT_SIZE);
+            }
+            switch ($uint) {
+                case 'k':
+                    $size = $num * 1024;
+                    break;
+                case 'm':
+                    return $num * 1048576;
+                case 'g':
+                    return $num * 1073741824;
+                default :
+                    $this->errMessage('分割尺寸错误,使用默认');
+                    return $this->sizeCovert(self::DEFAULT_SPLIT_SIZE);
+            }
+        }
+        return $size < $min ? $min : $size;
     }
 
     public function oauth() {
+        if (file_exists($this->oauth_file)) {
+            $oauth = file_get_contents($this->oauth_file);
+            $ret = json_decode($oauth, true);
+            $mtime = filemtime($this->oauth_file) + $ret['expires_in'];
+            if ($mtime < time()) {
+                return $this->oauth();
+            }
+            $this->accessToken = $ret['access_token'];
+            return;
+        }
         $queryParamString = http_build_query(array('client_id' => self::CLIENT_ID,
             'response_type' => 'device_code',
             'scope' => 'basic,netdisk'
         ));
-        $url = "{$this->transprot}openapi.baidu.com";
-        $this->url = "{$url}/oauth/2.0/device/code?{$queryParamString}";
-        $return = $this->httpRequest();
+        $host = "openapi.baidu.com";
+        $this->url = "/oauth/2.0/device/code?{$queryParamString}";
+        $port = $this->transprot == 'ssl://' ? 443 : 80;
+        $return = $this->httpRequest($host, $port);
 
         if (!empty($return)) {
             $this->errMessage($return);
@@ -183,7 +289,8 @@ EOF;
             'code' => $retData['device_code'],
             'client_id' => self::CLIENT_ID,
             'client_secret' => self::SECRET_KEY));
-        $this->url = "{$url}/oauth/2.0/token?{$tokenQuery}";
+
+        $this->url = "/oauth/2.0/token?{$tokenQuery}";
         $expires = time() + $retData['expires_in'];
         $inter = $retData['interval'] + 1;
         while (true) {
@@ -192,7 +299,7 @@ EOF;
             }
             $this->errMessage('等待授权');
             sleep($inter);
-            $ret = $this->httpRequest();
+            $ret = $this->httpRequest($host, $port);
             if (!empty($ret)) {
                 $this->errMessage($ret);
                 $retData = json_decode($ret, true);
@@ -224,9 +331,144 @@ EOF;
         echo "$str\n";
     }
 
-    public function httpRequest() {
-        curl_setopt($this->ch, CURLOPT_URL, $this->url);
-        return curl_exec($this->ch);
+    public function httpRequest($hostname, $port) {
+        $errno = $errstr = 0;
+        $sock = fsockopen($this->transprot . $hostname, $port, $errno, $errstr, 5);
+        if ($sock) {
+            $this->errMessage("Request:$hostname");
+            $header = "GET {$this->url} HTTP/1.1\r\n";
+            $header .= "Host: {$hostname}\r\n";
+            $header .= "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:1.0) MyBaiduClient\r\n";
+            $header .= "Accept: */*\r\n";
+            $header .= "\r\n";
+            fwrite($sock, $header, strlen($header));
+            $response = stream_get_contents($sock);
+            fclose($sock);
+
+            if (!empty($response)) {
+                list($rheader, $rbody) = explode("\r\n\r\n", $response);
+                $rheaderList = explode("\r\n", $rheader);
+                $resStatus = explode(' ', $rheaderList[0]);
+                if ($resStatus[1] != 200) {
+                    $this->errMessage($rheader);
+                    return false;
+                } else {
+                    $this->errMessage($rheaderList[0]);
+                    return $rbody;
+                }
+            }
+        } else {
+            $this->errMessage("$errstr($errno)");
+        }
+    }
+
+    public function httpPost($hostname, $port, $filepath, $upfile = true) {
+        $errno = $errstr = 0;
+        $sock = fsockopen($this->transprot . $hostname, $port, $errno, $errstr, 5);
+        if ($sock) {
+            $this->errMessage('SSL connect OK');
+            $boundaryStr = '------------' . md5(time() . $filepath . $hostname);
+            $header = "POST {$this->url} HTTP/1.1\r\n";
+            $header .= "Host: {$hostname}\r\n";
+            $header .= "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:1.0) MyBaiduClient\r\n";
+            $header .= "Accept: */*\r\n";
+            $header .= "Content-Type: multipart/form-data; boundary={$boundaryStr}\r\n";
+
+
+            $endheader = "\r\n{$boundaryStr}--";
+            $endHeaderLength = strlen($endheader);
+
+            if ($upfile === false) {
+                $bodyheader = "{$boundaryStr}\r\n";
+                $bodyheader .= "Content-Disposition: form-data; name=param\r\n";
+                $bodyheader .= "\r\n";
+                $bodyheader .= "$filepath";
+
+                $bodyLength = strlen($bodyheader) + $endHeaderLength;
+                $header .= "Content-length: {$bodyLength}\r\n";
+                $header .= "\r\n";
+                fwrite($sock, $header, strlen($header));
+
+                fwrite($sock, $bodyheader, strlen($bodyheader));
+                $writeOk = true;
+            } else {
+                $bodyheader = "{$boundaryStr}\r\n";
+                $bodyheader .= "Content-Type: application/octet-stream\r\n";
+                $bodyheader .= "Content-Transfer-Encoding: binary\r\n";
+                $bodyheader .= "Content-Disposition: form-data; name=file; filename={$filepath}\r\n";
+                $bodyheader .= "\r\n";
+
+                $currentSize = $this->filesize - $this->uploadSize;
+                if ($currentSize < $this->splitSize) {
+                    $fileDataLength = $currentSize;
+                } else {
+                    $fileDataLength = $this->splitSize;
+                }
+                $bodyLength = strlen($bodyheader) + $endHeaderLength + $fileDataLength;
+                $header .= "Content-length: {$bodyLength}\r\n";
+                $header .= "\r\n";
+                fwrite($sock, $header, strlen($header));
+
+                $this->errMessage('start send file');
+                fwrite($sock, $bodyheader, strlen($bodyheader));
+                if (!$this->ffp) {
+                    $this->ffp = fopen($filepath, 'rb');
+                }
+                $readSize = 1024;
+                $sendSize = $writeOk = 0;
+                $c = 1;
+                while (!feof($this->ffp)) {
+                    $fileData = '';
+                    $i = 0;
+                    while (!feof($this->ffp) && $i <= 5) {
+                        $fileData .= fread($this->ffp, $readSize);
+                        $i++;
+                    }
+                    if ($sock) {
+                        $rReadSize = strlen($fileData);
+                        if (!fwrite($sock, $fileData, $rReadSize)) {
+                            $this->writeStatus = 'reset';
+                            fseek($this->ffp, $currentSize);
+                            return false;
+                        }
+                        $sendSize += $rReadSize;
+                        $per = round($sendSize / $fileDataLength, 2) * 100;
+                        if ($per >= 10 * $c) {
+                            $this->errMessage("$per%");
+                            $c++;
+                        }
+
+                        $writeOk = true;
+                        if ($sendSize + $readSize > $this->splitSize) {
+                            break;
+                        }
+                    }
+                }
+                $this->uploadSize += $sendSize;
+                $this->errMessage('File Send Ok');
+            }
+            if ($writeOk) {
+                fwrite($sock, $endheader, strlen($endheader));
+                $this->errMessage('End line');
+            }
+            $response = stream_get_contents($sock);
+            fclose($sock);
+
+            if (!empty($response)) {
+                list($rheader, $rbody) = explode("\r\n\r\n", $response);
+                $rheaderList = explode("\r\n", $rheader);
+                $resStatus = explode(' ', $rheaderList[0]);
+                if ($resStatus[1] != 200) {
+                    $this->errMessage($rheader);
+                    return false;
+                } else {
+                    $this->errMessage($rheaderList[0]);
+                    return $rbody;
+                }
+            }
+        } else {
+            $this->errMessage("$errstr($errno)");
+        }
     }
 
     public function __destory() {
