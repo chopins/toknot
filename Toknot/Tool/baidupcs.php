@@ -126,7 +126,7 @@ EOF;
         $this->url = "/rest/2.0/pcs/quota?{$query}";
         $ret = $this->httpRequest($host, $port);
         if (!empty($ret)) {
-            $retData = json_decode($ret);
+            $retData = json_decode($ret,true);
             if (isset($retData['error'])) {
                 $this->oauthError($retData);
             } else {
