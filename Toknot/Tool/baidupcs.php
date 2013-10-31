@@ -269,20 +269,20 @@ EOF;
         $this->url = "/oauth/2.0/device/code?{$queryParamString}";
         $port = $this->transprot == 'ssl://' ? 443 : 80;
         $return = $this->httpRequest($host, $port);
-
         if (!empty($return)) {
-            $this->errMessage($return);
+            //$this->errMessage($return);
             $retData = json_decode($return, true);
             if ($retData) {
                 if (isset($retData['error'])) {
                     die($this->oauthError($retData));
                 }
+				print_r($retData);
                 echo "验证码:{$retData['user_code']}\r\n验证地址:{$retData['verification_url']}\r\n二维码地址:{$retData['qrcode_url']}\r\n";
             } else {
-                return $this->errMessage('Error');
+                return $this->errMessage($return);
             }
         } else {
-            return $this->errMessage('Error');
+            return $this->errMessage('Network Error');
         }
         $this->errMessage('请根据上面输出的验证码，前往验证地址或二维码地址进行授权');
         $tokenQuery = http_build_query(array('grant_type' => 'device_token',
@@ -339,20 +339,36 @@ EOF;
             $header = "GET {$this->url} HTTP/1.1\r\n";
             $header .= "Host: {$hostname}\r\n";
             $header .= "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:1.0) MyBaiduClient\r\n";
-            $header .= "Accept: */*\r\n";
+            $header .= "Accept:text/plain，text/html；q=0.8\r\n";
             $header .= "\r\n";
             fwrite($sock, $header, strlen($header));
             $response = stream_get_contents($sock);
             fclose($sock);
-
+			$chunked = FALSE;
             if (!empty($response)) {
                 list($rheader, $rbody) = explode("\r\n\r\n", $response);
                 $rheaderList = explode("\r\n", $rheader);
                 $resStatus = explode(' ', $rheaderList[0]);
+				foreach($rheaderList as $headerItem) {
+					if(strtolower(trim($headerItem)) == 'transfer-encoding: chunked') {
+						$chunked = true;
+					}
+				}
                 if ($resStatus[1] != 200) {
                     $this->errMessage($rheader);
                     return false;
                 } else {
+					if($chunked) {
+						$chunkList = explode("\r\n", $rbody);
+						$rbody = '';
+						foreach($chunkList as $k=>$block) {
+							if($k%2 == 0 && $block == '0') {
+								break;
+							} elseif($k%2 == 1) {
+								$rbody .= $block;
+							}
+						}
+					}
                     $this->errMessage($rheaderList[0]);
                     return $rbody;
                 }
