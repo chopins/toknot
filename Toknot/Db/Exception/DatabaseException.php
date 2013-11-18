@@ -13,10 +13,12 @@ namespace Toknot\Db\Exception;
 use Toknot\Exception\StandardException;
 
 class DatabaseException extends StandardException {
-    public function __construct($message, $code =0) {
-        $message = print_r($message, true);
-        $code = print_r($code, true);
+    public $sqls = array();
+    public $params = array();
+    public function __construct($message, $code =0, $sql = '',$param = null) {
         $message = "Database Failed : $message ($code)";
+        $this->sqls[] = $sql;
+        $this->params[] = $param;
         parent::__construct($message);
     }
 }

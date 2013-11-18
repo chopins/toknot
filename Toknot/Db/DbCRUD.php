@@ -40,14 +40,15 @@ abstract class DbCRUD extends Object {
             $r = $pdo->execute($params);
             if(!$r) {
                 throw new DatabaseException($pdo->errorInfo(),
-                                            $pdo->errorCode());
+                                            $pdo->errorCode(), $sql,$params);
             }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
             if(!$pdo) {
                 throw new DatabaseException($this->connectInstance->errorInfo(),
-                                            $this->connectInstance->errorCode());
+                                            $this->connectInstance->errorCode(), 
+                                            $sql,$params);
             }
         }
         if($isInsert) {
@@ -72,14 +73,16 @@ abstract class DbCRUD extends Object {
             $r = $pdo->execute($params);
             if(!$r) {
                 throw new DatabaseException($pdo->errorInfo(),
-                                            $pdo->errorCode());
+                                            $pdo->errorCode(), 
+                                            $sql,$params);
             }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
             if(!$pdo) {
                 throw new DatabaseException($this->connectInstance->errorInfo(),
-                                            $this->connectInstance->errorCode());
+                                            $this->connectInstance->errorCode(), 
+                                            $sql,$params);
             }
         }
         return $pdo->fetch($this->getDbDriverFetchStyle());
@@ -91,14 +94,16 @@ abstract class DbCRUD extends Object {
             $r = $pdo->execute($params);
             if(!$r) {
                 throw new DatabaseException($pdo->errorInfo(),
-                                            $pdo->errorCode());
+                                            $pdo->errorCode(),
+                                            $sql,$params);
             }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
             if(!$pdo) {
                 throw new DatabaseException($this->connectInstance->errorInfo(),
-                                            $this->connectInstance->errorCode());
+                                            $this->connectInstance->errorCode(),
+                                            $sql,$params);
             }
         }
         return $pdo->fetchAll($this->getDbDriverFetchStyle());
@@ -110,14 +115,16 @@ abstract class DbCRUD extends Object {
             $r  = $pdo->execute($params);
             if(!$r) {
                 throw new DatabaseException($pdo->errorInfo(),
-                                           $pdo->errorCode());
+                                           $pdo->errorCode(),
+                                           $sql,$params);
             }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
             if(!$pdo) {
                 throw new DatabaseException($this->connectInstance->errorInfo(),
-                                            $this->connectInstance->errorCode());
+                                            $this->connectInstance->errorCode(),
+                                            $sql,$params);
             }
         }
         return $pdo->rowCount();
@@ -129,14 +136,16 @@ abstract class DbCRUD extends Object {
             $r = $pdo->execute($params);
             if(!$r) {
                 throw new DatabaseException($pdo->errorInfo(),
-                                            $$pdo->errorCode());
+                                            $$pdo->errorCode(),
+                                            $sql,$params);
             }
         } else {
             $sql = ActiveQuery::bindParams($params, $sql);
             $pdo = $this->connectInstance->query($sql);
             if(!$pdo) {
                 throw new DatabaseException($this->connectInstance->errorInfo(),
-                                            $this->connectInstance->errorCode());
+                                            $this->connectInstance->errorCode(),
+                                            $sql,$params);
             }
         }
         return $pdo->rowCount();

@@ -335,7 +335,7 @@ final class Application {
                 $router->defaultInvoke($defaultInvoke);
             }
             $router->invoke($FMAI);
-        } catch (StandardException $e) {
+        } catch (Exception $e) {
             if (DEVELOPMENT) {
                 echo $e;
             } else {

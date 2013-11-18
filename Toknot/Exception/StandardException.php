@@ -131,6 +131,15 @@ class StandardException extends ErrorException {
             $str .= $this->earch($this->traceArr);
         }
         $str .='</ul></div>';
+        if(isset($this->sqls) && is_array($this->sqls)) {
+            $i = 0;
+            $str .= '<ul class="ToKnotTraceItem">';
+            while(isset($this->sqls[$i])) {
+                $str .= "<li>{$this->sqls[$i]}:({$this->params[$i]})</li>";
+                $i++;
+            }
+            $str .= '</ul>';
+        }
         if (PHP_SAPI == 'cli') {
             $str .= str_repeat('=', 20) . "\n";
             return strip_tags($str);

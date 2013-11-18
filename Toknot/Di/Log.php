@@ -39,6 +39,18 @@ class Log {
         print self::formatTrace($trace);
     }
 
+    public static function message($info) {
+        $day = date('Y-m-d');
+        $time = date('Y-m-d H:i:s');
+        $message = "[$time] $info\r\n";
+        if(self::$enableSaveLog && !empty(self::$savePath)) {
+            FileObject::saveContent(self::$savePath . DIRECTORY_SEPARATOR . $day, $message, FILE_APPEND);
+        } else {
+            echo $message;
+        }
+        return;
+    }
+    
     /**
      * save trace info to log file
      *
