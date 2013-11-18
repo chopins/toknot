@@ -43,29 +43,32 @@ class ActiveQuery {
     public static function setDbDriverType($type) {
         self::$dbDriverType = $type;
     }
+
     public static function getDbDriverType() {
         return self::$dbDriverType;
     }
+
     public static function parseSQLiteColumn($sql) {
         strtok($sql, '(');
         $feildInfo = strtok(')');
         $columnList = array();
         $columnList[] = strtok($feildInfo, ' ');
-        $pro  = strtok(',');
-        while($pro) {
-           $feild = strtok(' ');
-           if(!$feild) {
-               break;
-           }
-           $columnList[] = $feild;
-           $pro  = strtok(',');
+        $pro = strtok(',');
+        while ($pro) {
+            $feild = strtok(' ');
+            if (!$feild) {
+                break;
+            }
+            $columnList[] = $feild;
+            $pro = strtok(',');
         }
         return $columnList;
     }
 
     public static function createTable($tableName) {
-        if(self::$dbDriverType == self::DRIVER_MYSQL) {
-            return "CREATE TABLE IF NOT EXISTS `$tableName`";
+        $tableName = self::backtick($tableName);
+        if (self::$dbDriverType == self::DRIVER_MYSQL) {
+            return "CREATE TABLE IF NOT EXISTS $tableName";
         }
         return "CREATE TABLE $tableName";
     }
@@ -75,7 +78,7 @@ class ActiveQuery {
         $sqlList = array();
         foreach ($columnList as $columnName => $column) {
             $sqlList[$columnName] = " $columnName {$column->type}";
-            if($column->length >0) {
+            if ($column->length > 0) {
                 $sqlList[$columnName] .= "($column->length)";
             }
             if ($column->isPK) {
@@ -85,10 +88,11 @@ class ActiveQuery {
                 $sqlList[$columnName] .= ' autoincrement';
             }
         }
-        return '('. implode(',', $sqlList) . ')';
+        return '(' . implode(',', $sqlList) . ')';
     }
 
     public static function select($tableName, $field = '*') {
+        $tableName = self::backtick($tableName);
         return "SELECT $field FROM $tableName";
     }
 
@@ -97,7 +101,7 @@ class ActiveQuery {
             return $sql;
         }
         foreach ($params as &$v) {
-            $v = "'" . addslashes($v) . "'";
+            $v = "'" . addslashes(stripslashes($v)) . "'";
         }
         return str_replace('?', $params, $sql);
     }
@@ -107,30 +111,37 @@ class ActiveQuery {
     }
 
     public static function update($tableName) {
+        $tableName = self::backtick($tableName);
         return "UPDATE $tableName SET";
     }
 
     public static function set($field) {
         $setList = array();
         foreach ($field as $key => $val) {
-            $setList = "$key='" . addslashes($val) . "'";
+            $key = self::backtick($key);;
+            $setList = "$key='" . $val . "'";
         }
         return ' ' . implode(',', $setList);
     }
 
     public static function delete($tableName) {
+        $tableName = self::backtick($tableName);
         return "DETELE FROM $tableName";
     }
 
     public static function leftJoin($tableName, $alias) {
+        $tableName = self::backtick($tableName);;
         return " LEFT JOIN $tableName AS $alias";
     }
 
     public static function on($key1, $key2) {
+        $key1 = self::backtick($key1);;
+        $key2 = self::backtick($key2);
         return " ON $key1=$key2";
     }
 
     public static function alias($name, $alias) {
+        $name = self::backtick($name);
         return " $name AS $alias";
     }
 
@@ -146,7 +157,7 @@ class ActiveQuery {
     }
 
     public static function showColumnList($tableName) {
-        if(self::$dbDriverType == self::DRIVER_SQLITE) {
+        if (self::$dbDriverType == self::DRIVER_SQLITE) {
             return "SELECT * FROM sqlite_master WHERE type='table' AND name='$tableName'";
         }
         return "SHOW COLUMNS FROM $tableName";
@@ -170,7 +181,8 @@ class ActiveQuery {
             return " LIMIT {$start},{$limit}";
         }
     }
-    public static function conditionLimit($condition, $start,$limit) {
+
+    public static function conditionLimit($condition, $start, $limit) {
         switch ($condition) {
             case ActiveQuery::EQUAL:
                 return ActiveQuery::limit(0, 1);
@@ -185,7 +197,7 @@ class ActiveQuery {
     }
 
     public static function order($order, $field) {
-        if($field == NULL) {
+        if ($field == NULL) {
             return '';
         }
         if ($order == self::ORDER_ASC) {
@@ -200,23 +212,30 @@ class ActiveQuery {
     }
 
     public static function bindTableAlias($alias, $columnList) {
-        return ' ' . $alias . '.' . implode(", $alias.", $columnList);
+        return ' ' . $alias . '.`' . implode("`, $alias.`", $columnList).'`';
     }
 
     public static function insert($tableName, $field) {
-        $field = implode(',', keys($field));
-        foreach ($field as &$v) {
-            $v = addslashes($v);
-        }
+        $field = '`' . implode('`,`', keys($field)) . '`';
         $values = "'" . implode("','", $field) . "'";
         return "INSERT INTO $tableName ($field) VALUES($values)";
     }
 
-    public static function updateDecrement($field, $num = 1) {
+    public static function updateDecrement($field, $num = 1, $negative = false) {
+        $field = self::backtick($field);
+        if ($negative) {
+            return " $field = $field - $num";
+        }
         return " $field = IF(($field - $num)>0,($field-$num),0)";
     }
 
     public static function updateIncrement($field, $num = 1) {
+        $field = self::backtick($field);
         return " $field = $field + $num";
     }
+
+    public static function backtick($field) {
+        return '`' . str_replace('.', '`.`', $field) . '`';
+    }
+
 }
