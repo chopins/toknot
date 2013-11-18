@@ -24,7 +24,6 @@ use Toknot\User\Session;
 use Toknot\Di\Log;
 use Toknot\Di\FileObject;
 
-
 /**
  * Framework Module Access Interfaces
  */
@@ -162,14 +161,14 @@ final class FMAI extends Object {
 
     public function invokeBefore(&$controller) {
         $this->controller = $controller;
-        
+
         if ($this->requestMethod == 'GET' && $this->enableCache) {
             ViewCache::outPutCache();
             if (ViewCache::$cacheEffective == ViewCache::CACHE_USE_SUCC) {
                 return false;
             }
         }
-        
+
         if ($this->invokeBeforeHandler !== null) {
             if (is_array($this->invokeAfterHandler)) {
                 $obj = $this->invokeAfterHandler[0];
@@ -329,10 +328,63 @@ final class FMAI extends Object {
      * Get parameter of passed by URI and with out router path
      * 
      * @param integer $index
+     * @param boolean $filter Whether addslashes for value, default is true
      * @return string
      */
-    public function getParam($index) {
-        return $this->uriOutRouterPath[$index];
+    public function getParam($index, $filter = true) {
+        if ($filter) {
+            return addslashes($this->uriOutRouterPath[$index]);
+        } else {
+            return $this->uriOutRouterPath[$index];
+        }
+    }
+
+    /**
+     * get value of $_GET and use addslashes
+     * 
+     * @param string $name
+     * @return null|string
+     */
+    public function getGET($name) {
+        if (!isset($_GET[$name])) {
+            return null;
+        } else if (get_magic_quotes_gpc()) {
+            return $_GET[$name];
+        } else {
+            return addslashes($_GET[$name]);
+        }
+    }
+
+    /**
+     * get value of $_POST and use addslashes
+     * 
+     * @param string $name
+     * @return null|string
+     */
+    public function getPOST($name) {
+        if (!isset($_GET[$name])) {
+            return null;
+        } else if (get_magic_quotes_gpc()) {
+            return $_GET[$name];
+        } else {
+            return addslashes($_GET[$name]);
+        }
+    }
+    
+    /**
+     * get value of $_POST and use addslashes
+     * 
+     * @param string $name
+     * @return null|string
+     */
+    public function getCOOKIE($name) {
+        if (!isset($_COOKIE[$name])) {
+            return null;
+        } else if (get_magic_quotes_gpc()) {
+            return $_COOKIE[$name];
+        } else {
+            return addslashes($_COOKIE[$name]);
+        }
     }
 
     /**

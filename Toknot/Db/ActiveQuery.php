@@ -213,7 +213,7 @@ class ActiveQuery {
     }
 
     public static function updateDecrement($field, $num = 1) {
-        return " $field = IF(($field - $num),($field-$num),0)";
+        return " $field = IF(($field - $num)>0,($field-$num),0)";
     }
 
     public static function updateIncrement($field, $num = 1) {

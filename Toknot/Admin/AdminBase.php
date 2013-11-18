@@ -72,9 +72,7 @@ class AdminBase extends ClassAccessControl {
      * @var Toknot\User\Session
      */
     protected $SESSION = null;
-    
     private static $adminConstruct = false;
-
     protected $currentUser = null;
 
     public function __construct(FMAI $FMAI) {
@@ -99,7 +97,7 @@ class AdminBase extends ClassAccessControl {
             exit();
         }
     }
-    
+
     /**
      * set view value
      */
@@ -108,7 +106,7 @@ class AdminBase extends ClassAccessControl {
         self::$FMAI->D->toknotVersion = Version::VERSION . '-' . Version::STATUS;
         self::$FMAI->D->currentUser = $this->currentUser;
     }
-    
+
     /**
      * init database connect
      */
@@ -135,7 +133,7 @@ class AdminBase extends ClassAccessControl {
             UserClass::$DBConnect = $this->dbConnect;
         }
     }
-    
+
     /**
      * load admin application config
      * 
@@ -148,7 +146,7 @@ class AdminBase extends ClassAccessControl {
         ConfigLoader::$cacheFile = self::$FMAI->appRoot . '/Data/config';
         self::$CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
     }
-    
+
     /**
      * if CLI run, redirect to GET
      */
@@ -167,15 +165,19 @@ class AdminBase extends ClassAccessControl {
             if ($user->checkUserFlag($_SESSION['Flag'])) {
                 return $user;
             }
-        } elseif (isset($_COOKIE['uid']) && isset($_COOKIE['Flag']) && isset($_COOKIE['TokenKey'])) {
-            $user = UserClass::checkLogin($_COOKIE['uid'], $_COOKIE['Flag'], $_COOKIE['TokenKey']);
+        } elseif (isset(self::$FMAI->getCOOKIE('uid')) 
+                    && isset($_COOKIE['Flag']) 
+                    && isset(self::$FMAI->getCOOKIE('TokenKey'))) {
+            $user = UserClass::checkLogin(self::$FMAI->getCOOKIE('uid'), 
+                                          self::$FMAI->getCOOKIE('Flag'), 
+                                          self::$FMAI->getCOOKIE('TokenKey'));
             if ($user) {
                 return $user;
             }
         }
         return new Nobody;
     }
-    
+
     /**
      * Set user login
      * 

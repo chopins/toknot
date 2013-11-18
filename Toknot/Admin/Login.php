@@ -24,11 +24,11 @@ class Login extends AdminBase {
     }
 
     public function POST() {
-        $userName = $_POST['username'];
-        $password = $_POST['password'];
+        $userName = self::$FMAI->getPOST('username');
+        $password = self::$FMAI->getPOST('password');
         $user = UserClass::login($userName, $password);
         if ($user) {
-            if (isset($_POST['week'])) {
+            if (isset(self::$FMAI->getPOST('week'))) {
                 $user->setLoginExpire('1w');
             }
             $this->setAdminLogin($user);
