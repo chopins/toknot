@@ -24,8 +24,7 @@ class Router implements RouterInterface {
      * The property value is {@see Toknot\Control\Router::ROUTER_PATH} or 
      * {@see Toknot\Control\Router::ROUTER_GET_QUERY},
      * {@see Toknot\Control\Router::ROUTER_CONFIG_MAP}
-     * router mode, default 1 is PATH mode, 2 is GET query mode and use $_GET['r']
-     * to is invoke class, 2 the property set by {@see Toknot\Control\Application::run} 
+     * the property set by {@see Toknot\Control\Application::run} 
      * be invoke with passed of 4th parameter, Toknot default router of runtimeArgs method
      * will set be passed of first parameter
      * 
