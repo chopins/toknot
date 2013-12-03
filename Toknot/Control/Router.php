@@ -16,19 +16,23 @@ use Toknot\Exception\BadClassCallException;
 use Toknot\Control\FMAI;
 use Toknot\Control\StandardAutoloader;
 use Toknot\Di\FileObject;
+use Toknot\Config\ConfigLoader;
 
 class Router implements RouterInterface {
 
     /**
-     * router mode, default 0 is PATH mode, 1 is GET query mode and use $_GET['r']
-     * to is invoke class, the property set by {@see Toknot\Control\Application::run} 
+     * The property value is {@see Toknot\Control\Router::ROUTER_PATH} or 
+     * {@see Toknot\Control\Router::ROUTER_GET_QUERY},
+     * {@see Toknot\Control\Router::ROUTER_CONFIG_MAP}
+     * router mode, default 1 is PATH mode, 2 is GET query mode and use $_GET['r']
+     * to is invoke class, 2 the property set by {@see Toknot\Control\Application::run} 
      * be invoke with passed of 4th parameter, Toknot default router of runtimeArgs method
      * will set be passed of first parameter
      * 
      * @var integer 
      * @access private
      */
-    private $routerMode = 0;
+    private $routerMode = 1;
 
     /**
      * router class of root namespace , usual it is application root namespace
@@ -105,6 +109,11 @@ class Router implements RouterInterface {
      * use requset query of $_GET['c'] parameter controller invoke application controller of class
      */
     const ROUTER_GET_QUERY = 2;
+    
+    /**
+     * use router map table which be configure
+     */
+    const ROUTER_CONFIG_MAP = 3;
 
     /**
      * Set Controler info that under application, if CLI mode, will set request method is CLI
@@ -116,6 +125,13 @@ class Router implements RouterInterface {
                 $this->spacePath = $this->defaultClass;
             } else {
                 $this->spacePath = '\\' . strtr($_GET['c'], '.', '\\');
+            }
+        } elseif($this->routerMode == self::ROUTER_CONFIG_MAP) {
+            $maplist = $this->loadRouterMapTable();
+            foreach($maplist as $pattern => $path) {
+                if(preg_match($pattern, $_SERVER['REQUEST_URI'])) {
+                    $this->spacePath = $path;
+                }
             }
         } else {
             if (empty($_SERVER['REQUEST_METHOD']) && PHP_SAPI == 'cli') {
@@ -151,6 +167,11 @@ class Router implements RouterInterface {
         }
     }
 
+    private function loadRouterMapTable() {
+        $filePath = $this->routerPath . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR .'router_map.ini';
+        return ConfigLoader::loadCfg($filePath);
+    }
+    
     /**
      * set application path, implements RouterInterface
      * 
