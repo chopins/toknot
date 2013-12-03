@@ -23,7 +23,7 @@ class Router implements RouterInterface {
     /**
      * The property value is {@see Toknot\Control\Router::ROUTER_PATH} or 
      * {@see Toknot\Control\Router::ROUTER_GET_QUERY},
-     * {@see Toknot\Control\Router::ROUTER_CONFIG_MAP}
+     * {@see Toknot\Control\Router::ROUTER_MAP_TABLE}
      * the property set by {@see Toknot\Control\Application::run} 
      * be invoke with passed of 4th parameter, Toknot default router of runtimeArgs method
      * will set be passed of first parameter
@@ -112,7 +112,7 @@ class Router implements RouterInterface {
     /**
      * use router map table which be configure
      */
-    const ROUTER_CONFIG_MAP = 3;
+    const ROUTER_MAP_TABLE = 3;
 
     /**
      * Set Controler info that under application, if CLI mode, will set request method is CLI
@@ -125,11 +125,13 @@ class Router implements RouterInterface {
             } else {
                 $this->spacePath = '\\' . strtr($_GET['c'], '.', '\\');
             }
-        } elseif($this->routerMode == self::ROUTER_CONFIG_MAP) {
+        } elseif($this->routerMode == self::ROUTER_MAP_TABLE) {
             $maplist = $this->loadRouterMapTable();
+            $matches = array();
             foreach($maplist as $pattern => $path) {
-                if(preg_match($pattern, $_SERVER['REQUEST_URI'])) {
+                if(preg_match($pattern, $_SERVER['REQUEST_URI'],$matches)) {
                     $this->spacePath = $path;
+                    $this->suffixPart = $matches;
                 }
             }
         } else {
@@ -296,6 +298,7 @@ class Router implements RouterInterface {
      * 
      * @param int $mode  Router of run mode Use set {@see Toknot\Control\Router::ROUTER_PATH}
      *                      is default or {@see Toknot\Control\Router::ROUTER_GET_QUERY}, 
+     *                      or {@see Toknot\Control\Router::ROUTER_MAP_TABLE}
      *                      only use framework router the parameter is set router mode
      * @param int $routerDepth  The under controller of namespace max level, 
      *                              if set 0 will not limit
