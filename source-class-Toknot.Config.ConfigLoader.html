@@ -5,10 +5,10 @@
 	<meta name="generator" content="ApiGen 2.8.0" />
 	<meta name="robots" content="noindex" />
 
-	<title>File Config/ConfigLoader.php</title>
+	<title>File Toknot/Config/ConfigLoader.php | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -22,10 +22,22 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
 				<li><a href="namespace-None.html">None</a>
 						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Admin.html">Admin</a>
@@ -51,11 +63,6 @@
 				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
-						</li>
-							</ul></li>
-				<li><a href="namespace-Toknot.Image.html">Image<span></span></a>
-						<ul>
-				<li><a href="namespace-Toknot.Image.CartoonImage.html">CartoonImage</a>
 						</li>
 							</ul></li>
 				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
@@ -148,7 +155,7 @@
 </span><span id="22" class="l"><a class="l" href="#22">22: </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> <a id="___construct" href="#___construct">__construct</a>() {
 </span><span id="23" class="l"><a class="l" href="#23">23: </a>        <span class="php-var">$file</span> = __DIR__ . <span class="php-quote">'/default.ini'</span>;
 </span><span id="24" class="l"><a class="l" href="#24">24: </a>        self::<span class="php-var">$_CFG</span> = <span class="php-keyword1">new</span> ArrayObject;
-</span><span id="25" class="l"><a class="l" href="#25">25: </a>        self::loadCfg(<span class="php-var">$file</span>);
+</span><span id="25" class="l"><a class="l" href="#25">25: </a>        self::importCfg(<span class="php-var">$file</span>);
 </span><span id="26" class="l"><a class="l" href="#26">26: </a>    }
 </span><span id="27" class="l"><a class="l" href="#27">27: </a>
 </span><span id="28" class="l"><a class="l" href="#28">28: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_singleton" href="#_singleton">singleton</a>() {
@@ -172,12 +179,12 @@
 </span><span id="46" class="l"><a class="l" href="#46">46: </a>    }
 </span><span id="47" class="l"><a class="l" href="#47">47: </a>
 </span><span id="48" class="l"><a class="l" href="#48">48: </a>    <span class="php-comment">/**
-</span></span><span id="49" class="l"><a class="l" href="#49">49: </a><span class="php-comment">     * load configuration file
+</span></span><span id="49" class="l"><a class="l" href="#49">49: </a><span class="php-comment">     * import application configuration file
 </span></span><span id="50" class="l"><a class="l" href="#50">50: </a><span class="php-comment">     * 
 </span></span><span id="51" class="l"><a class="l" href="#51">51: </a><span class="php-comment">     * @access public
 </span></span><span id="52" class="l"><a class="l" href="#52">52: </a><span class="php-comment">     * @return void
 </span></span><span id="53" class="l"><a class="l" href="#53">53: </a><span class="php-comment">     */</span>
-</span><span id="54" class="l"><a class="l" href="#54">54: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_loadCfg" href="#_loadCfg">loadCfg</a>(<span class="php-var">$file</span>) {
+</span><span id="54" class="l"><a class="l" href="#54">54: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_importCfg" href="#_importCfg">importCfg</a>(<span class="php-var">$file</span>) {
 </span><span id="55" class="l"><a class="l" href="#55">55: </a>        <span class="php-keyword1">if</span> (<span class="php-keyword2">file_exists</span>(<span class="php-var">$file</span>)) {
 </span><span id="56" class="l"><a class="l" href="#56">56: </a>            <span class="php-var">$cacheControl</span> = <span class="php-keyword1">new</span> DataCacheControl(self::<span class="php-var">$cacheFile</span>, <span class="php-keyword2">filemtime</span>(<span class="php-var">$file</span>));
 </span><span id="57" class="l"><a class="l" href="#57">57: </a>            <span class="php-var">$cache</span> = <span class="php-var">$cacheControl</span>-&gt;get();
@@ -194,12 +201,21 @@
 </span><span id="68" class="l"><a class="l" href="#68">68: </a>        <span class="php-keyword1">return</span> self::<span class="php-var">$_CFG</span>;
 </span><span id="69" class="l"><a class="l" href="#69">69: </a>    }
 </span><span id="70" class="l"><a class="l" href="#70">70: </a>
-</span><span id="71" class="l"><a class="l" href="#71">71: </a>}
-</span><span id="72" class="l"><a class="l" href="#72">72: </a>
-</span><span id="73" class="l"><a class="l" href="#73">73: </a></span></code></pre>
+</span><span id="71" class="l"><a class="l" href="#71">71: </a>    <span class="php-comment">/**
+</span></span><span id="72" class="l"><a class="l" href="#72">72: </a><span class="php-comment">     * Load  ini file
+</span></span><span id="73" class="l"><a class="l" href="#73">73: </a><span class="php-comment">     * 
+</span></span><span id="74" class="l"><a class="l" href="#74">74: </a><span class="php-comment">     * @param string $file
+</span></span><span id="75" class="l"><a class="l" href="#75">75: </a><span class="php-comment">     * @return array
+</span></span><span id="76" class="l"><a class="l" href="#76">76: </a><span class="php-comment">     */</span>
+</span><span id="77" class="l"><a class="l" href="#77">77: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_loadCfg" href="#_loadCfg">loadCfg</a>(<span class="php-var">$file</span>) {
+</span><span id="78" class="l"><a class="l" href="#78">78: </a>        <span class="php-keyword1">return</span> <span class="php-keyword2">parse_ini_file</span>(<span class="php-var">$file</span>, <span class="php-keyword1">true</span>);
+</span><span id="79" class="l"><a class="l" href="#79">79: </a>    }
+</span><span id="80" class="l"><a class="l" href="#80">80: </a>}
+</span><span id="81" class="l"><a class="l" href="#81">81: </a>
+</span><span id="82" class="l"><a class="l" href="#82">82: </a></span></code></pre>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>

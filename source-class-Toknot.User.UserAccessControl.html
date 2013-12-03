@@ -5,10 +5,10 @@
 	<meta name="generator" content="ApiGen 2.8.0" />
 	<meta name="robots" content="noindex" />
 
-	<title>File User/UserAccessControl.php</title>
+	<title>File Toknot/User/UserAccessControl.php | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -22,10 +22,22 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
 				<li><a href="namespace-None.html">None</a>
 						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Admin.html">Admin</a>
@@ -51,11 +63,6 @@
 				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
-						</li>
-							</ul></li>
-				<li><a href="namespace-Toknot.Image.html">Image<span></span></a>
-						<ul>
-				<li><a href="namespace-Toknot.Image.CartoonImage.html">CartoonImage</a>
 						</li>
 							</ul></li>
 				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
@@ -270,14 +277,14 @@
 </span></span><span id="139" class="l"><a class="l" href="#139">139: </a><span class="php-comment">     * @static
 </span></span><span id="140" class="l"><a class="l" href="#140">140: </a><span class="php-comment">     */</span>
 </span><span id="141" class="l"><a class="l" href="#141">141: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_bestHashAlgos" href="#_bestHashAlgos">bestHashAlgos</a>() {
-</span><span id="142" class="l"><a class="l" href="#142">142: </a>        <span class="php-keyword1">if</span> (CRYPT_BLOWFISH) {
-</span><span id="143" class="l"><a class="l" href="#143">143: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'BLOWFISH'</span>;
+</span><span id="142" class="l"><a class="l" href="#142">142: </a>        <span class="php-keyword1">if</span> (CRYPT_SHA256) {
+</span><span id="143" class="l"><a class="l" href="#143">143: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'SHA256'</span>;
 </span><span id="144" class="l"><a class="l" href="#144">144: </a>        }
-</span><span id="145" class="l"><a class="l" href="#145">145: </a>        <span class="php-keyword1">if</span> (CRYPT_SHA256) {
-</span><span id="146" class="l"><a class="l" href="#146">146: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'SHA256'</span>;
+</span><span id="145" class="l"><a class="l" href="#145">145: </a>        <span class="php-keyword1">if</span> (CRYPT_SHA512) {
+</span><span id="146" class="l"><a class="l" href="#146">146: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'SHA512'</span>;
 </span><span id="147" class="l"><a class="l" href="#147">147: </a>        }
-</span><span id="148" class="l"><a class="l" href="#148">148: </a>        <span class="php-keyword1">if</span> (CRYPT_SHA512) {
-</span><span id="149" class="l"><a class="l" href="#149">149: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'SHA512'</span>;
+</span><span id="148" class="l"><a class="l" href="#148">148: </a>        <span class="php-keyword1">if</span> (CRYPT_BLOWFISH) {
+</span><span id="149" class="l"><a class="l" href="#149">149: </a>            <span class="php-keyword1">return</span> <span class="php-quote">'BLOWFISH'</span>;
 </span><span id="150" class="l"><a class="l" href="#150">150: </a>        }
 </span><span id="151" class="l"><a class="l" href="#151">151: </a>        <span class="php-keyword1">return</span> <span class="php-quote">'SHA1'</span>;
 </span><span id="152" class="l"><a class="l" href="#152">152: </a>    }
@@ -296,7 +303,7 @@
 </span></span><span id="165" class="l"><a class="l" href="#165">165: </a><span class="php-comment">     *                         will use to the nearest limit.
 </span></span><span id="166" class="l"><a class="l" href="#166">166: </a><span class="php-comment">     * @return string the hashed string and salt, like {@see crypt()) of PHP
 </span></span><span id="167" class="l"><a class="l" href="#167">167: </a><span class="php-comment">     */</span>
-</span><span id="168" class="l"><a class="l" href="#168">168: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_getTextHash" href="#_getTextHash">getTextHash</a>(<span class="php-var">$password</span>, <span class="php-var">$algo</span>, <span class="php-var">$salt</span> = <span class="php-quote">''</span>, <span class="php-var">$rounds</span> = <span class="php-num">5000</span>) {
+</span><span id="168" class="l"><a class="l" href="#168">168: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">static</span> <span class="php-keyword1">function</span> <a id="_getTextHash" href="#_getTextHash">getTextHash</a>(<span class="php-var">$password</span>, <span class="php-var">$algo</span>, <span class="php-var">$salt</span> = <span class="php-quote">''</span>, <span class="php-var">$rounds</span> = <span class="php-num">500</span>) {
 </span><span id="169" class="l"><a class="l" href="#169">169: </a>        <span class="php-keyword1">if</span> (!<span class="php-keyword2">preg_match</span>(<span class="php-quote">'/^[0-9A-Za-z]+$/'</span>, <span class="php-var">$salt</span>)) {
 </span><span id="170" class="l"><a class="l" href="#170">170: </a>            <span class="php-keyword1">return</span> <span class="php-keyword1">false</span>;
 </span><span id="171" class="l"><a class="l" href="#171">171: </a>        }
@@ -436,14 +443,14 @@
 </span></span><span id="305" class="l"><a class="l" href="#305">305: </a><span class="php-comment">     */</span>
 </span><span id="306" class="l"><a class="l" href="#306">306: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_generateUserFlag" href="#_generateUserFlag">generateUserFlag</a>() {
 </span><span id="307" class="l"><a class="l" href="#307">307: </a>        <span class="php-var">$userFlag</span> = self::getUserRemoteAddress();
-</span><span id="308" class="l"><a class="l" href="#308">308: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_USER_AGENT'</span>]) ? <span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_USER_AGENT'</span>]:<span class="php-quote">''</span>;
-</span><span id="309" class="l"><a class="l" href="#309">309: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT'</span>]) ? <span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT'</span>] : <span class="php-quote">''</span>; 
-</span><span id="310" class="l"><a class="l" href="#310">310: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_CHARSET'</span>])?<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_CHARSET'</span>]:<span class="php-quote">''</span>;
-</span><span id="311" class="l"><a class="l" href="#311">311: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_LANGUAGE'</span>])?<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_LANGUAGE'</span>]:<span class="php-quote">''</span>;
-</span><span id="312" class="l"><a class="l" href="#312">312: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_ENCODING'</span>])?<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_ENCODING'</span>]:<span class="php-quote">''</span>;
+</span><span id="308" class="l"><a class="l" href="#308">308: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_USER_AGENT'</span>]) ? <span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_USER_AGENT'</span>] : <span class="php-quote">''</span>;
+</span><span id="309" class="l"><a class="l" href="#309">309: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT'</span>]) ? <span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT'</span>] : <span class="php-quote">''</span>;
+</span><span id="310" class="l"><a class="l" href="#310">310: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_CHARSET'</span>]) ? <span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_CHARSET'</span>] : <span class="php-quote">''</span>;
+</span><span id="311" class="l"><a class="l" href="#311">311: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_LANGUAGE'</span>]) ? <span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_LANGUAGE'</span>] : <span class="php-quote">''</span>;
+</span><span id="312" class="l"><a class="l" href="#312">312: </a>        <span class="php-var">$userFlag</span> .= <span class="php-keyword1">isset</span>(<span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_ENCODING'</span>]) ? <span class="php-var">$_SERVER</span>[<span class="php-quote">'HTTP_ACCEPT_ENCODING'</span>] : <span class="php-quote">''</span>;
 </span><span id="313" class="l"><a class="l" href="#313">313: </a>        <span class="php-keyword1">return</span> self::hashPassword(<span class="php-var">$userFlag</span>);
 </span><span id="314" class="l"><a class="l" href="#314">314: </a>    }
-</span><span id="315" class="l"><a class="l" href="#315">315: </a>    
+</span><span id="315" class="l"><a class="l" href="#315">315: </a>
 </span><span id="316" class="l"><a class="l" href="#316">316: </a>    <span class="php-comment">/**
 </span></span><span id="317" class="l"><a class="l" href="#317">317: </a><span class="php-comment">     * check user flag whether valid
 </span></span><span id="318" class="l"><a class="l" href="#318">318: </a><span class="php-comment">     * 
@@ -478,11 +485,13 @@
 </span><span id="347" class="l"><a class="l" href="#347">347: </a>        <span class="php-keyword2">preg_match</span>(<span class="php-quote">&quot;/[\d\.]{7,15}/&quot;</span>, <span class="php-var">$ip</span>, <span class="php-var">$ipm</span>);
 </span><span id="348" class="l"><a class="l" href="#348">348: </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">isset</span>(<span class="php-var">$ipm</span>[<span class="php-num">0</span>]) ? <span class="php-var">$ipm</span>[<span class="php-num">0</span>] : <span class="php-quote">'unknown'</span>;
 </span><span id="349" class="l"><a class="l" href="#349">349: </a>    }
-</span><span id="350" class="l"><a class="l" href="#350">350: </a>
-</span><span id="351" class="l"><a class="l" href="#351">351: </a></span>}</code></pre>
+</span><span id="350" class="l"><a class="l" href="#350">350: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="___toString" href="#___toString">__toString</a>() {
+</span><span id="351" class="l"><a class="l" href="#351">351: </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;userName;
+</span><span id="352" class="l"><a class="l" href="#352">352: </a>    }
+</span><span id="353" class="l"><a class="l" href="#353">353: </a></span>}</code></pre>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>

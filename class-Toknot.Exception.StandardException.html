@@ -4,10 +4,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="generator" content="ApiGen 2.8.0" />
 
-	<title>Class Toknot\Exception\StandardException</title>
+	<title>Class Toknot\Exception\StandardException | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,10 +21,22 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
 				<li><a href="namespace-None.html">None</a>
 						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Admin.html">Admin</a>
@@ -50,11 +62,6 @@
 				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
-						</li>
-							</ul></li>
-				<li><a href="namespace-Toknot.Image.html">Image<span></span></a>
-						<ul>
-				<li><a href="namespace-Toknot.Image.CartoonImage.html">CartoonImage</a>
 						</li>
 							</ul></li>
 				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
@@ -85,6 +92,7 @@
 			<ul>
 				<li><a href="class-Toknot.Exception.BadClassCallException.html">BadClassCallException</a></li>
 				<li><a href="class-Toknot.Exception.BadNamespaceException.html">BadNamespaceException</a></li>
+				<li><a href="class-Toknot.Exception.BadPropertyGetException.html">BadPropertyGetException</a></li>
 				<li><a href="class-Toknot.Exception.DependExtensionException.html">DependExtensionException</a></li>
 				<li><a href="class-Toknot.Exception.FileIOException.html">FileIOException</a></li>
 				<li class="active"><a href="class-Toknot.Exception.StandardException.html">StandardException</a></li>
@@ -163,14 +171,15 @@
 		<h4>Direct known subclasses</h4>
 			<a href="class-Toknot.Control.Exception.PHPVersionException.html">Toknot\Control\Exception\PHPVersionException</a>, 
 			<a href="class-Toknot.Db.Exception.DatabaseConfigException.html">Toknot\Db\Exception\DatabaseConfigException</a>, 
+			<a href="class-Toknot.Process.Exception.ProcessException.html">Toknot\Process\Exception\ProcessException</a>, 
 			<a href="class-Toknot.Db.Exception.DatabaseException.html">Toknot\Db\Exception\DatabaseException</a>, 
 			<a href="class-Toknot.Exception.BadClassCallException.html">Toknot\Exception\BadClassCallException</a>, 
 			<a href="class-Toknot.Exception.BadNamespaceException.html">Toknot\Exception\BadNamespaceException</a>, 
+			<a href="class-Toknot.Exception.BadPropertyGetException.html">Toknot\Exception\BadPropertyGetException</a>, 
 			<a href="class-Toknot.Exception.DependExtensionException.html">Toknot\Exception\DependExtensionException</a>, 
 			<a href="class-Toknot.Exception.FileIOException.html">Toknot\Exception\FileIOException</a>, 
 			<a href="class-Toknot.Http.TransportsException.TransportsException.html">Toknot\Http\TransportsException\TransportsException</a>, 
-			<a href="class-Toknot.Process.Eception.PipException.html">Toknot\Process\Eception\PipException</a>, 
-			<a href="class-Toknot.Process.Exception.ProcessException.html">Toknot\Process\Exception\ProcessException</a>
+			<a href="class-Toknot.Process.Eception.PipException.html">Toknot\Process\Eception\PipException</a>
 	</div>
 
 
@@ -184,7 +193,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Exception.html">Exception</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Exception.StandardException.html#16-140" title="Go to source code">Exception/StandardException.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Exception.StandardException.html#16-166" title="Go to source code">Toknot/Exception/StandardException.php</a><br />
 	</div>
 
 
@@ -202,7 +211,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Exception.StandardException.html#29-46" title="Go to source code">__construct</a>( <span>string <var>$message</var> = <span class="php-quote">''</span></span>, <span>integer <var>$code</var> = <span class="php-num">0</span></span>, <span>string <var>$file</var> = <span class="php-keyword1">null</span></span>, <span>integer <var>$line</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Toknot.Exception.StandardException.html#30-47" title="Go to source code">__construct</a>( <span>string <var>$message</var> = <span class="php-quote">''</span></span>, <span>integer <var>$code</var> = <span class="php-num">0</span></span>, <span>string <var>$file</var> = <span class="php-keyword1">null</span></span>, <span>integer <var>$line</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -248,7 +257,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorReportHandler">#</a>
-		<code><a href="source-class-Toknot.Exception.StandardException.html#48-50" title="Go to source code">errorReportHandler</a>( <span>mixed <var>$argv</var></span> )</code>
+		<code><a href="source-class-Toknot.Exception.StandardException.html#49-62" title="Go to source code">errorReportHandler</a>( <span>mixed <var>$argv</var></span> )</code>
 
 		<div class="description short">
 			
@@ -277,7 +286,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getErrorType">#</a>
-		<code><a href="source-class-Toknot.Exception.StandardException.html#52-89" title="Go to source code">getErrorType</a>( <span>mixed <var>$code</var></span> )</code>
+		<code><a href="source-class-Toknot.Exception.StandardException.html#64-105" title="Go to source code">getErrorType</a>( <span>mixed <var>$code</var></span> )</code>
 
 		<div class="description short">
 			
@@ -306,7 +315,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getDebugTraceAsString">#</a>
-		<code><a href="source-class-Toknot.Exception.StandardException.html#91-124" title="Go to source code">getDebugTraceAsString</a>( )</code>
+		<code><a href="source-class-Toknot.Exception.StandardException.html#107-149" title="Go to source code">getDebugTraceAsString</a>( )</code>
 
 		<div class="description short">
 			
@@ -335,7 +344,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___toString">#</a>
-		<code><a href="source-class-Toknot.Exception.StandardException.html#126-135" title="Go to source code">__toString</a>( )</code>
+		<code><a href="source-class-Toknot.Exception.StandardException.html#151-160" title="Go to source code">__toString</a>( )</code>
 
 		<div class="description short">
 			
@@ -366,7 +375,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_earch">#</a>
-		<code><a href="source-class-Toknot.Exception.StandardException.html#137-139" title="Go to source code">earch</a>( <span>mixed <var>$traceArr</var></span> )</code>
+		<code><a href="source-class-Toknot.Exception.StandardException.html#162-164" title="Go to source code">earch</a>( <span>mixed <var>$traceArr</var></span> )</code>
 
 		<div class="description short">
 			
@@ -566,7 +575,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Exception.StandardException.html#27" title="Go to source code"><var>$traceArr</var></a>
+				<a href="source-class-Toknot.Exception.StandardException.html#28" title="Go to source code"><var>$traceArr</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">array</span>()</code></td>
 		<td class="description"><div>
@@ -609,7 +618,7 @@
 </div>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>

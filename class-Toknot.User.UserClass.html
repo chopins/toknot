@@ -4,10 +4,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="generator" content="ApiGen 2.8.0" />
 
-	<title>Class Toknot\User\UserClass</title>
+	<title>Class Toknot\User\UserClass | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,10 +21,22 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
 				<li><a href="namespace-None.html">None</a>
 						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Admin.html">Admin</a>
@@ -50,11 +62,6 @@
 				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
-						</li>
-							</ul></li>
-				<li><a href="namespace-Toknot.Image.html">Image<span></span></a>
-						<ul>
-				<li><a href="namespace-Toknot.Image.CartoonImage.html">CartoonImage</a>
 						</li>
 							</ul></li>
 				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
@@ -171,7 +178,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.User.html">User</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.User.UserClass.html#18-582" title="Go to source code">User/UserClass.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.User.UserClass.html#18-587" title="Go to source code">Toknot/User/UserClass.php</a><br />
 	</div>
 
 
@@ -778,7 +785,7 @@ after the current time, 365 days of a year other string be passed will use strto
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addUser">#</a>
-		<code><a href="source-class-Toknot.User.UserClass.html#430-460" title="Go to source code">addUser</a>( <span>array <var>$data</var></span> )</code>
+		<code><a href="source-class-Toknot.User.UserClass.html#430-461" title="Go to source code">addUser</a>( <span>array <var>$data</var></span> )</code>
 
 		<div class="description short">
 			
@@ -822,7 +829,7 @@ column name</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getPasswordTexture">#</a>
-		<code><a href="source-class-Toknot.User.UserClass.html#462-505" title="Go to source code">getPasswordTexture</a>( <span>string <var>$password</var></span> )</code>
+		<code><a href="source-class-Toknot.User.UserClass.html#463-510" title="Go to source code">getPasswordTexture</a>( <span>string <var>$password</var></span> )</code>
 
 		<div class="description short">
 			
@@ -844,9 +851,9 @@ column name</p>
 
 				<h4>Returns</h4>
 				<div class="list">
-					<code>integer</code><br>value is CurrentUser::PASSWD_ALL_NUMBER,CurrentUser::PASSWD_SHORT6
-CurrentUser::PASSWD_NUMBER_SORT,CurrentUser::PASSWD_ABC_SORT,
-CurrentUser::PASSWD_ABC_KEYBOARD_SORT,CurrentUser::PASSWD_ALL_LOWER, CurrentUser::PASSWD_ALL_UPPER,CurrentUser::PASSWD_ALL_ABC CurrentUser::PASSWD_ORDERLESS<br />
+					<code>integer</code><br>value is CurrentUser::PASSWD_ALL_NUMBER, CurrentUser::PASSWD_SHORT6 CurrentUser::PASSWD_NUMBER_SORT, CurrentUser::PASSWD_ABC_SORT, CurrentUser::PASSWD_ABC_KEYBOARD_SORT,
+CurrentUser::PASSWD_ALL_LOWER, CurrentUser::PASSWD_ALL_UPPER,
+CurrentUser::PASSWD_ALL_ABC CurrentUser::PASSWD_ORDERLESS<br />
 				</div>
 
 
@@ -866,7 +873,7 @@ CurrentUser::PASSWD_ABC_KEYBOARD_SORT,CurrentUser::PASSWD_ALL_LOWER, CurrentUser
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getInstanceByUid">#</a>
-		<code><a href="source-class-Toknot.User.UserClass.html#507-528" title="Go to source code">getInstanceByUid</a>( <span>integer <var>$uid</var></span> )</code>
+		<code><a href="source-class-Toknot.User.UserClass.html#512-533" title="Go to source code">getInstanceByUid</a>( <span>integer <var>$uid</var></span> )</code>
 
 		<div class="description short">
 			
@@ -910,7 +917,7 @@ object</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___sleep">#</a>
-		<code><a href="source-class-Toknot.User.UserClass.html#568-570" title="Go to source code">__sleep</a>( )</code>
+		<code><a href="source-class-Toknot.User.UserClass.html#573-575" title="Go to source code">__sleep</a>( )</code>
 
 		<div class="description short">
 			
@@ -939,7 +946,7 @@ object</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___wakeup">#</a>
-		<code><a href="source-class-Toknot.User.UserClass.html#572-574" title="Go to source code">__wakeup</a>( )</code>
+		<code><a href="source-class-Toknot.User.UserClass.html#577-579" title="Go to source code">__wakeup</a>( )</code>
 
 		<div class="description short">
 			
@@ -968,7 +975,7 @@ object</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_logout">#</a>
-		<code><a href="source-class-Toknot.User.UserClass.html#576-581" title="Go to source code">logout</a>( )</code>
+		<code><a href="source-class-Toknot.User.UserClass.html#581-586" title="Go to source code">logout</a>( )</code>
 
 		<div class="description short">
 			
@@ -996,6 +1003,7 @@ object</p>
 	<caption>Methods inherited from <a href="class-Toknot.User.UserAccessControl.html#methods">Toknot\User\UserAccessControl</a></caption>
 	<tr>
 		<td><code>
+			<a href="class-Toknot.User.UserAccessControl.html#___toString">__toString()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_bestHashAlgos">bestHashAlgos()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_checkUserFlag">checkUserFlag()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_generateUserFlag">generateUserFlag()</a>, 
@@ -1020,13 +1028,16 @@ object</p>
 		<td><code>
 			<a href="class-Toknot.Di.Object.html#___set">__set()</a>, 
 			<a href="class-Toknot.Di.Object.html#___singleton">__singleton()</a>, 
+			<a href="class-Toknot.Di.Object.html#_constructArgs">constructArgs()</a>, 
 			<a href="class-Toknot.Di.Object.html#_count">count()</a>, 
 			<a href="class-Toknot.Di.Object.html#_current">current()</a>, 
 			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getInstance">getInstance()</a>, 
 			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
 			<a href="class-Toknot.Di.Object.html#_key">key()</a>, 
-			<a href="class-Toknot.Di.Object.html#_newInstance">newInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
 			<a href="class-Toknot.Di.Object.html#_next">next()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
 			<a href="class-Toknot.Di.Object.html#_rewind">rewind()</a>, 
 			<a href="class-Toknot.Di.Object.html#_setPropertie">setPropertie()</a>, 
 			<a href="class-Toknot.Di.Object.html#_valid">valid()</a>
@@ -1467,7 +1478,7 @@ class="php-var">$AR</span>-&gt;connect();s
 </div>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>

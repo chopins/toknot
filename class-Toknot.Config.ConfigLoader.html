@@ -4,10 +4,10 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="generator" content="ApiGen 2.8.0" />
 
-	<title>Class Toknot\Config\ConfigLoader</title>
+	<title>Class Toknot\Config\ConfigLoader | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?2028125618"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -21,10 +21,22 @@
 		<div id="groups">
 			<h3>Namespaces</h3>
 			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
 				<li><a href="namespace-None.html">None</a>
 						</li>
 				<li><a href="namespace-PHP.html">PHP</a>
 						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
 				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Admin.html">Admin</a>
@@ -50,11 +62,6 @@
 				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
-						</li>
-							</ul></li>
-				<li><a href="namespace-Toknot.Image.html">Image<span></span></a>
-						<ul>
-				<li><a href="namespace-Toknot.Image.CartoonImage.html">CartoonImage</a>
 						</li>
 							</ul></li>
 				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
@@ -159,7 +166,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Config.html">Config</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Config.ConfigLoader.html#17-71" title="Go to source code">Config/ConfigLoader.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Config.ConfigLoader.html#17-80" title="Go to source code">Toknot/Config/ConfigLoader.php</a><br />
 	</div>
 
 
@@ -253,7 +260,7 @@
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="loadCfg" id="_loadCfg">
+	<tr data-order="importCfg" id="_importCfg">
 
 		<td class="attributes"><code>
 			 public static
@@ -263,22 +270,64 @@
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_loadCfg">#</a>
-		<code><a href="source-class-Toknot.Config.ConfigLoader.html#48-69" title="Go to source code">loadCfg</a>( <span>mixed <var>$file</var></span> )</code>
+		<a class="anchor" href="#_importCfg">#</a>
+		<code><a href="source-class-Toknot.Config.ConfigLoader.html#48-69" title="Go to source code">importCfg</a>( <span>mixed <var>$file</var></span> )</code>
 
 		<div class="description short">
 			
-<p>load configuration file</p>
+<p>import application configuration file</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>load configuration file</p>
+<p>import application configuration file</p>
 
 
 
 
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="loadCfg" id="_loadCfg">
+
+		<td class="attributes"><code>
+			 public static
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_loadCfg">#</a>
+		<code><a href="source-class-Toknot.Config.ConfigLoader.html#71-79" title="Go to source code">loadCfg</a>( <span>string <var>$file</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Load ini file</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Load ini file</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$file</var></dt>
+					<dd><code>string</code><br>$file</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br />
+				</div>
 
 
 
@@ -294,13 +343,16 @@
 		<td><code>
 			<a href="class-Toknot.Di.Object.html#___set">__set()</a>, 
 			<a href="class-Toknot.Di.Object.html#___singleton">__singleton()</a>, 
+			<a href="class-Toknot.Di.Object.html#_constructArgs">constructArgs()</a>, 
 			<a href="class-Toknot.Di.Object.html#_count">count()</a>, 
 			<a href="class-Toknot.Di.Object.html#_current">current()</a>, 
 			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getInstance">getInstance()</a>, 
 			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
 			<a href="class-Toknot.Di.Object.html#_key">key()</a>, 
-			<a href="class-Toknot.Di.Object.html#_newInstance">newInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
 			<a href="class-Toknot.Di.Object.html#_next">next()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
 			<a href="class-Toknot.Di.Object.html#_rewind">rewind()</a>, 
 			<a href="class-Toknot.Di.Object.html#_setPropertie">setPropertie()</a>, 
 			<a href="class-Toknot.Di.Object.html#_valid">valid()</a>
@@ -361,7 +413,7 @@
 </div>
 
 	<div id="footer">
-		 API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
 	</div>
 </div>
 </div>
