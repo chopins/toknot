@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Class Toknot\Tool\SSH2 | toknot</title>
+
+	<script type="text/javascript" src="resources/combined.js?934585053"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
+				<li><a href="namespace-None.html">None</a>
+						</li>
+				<li><a href="namespace-PHP.html">PHP</a>
+						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
+				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
+				<li><a href="namespace-Toknot.Config.html">Config</a>
+						</li>
+				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Db.html">Db<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Db.Driver.html">Driver</a>
+						</li>
+				<li><a href="namespace-Toknot.Db.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Di.html">Di</a>
+						</li>
+				<li><a href="namespace-Toknot.Exception.html">Exception</a>
+						</li>
+				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Process.Eception.html">Eception</a>
+						</li>
+				<li><a href="namespace-Toknot.Process.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li class="active"><a href="namespace-Toknot.Tool.html">Tool</a>
+						</li>
+				<li><a href="namespace-Toknot.User.html">User</a>
+						</li>
+				<li><a href="namespace-Toknot.View.html">View</a>
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-Toknot.Tool.InotifySync.html">InotifySync</a></li>
+				<li><a href="class-Toknot.Tool.Logs.html">Logs</a></li>
+				<li><a href="class-Toknot.Tool.SimpleCaptcha.html">SimpleCaptcha</a></li>
+				<li class="active"><a href="class-Toknot.Tool.SSH2.html">SSH2</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-Toknot.Tool.html" title="Summary of Toknot\Tool"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class SSH2</h1>
+
+
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Tool.html">Tool</a><br />
+		
+
+		<b>Located at</b> <a href="source-class-Toknot.Tool.SSH2.html#13-144" title="Go to source code">Toknot/Tool/SSH2.php</a><br />
+	</div>
+
+
+
+	<table class="summary" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#24-32" title="Go to source code">__construct</a>( <span>mixed <var>$host</var></span>, <span>mixed <var>$port</var></span>, <span>mixed <var>$ssh_user</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$ssh_pass</var> = <span class="php-keyword1">null</span></span>, <span>mixed <var>$keyfile_dir</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="connect" id="_connect">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_connect">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#33-48" title="Go to source code">connect</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="cmd" id="_cmd">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_cmd">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#49-60" title="Go to source code">cmd</a>( <span>mixed <var>$cmd</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="get_last_error" id="_get_last_error">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_get_last_error">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#61-63" title="Go to source code">get_last_error</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="mkdir" id="_mkdir">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_mkdir">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#64-70" title="Go to source code">mkdir</a>( <span>mixed <var>$path</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="create_sftp" id="_create_sftp">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_create_sftp">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#71-73" title="Go to source code">create_sftp</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="sftp_file_exists" id="_sftp_file_exists">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_sftp_file_exists">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#74-77" title="Go to source code">sftp_file_exists</a>( <span>mixed <var>$path</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="sftp_ls" id="_sftp_ls">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_sftp_ls">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#78-80" title="Go to source code">sftp_ls</a>( <span>mixed <var>$path</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="sftp_is_dir" id="_sftp_is_dir">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_sftp_is_dir">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#81-83" title="Go to source code">sftp_is_dir</a>( <span>mixed <var>$path</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="mv" id="_mv">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_mv">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#84-91" title="Go to source code">mv</a>( <span>mixed <var>$from</var></span>, <span>mixed <var>$to</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="rm" id="_rm">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_rm">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#92-106" title="Go to source code">rm</a>( <span>mixed <var>$path</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="sendfile" id="_sendfile">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_sendfile">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#107-126" title="Go to source code">sendfile</a>( <span>mixed <var>$local_file</var></span>, <span>mixed <var>$remote_file</var></span>, <span>mixed <var>$mode</var> = <span class="php-num">0644</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="disconnect" id="_disconnect">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_disconnect">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#127-130" title="Go to source code">disconnect</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="auth_pub_file" id="_auth_pub_file">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_auth_pub_file">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#131-138" title="Go to source code">auth_pub_file</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="__destruct" id="___destruct">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___destruct">#</a>
+		<code><a href="source-class-Toknot.Tool.SSH2.html#139-143" title="Go to source code">__destruct</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>

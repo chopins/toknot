@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Class Toknot\Db\DbTableJoinObject | toknot</title>
+
+	<script type="text/javascript" src="resources/combined.js?934585053"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
+				<li><a href="namespace-None.html">None</a>
+						</li>
+				<li><a href="namespace-PHP.html">PHP</a>
+						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
+				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
+				<li><a href="namespace-Toknot.Config.html">Config</a>
+						</li>
+				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li class="active"><a href="namespace-Toknot.Db.html">Db<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Db.Driver.html">Driver</a>
+						</li>
+				<li><a href="namespace-Toknot.Db.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Di.html">Di</a>
+						</li>
+				<li><a href="namespace-Toknot.Exception.html">Exception</a>
+						</li>
+				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Process.Eception.html">Eception</a>
+						</li>
+				<li><a href="namespace-Toknot.Process.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Tool.html">Tool</a>
+						</li>
+				<li><a href="namespace-Toknot.User.html">User</a>
+						</li>
+				<li><a href="namespace-Toknot.View.html">View</a>
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-Toknot.Db.ActiveQuery.html">ActiveQuery</a></li>
+				<li><a href="class-Toknot.Db.ActiveRecord.html">ActiveRecord</a></li>
+				<li><a href="class-Toknot.Db.Connect.html">Connect</a></li>
+				<li><a href="class-Toknot.Db.DatabaseObject.html">DatabaseObject</a></li>
+				<li><a href="class-Toknot.Db.DbCRUD.html">DbCRUD</a></li>
+				<li><a href="class-Toknot.Db.DbTableColumn.html">DbTableColumn</a></li>
+				<li class="active"><a href="class-Toknot.Db.DbTableJoinObject.html">DbTableJoinObject</a></li>
+				<li><a href="class-Toknot.Db.DbTableObject.html">DbTableObject</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-Toknot.Db.html" title="Summary of Toknot\Db"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class DbTableJoinObject</h1>
+
+
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+			<a href="class-Toknot.Di.Object.html"><span>Toknot\Di\Object</span></a>
+			
+			 implements 
+				<a href="class-Iterator.html"><span>Iterator</span></a>, 
+			
+				<a href="class-Countable.html"><span>Countable</span></a>
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by" />
+			<a href="class-Toknot.Db.DbCRUD.html"><span>Toknot\Db\DbCRUD</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:60px">
+			<img src="resources/inherit.png" alt="Extended by" />
+<b><span>Toknot\Db\DbTableJoinObject</span></b>			
+			
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="info">
+		<b>Final</b><br />
+		
+		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Db.html">Db</a><br />
+		
+
+		<b>Located at</b> <a href="source-class-Toknot.Db.DbTableJoinObject.html#18-130" title="Go to source code">Toknot/Db/DbTableJoinObject.php</a><br />
+	</div>
+
+
+
+	<table class="summary" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Toknot.Db.DbTableJoinObject.html#25-45" title="Go to source code">__construct</a>( <span><code><a href="class-Toknot.Db.DbTableObject.html">Toknot\Db\DbTableObject</a></code> <var>$table1</var></span>, <span><code><a href="class-Toknot.Db.DbTableObject.html">Toknot\Db\DbTableObject</a></code> <var>$table2</var></span> )</code>
+
+		<div class="description short">
+			
+<p>join some table</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>join some table</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$table1</var></dt>
+					<dd><code><code><a href="class-Toknot.Db.DbTableObject.html">Toknot\Db\DbTableObject</a></code></code><br>$table1</dd>
+					<dt><var>$table2</var></dt>
+					<dd><code><code><a href="class-Toknot.Db.DbTableObject.html">Toknot\Db\DbTableObject</a></code></code><br>$table2</dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-InvalidArgumentException.html">InvalidArgumentException</a></code></code><br />
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="__get" id="___get">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___get">#</a>
+		<code><a href="source-class-Toknot.Db.DbTableJoinObject.html#47-51" title="Go to source code">__get</a>( <span>mixed <var>$name</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="tableON" id="_tableON">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_tableON">#</a>
+		<code><a href="source-class-Toknot.Db.DbTableJoinObject.html#53-79" title="Go to source code">tableON</a>( <span>string <var>$key1</var></span>, <span>string <var>$key2</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Set join condition of tables between of relationship, if set table alias,
+must be after invoke the method, usage at <code><a href="class-Toknot.Db.DbTableJoinObject.html#_find">Toknot\Db\DbTableJoinObject::find()</a></code></p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Set join condition of tables between of relationship, if set table alias,
+must be after invoke the method, usage at <code><a href="class-Toknot.Db.DbTableJoinObject.html#_find">Toknot\Db\DbTableJoinObject::find()</a></code></p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$key1</var></dt>
+					<dd><code>string</code><br>$key1 be linked key</dd>
+					<dt><var>$key2</var></dt>
+					<dd><code>string</code><br>$key2 be linked key</dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-InvalidArgumentException.html">InvalidArgumentException</a></code></code><br />
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="tableJOIN" id="_tableJOIN">
+
+		<td class="attributes"><code>
+			 protected 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_tableJOIN">#</a>
+		<code><a href="source-class-Toknot.Db.DbTableJoinObject.html#81-86" title="Go to source code">tableJOIN</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="bulidSQL" id="_bulidSQL">
+
+		<td class="attributes"><code>
+			 protected 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_bulidSQL">#</a>
+		<code><a href="source-class-Toknot.Db.DbTableJoinObject.html#88-101" title="Go to source code">bulidSQL</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="find" id="_find">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_find">#</a>
+		<code><a href="source-class-Toknot.Db.DbTableJoinObject.html#103-128" title="Go to source code">find</a>( <span>type <var>$start</var> = <span class="php-num">0</span></span>, <span>type <var>$limit</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			
+<p>get result by join relationship and set where statement(which is set on
+DbTableJoinObject::$where)</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>get result by join relationship and set where statement(which is set on
+DbTableJoinObject::$where)</p>
+
+<pre>
+<span class="php-var">$ar</span> = <span
+class="php-keyword1">new</span> create ActiveRecord()
+<span
+class="php-var">$db</span> = <span
+class="php-var">$ar</span>-&gt;connect();
+<span
+class="php-var">$joinTable</span> = <span
+class="php-var">$db</span>-&gt;tableJOIN(<span
+class="php-var">$db</span>-&gt;table1, <span
+class="php-var">$db</span>-&gt;table2);
+<span
+class="php-var">$joinTable</span>-&gt;table1-&gt;alias = <span
+class="php-quote">'a'</span>;
+<span
+class="php-var">$joinTable</span>-&gt;table2-&gt;alias = <span
+class="php-quote">'b'</span>;
+<span
+class="php-var">$joinTable</span>-&gt;tableON(<span
+class="php-var">$joinTable</span>-&gt;table1-&gt;Id, <span
+class="php-var">$joinTable</span>-&gt;table2-&gt;id);
+<span
+class="php-var">$joinTable</span>-&gt;where = <span
+class="php-quote">'a.id &gt; 5'</span>;   <span
+class="php-comment">//set where is table1 of id greater than 5</span>
+<span
+class="php-var">$joinTable</span>-&gt;order = ActiveQuery::ORDER_DESC;
+<span
+class="php-var">$joinTable</span>-&gt;orderBy = <span
+class="php-quote">'b.id'</span>;  <span
+class="php-comment">//set order by table2 of id</span>
+<span
+class="php-var">$joinTable</span>-&gt;find(<span
+class="php-num">10</span>);
+</pre>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$start</var></dt>
+					<dd><code>type</code><br>$start</dd>
+					<dt><var>$limit</var></dt>
+					<dd><code>type</code><br>$limit</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.Db.DbCRUD.html#methods">Toknot\Db\DbCRUD</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Db.DbCRUD.html#_create">create()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_delete">delete()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_exec">exec()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_fetch">fetch()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_readAll">readAll()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_readOne">readOne()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_update">update()</a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.Di.Object.html#methods">Toknot\Di\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Di.Object.html#___set">__set()</a>, 
+			<a href="class-Toknot.Di.Object.html#___singleton">__singleton()</a>, 
+			<a href="class-Toknot.Di.Object.html#_constructArgs">constructArgs()</a>, 
+			<a href="class-Toknot.Di.Object.html#_count">count()</a>, 
+			<a href="class-Toknot.Di.Object.html#_current">current()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getInstance">getInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
+			<a href="class-Toknot.Di.Object.html#_key">key()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
+			<a href="class-Toknot.Di.Object.html#_next">next()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
+			<a href="class-Toknot.Di.Object.html#_rewind">rewind()</a>, 
+			<a href="class-Toknot.Di.Object.html#_setPropertie">setPropertie()</a>, 
+			<a href="class-Toknot.Di.Object.html#_valid">valid()</a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="where" id="$where">
+		<td class="attributes"><code>
+			public  
+			integer
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DbTableJoinObject.html#23" title="Go to source code"><var>$where</var></a>
+		</td>
+		<td class="value"><code><span class="php-num">1</span></code></td>
+		<td class="description"><div>
+			<a href="#$where" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.Db.DbCRUD.html#properties">Toknot\Db\DbCRUD</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Db.DbCRUD.html#$connectInstance"><var>$connectInstance</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$dbDriverType"><var>$dbDriverType</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$dbINSType"><var>$dbINSType</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$fetchStyle"><var>$fetchStyle</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$order"><var>$order</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$orderBy"><var>$orderBy</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$queryResult"><var>$queryResult</var></a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.Di.Object.html#properties">Toknot\Di\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Di.Object.html#$interatorArray"><var>$interatorArray</var></a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>

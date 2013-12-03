@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Class Toknot\Db\DatabaseObject | toknot</title>
+
+	<script type="text/javascript" src="resources/combined.js?934585053"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
+				<li><a href="namespace-None.html">None</a>
+						</li>
+				<li><a href="namespace-PHP.html">PHP</a>
+						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
+				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
+				<li><a href="namespace-Toknot.Config.html">Config</a>
+						</li>
+				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li class="active"><a href="namespace-Toknot.Db.html">Db<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Db.Driver.html">Driver</a>
+						</li>
+				<li><a href="namespace-Toknot.Db.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Di.html">Di</a>
+						</li>
+				<li><a href="namespace-Toknot.Exception.html">Exception</a>
+						</li>
+				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Process.Eception.html">Eception</a>
+						</li>
+				<li><a href="namespace-Toknot.Process.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Tool.html">Tool</a>
+						</li>
+				<li><a href="namespace-Toknot.User.html">User</a>
+						</li>
+				<li><a href="namespace-Toknot.View.html">View</a>
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-Toknot.Db.ActiveQuery.html">ActiveQuery</a></li>
+				<li><a href="class-Toknot.Db.ActiveRecord.html">ActiveRecord</a></li>
+				<li><a href="class-Toknot.Db.Connect.html">Connect</a></li>
+				<li class="active"><a href="class-Toknot.Db.DatabaseObject.html">DatabaseObject</a></li>
+				<li><a href="class-Toknot.Db.DbCRUD.html">DbCRUD</a></li>
+				<li><a href="class-Toknot.Db.DbTableColumn.html">DbTableColumn</a></li>
+				<li><a href="class-Toknot.Db.DbTableJoinObject.html">DbTableJoinObject</a></li>
+				<li><a href="class-Toknot.Db.DbTableObject.html">DbTableObject</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-Toknot.Db.html" title="Summary of Toknot\Db"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class DatabaseObject</h1>
+
+
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+			<a href="class-Toknot.Di.Object.html"><span>Toknot\Di\Object</span></a>
+			
+			 implements 
+				<a href="class-Iterator.html"><span>Iterator</span></a>, 
+			
+				<a href="class-Countable.html"><span>Countable</span></a>
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by" />
+			<a href="class-Toknot.Db.DbCRUD.html"><span>Toknot\Db\DbCRUD</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:60px">
+			<img src="resources/inherit.png" alt="Extended by" />
+<b><span>Toknot\Db\DatabaseObject</span></b>			
+			
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="info">
+		<b>Final</b><br />
+		
+		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Db.html">Db</a><br />
+		
+
+		<b>Located at</b> <a href="source-class-Toknot.Db.DatabaseObject.html#22-156" title="Go to source code">Toknot/Db/DatabaseObject.php</a><br />
+	</div>
+
+
+
+	<table class="summary" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 protected 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#33-35" title="Go to source code">__construct</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setDbINSType" id="_setDbINSType">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setDbINSType">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#37-39" title="Go to source code">setDbINSType</a>( <span>mixed <var>$type</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="singleton" id="_singleton">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_singleton">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#41-43" title="Go to source code">singleton</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setConfig" id="_setConfig">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setConfig">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#44-54" title="Go to source code">setConfig</a>( <span>mixed <var>$config</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setDSN" id="_setDSN">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setDSN">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#56-58" title="Go to source code">setDSN</a>( <span>mixed <var>$dsn</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setUsername" id="_setUsername">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setUsername">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#60-62" title="Go to source code">setUsername</a>( <span>mixed <var>$username</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setPassword" id="_setPassword">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setPassword">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#64-66" title="Go to source code">setPassword</a>( <span>mixed <var>$password</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setDriverOptions" id="_setDriverOptions">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setDriverOptions">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#68-70" title="Go to source code">setDriverOptions</a>( <span>mixed <var>$driverOptions</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setConnectInstance" id="_setConnectInstance">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setConnectInstance">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#72-75" title="Go to source code">setConnectInstance</a>( <span><code><a href="class-Toknot.Db.Connect.html">Toknot\Db\Connect</a></code> <var>$connect</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="showTableList" id="_showTableList">
+
+		<td class="attributes"><code>
+			 public 
+			array
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_showTableList">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#77-98" title="Go to source code">showTableList</a>( )</code>
+
+		<div class="description short">
+			
+<p>get table list of the database</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>get table list of the database</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>array</code><br>table list<br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setPropertie" id="_setPropertie">
+
+		<td class="attributes"><code>
+			 protected 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setPropertie">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#100-103" title="Go to source code">setPropertie</a>( <span>string <var>$name</var></span>, <span>mixed <var>$value</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$name</var></dt>
+					<dd><code>string</code><br>$propertie</dd>
+					<dt><var>$value</var></dt>
+					<dd><code>mixed</code><br>$value</dd>
+				</dl></div>
+
+
+
+
+				<h4>Overrides</h4>
+				<div class="list"><code><a href="class-Toknot.Di.Object.html#_setPropertie">Toknot\Di\Object::setPropertie()</a></code></div>
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="__get" id="___get">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___get">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#105-119" title="Go to source code">__get</a>( <span>mixed <var>$propertie</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getDSN" id="_getDSN">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getDSN">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#121-123" title="Go to source code">getDSN</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="tableJOIN" id="_tableJOIN">
+
+		<td class="attributes"><code>
+			 public 
+			<code><a href="class-Toknot.Db.DbTableJoinObject.html">Toknot\Db\DbTableJoinObject</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_tableJOIN">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#125-143" title="Go to source code">tableJOIN</a>( <span><code><a href="class-Toknot.Db.DbTableObject.html">Toknot\Db\DbTableObject</a></code> <var>$table1</var></span>, <span><code><a href="class-Toknot.Db.DbTableObject.html">Toknot\Db\DbTableObject</a></code> <var>$table2</var></span> )</code>
+
+		<div class="description short">
+			
+<p>left join some tables for prepared query</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>left join some tables for prepared query</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$table1</var></dt>
+					<dd><code><code><a href="class-Toknot.Db.DbTableObject.html">Toknot\Db\DbTableObject</a></code></code><br>$table1</dd>
+					<dt><var>$table2</var></dt>
+					<dd><code><code><a href="class-Toknot.Db.DbTableObject.html">Toknot\Db\DbTableObject</a></code></code><br>$table2</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Db.DbTableJoinObject.html">Toknot\Db\DbTableJoinObject</a></code></code><br>return an instance of DbTableJoinObject<br />
+				</div>
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-InvalidArgumentException.html">InvalidArgumentException</a></code></code><br />
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="createTable" id="_createTable">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_createTable">#</a>
+		<code><a href="source-class-Toknot.Db.DatabaseObject.html#145-154" title="Go to source code">createTable</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.Db.DbCRUD.html#methods">Toknot\Db\DbCRUD</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Db.DbCRUD.html#_create">create()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_delete">delete()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_exec">exec()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_fetch">fetch()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_readAll">readAll()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_readOne">readOne()</a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#_update">update()</a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.Di.Object.html#methods">Toknot\Di\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Di.Object.html#___set">__set()</a>, 
+			<a href="class-Toknot.Di.Object.html#___singleton">__singleton()</a>, 
+			<a href="class-Toknot.Di.Object.html#_constructArgs">constructArgs()</a>, 
+			<a href="class-Toknot.Di.Object.html#_count">count()</a>, 
+			<a href="class-Toknot.Di.Object.html#_current">current()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getInstance">getInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
+			<a href="class-Toknot.Di.Object.html#_key">key()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
+			<a href="class-Toknot.Di.Object.html#_next">next()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
+			<a href="class-Toknot.Di.Object.html#_rewind">rewind()</a>, 
+			<a href="class-Toknot.Di.Object.html#_valid">valid()</a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+	<table class="summary" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="dsn" id="$dsn">
+		<td class="attributes"><code>
+			protected  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DatabaseObject.html#24" title="Go to source code"><var>$dsn</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$dsn" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="username" id="$username">
+		<td class="attributes"><code>
+			protected  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DatabaseObject.html#25" title="Go to source code"><var>$username</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$username" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="password" id="$password">
+		<td class="attributes"><code>
+			protected  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DatabaseObject.html#26" title="Go to source code"><var>$password</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$password" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="driverOptions" id="$driverOptions">
+		<td class="attributes"><code>
+			protected  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DatabaseObject.html#28" title="Go to source code"><var>$driverOptions</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$driverOptions" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="tablePrefix" id="$tablePrefix">
+		<td class="attributes"><code>
+			protected  
+			string
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DatabaseObject.html#29" title="Go to source code"><var>$tablePrefix</var></a>
+		</td>
+		<td class="value"><code><span class="php-quote">''</span></code></td>
+		<td class="description"><div>
+			<a href="#$tablePrefix" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="tableValueList" id="$tableValueList">
+		<td class="attributes"><code>
+			protected  
+			array
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DatabaseObject.html#30" title="Go to source code"><var>$tableValueList</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">array</span>()</code></td>
+		<td class="description"><div>
+			<a href="#$tableValueList" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="databaseStructInfoCache" id="$databaseStructInfoCache">
+		<td class="attributes"><code>
+			protected  
+			string
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DatabaseObject.html#31" title="Go to source code"><var>$databaseStructInfoCache</var></a>
+		</td>
+		<td class="value"><code><span class="php-quote">''</span></code></td>
+		<td class="description"><div>
+			<a href="#$databaseStructInfoCache" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="databaseCacheExpire" id="$databaseCacheExpire">
+		<td class="attributes"><code>
+			protected  
+			integer
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Db.DatabaseObject.html#32" title="Go to source code"><var>$databaseCacheExpire</var></a>
+		</td>
+		<td class="value"><code><span class="php-num">100</span></code></td>
+		<td class="description"><div>
+			<a href="#$databaseCacheExpire" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.Db.DbCRUD.html#properties">Toknot\Db\DbCRUD</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Db.DbCRUD.html#$connectInstance"><var>$connectInstance</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$dbDriverType"><var>$dbDriverType</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$dbINSType"><var>$dbINSType</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$fetchStyle"><var>$fetchStyle</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$order"><var>$order</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$orderBy"><var>$orderBy</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$queryResult"><var>$queryResult</var></a>, 
+			<a href="class-Toknot.Db.DbCRUD.html#$where"><var>$where</var></a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.Di.Object.html#properties">Toknot\Di\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Di.Object.html#$interatorArray"><var>$interatorArray</var></a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>

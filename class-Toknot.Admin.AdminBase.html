@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Class Toknot\Admin\AdminBase | toknot</title>
+
+	<script type="text/javascript" src="resources/combined.js?934585053"></script>
+	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li><a href="namespace-AppAdmin.html">AppAdmin<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-AppAdmin.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
+				<li><a href="namespace-None.html">None</a>
+						</li>
+				<li><a href="namespace-PHP.html">PHP</a>
+						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller</a>
+						</li>
+							</ul></li>
+				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
+						<ul>
+				<li class="active"><a href="namespace-Toknot.Admin.html">Admin</a>
+						</li>
+				<li><a href="namespace-Toknot.Config.html">Config</a>
+						</li>
+				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Db.html">Db<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Db.Driver.html">Driver</a>
+						</li>
+				<li><a href="namespace-Toknot.Db.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Di.html">Di</a>
+						</li>
+				<li><a href="namespace-Toknot.Exception.html">Exception</a>
+						</li>
+				<li><a href="namespace-Toknot.Http.html">Http<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Http.TransportsException.html">TransportsException</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Process.html">Process<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Process.Eception.html">Eception</a>
+						</li>
+				<li><a href="namespace-Toknot.Process.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Tool.html">Tool</a>
+						</li>
+				<li><a href="namespace-Toknot.User.html">User</a>
+						</li>
+				<li><a href="namespace-Toknot.View.html">View</a>
+						</li>
+							</ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-Toknot.Admin.AdminBase.html">AdminBase</a></li>
+				<li><a href="class-Toknot.Admin.AdminOpreatePage.html">AdminOpreatePage</a></li>
+				<li><a href="class-Toknot.Admin.Login.html">Login</a></li>
+				<li><a href="class-Toknot.Admin.Menu.html">Menu</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-Toknot.Admin.html" title="Summary of Toknot\Admin"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class AdminBase</h1>
+
+
+	<div class="description">
+	
+<p>Admin module base class for user's admin application</p>
+
+	</div>
+
+	<dl class="tree">
+		<dd style="padding-left:0px">
+			<a href="class-Toknot.Di.Object.html"><span>Toknot\Di\Object</span></a>
+			
+			 implements 
+				<a href="class-Iterator.html"><span>Iterator</span></a>, 
+			
+				<a href="class-Countable.html"><span>Countable</span></a>
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by" />
+			<a href="class-Toknot.User.UserAccessControl.html"><span>Toknot\User\UserAccessControl</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:60px">
+			<img src="resources/inherit.png" alt="Extended by" />
+			<a href="class-Toknot.User.ClassAccessControl.html"><span>Toknot\User\ClassAccessControl</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:90px">
+			<img src="resources/inherit.png" alt="Extended by" />
+<b><span>Toknot\Admin\AdminBase</span></b>			
+			
+			
+		</dd>
+	</dl>
+
+
+	<div>
+		<h4>Direct known subclasses</h4>
+			<a href="class-AppAdmin.Controller.Index.html">AppAdmin\Controller\Index</a>, 
+			<a href="class-Toknot.Admin.Login.html">Toknot\Admin\Login</a>
+	</div>
+
+	<div>
+		<h4>Indirect known subclasses</h4>
+			<a href="class-AppAdmin.Controller.User.Login.html">AppAdmin\Controller\User\Login</a>, 
+			<a href="class-AppAdmin.Controller.User.Logout.html">AppAdmin\Controller\User\Logout</a>
+	</div>
+
+
+
+
+
+	<div class="info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Admin.html">Admin</a><br />
+		
+
+		<b>Located at</b> <a href="source-class-Toknot.Admin.AdminBase.html#22-198" title="Go to source code">Toknot/Admin/AdminBase.php</a><br />
+	</div>
+
+
+
+	<table class="summary" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Toknot.Admin.AdminBase.html#78-99" title="Go to source code">__construct</a>( <span><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> <var>$FMAI</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="commonTplVarSet" id="_commonTplVarSet">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_commonTplVarSet">#</a>
+		<code><a href="source-class-Toknot.Admin.AdminBase.html#101-108" title="Go to source code">commonTplVarSet</a>( )</code>
+
+		<div class="description short">
+			
+<p>set view value</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>set view value</p>
+
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="initDatabase" id="_initDatabase">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_initDatabase">#</a>
+		<code><a href="source-class-Toknot.Admin.AdminBase.html#110-135" title="Go to source code">initDatabase</a>( )</code>
+
+		<div class="description short">
+			
+<p>init database connect</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>init database connect</p>
+
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="loadAdminConfig" id="_loadAdminConfig">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_loadAdminConfig">#</a>
+		<code><a href="source-class-Toknot.Admin.AdminBase.html#137-148" title="Go to source code">loadAdminConfig</a>( )</code>
+
+		<div class="description short">
+			
+<p>load admin application config</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>load admin application config</p>
+
+
+
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Exception.FileIOException.html">Toknot\Exception\FileIOException</a></code></code><br />
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="CLI" id="_CLI">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_CLI">#</a>
+		<code><a href="source-class-Toknot.Admin.AdminBase.html#150-155" title="Go to source code">CLI</a>( )</code>
+
+		<div class="description short">
+			
+<p>if CLI run, redirect to GET</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>if CLI run, redirect to GET</p>
+
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="checkUserLogin" id="_checkUserLogin">
+
+		<td class="attributes"><code>
+			 public 
+			<code><a href="class-Toknot.User.Nobody.html">Toknot\User\Nobody</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_checkUserLogin">#</a>
+		<code><a href="source-class-Toknot.Admin.AdminBase.html#157-179" title="Go to source code">checkUserLogin</a>( )</code>
+
+		<div class="description short">
+			
+<p>Check current visiter whether logined</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Check current visiter whether logined</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.User.Nobody.html">Toknot\User\Nobody</a></code></code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setAdminLogin" id="_setAdminLogin">
+
+		<td class="attributes"><code>
+			 protected 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setAdminLogin">#</a>
+		<code><a href="source-class-Toknot.Admin.AdminBase.html#181-196" title="Go to source code">setAdminLogin</a>( <span><code><a href="class-Toknot.User.UserAccessControl.html">Toknot\User\UserAccessControl</a></code> <var>$user</var></span> )</code>
+
+		<div class="description short">
+			
+<p>Set user login</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Set user login</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$user</var></dt>
+					<dd><code><code><a href="class-Toknot.User.UserAccessControl.html">Toknot\User\UserAccessControl</a></code></code><br>$user</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.User.ClassAccessControl.html#methods">Toknot\User\ClassAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.ClassAccessControl.html#___toString">__toString()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_changeClassGroup">changeClassGroup()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_changeClassPermissions">changeClassPermissions()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_checkChange">checkChange()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_checkRead">checkRead()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_checkWrite">checkWrite()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_getClassType">getClassType()</a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.User.UserAccessControl.html#methods">Toknot\User\UserAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.UserAccessControl.html#_bestHashAlgos">bestHashAlgos()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_checkUserFlag">checkUserFlag()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_generateUserFlag">generateUserFlag()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getGid">getGid()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getGroup">getGroup()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getHashInfo">getHashInfo()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getLogin">getLogin()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getTextHash">getTextHash()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getTextHashCleanSalt">getTextHashCleanSalt()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getUid">getUid()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getUserName">getUserName()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getUserRemoteAddress">getUserRemoteAddress()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_hashPassword">hashPassword()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_verifyHash">verifyHash()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_verifyPassword">verifyPassword()</a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.Di.Object.html#methods">Toknot\Di\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Di.Object.html#___set">__set()</a>, 
+			<a href="class-Toknot.Di.Object.html#___singleton">__singleton()</a>, 
+			<a href="class-Toknot.Di.Object.html#_constructArgs">constructArgs()</a>, 
+			<a href="class-Toknot.Di.Object.html#_count">count()</a>, 
+			<a href="class-Toknot.Di.Object.html#_current">current()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getInstance">getInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
+			<a href="class-Toknot.Di.Object.html#_key">key()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
+			<a href="class-Toknot.Di.Object.html#_next">next()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
+			<a href="class-Toknot.Di.Object.html#_rewind">rewind()</a>, 
+			<a href="class-Toknot.Di.Object.html#_setPropertie">setPropertie()</a>, 
+			<a href="class-Toknot.Di.Object.html#_valid">valid()</a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+	<table class="summary inherited">
+	<caption>Constants inherited from <a href="class-Toknot.User.ClassAccessControl.html#constants">Toknot\User\ClassAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.ClassAccessControl.html#CLASS_READ"><b>CLASS_READ</b></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#CLASS_UPDATE"><b>CLASS_UPDATE</b></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#CLASS_WRITE"><b>CLASS_WRITE</b></a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Constants inherited from <a href="class-Toknot.User.UserAccessControl.html#constants">Toknot\User\UserAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.UserAccessControl.html#PASSWORD_SALT"><b>PASSWORD_SALT</b></a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+	<table class="summary" id="properties">
+	<caption>Properties summary</caption>
+	<tr data-order="permissions" id="$permissions">
+		<td class="attributes"><code>
+			protected  
+			integer
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Admin.AdminBase.html#27-33" title="Go to source code"><var>$permissions</var></a>
+		</td>
+		<td class="value"><code><span class="php-num">0770</span></code></td>
+		<td class="description"><div>
+			<a href="#$permissions" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>the controller permission, 8bit number like uninx</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>the controller permission, 8bit number like uninx</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="FMAI" id="$FMAI">
+		<td class="attributes"><code>
+			protected static 
+			<code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code>
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Admin.AdminBase.html#35-42" title="Go to source code"><var>$FMAI</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$FMAI" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> instance</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> instance</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="AR" id="$AR">
+		<td class="attributes"><code>
+			protected  
+			<code><a href="class-Toknot.Db.ActiveRecord.html">Toknot\Db\ActiveRecord</a></code>
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Admin.AdminBase.html#44-50" title="Go to source code"><var>$AR</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$AR" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p><code><a href="class-Toknot.Db.ActiveRecord.html">Toknot\Db\ActiveRecord</a></code> instance</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p><code><a href="class-Toknot.Db.ActiveRecord.html">Toknot\Db\ActiveRecord</a></code> instance</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="CFG" id="$CFG">
+		<td class="attributes"><code>
+			protected static 
+			<code><a href="class-Toknot.Di.ArrayObject.html">Toknot\Di\ArrayObject</a></code>
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Admin.AdminBase.html#52-59" title="Go to source code"><var>$CFG</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$CFG" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>Object of the configure data</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>Object of the configure data</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="dbConnect" id="$dbConnect">
+		<td class="attributes"><code>
+			protected  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Admin.AdminBase.html#61-67" title="Go to source code"><var>$dbConnect</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$dbConnect" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p>The database connect instance of <code><a href="class-Toknot.Db.DatabaseObject.html">Toknot\Db\DatabaseObject</a></code>, if use
+multi-database, the property will is array store connect instance</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p>The database connect instance of <code><a href="class-Toknot.Db.DatabaseObject.html">Toknot\Db\DatabaseObject</a></code>, if use
+multi-database, the property will is array store connect instance</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="SESSION" id="$SESSION">
+		<td class="attributes"><code>
+			protected  
+			<code><a href="class-Toknot.User.Session.html">Toknot\User\Session</a></code>
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Admin.AdminBase.html#69-74" title="Go to source code"><var>$SESSION</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$SESSION" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p><code><a href="class-Toknot.User.Session.html">Toknot\User\Session</a></code> instance</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p><code><a href="class-Toknot.User.Session.html">Toknot\User\Session</a></code> instance</p>
+
+
+			</div>
+		</div></td>
+	</tr>
+	<tr data-order="currentUser" id="$currentUser">
+		<td class="attributes"><code>
+			protected  
+			mixed
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Admin.AdminBase.html#76" title="Go to source code"><var>$currentUser</var></a>
+		</td>
+		<td class="value"><code><span class="php-keyword1">null</span></code></td>
+		<td class="description"><div>
+			<a href="#$currentUser" class="anchor">#</a>
+
+			<div class="description short">
+				
+			</div>
+
+			<div class="description detailed hidden">
+				
+
+			</div>
+		</div></td>
+	</tr>
+	</table>
+
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.User.ClassAccessControl.html#properties">Toknot\User\ClassAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.ClassAccessControl.html#$classType"><var>$classType</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$gid"><var>$gid</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$group"><var>$group</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$uid"><var>$uid</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$userName"><var>$userName</var></a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.User.UserAccessControl.html#properties">Toknot\User\UserAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.UserAccessControl.html#$enableAdmin"><var>$enableAdmin</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$groupName"><var>$groupName</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$hashAlgo"><var>$hashAlgo</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$hashSalt"><var>$hashSalt</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$useHashFunction"><var>$useHashFunction</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$userFlag"><var>$userFlag</var></a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.Di.Object.html#properties">Toknot\Di\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Di.Object.html#$interatorArray"><var>$interatorArray</var></a>
+		</code></td>
+	</tr>
+	</table>
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>
