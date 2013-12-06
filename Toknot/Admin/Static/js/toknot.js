@@ -649,6 +649,15 @@ if (typeof TK == 'undefined') {
                         return this.style.cssText = value;
                     this.setAttribute('style', value);
                 },
+                setOpacity : function(num) {
+                    num = navigator.IE ? num : num / 100;
+                    return navigator.IE ? this.setStyle("filter","alpha(opacity=" + num + ");") : this.setStyle('opacity',num);
+                },
+                appendCss : function(value) {
+                    if (navigator.IE)
+                        return this.style.cssText = this.style.cssText + value;
+                    this.setAttribute('style', this.getAttribute('style') + value);
+                },
                 //获取元素style属性中指定名字的值
                 getStyle: function(ns) {
                     ns = this.convStyleName(ns);
@@ -2395,6 +2404,7 @@ if (typeof TK == 'undefined') {
             num = navigator.IE ? num : num / 100;
             return navigator.IE ? "filter:alpha(opacity=" + num + ");" : 'opacity:' + num;
         },
+        
         /**
          * 页面cover对象
          */
