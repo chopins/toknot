@@ -301,7 +301,7 @@ if (typeof TK == 'undefined') {
         },
         keyUp: function() {
             this.key = function(key, func) {
-                TK.addKeyListener(key, func, 'keyupnn');
+                TK.addKeyListener(key, func, 'keyup');
             };
             return TK.keyboardEventRegisterController(this);
         },
