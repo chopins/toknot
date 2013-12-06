@@ -41,10 +41,15 @@ if (typeof TK == 'undefined') {
             throw new Error(str);
         };
         console.log = function(str) {
-            };
+            throw new Error(str);
+        };
     }
     ;
     navigator.IE = typeof ActiveXObject == 'undefined' ? false : true;
+    navigator.ugent = navigator.userAgent.toLowerCase()
+    navigator.FIREFOX = /firefox/.test(navigator.ugent);
+    navigator.WEBKIT = /webkit/.test(navigator.ugent);
+    navigator.IEV =  navigator.IE && !document.documentMode ? 6 : document.documentMode;
     var TK = {
         doc: window.document,
         bodyNode: window.document.body, //TK.$(ele)方法返回对象的父对象
@@ -69,15 +74,13 @@ if (typeof TK == 'undefined') {
         //窗口滚动事件注册函数列表
         windowScrollEventCallFunctionList: [],
         windowResizeCallFunctionList: [],
-        IEV: navigator.IE && !document.documentMode ? 6 : document.documentMode,
         createNode: function(t) {
             return TK.$(TK.doc.createElement(t));
         },
-        FIREFOX: /.*{firefox}\/([\w.]+).*/.test(this.ugent),
-        WEBKIT: /(Webkit)/i.test(this.ugent),
         jsPath: function(cidx) {
             var scripts = TK.doc.scripts;
-            if(!cidx) cidx = scripts.length - 1;
+            if (!cidx)
+                cidx = scripts.length - 1;
             var shash = scripts[cidx].src.lastIndexOf("/");
             if (shash < 0)
                 return '';
@@ -94,8 +97,8 @@ if (typeof TK == 'undefined') {
             INPUT_IMAGE: 8,
             INPUT_SELECT: 9
         },
-        require : function(fs,bodyEnd) {
-            return TK.loadJSFile(fs,bodyEnd);
+        require: function(fs, bodyEnd) {
+            return TK.loadJSFile(fs, bodyEnd);
         },
         loadJSFile: function(fs, bodyEnd) {
             var f = TK.createNode('script');
@@ -177,7 +180,6 @@ if (typeof TK == 'undefined') {
             };
         },
         readyFunctionList: [],
-
         /**
          * Page load ready after call function
          *
@@ -188,7 +190,7 @@ if (typeof TK == 'undefined') {
             TK.readyFunctionList.push(func);
             TK.init();
         },
-        getURIHash : function() {
+        getURIHash: function() {
             var hash = window.location.hash.substr(1);
             return hash;
         },
@@ -249,7 +251,8 @@ if (typeof TK == 'undefined') {
             e = e || event, k = e.keyCode, fL = TK.keyList[e.type];
             for (var key in fL)
                 key != '' && k == key && fL[k](e);
-            if(fL['any']) fL['any'](e);
+            if (fL['any'])
+                fL['any'](e);
         },
         addKeyListener: function(key, func, type) {
             TK.keyList[type][key] = func;
@@ -287,7 +290,7 @@ if (typeof TK == 'undefined') {
                 right: function(func) {
                     obj.key(39, func);
                 },
-                any : function(func) {
+                any: function(func) {
                     obj.key('any', func);
                 },
                 key: obj.key
@@ -312,44 +315,44 @@ if (typeof TK == 'undefined') {
                     return TK.addMouseClickCallFunction(func, type, 0) - 1;
                 },
                 right: function(func) {
-                    return TK.addMouseClickCallFunction(func, type, 2) -1;
+                    return TK.addMouseClickCallFunction(func, type, 2) - 1;
                 },
                 middle: function(func) {
-                    return TK.addMouseClickCallFunction(func, type, 1) -1;
+                    return TK.addMouseClickCallFunction(func, type, 1) - 1;
                 },
                 any: function(func) {
-                    return TK.addMouseClickCallFunction(func, type, 3) -1;
+                    return TK.addMouseClickCallFunction(func, type, 3) - 1;
                 }
             };
         },
-        delMouseEventFunction : function(type, idx,button) {
-            if(type == 'mouseover' || type == 'mouseout') {
+        delMouseEventFunction: function(type, idx, button) {
+            if (type == 'mouseover' || type == 'mouseout') {
                 delete TK.bodyMouseEventCallFuncitonList[type][idx];
             } else {
-                switch(button) {
+                switch (button) {
                     case 'left':
-                    button = 0;
-                    break;
+                        button = 0;
+                        break;
                     case 'right':
-                    button = 2;
-                    break;
+                        button = 2;
+                        break;
                     case 'middle':
-                    button = 1;
-                    break;
+                        button = 1;
+                        break;
                     case 'any':
                     default:
-                    button = 3;
-                    break;
+                        button = 3;
+                        break;
                 }
                 delete TK.bodyMouseEventCallFuncitonList[type][button][idx];
             }
         },
         mouseover: function(func, eventObj) {
             func.eventObj = eventObj;
-            return TK.addMouseMoveCallFunction(func, 'mouseover') -1;
+            return TK.addMouseMoveCallFunction(func, 'mouseover') - 1;
         },
         mouseout: function(func, eventObj) {
-            return TK.addMouseMoveCallFunction(func, 'mouseout', eventObj)-1;
+            return TK.addMouseMoveCallFunction(func, 'mouseout', eventObj) - 1;
         },
         mousedown: function() {
             return TK.addMouseEventController('mousedown');
@@ -610,7 +613,7 @@ if (typeof TK == 'undefined') {
                 },
                 //移除指定样式名
                 removeClass: function(cls) {
-                    if(this.className == cls) {
+                    if (this.className == cls) {
                         return this.className = '';
                     }
                     if (this.hasClass(cls)) {
@@ -618,10 +621,10 @@ if (typeof TK == 'undefined') {
                         this.className = this.className.replace(reg, '');
                     }
                 },
-                replaceClass : function(oldCls, newCls) {
-                    if(this.hasClass(oldCls)) {
-                        var reg = new RegExp('(\\s|^)'+oldCls + '(\\s|$)');
-                        this.className = this.className.replace(reg,' '+newCls+' ').trim();
+                replaceClass: function(oldCls, newCls) {
+                    if (this.hasClass(oldCls)) {
+                        var reg = new RegExp('(\\s|^)' + oldCls + '(\\s|$)');
+                        this.className = this.className.replace(reg, ' ' + newCls + ' ').trim();
                     } else {
                         this.addClass(newCls);
                     }
@@ -906,7 +909,7 @@ if (typeof TK == 'undefined') {
                                 pop.toPos(pos.x + pos.w - popPos.w, pos.y + pos.h);
                                 return;
                             case 3: //左侧居上
-                                pop.toPos(pos.x,pos.y);
+                                pop.toPos(pos.x, pos.y);
                                 return;
                             case 4: //右侧居内
                                 var w = pop.getStyle('width').replace(/[A-za-z]+/i, '');
@@ -944,7 +947,7 @@ if (typeof TK == 'undefined') {
                     setPos(direct);
                 },
                 //放大图片
-                maxImg: function(cls, bsrc,altShow, altClose) {
+                maxImg: function(cls, bsrc, altShow, altClose) {
                     if (this.tag != 'img')
                         return;
                     this.setAttribute('title', altShow);
@@ -1205,41 +1208,59 @@ if (typeof TK == 'undefined') {
                 destroy: function() {
                     this.parentNode.removeChild(this);
                     delete this;
-                },
-                //获取当前输入区，光标偏移量
-                getCursorOffset: function() {
-                    if (this.selectionStart)
-                        return this.selectionStart;
-                    if (TK.doc.selection) {
-                        var selectionObj = TK.doc.selection.createRange();
-                        selectionObj.moveStart('character', -this.value.length);
-                        return selectionObj.text.length;
-                    }
-                    return 0;
-                },
-                //设置光标偏移量
-                setCursorOffset: function(offset, start) {
-                    var start = 0;
-                    if (TK.doc.hasFocus() && this == TK.getFocusNode())
-                        start = this.getCursorOffset();
-                    else
-                        this.focus();
-                    var pos = start + offset;
-                    if (this.setSelectionRange)
-                        this.setSelectionRange(pos, pos);
-                    if (this.createTextRange) {
-                        var rangeObj = this.createTextRange();
-                        rangeObj.collapse(true);
-                        rangeObj.moveEnd('character', pos);
-                        rangeObj.moveStart('character', pos);
-                        rangeObj.select();
-                        this.focus();
-                    }
                 }
             };
             for (var fn in __extend)
                 __element[fn] = __extend[fn];
             return __element;
+        },
+        //设置光标偏移量
+        setCursorOffset: function(offset, start) {
+            if (!TK.doc.hasFocus()) {
+                return;
+            }
+            if (start) {
+                offset = offset + start;
+            }
+            var focusNode = TK.getFocusNode();
+            if (window.getSelection()) {
+                cur = TK.getCursorOffset();
+                var s = window.getSelection();
+                s.collapse(focusNode, offset);
+                return;
+            }
+            if (TK.doc.createTextRange) {
+                var rangeObj = TK.doc.createTextRange();
+                rangeObj.collapse(true);
+                rangeObj.moveEnd('character', pos);
+                rangeObj.moveStart('character', pos);
+                rangeObj.select();
+            }
+        },
+        addCursorSelect: function(start, offset) {
+            if (!TK.doc.hasFocus()) {
+                return;
+            }
+            if (window.getSelection()) {
+                var s = window.getSelection();
+                var focusNode = TK.getFocusNode();
+                var range = TK.doc.createRange();
+                range.setStart(focusNode, start);
+                range.setEnd(focusNode, start + offset);
+                range.selectNode(focusNode);
+                s.addRange(range);
+            }
+        },
+        //获取当前输入区，光标偏移量
+        getCursorOffset: function() {
+            if (window.getSelection)
+                return window.getSelection().getRangeAt(0).startOffset;
+            if (TK.doc.selection) {
+                var selectionObj = TK.doc.selection.createRange();
+                selectionObj.moveStart('character', -this.value.length);
+                return selectionObj.text.length;
+            }
+            return 0;
         },
         /**
          *  AJAX对象
@@ -1280,7 +1301,7 @@ if (typeof TK == 'undefined') {
             waitTime: 10000,
             outObj: [],
             formObj: null,
-            reponseContentType : null,
+            reponseContentType: null,
             messageList: {
                 start: '',
                 complete: '',
@@ -1304,7 +1325,7 @@ if (typeof TK == 'undefined') {
             },
             setUrl: function(url) {
                 if (url.substr(0, 4).toLowerCase() != 'http://' &&
-                    url.substr(0, 5).toLowerCase() != 'https://') {
+                        url.substr(0, 5).toLowerCase() != 'https://') {
                     var protocol = window.location.protocol == "https:" ? 'https' : 'http';
                     url = protocol + '://' + TK.Ajax.defaultDomain + url;
                 }
@@ -1530,8 +1551,8 @@ if (typeof TK == 'undefined') {
                         }
                         if (TK.Ajax.openInstance[openId].method == 'TRACE') {
                             TK.Ajax.openInstance[openId].callFunc(
-                                TK.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders(),
-                                TK.Ajax.openInstance[openId].XMLHttp.responseText);
+                                    TK.Ajax.openInstance[openId].XMLHttp.getAllResponseHeaders(),
+                                    TK.Ajax.openInstance[openId].XMLHttp.responseText);
                             return null;
                         }
                         if (TK.Ajax.openInstance[openId].XMLHttp.status == 200) {
@@ -1558,7 +1579,7 @@ if (typeof TK == 'undefined') {
                             }
                             if (TK.Ajax.openInstance[openId].callFunc) {
                                 TK.Ajax.openInstance[openId].callFunc(reData);
-                            /*try { TK.Ajax.openInstance[openId].callFunc(reData);
+                                /*try { TK.Ajax.openInstance[openId].callFunc(reData);
                                  } catch(e) {
                                  console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
                                  }*/
@@ -1947,10 +1968,10 @@ if (typeof TK == 'undefined') {
             var str = TK.repeat('0', bit);
             return num < max ? str + num : num;
         },
-        dateStatic : [0],
+        dateStatic: [0],
         date: function(time, cache) {
             var seconds = '00';
-            if(TK.dateStatic[0] == 0) {
+            if (TK.dateStatic[0] == 0) {
                 var d = time ? new Date(time) : new Date;
                 var month = TK.preZero(d.getMonth() + 1);
                 var date = TK.preZero(d.getDate());
@@ -1961,7 +1982,7 @@ if (typeof TK == 'undefined') {
                 TK.dateStatic[0] = 59 - sec;
                 TK.dateStatic[1] = d.getFullYear() + '-' + month + '-' + date + ' ' + hours + ':' + minutes + ':';
             } else {
-                if(cache) {
+                if (cache) {
                     TK.dateStatic[0]--;
                     sec = 59 - TK.dateStatic[0];
                 } else {
@@ -2087,7 +2108,7 @@ if (typeof TK == 'undefined') {
                     inputItem.innerHTML = inputList[i].value;
                 } else if (inputList[i].type == 'select') {
                     inputItem = TK.selectDiv(inputList[i].value, inputList[i].name,
-                        '', '', inputList[i].cls);
+                            '', '', inputList[i].cls);
                 } else {
                     inputItem = input.copyNode(true);
                     inputItem.setAttribute('type', inputList[i].type);
@@ -2665,7 +2686,7 @@ if (typeof TK == 'undefined') {
             var searchNear = function(arr, na) {
                 for (var k in arr) {
                     if (arr[k][0] + 5 > na[0] && arr[k][0] - 5 < na[0] &&
-                        arr[k][1] + 5 > na[1] && arr[k][1] - 5 < na[1]) {
+                            arr[k][1] + 5 > na[1] && arr[k][1] - 5 < na[1]) {
                         return k;
                     }
                 }
@@ -2775,10 +2796,10 @@ if (typeof TK == 'undefined') {
         version: 0.6
     };
     window.onbeforeunload = TK.unloadExec;
-    if(typeof $ == 'undefined') {
+    if (typeof $ == 'undefined') {
         window.$ = TK.$;
     }
-    if(typeof require == 'undefined') {
+    if (typeof require == 'undefined') {
         window.require = TK.loadJSFile;
     }
 }
