@@ -152,8 +152,22 @@ if (typeof TK == 'undefined') {
                 return TK.unloadExecMessage;
             delete TK;
         },
-        error: function(msg) {
+                
+        /**
+         * 
+         * @param {String} msg
+         * @returns {void}
+         */   
+        log : function(msg) {
             console.log(msg);
+        },
+        /**
+         * 
+         * @param {String} msg
+         * @returns {void}
+         */
+        error: function(msg) {
+            console.error(msg);
         },
         init: function() {
             window.onload = function() {
@@ -184,7 +198,7 @@ if (typeof TK == 'undefined') {
          * Page load ready after call function
          *
          * @param {type} func
-         * @returns {undefined}
+         * @returns {void}
          */
         ready: function(func) {
             TK.readyFunctionList.push(func);
@@ -359,6 +373,9 @@ if (typeof TK == 'undefined') {
         },
         mouseup: function() {
             return TK.addMouseEventController('mouseup');
+        },
+        click : function() {
+            return TK.addMouseEventController('click');
         },
         setTimeout: function(func, time) {
             var id = window.setTimeout(func, time);
@@ -661,13 +678,13 @@ if (typeof TK == 'undefined') {
                 //获取元素style属性中指定名字的值
                 getStyle: function(ns) {
                     ns = this.convStyleName(ns);
-                    if (this.style[ns])
-                        return this.style[ns];
-                    if (this.currentStyle)
-                        return this.currentStyle[ns];
                     if (TK.doc.defaultView)
                         return TK.doc.defaultView.getComputedStyle(this, null)[ns];
-                    return false;
+                    if (this.currentStyle) 
+                        return this.currentStyle[ns];
+                    if (this.style[ns])
+                        return this.style[ns];
+                    return null;
                 },
                 convStyleName: function(ns) {
                     var b = ns.strpos('-');
@@ -1248,7 +1265,7 @@ if (typeof TK == 'undefined') {
         },
         addCursorSelect: function(start, offset) {
             if (!TK.doc.hasFocus()) {
-                return;
+                return false;
             }
             if (window.getSelection()) {
                 var s = window.getSelection();
