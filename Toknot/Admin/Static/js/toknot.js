@@ -1,4 +1,5 @@
 if (typeof TK == 'undefined') {
+    "use strict";
     String.prototype.isEmail = function() {
         return /^([a-z0-9+_]|\-|\.)+@(([a-z0-9_]|\-)+\.)+[a-z]{2,6}$/.test(this);
     };
@@ -47,7 +48,7 @@ if (typeof TK == 'undefined') {
     ;
     navigator.IE = typeof ActiveXObject == 'undefined' ? false : true;
     navigator.ugent = navigator.userAgent.toLowerCase()
-    navigator.FIREFOX = /firefox/.test(navigator.ugent);
+    navigator.FIREFOX = /gecko/.test(navigator.ugent);
     navigator.WEBKIT = /webkit/.test(navigator.ugent);
     navigator.IEV =  navigator.IE && !document.documentMode ? 6 : document.documentMode;
     var TK = {
@@ -71,20 +72,79 @@ if (typeof TK == 'undefined') {
             mouseout: [],
             click: [[], [], [], []]
         },
+        path : (function(){
+            if(document.currentScript) {
+                return document.currentScript.src;
+            }
+            try {
+                throw new Error("Get Filename");
+            } catch(e) {
+                if(typeof e.fileName !== 'undefined') {
+                    return e.fileName;
+                }
+            }
+            return document.scripts[document.scripts.length-1].src;
+        })(),
+        requirePath : 0,
         //窗口滚动事件注册函数列表
         windowScrollEventCallFunctionList: [],
         windowResizeCallFunctionList: [],
+        isArray : function(it) {
+            return Object.prototype.toString.call(it) === '[object Array]';
+        },
+        isFunction: function(it) {
+            return Object.prototype.toString.call(it) === '[object Function]';
+        },
+        isNumeric : function(it) {
+            return  !isNaN(parseFloat(it)) && isFinite(it);;
+        },
         createNode: function(t) {
             return TK.$(TK.doc.createElement(t));
         },
+        realpath : function(srcPath) {
+            var questionMark = srcPath.indexOf("?");
+            if(questionMark > 0) {
+                srcPath = srcPath.substring(0,questionMark);
+            } else if(questionMark === 0) {
+                return '';
+            }
+            var pound = srcPath.indexOf("#");
+            if(pound >0) {
+                srcPath = srcPath.substring(0,pound);
+            } else if(pound === 0) {
+                return '';
+            }
+            return srcPath;
+        },
+        basename : function(path) {
+            var shash = path.lastIndexOf("/") +1;
+            return path.substring(shash,path.length);
+        },
+        dirname : function(path) {
+            var shash = path.lastIndexOf("/");
+            return path.substring(0,shash);
+        },
         jsPath: function(cidx) {
-            var scripts = TK.doc.scripts;
-            if (!cidx)
-                cidx = scripts.length - 1;
-            var shash = scripts[cidx].src.lastIndexOf("/");
+            var scripts = TK.doc.scripts,scriptPath;
+            if(typeof cidx == "string") {
+                var scriptfile, i = 0,path;
+                while(cidx != scriptfile) {
+                    scriptPath = TK.realpath(scripts[i].src);
+                    scriptfile = TK.basename(scriptPath);
+                    i++;
+                }
+            }
+            if (!cidx) {
+                cidx = 0;
+            } else if(TK.isNumeric(cidx)) {
+                cidx = parseInt(cidx);
+                scriptPath= scripts[cidx].src;
+                scriptPath = TK.realpath(scriptPath);
+            }
+            var shash = scriptPath.lastIndexOf("/");
             if (shash < 0)
                 return '';
-            return scripts[cidx].src.substring(0, shash + 1);
+            return scriptPath.substring(0, shash + 1);
         },
         inputType: {
             INPUT_TEXT: 1,
@@ -97,18 +157,42 @@ if (typeof TK == 'undefined') {
             INPUT_IMAGE: 8,
             INPUT_SELECT: 9
         },
-        require: function(fs, bodyEnd) {
-            return TK.loadJSFile(fs, bodyEnd);
+
+        require: function(fs, options) {
+            options = options || 0;
+            if (typeof fs === 'string') {
+                var requirePath = TK.requirePath || TK.dirname(TK.realpath(TK.path));
+                while(true) {
+                    if(fs.substring(0,2) == '..') {
+                        requirePath = TK.dirname(requirePath);
+                        fs = fs.substring(2,fs.length);
+                    } else {
+                        break;
+                    }
+                }
+                if(fs.substring(0,1) != '/') fs= '/'+fs;
+                return TK.loadJSFile(requirePath+fs+'.js',options);
+            }
+        },
+        script : function() {
+            return TK.doc.getElementsByTagName('script');
         },
         loadJSFile: function(fs, bodyEnd) {
             var f = TK.createNode('script');
             f.setAttribute('type', 'text/javascript');
             f.setAttribute('src', fs);
-            if (bodyEnd) {
-                TK.doc.body.appendChild(f);
-                return f;
+            try {
+                if (bodyEnd) {
+                    TK.doc.body.appendChild(f);
+                    return f;
+                }
+                TK.doc.getElementsByTagName('head')[0].appendChild(f);
+                f.onerror = function(e) {
+                    TK.error(fs+' Load Failure');
+                }
+            } catch(e) {
+                TK.error(fs+' Load Failure');
             }
-            TK.doc.getElementsByTagName('head')[0].appendChild(f);
             return f;
         },
         unloadExecList: [],
@@ -428,6 +512,9 @@ if (typeof TK == 'undefined') {
             }
 
             var eleType = typeof(ele);
+            if(eleType == 'string' && typeof TK.cache[ele] != 'undefined') {
+                return TK.cache[ele];
+            }
             switch (eleType) {
                 case  'string':
                     var firstWord = ele.substr(0, 1);
@@ -515,6 +602,20 @@ if (typeof TK == 'undefined') {
             var __extend = {
                 getIframeBody: function() {
                     return navigator.IE ? this.TK.doc.body : this.contentDocument.body;
+                },
+                setAttr : function(att, value) {
+                    return this.setAttribute(att, value);
+                },
+                getAttr : function(att) {
+                    return this.getAttribute(att);
+                },
+                getText : function() {
+                    if(typeof(this.textContent) != 'undefined') return this.textContent;
+                    return this.innerText;
+                },
+                setText : function(text) {
+                    if(typeof(this.textContent) != 'undefined') this.textContent = text;
+                    else this.innerText = text;
                 },
                 getPos: function() {
                     var y = this.offsetTop;
@@ -1238,6 +1339,7 @@ if (typeof TK == 'undefined') {
             };
             for (var fn in __extend)
                 __element[fn] = __extend[fn];
+            TK.cache[ele] = __element;
             return __element;
         },
         //设置光标偏移量
@@ -2827,6 +2929,6 @@ if (typeof TK == 'undefined') {
         window.$ = TK.$;
     }
     if (typeof require == 'undefined') {
-        window.require = TK.loadJSFile;
+        window.require = TK.require;
     }
 }
