@@ -102,21 +102,10 @@ if (typeof TK == 'undefined') {
             return TK.$(TK.doc.createElement(t));
         },
         realpath : function(srcPath) {
-            var questionMark = srcPath.indexOf("?");
-            if(questionMark > 0) {
-                srcPath = srcPath.substring(0,questionMark);
-            } else if(questionMark === 0) {
-                return '';
-            }
-            var pound = srcPath.indexOf("#");
-            if(pound >0) {
-                srcPath = srcPath.substring(0,pound);
-            } else if(pound === 0) {
-                return '';
-            }
-            return srcPath;
+            return srcPath.split("?")[0].split("#")[0];
         },
         basename : function(path) {
+            path = TK.realpath(path);
             var shash = path.lastIndexOf("/") +1;
             return path.substring(shash,path.length);
         },
@@ -127,10 +116,10 @@ if (typeof TK == 'undefined') {
         jsPath: function(cidx) {
             var scripts = TK.doc.scripts,scriptPath;
             if(typeof cidx == "string") {
-                var scriptfile, i = 0,path;
+                var scriptfile, i = 0;
                 while(cidx != scriptfile) {
                     scriptPath = TK.realpath(scripts[i].src);
-                    scriptfile = TK.basename(scriptPath);
+                    scriptfile = TK.basename(scripts[i].src);
                     i++;
                 }
             }
