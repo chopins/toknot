@@ -26,7 +26,7 @@ class StandardException extends ErrorException {
     protected $exceptionMessage = null;
     private $fatalError = false;
     public $traceArr = array();
-
+    public $exceptionInstance = null;
     /**
      * construct StandardException
      * 
@@ -34,13 +34,15 @@ class StandardException extends ErrorException {
      * @param integer $code
      * @param string $file
      * @param integer $line
+     * @param object|null $exceIns
      */
-    public function __construct($message = '', $code = 0, $file = null, $line = null) {
+    public function __construct($message = '', $code = 0, $file = null, $line = null,$exceIns = null) {
         if ($this->exceptionMessage) {
             $this->message = $this->exceptionMessage;
         } else {
             $this->message = $message;
         }
+        $this->exceptionInstance = $exceIns;
         $this->errfile = empty($file) ? $this->getFile() : $file;
         $this->errline = empty($line) ? $this->getLine() : $line;
         $this->getErrorType($code);
@@ -100,6 +102,9 @@ class StandardException extends ErrorException {
                 $type = get_called_class();
                 $this->fatalError = true;
                 break;
+        }
+        if($this->exceptionInstance) {
+            $type = get_class($this->exceptionInstance);
         }
         $this->message = "<b>$type : </b>" . $this->message;
     }
