@@ -293,18 +293,18 @@ EOS;
     protected $permissions;
     protected $classGroup;
     public function __construct($FMAI) {
-        $this->FMAI = $FMAI;
-        $this->CFG = $this->FMAI->loadConfigure($FMAI->appRoot . '/Config/config.ini');
+        self::$FMAI = $FMAI;
+        $this->CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
         
-        $this->AR = $this->FMAI->getActiveRecord();
+        $this->AR = self::$FMAI->getActiveRecord();
 
         //$this->AR->config($this->CFG->Database);
         
-        $this->FMAI->enableHTMLCache();
+        //self::$FMAI->enableHTMLCache(self::$CFG->View);
         
-        $this->view = $this->FMAI->newTemplateView($this->CFG->View);
+        //$this->view = self::$FMAI->newTemplateView($this->CFG->View);
 
-        $FMAI->checkAccess($this);
+        $FMAI->checkAccess($this, new Nobody());
     }
 
     public function CLI() {
