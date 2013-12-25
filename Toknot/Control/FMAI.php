@@ -110,6 +110,8 @@ final class FMAI extends Object {
      * @access readonly
      */
     private $appNamespace = '';
+    
+    public static $magicQuotesGpc = 0;
 
     /**
      * Whether enable HTML cache
@@ -138,6 +140,7 @@ final class FMAI extends Object {
         $this->D = new ArrayObject;
         //ConfigLoader::CFG()->AppRoot = $this->appRoot;
         date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
+        self::$magicQuotesGpc = get_magic_quotes_gpc();
     }
 
     /**
@@ -346,9 +349,9 @@ final class FMAI extends Object {
      * @return null|string
      */
     public function getGET($name) {
-        if (!isset($_GET[$name])) {
+        if (empty($_GET[$name])) {
             return null;
-        } else if (get_magic_quotes_gpc()) {
+        } else if (self::$magicQuotesGpc) {
             return $_GET[$name];
         } else {
             return addslashes($_GET[$name]);
@@ -362,9 +365,9 @@ final class FMAI extends Object {
      * @return null|string
      */
     public function getPOST($name) {
-        if (!isset($_GET[$name])) {
+        if (empty($_GET[$name])) {
             return null;
-        } else if (get_magic_quotes_gpc()) {
+        } else if (self::$magicQuotesGpc) {
             return $_GET[$name];
         } else {
             return addslashes($_GET[$name]);
@@ -378,9 +381,9 @@ final class FMAI extends Object {
      * @return null|string
      */
     public function getCOOKIE($name) {
-        if (!isset($_COOKIE[$name])) {
+        if (empty($_COOKIE[$name])) {
             return null;
-        } else if (get_magic_quotes_gpc()) {
+        } else if (self::$magicQuotesGpc) {
             return $_COOKIE[$name];
         } else {
             return addslashes($_COOKIE[$name]);
