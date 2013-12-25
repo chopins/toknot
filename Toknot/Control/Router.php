@@ -224,7 +224,9 @@ class Router implements RouterInterface {
             $classFile = "{$this->routerNameSpace}\Controller";
             $classPart = explode(StandardAutoloader::NS_SEPARATOR, $this->spacePath);
             foreach($classPart as $key =>$part) {
-                $classFile = "$classFile/$part";
+                if(empty($part))  continue;
+                $classFile = StandardAutoloader::transformClassNameToFilename("$classFile/$part", $this->routerPath);
+                
                 $caseClassFile = FileObject::fileExistCase($classFile);
                 if($caseClassFile) {
                     $this->suffixPart = array_slice($classPart, $key + 1);
