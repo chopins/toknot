@@ -146,7 +146,7 @@ class StringObject extends Object implements ArrayAccess {
         return $supprot;
     }
 
-    public function __callStatic($stringFunction, $arguments) {
+    public static function __callStatic($stringFunction, $arguments) {
         if (!in_array($stringFunction, self::$supportStringMethodList))
             throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
 
