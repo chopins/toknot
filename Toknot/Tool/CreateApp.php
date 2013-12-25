@@ -280,7 +280,7 @@ EOS;
 <?php
 namespace {$this->appName};
 use Toknot\User\ClassAccessControl;
-
+use Toknot\User\Nobody;
 class {$this->appName}Base extends ClassAccessControl {
 EOS;
         $phpCode .= <<<'EOS'
