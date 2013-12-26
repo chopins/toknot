@@ -18,6 +18,7 @@ use Toknot\Db\Connect;
 use Toknot\Db\ActiveQuery;
 use Toknot\Db\Exception\DatabaseException;
 use Toknot\Di\DataCacheControl;
+use Toknot\Di\StringObject;
 
 final class DatabaseObject extends DbCRUD {
 
@@ -25,7 +26,7 @@ final class DatabaseObject extends DbCRUD {
     protected $username = null;
     protected $password = null;
     private $tableList = array();
-    protected $driverOptions = null;
+    protected $driverOptions = array();
     protected $tablePrefix = '';
     protected $tableValueList = array();
     protected $databaseStructInfoCache = '';
@@ -66,7 +67,16 @@ final class DatabaseObject extends DbCRUD {
     }
 
     public function setDriverOptions($driverOptions) {
-        $this->driverOptions = $driverOptions;
+        if($driverOptions instanceof StringObject) {
+            $this->driverOptions[] = $driverOptions->__toString();
+            return;
+        }
+        foreach($driverOptions as $key => $v) {
+            if(!is_numeric($key)) {
+                $key = constant($key);
+            } 
+            $this->driverOptions[$key] = $v;
+        }
     }
 
     public function setConnectInstance(Connect $connect) {

@@ -27,6 +27,7 @@ class StandardException extends ErrorException {
     private $fatalError = false;
     public $traceArr = array();
     public $exceptionInstance = null;
+
     /**
      * construct StandardException
      * 
@@ -36,7 +37,7 @@ class StandardException extends ErrorException {
      * @param integer $line
      * @param object|null $exceIns
      */
-    public function __construct($message = '', $code = 0, $file = null, $line = null,$exceIns = null) {
+    public function __construct($message = '', $code = 0, $file = null, $line = null, $exceIns = null) {
         if ($this->exceptionMessage) {
             $this->message = $this->exceptionMessage;
         } else {
@@ -103,7 +104,7 @@ class StandardException extends ErrorException {
                 $this->fatalError = true;
                 break;
         }
-        if($this->exceptionInstance) {
+        if ($this->exceptionInstance) {
             $type = get_class($this->exceptionInstance);
         }
         $this->message = "<b>$type : </b>" . $this->message;
@@ -118,10 +119,8 @@ class StandardException extends ErrorException {
             $str .= str_repeat('=', 20) . "\n";
         }
         $str .='<div class="ToknotDebugArea">';
-        if (PHP_SAPI == 'cli') {
-            if($_SERVER['COLORTERM']) {
-                $this->message = "\e[1;31m{$this->message}\e[0m";
-            }
+        if (PHP_SAPI == 'cli' && !empty($_SERVER['COLORTERM'])) {
+            $this->message = "\e[1;31m{$this->message}\e[0m";
         }
         $str .="<p class='ToknotMessage'>{$this->message}</p>\n";
         $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div><ul class='ToKnotTraceItem'>\n";
@@ -138,10 +137,10 @@ class StandardException extends ErrorException {
             $str .= $this->earch($this->traceArr);
         }
         $str .='</ul></div>';
-        if(isset($this->sqls) && is_array($this->sqls)) {
+        if (isset($this->sqls) && is_array($this->sqls)) {
             $i = 0;
             $str .= '<ul class="ToKnotTraceItem">';
-            while(isset($this->sqls[$i])) {
+            while (isset($this->sqls[$i])) {
                 $str .= "<li>{$this->sqls[$i]}:({$this->params[$i]})</li>";
                 $i++;
             }

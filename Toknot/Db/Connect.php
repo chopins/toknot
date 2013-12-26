@@ -16,7 +16,6 @@ use Toknot\Di\Object;
 use Toknot\Db\Driver\MySQL;
 use Toknot\Db\Driver\SQLite;
 use \PDO;
-use Toknot\Di\StringObject;
 use Toknot\Db\ActiveQuery;
 
 class Connect extends Object {
@@ -41,10 +40,7 @@ class Connect extends Object {
         $this->dsn = $connectObject->dsn;
         $this->username = $connectObject->username;
         $this->password = $connectObject->password;
-        if ($connectObject->driverOptions instanceof StringObject) {
-            $this->driverOptions = array($connectObject->driverOptions);
-        }
-
+        $this->driverOptions = $connectObject->driverOptions;
         $this->connectDatabase();
         $connectObject->setConnectInstance($this);
         $connectObject->setDbINSType($this->dbINSType);
