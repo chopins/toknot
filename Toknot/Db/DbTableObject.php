@@ -355,7 +355,14 @@ final class DbTableObject extends DbCRUD {
         $sql .= ActiveQuery::limit($start, $limit);
         return $this->readAll($sql);
     }
-    public function count(array $params = array()) {
+    
+    /**
+     * Get record count number, the use $this->where set
+     * 
+     * @param array $params
+     * @return integer
+     */
+    public function countRecord(array $params = array()) {
         $sql = ActiveQuery::select($this->tableName, "COUNT(*) AS '0'");
         if($this->where !== 1) {
             $sql .= ActiveQuery::where($this->where);
