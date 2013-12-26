@@ -383,9 +383,6 @@ final class Process {
     public function __destruct() {
         if($this->useFileLock) {
             fclose($this->lockFileHanlde);
-        } else {
-            shmop_delete($this->mutex);
-            sem_remove($this->mutexId);
         }
     }
 }

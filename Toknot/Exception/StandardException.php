@@ -119,7 +119,9 @@ class StandardException extends ErrorException {
         }
         $str .='<div class="ToknotDebugArea">';
         if (PHP_SAPI == 'cli') {
-            $this->message = "\e[1;31m{$this->message}\e[0m";
+            if($_SERVER['COLORTERM']) {
+                $this->message = "\e[1;31m{$this->message}\e[0m";
+            }
         }
         $str .="<p class='ToknotMessage'>{$this->message}</p>\n";
         $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div><ul class='ToKnotTraceItem'>\n";

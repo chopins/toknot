@@ -335,6 +335,13 @@ final class Application {
                 $router->defaultInvoke($defaultInvoke);
             }
             $router->invoke($FMAI);
+        } catch (StandardException $e) {
+            if (DEVELOPMENT) {
+                echo $e;
+            } else {
+                header('500 Internal Server Error');
+                die('500 Internal Server Error');
+            }
         } catch (Exception $e) {
             if (DEVELOPMENT) {
                 echo $e;
@@ -357,7 +364,7 @@ final class Application {
 
     public function uncaughtExceptionHandler($e) {
         try {
-            throw new StandardException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine());
+            throw new StandardException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(),$e);
         } catch (StandardException $se) {
             if (DEVELOPMENT) {
                 $se->traceArr = $e->getTrace();
