@@ -160,6 +160,7 @@ final class DbTableObject extends DbCRUD {
         $sql .= ActiveQuery::set($this->columnValueList);
         $this->columnValueList = array();
         $sql .= ActiveQuery::where($this->where);
+        $this->where = 1;
         $sql .= ActiveQuery::limit($start, $limit);
         return $this->update($sql, $params);
     }
@@ -215,6 +216,7 @@ final class DbTableObject extends DbCRUD {
         }
         $sql = ActiveQuery::delete($this->tableName);
         $sql .= ActiveQuery::where($sql);
+        $this->where = 1;
         $sql .= ActiveQuery::limit($start, $limit);
         return $this->delete($sql, $params);
     }
@@ -353,5 +355,13 @@ final class DbTableObject extends DbCRUD {
         $sql .= ActiveQuery::limit($start, $limit);
         return $this->readAll($sql);
     }
-
+    public function count(array $params = array()) {
+        $sql = ActiveQuery::select($this->tableName, "COUNT(*) AS '0'");
+        if($this->where !== 1) {
+            $sql .= ActiveQuery::where($this->where);
+        }
+        $this->where = 1;
+        list($cnt) = $this->readOne($sql, $params);
+        return $cnt;
+    }
 }

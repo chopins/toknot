@@ -117,13 +117,13 @@ final class DatabaseObject extends DbCRUD {
             return $this->$propertie;
         } elseif (in_array($this->tablePrefix . $propertie, $this->tableList)) {
             if (!isset($this->interatorArray[$propertie])) {
-                $this->interatorArray[$propertie] = new DbTableObject($propertie, $this);
+                $this->interatorArray[$propertie] = new DbTableObject($this->tablePrefix.$propertie, $this);
             }
             return $this->interatorArray[$propertie];
         } elseif (isset($this->tableValueList[$propertie])) {
             return $this->tableValueList[$propertie];
         } else {
-            $this->tableValueList[$propertie] = new DbTableObject($propertie, $this, true);
+            $this->tableValueList[$propertie] = new DbTableObject($this->tablePrefix.$propertie, $this, true);
             return $this->tableValueList[$propertie];
         }
     }
