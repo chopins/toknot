@@ -164,7 +164,10 @@ class StandardException extends ErrorException {
             return '500 Internal Server Error';
         }
     }
-
+    public function save() {
+        $traceInfo = $this->getDebugTraceAsString();
+        Log::save($traceInfo);
+    }
     public function earch($traceArr) {
         return Log::formatTrace($traceArr);
     }

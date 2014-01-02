@@ -46,7 +46,7 @@ final class Application {
      * @access private 
      */
     private $standardAutoLoader = null;
-    
+
     /**
      * App root path
      *
@@ -55,7 +55,7 @@ final class Application {
      * @var string
      */
     private static $appRoot = '';
-    
+
     /**
      * This is router class name, if do not use setUserRouter method set a router 
      * after new Application and before invoke run method, and will use toknot default router
@@ -320,10 +320,10 @@ final class Application {
             $router = new $this->routerName;
             StandardAutoloader::importToknotClass('Control\FMAI');
             $this->addAppPath($appPath);
-            $FMAI = FMAI::singleton($appNameSpace,$appPath);
+            $FMAI = FMAI::singleton($appNameSpace, $appPath);
             self::$appRoot = $appPath;
-            call_user_func_array(array($router,'runtimeArgs'), $this->routerArgs);
-            
+            call_user_func_array(array($router, 'runtimeArgs'), $this->routerArgs);
+
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
             $router->routerRule();
@@ -336,6 +336,10 @@ final class Application {
             }
             $router->invoke($FMAI);
         } catch (StandardException $e) {
+            if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
+                $e->save();
+                die;
+            }
             if (DEVELOPMENT) {
                 echo $e;
             } else {
@@ -343,6 +347,10 @@ final class Application {
                 die('500 Internal Server Error');
             }
         } catch (Exception $e) {
+            if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
+                $e->save();
+                die;
+            }
             if (DEVELOPMENT) {
                 echo $e;
             } else {
@@ -364,8 +372,12 @@ final class Application {
 
     public function uncaughtExceptionHandler($e) {
         try {
-            throw new StandardException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(),$e);
+            throw new StandardException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
         } catch (StandardException $se) {
+            if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
+                $se->save();
+                die;
+            }
             if (DEVELOPMENT) {
                 $se->traceArr = $e->getTrace();
                 echo $se;
@@ -426,6 +438,10 @@ final class Application {
             try {
                 throw new StandardException($err['message'], $err['type'], $err['file'], $err['line']);
             } catch (StandardException $e) {
+                if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
+                    $e->save();
+                    die;
+                }
                 if (DEVELOPMENT) {
                     array_shift($this->debugTrace);
                     $e->traceArr = $this->debugTrace;
@@ -466,7 +482,7 @@ final class Application {
             $et = $et . ' seconds';
         }
         $str .= '<br />PHP Script Execure Time: ' . $et . "\n";
-        echo PHP_SAPI == 'cli' ? strip_tags($str) : $str;
+        echo PHP_SAPI == 'cli' && is_resource(STDOUT) ? strip_tags($str) : $str;
     }
 
     public static function checkXDebug() {
@@ -481,8 +497,10 @@ final class Application {
             $this->pageRunInfo();
         }
     }
+
     public static function getAppRoot() {
         return self::$appRoot;
     }
+
 }
 

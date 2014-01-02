@@ -363,11 +363,12 @@ final class DbTableObject extends DbCRUD {
      * @return integer
      */
     public function countRecord(array $params = array()) {
-        $sql = ActiveQuery::select($this->tableName, "COUNT(*) AS '0'");
+        $sql = ActiveQuery::select($this->tableName, 'COUNT(*)');
         if($this->where !== 1) {
             $sql .= ActiveQuery::where($this->where);
         }
         $this->where = 1;
+        $this->fetchStyle = ActiveQuery::FETCH_NUM;
         list($cnt) = $this->readOne($sql, $params);
         return $cnt;
     }
