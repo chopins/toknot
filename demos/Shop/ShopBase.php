@@ -1,7 +1,7 @@
 <?php
 namespace Shop;
 use Toknot\User\ClassAccessControl;
-
+use Toknot\User\Nobody;
 class ShopBase extends ClassAccessControl {
     protected static $FMAI;
     protected static $CFG;
@@ -11,22 +11,22 @@ class ShopBase extends ClassAccessControl {
     protected $permissions;
     protected $classGroup;
     public function __construct($FMAI) {
-        $this->FMAI = $FMAI;
-    //    $this->CFG = $this->FMAI->loadConfigure($FMAI->appRoot . '/Config/config.ini');
-
-   //     $this->AR = $this->FMAI->getActiveRecord();
+        self::$FMAI = $FMAI;
+        $this->CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
+        
+        $this->AR = self::$FMAI->getActiveRecord();
 
         //$this->AR->config($this->CFG->Database);
+        
+        //self::$FMAI->enableHTMLCache(self::$CFG->View);
+        
+        //$this->view = self::$FMAI->newTemplateView($this->CFG->View);
 
- //       $this->FMAI->enableHTMLCache();
-
-  //      $this->view = $this->FMAI->newTemplateView($this->CFG->View);
-
- //       $FMAI->checkAccess($this);
+        $FMAI->checkAccess($this, new Nobody());
     }
 
     public function CLI() {
         $this->GET();
-
     }
+
 }

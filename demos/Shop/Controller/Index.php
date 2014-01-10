@@ -2,7 +2,7 @@
 namespace  Shop\Controller;
             
 use Shop\ShopBase;
-class Index extends ShopBase{ 	
+class Index extends ShopBase{     
     protected $permissions = 0770;
 
     public function GET() {

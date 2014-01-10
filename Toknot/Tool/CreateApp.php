@@ -298,11 +298,11 @@ EOS;
         
         $this->AR = self::$FMAI->getActiveRecord();
 
-        //$this->AR->config($this->CFG->Database);
+        //$this->AR->config(self::$CFG->Database);
         
         //self::$FMAI->enableHTMLCache(self::$CFG->View);
         
-        //$this->view = self::$FMAI->newTemplateView($this->CFG->View);
+        //$this->view = self::$FMAI->newTemplateView(self::$CFG->View);
 
         $FMAI->checkAccess($this, new Nobody());
     }
