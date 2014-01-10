@@ -79,6 +79,7 @@ class ViewCache extends Object {
 	 * @static
 	 */
     public static function outPutCache() {
+        if(empty(self::$cacheFile)) return;
 		$displayMethod = self::$displayMethod;
 		self::$cacheEffective = self::$renderer->$displayMethod(self::$cacheFile);
     }

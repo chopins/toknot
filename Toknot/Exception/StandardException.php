@@ -138,11 +138,9 @@ class StandardException extends ErrorException {
         }
         $str .='</ul></div>';
         if (isset($this->sqls) && is_array($this->sqls)) {
-            $i = 0;
             $str .= '<ul class="ToKnotTraceItem">';
-            while (isset($this->sqls[$i])) {
-                $str .= "<li>{$this->sqls[$i]}:({$this->params[$i]})</li>";
-                $i++;
+            foreach($this->sqls as $i=>$sql) {
+                $str .= "<li>{$sql}:({$this->params[$i]})</li>";
             }
             $str .= '</ul>';
         }
