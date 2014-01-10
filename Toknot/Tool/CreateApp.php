@@ -294,7 +294,7 @@ EOS;
     protected $classGroup;
     public function __construct($FMAI) {
         self::$FMAI = $FMAI;
-        $this->CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
+        self::$CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
         
         $this->AR = self::$FMAI->getActiveRecord();
 
