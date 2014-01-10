@@ -33,7 +33,7 @@
 .icon-search:before { content: '\e806'; }
 .icon-after-down-micro:after{content: '\e80c';margin-left:5px;}
 
-body {margin: 0;padding: 0;font-family: "MuseoSans-700","Helvetica Neue",Helvetica,Arial,sans-serif;font-size: 16px;background-color: #E6EDF6;}
+body {margin: 0;margin-top:40px;padding: 0;font-family: "MuseoSans-700","Helvetica Neue",Helvetica,Arial,sans-serif;font-size: 16px;background-color: #E6EDF6;}
 .top-panel {background-color: #333333;color: #FFFFFF;height: 40px;line-height: 40px;box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);padding: 0 11px 0;cursor:default;position: fixed;top:0;width: 100%;padding: 0 10px 0;}
 
 .opreate-btn{display:inline-block;height: 26px;font-weight: bold;background-color: #555555;margin: 5px;line-height: 26px; border-radius: 2px; padding: 2px 8px;cursor:default;font-size: 13px;-moz-user-select:none;-webkit-user-select:none;}

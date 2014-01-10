@@ -10,29 +10,45 @@
 
 namespace Toknot\Admin;
 
-use Toknot\Di\Object;
+use Toknot\Admin\AdminBase;
 use Toknot\Config\ConfigLoader;
 use Toknot\Di\FileObject;
 use Toknot\Control\FMAI;
 
-class Menu extends Object {
+class Menu extends AdminBase {
 
     public $control = null;
     public $subNav = array();
+    public static $FMAI;
+    public function __construct() {
+        self::$FMAI = FMAI::getInstance();
+        $this->loadAdminConfig();
+        $this->initDatabase();
+    }
 
     public function getAllMenu() {
-        $FMAI = FMAI::getInstance();
-        $file = FileObject::getRealPath($FMAI->appRoot, './Config/managelist.ini');
-        $manageList = ConfigLoader::loadCfg($file);
+        $adminConfig = self::$CFG->Admin;
+        if($adminConfig->adminUseIniNavigationConfig == false && 
+                !empty($adminConfig->adminNavigationListTable)) {
+            $table = $this->dbConnect->adminNavigationListTable;
+            $allList = $table->readAll();
+            $manageList = array();
+            foreach ($allList as $manage) {
+                $manage['sub'] = unserialize($manage['sub']);
+                $manageList[$manage['key']] = $manage;
+            }
+        } else {
+             $file = FileObject::getRealPath(self::$FMAI->appRoot,"Config/{$adminConfig->adminNavigationListIniFile}");
+            $manageList = ConfigLoader::loadCfg($file);
+        }
         foreach($manageList as &$manage) {
-            if(isset($manage['sub'])) {
+            if($manage['hassub'] && !empty($manage['sub'])) {
                 foreach($manage['sub'] as $key=>$sub) {
                     $manage['sub'][$key] = $manageList[$sub];
                     unset($manageList[$sub]);
                 }
             }
         }
-        var_dump($manageList);
         return $manageList;
     }
   

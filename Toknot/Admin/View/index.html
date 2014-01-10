@@ -12,7 +12,7 @@
 				{if $nav.hassub}
 				<ul class="sub-nav-tree">
 					{foreach $nav.sub as $sub}
-					<li class="sub-nav-tree-li" {if $nav.action}action="{$nav.action}"{/if}>{$sub.name}</li>
+					<li class="sub-nav-tree-li" {if $sub.action}action="{$sub.action}"{/if}>{$sub.name}</li>
 					{/foreach}
 				</ul>
 				{/if}

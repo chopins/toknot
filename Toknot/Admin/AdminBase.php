@@ -113,25 +113,9 @@ class AdminBase extends ClassAccessControl {
     public function initDatabase() {
         $this->AR = self::$FMAI->getActiveRecord();
         $dbSectionName = self::$CFG->Admin->databaseOptionSectionName;
-        if (self::$CFG->Admin->multiDatabase) {
-            $i = 0;
-            while (true) {
-                $section = self::$CFG->Admin->databaseOptionSectionName . $i;
-                if (!isset(self::$CFG->$section)) {
-                    break;
-                }
-                $this->AR->config(self::$CFG->$section);
-                $this->dbConnect[$i] = $this->AR->connect();
-                $i++;
-            }
-            if (empty(self::$CFG->Admin->userTableDatabaseId)) {
-                UserClass::$DBConnect = $this->dbConnect[0];
-            }
-        } else {
-            $this->AR->config(self::$CFG->$dbSectionName);
-            $this->dbConnect = $this->AR->connect();
-            UserClass::$DBConnect = $this->dbConnect;
-        }
+        $this->AR->config(self::$CFG->$dbSectionName);
+        $this->dbConnect = $this->AR->connect();
+        UserClass::$DBConnect = $this->dbConnect;
     }
 
     /**
@@ -165,12 +149,8 @@ class AdminBase extends ClassAccessControl {
             if ($user->checkUserFlag($_SESSION['Flag'])) {
                 return $user;
             }
-        } elseif (null!==self::$FMAI->getCOOKIE('uid')
-                    && null!== $_COOKIE['Flag']
-                    && null!== self::$FMAI->getCOOKIE('TokenKey')) {
-            $user = UserClass::checkLogin(self::$FMAI->getCOOKIE('uid'), 
-                                          self::$FMAI->getCOOKIE('Flag'), 
-                                          self::$FMAI->getCOOKIE('TokenKey'));
+        } elseif (null !== self::$FMAI->getCOOKIE('uid') && null !== $_COOKIE['Flag'] && null !== self::$FMAI->getCOOKIE('TokenKey')) {
+            $user = UserClass::checkLogin(self::$FMAI->getCOOKIE('uid'), self::$FMAI->getCOOKIE('Flag'), self::$FMAI->getCOOKIE('TokenKey'));
             if ($user) {
                 return $user;
             }

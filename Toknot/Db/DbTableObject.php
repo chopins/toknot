@@ -372,4 +372,20 @@ final class DbTableObject extends DbCRUD {
         list($cnt) = $this->readOne($sql, $params);
         return $cnt;
     }
+    
+    /**
+     * Get all record by select, if not set $sql, the function will return all 
+     * record that not large 500 lines
+     * 
+     * @param string $sql
+     * @param array $params
+     * @return array
+     */
+    public function readAll($sql = null,$params = array()) {
+        if($sql == null) {
+            $sql = ActiveQuery::select($this->tableName, '*');
+            $sql .= ActiveQuery::limit(500);
+        }
+        return parent::readAll($sql,$params);
+    }
 }
