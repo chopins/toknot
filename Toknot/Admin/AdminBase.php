@@ -165,9 +165,9 @@ class AdminBase extends ClassAccessControl {
             if ($user->checkUserFlag($_SESSION['Flag'])) {
                 return $user;
             }
-        } elseif (isset(self::$FMAI->getCOOKIE('uid')) 
-                    && isset($_COOKIE['Flag']) 
-                    && isset(self::$FMAI->getCOOKIE('TokenKey'))) {
+        } elseif (null!==self::$FMAI->getCOOKIE('uid')
+                    && null!== $_COOKIE['Flag']
+                    && null!== self::$FMAI->getCOOKIE('TokenKey')) {
             $user = UserClass::checkLogin(self::$FMAI->getCOOKIE('uid'), 
                                           self::$FMAI->getCOOKIE('Flag'), 
                                           self::$FMAI->getCOOKIE('TokenKey'));

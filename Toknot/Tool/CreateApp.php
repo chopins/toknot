@@ -28,48 +28,48 @@ class CreateApp {
         new Toknot\Control\Application;
         $this->versionInfo();
 
-        $this->message("Whether create to current path yes/no(default:no):", null, false);
+        Toknot\Di\Log::colorMessage("Whether create to current path yes/no(default:no):", null, false);
         $isCurrent = trim(fgets(STDIN));
         $dir = $this->createAppRootDir($isCurrent);
-        $this->message('Whether admin of applicaton yes/no(default:no):', null, false);
+        Toknot\Di\Log::colorMessage('Whether admin of applicaton yes/no(default:no):', null, false);
         $admin = trim(fgets(STDIN));
         if ($admin == 'yes') {
             $this->isAdmin = true;
             while (($password = $this->enterRootPass()) === false) {
-                $this->message('Twice password not same, enter again:', 'red');
+                Toknot\Di\Log::colorMessage('Twice password not same, enter again:', 'red');
             }
 
             \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserAccessControl');
-            $this->message('Generate hash salt');
+            Toknot\Di\Log::colorMessage('Generate hash salt');
             $salt = substr(str_shuffle('1234567890qwertyuiopasdfghjklzxcvbnm'), 0, 8);
             $algo = Toknot\User\Root::bestHashAlgos();
             $password = Toknot\User\Root::getTextHashCleanSalt($password, $algo, $salt);
-            $this->message('Generate Root password hash string');
+            Toknot\Di\Log::colorMessage('Generate Root password hash string');
         }
 
         while (file_exists($dir)) {
-            $this->message("$dir is exists, change other");
+            Toknot\Di\Log::colorMessage("$dir is exists, change other");
             $dir = $this->createAppRootDir($isCurrent);
         }
-        $this->message("Create $dir");
+        Toknot\Di\Log::colorMessage("Create $dir");
         $res = mkdir($dir, 0777, true);
         if ($res === false) {
-            return $this->message("$dir create fail");
+            return Toknot\Di\Log::colorMessage("$dir create fail");
         }
         $dir = realpath($dir);
         $this->appName = basename($dir);
 
-        $this->message("Create $dir/Controller");
+        Toknot\Di\Log::colorMessage("Create $dir/Controller");
         mkdir($dir . '/Controller');
         $this->writeIndexController($dir . '/Controller');
 
-        $this->message("Create $dir/WebRoot");
+        Toknot\Di\Log::colorMessage("Create $dir/WebRoot");
         mkdir($dir . '/WebRoot');
 
-        $this->message("Create $dir/Config");
+        Toknot\Di\Log::colorMessage("Create $dir/Config");
         mkdir($dir . '/Config');
 
-        $this->message("Create $dir/Config/config.ini");
+        Toknot\Di\Log::colorMessage("Create $dir/Config/config.ini");
 
         $configure = file_get_contents($this->toknotDir . '/Config/default.ini');
         if ($this->isAdmin) {
@@ -84,25 +84,25 @@ class CreateApp {
         if (!$this->isAdmin) {
             $this->writeAppBaseClass($dir);
         }
-        $this->message("Create $dir/View");
+        Toknot\Di\Log::colorMessage("Create $dir/View");
         mkdir($dir . '/View');
         if ($this->isAdmin) {
             mkdir($dir.'/Controller/User');
-            $this->message("Create $dir/Controller/User");
+            Toknot\Di\Log::colorMessage("Create $dir/Controller/User");
             $this->writeAdminAppUserController($dir.'/Controller/User');
             $this->copyDir($this->toknotDir . '/Admin/View', $dir . '/View');
             $this->copyDir($this->toknotDir . '/Admin/Static', $dir . '/WebRoot/static');
             $this->writeManageListConfig($dir);
         }
-        $this->message("Create $dir/Data/View");
+        Toknot\Di\Log::colorMessage("Create $dir/Data/View");
         mkdir($dir . '/Data/View', 0777, true);
 
-        $this->message("Create $dir/Data/View/Compile");
+        Toknot\Di\Log::colorMessage("Create $dir/Data/View/Compile");
         mkdir($dir . '/Data/View/Compile', 0777, true);
 
-        $this->message('Create Success', 'green');
-        $this->message('You should configure ' . $dir . '/Config/config.ini');
-        $this->message("Configure your web root to $dir/WebRoot and visit your Application on browser");
+        Toknot\Di\Log::colorMessage('Create Success', 'green');
+        Toknot\Di\Log::colorMessage('You should configure ' . $dir . '/Config/config.ini');
+        Toknot\Di\Log::colorMessage("Configure your web root to $dir/WebRoot and visit your Application on browser");
     }
     public function writeManageListConfig($dir) {
         $configure = <<<EOF
@@ -122,38 +122,42 @@ action = false
 
 ;sub is the category child item list
 ;one item contain action and show name and use | split
-sub[] = '/User/All|User List'
-sub[] = '/User/Add|Add User'
+sub[] = 'UserList'
+sub[] = 'AddUser'
 
-[Log]
-name = Manage Log
-hassub = true
-action = false
-sub[] = '/Manage/All|Logs List'
+[UserList]
+name = UserList
+hassub = false
+action = User\Lists
+                
+[AddUser]
+name = Add User
+hassub = false
+action = User\Add
 
 EOF;
         file_put_contents($dir . '/Config/managelist.ini', $configure);
     }
 
     public function versionInfo() {
-        $this->message('Toknot Framework Application Create Script');
-        $this->message('Toknot ' . \Toknot\Di\Version::VERSION . '-' . \Toknot\Di\Version::STATUS . ';PHP ' . PHP_VERSION);
-        $this->message('Copyright (c) 2010-2013 Szopen Xiao');
-        $this->message('New BSD Licenses <http://toknot.com/LICENSE.txt>');
-        $this->message('');
+        Toknot\Di\Log::colorMessage('Toknot Framework Application Create Script');
+        Toknot\Di\Log::colorMessage('Toknot ' . \Toknot\Di\Version::VERSION . '-' . \Toknot\Di\Version::STATUS . ';PHP ' . PHP_VERSION);
+        Toknot\Di\Log::colorMessage('Copyright (c) 2010-2013 Szopen Xiao');
+        Toknot\Di\Log::colorMessage('New BSD Licenses <http://toknot.com/LICENSE.txt>');
+        Toknot\Di\Log::colorMessage('');
     }
 
     public function enterRootPass() {
-        $this->message('Enter root password:', null, false);
+        Toknot\Di\Log::colorMessage('Enter root password:', null, false);
         $password = trim(fgets(STDIN));
         while (strlen($password) < 6) {
-            $this->message('root password too short,enter again:', 'red', false);
+            Toknot\Di\Log::colorMessage('root password too short,enter again:', 'red', false);
             $password = trim(fgets(STDIN));
         }
-        $this->message('Enter root password again:', null, false);
+        Toknot\Di\Log::colorMessage('Enter root password again:', null, false);
         $repassword = trim(fgets(STDIN));
         while (empty($password)) {
-            $this->message('must enter root password again:', 'red', false);
+            Toknot\Di\Log::colorMessage('must enter root password again:', 'red', false);
             $repassword = trim(fgets(STDIN));
         }
         if ($repassword != $password) {
@@ -188,20 +192,20 @@ EOS;
         if ($isCurrent == 'yes') {
             $topnamespace = '';
             while (empty($topnamespace)) {
-                $this->message("Enter application root namespace name:", null, false);
+                Toknot\Di\Log::colorMessage("Enter application root namespace name:", null, false);
                 $topnamespace = trim(fgets(STDIN));
             }
             $dir = $this->workDir . '/' . $topnamespace;
         } else {
-            $this->message("Enter application path, the basename is root namespace name:", null, false);
+            Toknot\Di\Log::colorMessage("Enter application path, the basename is root namespace name:", null, false);
             $dir = trim(fgets(STDIN));
             while (empty($dir)) {
-                $this->message("must enter application path: ", null, false);
+                Toknot\Di\Log::colorMessage("must enter application path: ", null, false);
                 $dir = trim(fgets(STDIN));
             }
         }
         if (file_exists($dir)) {
-            $this->message('Path (' . $dir . ') is exists, change other path', 'red');
+            Toknot\Di\Log::colorMessage('Path (' . $dir . ') is exists, change other path', 'red');
             $this->createAppRootDir($isCurrent);
         }
         return $dir;
@@ -213,7 +217,7 @@ EOS;
         } else if (is_dir($source)) {
             $dir = dir($source);
             if (is_file($dest)) {
-                return $this->message($dest . ' is exist file');
+                return Toknot\Di\Log::colorMessage($dest . ' is exist file');
             }
             if (!is_dir($dest)) {
                 mkdir($dest, 0777, true);
@@ -223,7 +227,7 @@ EOS;
                     continue;
                 }
                 $file = $source . '/' . $f;
-                $this->message("copy $file");
+                Toknot\Di\Log::colorMessage("copy $file");
                 $destfile = $dest . '/' . $f;
                 if (is_dir($file)) {
                     $this->copyDir($file, $destfile);
@@ -271,7 +275,7 @@ $phpCode .= <<<'EOS'
     }
  }
 EOS;
-        $this->message("Create $path/Index.php");
+        Toknot\Di\Log::colorMessage("Create $path/Index.php");
         file_put_contents("$path/Index.php", $phpCode);
     }
 
@@ -313,7 +317,7 @@ EOS;
 
 }
 EOS;
-        $this->message("Create $path/{$this->appName}Base.php");
+        Toknot\Di\Log::colorMessage("Create $path/{$this->appName}Base.php");
         file_put_contents("$path/{$this->appName}Base.php", $phpCode);
     }
 
@@ -343,36 +347,8 @@ Router::ROUTER_MAP_TABLE    is use Config/router_map.ini, the file is ini config
 $app->setRouterArgs(Router::ROUTER_PATH, 2);
 $app->run("' . $namespace . '",dirname(__DIR__));';
 
-        $this->message("Create $path/index.php");
+        Toknot\Di\Log::colorMessage("Create $path/index.php");
         file_put_contents($path . '/index.php', $phpCode);
-    }
-
-    public function message($str, $color = null, $newLine = true) {
-        $number = FALSE;
-        switch ($color) {
-            case 'red':
-                $number = 31;
-                break;
-            case 'green':
-                $number = 32;
-                break;
-            case 'blue':
-                $number = 44;
-                break;
-            case 'yellow':
-                $number = 43;
-                break;
-        }
-        if ($number) {
-            echo "\033[1;{$number}m";
-        }
-        echo "$str";
-        if ($newLine) {
-            echo "\r\n";
-        }
-        if ($number) {
-            echo "\033[0m";
-        }
     }
 
 }

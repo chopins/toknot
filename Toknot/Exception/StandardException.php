@@ -157,7 +157,9 @@ class StandardException extends ErrorException {
         if (DEVELOPMENT) {
             return $traceInfo;
         } else {
-            header('500 Internal Server Error');
+            if (PHP_SAPI != 'cli') {
+                header('500 Internal Server Error');
+            }
             Log::save($traceInfo);
             return '500 Internal Server Error';
         }

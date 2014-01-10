@@ -9,10 +9,10 @@
 			{foreach $navList as $key=>$nav}
 			<li class="nav-tree-ul-li">
 				<div class="icon-down-open nav-cat" {if $nav.action}action="{$nav.action}"{/if} {if !$nav.hassub}hassub="no"{/if}>{$nav.name}</div>
-				{if isset($nav.sub)}
+				{if $nav.hassub}
 				<ul class="sub-nav-tree">
 					{foreach $nav.sub as $sub}
-					<li class="sub-nav-tree-li" action="{$sub[0]}">{$sub[1]}</li>
+					<li class="sub-nav-tree-li" {if $nav.action}action="{$nav.action}"{/if}>{$sub.name}</li>
 					{/foreach}
 				</ul>
 				{/if}

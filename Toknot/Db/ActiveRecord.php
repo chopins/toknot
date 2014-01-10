@@ -32,7 +32,7 @@ class ActiveRecord extends Object {
     }
 
     public function config(ArrayObject $config) {
-        if (isset($config->dsn)) {
+        if (isset($config->dsn) && !empty($config->dsn)) {
             $this->dbObject->setDSN($config->dsn);
         } else {
             throw new DatabaseConfigException('dsn');

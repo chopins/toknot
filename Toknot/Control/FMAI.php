@@ -365,12 +365,12 @@ final class FMAI extends Object {
      * @return null|string
      */
     public function getPOST($name) {
-        if (empty($_GET[$name])) {
+        if (empty($_POST[$name])) {
             return null;
         } else if (self::$magicQuotesGpc) {
-            return $_GET[$name];
+            return $_POST[$name];
         } else {
-            return addslashes($_GET[$name]);
+            return addslashes($_POST[$name]);
         }
     }
     

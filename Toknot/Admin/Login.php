@@ -28,7 +28,7 @@ class Login extends AdminBase {
         $password = self::$FMAI->getPOST('password');
         $user = UserClass::login($userName, $password);
         if ($user) {
-            if (isset(self::$FMAI->getPOST('week'))) {
+            if (null!== self::$FMAI->getPOST('week')) {
                 $user->setLoginExpire('1w');
             }
             $this->setAdminLogin($user);

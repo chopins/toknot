@@ -50,7 +50,33 @@ class Log {
         }
         return;
     }
-    
+    public static function colorMessage($str, $color = null, $newLine = true) {
+        $number = FALSE;
+        switch ($color) {
+            case 'red':
+                $number = 31;
+                break;
+            case 'green':
+                $number = 32;
+                break;
+            case 'blue':
+                $number = 44;
+                break;
+            case 'yellow':
+                $number = 43;
+                break;
+        }
+        if ($number) {
+            echo "\033[1;{$number}m";
+        }
+        echo "$str";
+        if ($newLine) {
+            echo "\r\n";
+        }
+        if ($number) {
+            echo "\033[0m";
+        }
+    }
     /**
      * save trace info to log file
      *

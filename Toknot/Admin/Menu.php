@@ -23,14 +23,16 @@ class Menu extends Object {
     public function getAllMenu() {
         $FMAI = FMAI::getInstance();
         $file = FileObject::getRealPath($FMAI->appRoot, './Config/managelist.ini');
-        $manageList = ConfigLoader::loadCfg($file);    
+        $manageList = ConfigLoader::loadCfg($file);
         foreach($manageList as &$manage) {
             if(isset($manage['sub'])) {
-                foreach($manage['sub'] as $key=> $sub) {
-                    $manage['sub'][$key] = explode('|', $sub);
+                foreach($manage['sub'] as $key=>$sub) {
+                    $manage['sub'][$key] = $manageList[$sub];
+                    unset($manageList[$sub]);
                 }
             }
         }
+        var_dump($manageList);
         return $manageList;
     }
   
