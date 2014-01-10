@@ -21,6 +21,12 @@ class Nobody extends UserAccessControl{
     public function __get($name) {
         return $this->$name;
     }
+    public function logout() {
+        
+    }
+    public function login() {
+        return false;
+    }
 }
 
 ?>

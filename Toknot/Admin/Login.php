@@ -35,7 +35,7 @@ class Login extends AdminBase {
             self::$FMAI->redirectController('\Index');
         } else {
             self::$FMAI->D->act = 'login';
-            self::$FMAI->D->message = 'Username or password error';
+            self::$FMAI->D->message = 'Username or password invaild';
             self::$FMAI->display('login');
         }
     }
