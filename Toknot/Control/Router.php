@@ -128,10 +128,12 @@ class Router implements RouterInterface {
         } elseif($this->routerMode == self::ROUTER_MAP_TABLE) {
             $maplist = $this->loadRouterMapTable();
             $matches = array();
-            foreach($maplist as $pattern => $path) {
-                if(preg_match($pattern, $_SERVER['REQUEST_URI'],$matches)) {
-                    $this->spacePath = $path;
+            foreach($maplist as $map) {
+                $map['pattern'] = str_replace('/','\/',$map['pattern']);
+                if(preg_match("/{$map['pattern']}/i", $_SERVER['REQUEST_URI'],$matches)) {
+                    $this->spacePath = $map['action'];
                     $this->suffixPart = $matches;
+                    break;
                 }
             }
         } else {
