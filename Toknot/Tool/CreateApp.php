@@ -257,7 +257,9 @@ EOS;
         $phpCode .= <<<'EOS'
      
     protected $permissions = 0770;
-
+    protected $gid = 0;
+    protected $uid = 0;
+    protected $operateType = 'r';
     public function GET() {
         //$database = $this->AR->connect();
         print "hello world";
@@ -294,11 +296,12 @@ EOS;
     protected $AppPath;
     protected $AR;
     protected $view;
-    protected $permissions;
-    protected $classGroup;
+    protected $permissions = 0777;
+    protected $operateType = 'r';
+    protected $gid =0;
+    protected $uid =0;
     public function __construct($FMAI) {
         self::$FMAI = $FMAI;
-        self::$CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
         
         $this->AR = self::$FMAI->getActiveRecord();
 
@@ -326,7 +329,7 @@ EOS;
         $namespace = '\\' . $this->appName;
         $phpCode = '<?php
 use Toknot\Control\Application;
-use Toknot\Control\Router;
+//use Toknot\Control\Router;
 
 //If developement set true, product set false
 define(\'DEVELOPMENT\', true);
@@ -343,8 +346,9 @@ Router::ROUTER_GET_QUERY    is router use $_GET[\'r\']
 Router::ROUTER_MAP_TABLE    is use Config/router_map.ini, the file is ini configure
                             key is pattern, value is class full name with namespace
                             use FMAI::getParam() get match sub
+NOTE: if you set value here and different config.ini will use config.ini set value
 */
-$app->setRouterArgs(Router::ROUTER_PATH, 2);
+//$app->setRouterArgs(Router::ROUTER_PATH, 2);
 $app->run("' . $namespace . '",dirname(__DIR__));';
 
         Toknot\Di\Log::colorMessage("Create $path/index.php");

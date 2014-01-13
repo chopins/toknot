@@ -10,6 +10,7 @@
 
 namespace Toknot\Control;
 
+use Toknot\Di\Object;
 use Toknot\Control\RouterInterface;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
@@ -18,7 +19,7 @@ use Toknot\Control\StandardAutoloader;
 use Toknot\Di\FileObject;
 use Toknot\Config\ConfigLoader;
 
-class Router implements RouterInterface {
+class Router extends Object implements RouterInterface {
 
     /**
      * The property value is {@see Toknot\Control\Router::ROUTER_PATH} or 
@@ -88,7 +89,7 @@ class Router implements RouterInterface {
      *
      * @var string
      */
-    private $notFuondController = null;
+    private $notFoundController = null;
 
     /**
      * the class be invoked when the request controller not has support the method of the http request, 
@@ -97,6 +98,8 @@ class Router implements RouterInterface {
      * @var string
      */
     private $methodNotAllowedController = null;
+    
+    private $charset = 'UTF-8';
 
     /**
      * use URI of path controller invoke application controller of class
@@ -108,11 +111,29 @@ class Router implements RouterInterface {
      * use requset query of $_GET['c'] parameter controller invoke application controller of class
      */
     const ROUTER_GET_QUERY = 2;
-    
+
     /**
      * use router map table which be configure
      */
     const ROUTER_MAP_TABLE = 3;
+    
+    /**
+     * __construct reject new of outside
+     * 
+     * @access public
+     * @return void
+     */
+    protected function __construct() {
+        
+    }
+    
+    /**
+     * 
+     * @return Toknot\Control\Router
+     */
+    public static function singleton() {
+        return parent::__singleton();
+    }
 
     /**
      * Set Controler info that under application, if CLI mode, will set request method is CLI
@@ -125,12 +146,12 @@ class Router implements RouterInterface {
             } else {
                 $this->spacePath = '\\' . strtr($_GET['c'], '.', '\\');
             }
-        } elseif($this->routerMode == self::ROUTER_MAP_TABLE) {
+        } elseif ($this->routerMode == self::ROUTER_MAP_TABLE) {
             $maplist = $this->loadRouterMapTable();
             $matches = array();
-            foreach($maplist as $map) {
-                $map['pattern'] = str_replace('/','\/',$map['pattern']);
-                if(preg_match("/{$map['pattern']}/i", $_SERVER['REQUEST_URI'],$matches)) {
+            foreach ($maplist as $map) {
+                $map['pattern'] = str_replace('/', '\/', $map['pattern']);
+                if (preg_match("/{$map['pattern']}/i", $_SERVER['REQUEST_URI'], $matches)) {
                     $this->spacePath = $map['action'];
                     $this->suffixPart = $matches;
                     break;
@@ -171,10 +192,10 @@ class Router implements RouterInterface {
     }
 
     private function loadRouterMapTable() {
-        $filePath = $this->routerPath . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR .'router_map.ini';
+        $filePath = $this->routerPath . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'router_map.ini';
         return ConfigLoader::loadCfg($filePath);
     }
-    
+
     /**
      * set application path, implements RouterInterface
      * 
@@ -192,9 +213,14 @@ class Router implements RouterInterface {
         if (DEVELOPMENT) {
             throw new BadClassCallException($invokeClass);
         }
-        header('404 Not Found');
-        if ($this->notFuondController !== null) {
-            $invokeClass = "{$this->routerNameSpace}\{$this->notFuondController}";
+        header('Status:404 Not Found');
+        header("Content-type: text/html; charset={$this->charset}"); 
+        if ($this->notFoundController !== null) {
+            $invokeClass = "{$this->routerNameSpace}\Controller{$this->notFoundController}";
+            $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
+            if (is_file($classFile)) {
+                include $classFile;
+            }
             if (!class_exists($invokeClass, true)) {
                 die('404 Not Found');
             }
@@ -216,21 +242,22 @@ class Router implements RouterInterface {
         $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}";
         $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
         $classExist = false;
-        
+
         //not case sensitive check file whether exist
-        if($this->routerDepth >0) {
+        if ($this->routerDepth > 0) {
             $caseClassFile = FileObject::fileExistCase($classFile);
         } else {
             //if not set routerDepth, controller is first finded class, suffix of url
             //will be ignored and push to paramers
             $classPath = "{$this->routerNameSpace}\Controller";
             $classPart = explode(StandardAutoloader::NS_SEPARATOR, $this->spacePath);
-            foreach($classPart as $key =>$part) {
-                if(empty($part))  continue;
+            foreach ($classPart as $key => $part) {
+                if (empty($part))
+                    continue;
                 $classPath .= "/$part";
                 $classFile = StandardAutoloader::transformClassNameToFilename($classPath, $this->routerPath);
                 $caseClassFile = FileObject::fileExistCase($classFile);
-                if($caseClassFile) {
+                if ($caseClassFile) {
                     $this->suffixPart = array_slice($classPart, $key + 1);
                     break;
                 }
@@ -243,7 +270,7 @@ class Router implements RouterInterface {
             $invokeClass = $this->routerNameSpace . strtok($invokeClass, '.');
             $classExist = class_exists($invokeClass, false);
         }
-        
+
         //if url mapped controller not exist
         if (!$classExist) {
             //The url mapping to a namespace but not a controller class, will invoke 
@@ -263,18 +290,19 @@ class Router implements RouterInterface {
                 $this->invokeNotFoundController($invokeClass);
             }
         }
-        
+
 
         $FMAI->setURIOutRouterPath($this->suffixPart, $method);
-        
+
         $invokeObject = new $invokeClass($FMAI);
-        if (!method_exists($invokeClass,$method)) {
+        if (!method_exists($invokeClass, $method)) {
             if (DEVELOPMENT) {
                 throw new StandardException("Not Support Request Method ($method)");
             } else {
-                header('405 Method Not Allowed');
-                if ($this->methodNotAllowedController === null) {
-                    $invokeClass = "{$this->routerNameSpace}\{$this->methodNotAllowedController}";
+                header('Status:405 Method Not Allowed');
+                header("Content-type: text/html; charset={$this->charset}");
+                if ($this->methodNotAllowedController !== null) {
+                    $invokeClass = "{$this->routerNameSpace}\Controller{$this->methodNotAllowedController}";
                     $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
                     if (is_file($classFile)) {
                         include $classFile;
@@ -282,6 +310,7 @@ class Router implements RouterInterface {
                     if (!class_exists($invokeClass, false)) {
                         die('405 Method Not Allowed');
                     }
+                    $invokeObject = new $invokeClass($FMAI);
                 } else {
                     die('405 Method Not Allowed');
                 }
@@ -316,7 +345,7 @@ class Router implements RouterInterface {
     public function runtimeArgs($mode = self::ROUTER_PATH, $routeDepth = 1, $notFound = null, $methodNotAllowed = null) {
         $this->routerMode = $mode;
         $this->routerDepth = $routeDepth;
-        $this->notFuondController = $notFound;
+        $this->notFoundController = $notFound;
         $this->methodNotAllowedController = $methodNotAllowed;
     }
 
@@ -345,14 +374,37 @@ class Router implements RouterInterface {
         return strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
-    /**
-     * __construct reject new of outside
-     * 
-     * @access public
-     * @return void
-     */
-    public function __construct() {
-        
+
+    public function getNotFoundController() {
+        return $this->notFoundController;
+    }
+
+    public function getMethodNotAllowedController() {
+        return $this->methodNotAllowedController;
+    }
+
+    public function loadConfigure() {
+        $cfg = ConfigLoader::CFG();
+        if (!empty($cfg->App->notFoundController)) {
+            $this->notFoundController = $cfg->App->notFoundController;
+        }
+        if (!empty($cfg->App->methodNotAllowedController)) {
+            $this->methodNotAllowedController = $cfg->App->methodNotAllowedController;
+        }
+        if (!empty($cfg->App->defaultInvokeController)) {
+            $this->defaultInvokeController = $cfg->App->defaultInvokeController;
+        }
+        if (!empty($cfg->App->routerMode)) {
+            $this->routerMode = constant("self::{$cfg->App->routerMode}");
+        } else {
+            $this->routerMode = self::ROUTER_PATH;
+        }
+        if (!empty($cfg->App->routerDepth)) {
+            $this->routerDepth = $cfg->App->routerDepth;
+        }
+        if(!empty($cfg->App->charset)) {
+            $this->charset = $cfg->App->charset;
+        }
     }
 
 }

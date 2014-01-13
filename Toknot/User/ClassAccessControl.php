@@ -63,7 +63,7 @@ abstract class ClassAccessControl extends UserAccessControl {
      *
      * @var integer
      */
-    protected $classType = self::CLASS_READ;
+    protected $operateType = self::CLASS_READ;
     
     /**
      * only show data
@@ -80,10 +80,27 @@ abstract class ClassAccessControl extends UserAccessControl {
      */
     const CLASS_UPDATE = 3;
     
-    public function getClassType() {
-        return $this->classType;
+    public function getOperateType() {
+        return $this->operateType;
     }
 
+    public function setOperateType($operate) {
+        if(is_numeric($operate)) {
+            if($operate >=1 && $operate <=3) {
+                $this->operateType = $operate;
+            } else {
+                $this->operateType = self::CLASS_READ;
+            }
+            return;
+        }
+        $opStr = 'rwu';
+        $idx = strpos($opStr, strtolower($operate));
+        if($idx >=0) {
+            $this->operateType = $idx+1;
+        } else {
+            $this->operateType = self::CLASS_READ;
+        }
+    }
      /**
      * Use Root user change class of permission with is temp
      * 

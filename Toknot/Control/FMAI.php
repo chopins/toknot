@@ -23,9 +23,7 @@ use Toknot\Di\ArrayObject;
 use Toknot\User\Session;
 use Toknot\Di\Log;
 use Toknot\Di\FileObject;
-
-use Toknot\User\Root;
-use Toknot\User\MethodAccessControl;
+use Toknot\Control\Router;
 
 
 /**
@@ -136,6 +134,12 @@ final class FMAI extends Object {
     protected function __construct($appNamespace, $appRoot) {
         StandardAutoloader::importToknotClass('Config\ConfigLoader');
         ConfigLoader::singleton();
+        
+        if (!file_exists($appRoot . '/Config/config.ini')) {
+            throw new FileIOException('must create ' . $this->appRoot . '/Config/config.ini');
+        }
+        $this->loadConfigure($appRoot . '/Config/config.ini',$appRoot . '/Data/config');
+        
         $this->appRoot = $appRoot;
         $this->appNamespace = $appNamespace;
         DataCacheControl::$appRoot = $appRoot;
@@ -339,6 +343,9 @@ final class FMAI extends Object {
      * @return string
      */
     public function getParam($index, $filter = true) {
+        if(count($this->uriOutRouterPath) <= $index) {
+            return null;
+        }
         if ($filter) {
             return addslashes($this->uriOutRouterPath[$index]);
         } else {
@@ -480,7 +487,7 @@ final class FMAI extends Object {
      * @param \Toknot\User\UserClass $user
      */
     public function checkAccess(ClassAccessControl $clsObj, UserAccessControl $user) {
-        switch ($clsObj->getClassType()) {
+        switch ($clsObj->getOperateType()) {
             case ClassAccessControl::CLASS_READ:
                 $this->accessControlStatus = $clsObj->checkRead($user);
                 break;
@@ -495,7 +502,29 @@ final class FMAI extends Object {
                 break;
         }
     }
-
+    
+    /**
+     * invoke Sub Action for custom method of Controller
+     * the method will check User Access permissions
+     * 
+     * @param \Toknot\User\ClassAccessControl $clsObj
+     * @param \Toknot\User\UserAccessControl $user
+     * @return null
+     */
+    public function invokeSubAction(ClassAccessControl &$clsObj, UserAccessControl $user) {
+        if(!($subActionName = $this->getParam(0,false))) {
+            $subActionName = 'index';
+        }
+        if(method_exists($clsObj,$subActionName)) {
+            $this->checkAccess($clsObj, $user);
+            $clsObj->$subActionName();
+        } else {
+            $invokeClass = null;
+            Router::singleton()->invokeNotFoundController($invokeClass);
+            return $invokeClass->GET();  
+        }
+        
+    }
     /**
      * Get a user object by uid, recommended ser serialize() the user object instead
      * 
@@ -536,32 +565,6 @@ final class FMAI extends Object {
      */
     public static function getCurrentExecTime() {
         return microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
-    }
-    
-    public function invokeSubAction(&$controller) {
-        $subActionName = $this->getParam(0);
-        try {
-            $action = new \ReflectionMethod($controller,$subActionName);
-        } catch(\ReflectionException $e) {
-            try {
-                $action = new \ReflectionMethod($controller,'index');
-            } catch (\ReflectionException $e) {
-                header('404 Not Found');
-                die('404 Not Found');
-            }
-        }
-        if($user instanceof Root) {
-            return $controller->$subActionName();
-        }
-        var_dump($action->getDocComment());return;
-        $parameters = $action->getParameters();
-        $method = new MethodAccessControl($user);
-        foreach($parameters as $param) {
-            $method->setPropertie($param->name, $param->getDefaultValue());
-        }
-        if($method->checkAccess()) {
-            $controller->$subActionName();
-        }
     }
     
 }
