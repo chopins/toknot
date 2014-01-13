@@ -128,16 +128,16 @@ abstract class ClassAccessControl extends UserAccessControl {
         if ($user instanceof Root) {
             return true;
         }
-        if (($this->permissions ^ 0770) > $perm) {
+        if (($this->permissions > 0770 && $this->permissions ^ 0770) >= $perm) {
             return true;
         }
         if ($user instanceof Nobody) {
             return false;
         }
-        if ($user->inGroup($this->gid) && $this->permissions ^ 0707 >> 3 > $perm) {
+        if ($user->inGroup($this->gid) && $this->permissions > 0707 &&  ($this->permissions ^ 0707) >> 3 >= $perm) {
             return true;
         }
-        if ($this->uid == $user->getUid() && $this->permissions ^ 0077 >> 6 > $perm) {
+        if ($this->uid == $user->getUid() && ($this->permissions ^ 0077) >> 6 >= $perm) {
             return true;
         }
         return false;
