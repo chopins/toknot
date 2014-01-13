@@ -24,6 +24,10 @@ use Toknot\User\Session;
 use Toknot\Di\Log;
 use Toknot\Di\FileObject;
 
+use Toknot\User\Root;
+use Toknot\User\MethodAccessControl;
+
+
 /**
  * Framework Module Access Interfaces
  */
@@ -533,5 +537,30 @@ final class FMAI extends Object {
     public static function getCurrentExecTime() {
         return microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
     }
-
+    
+    public function invokeSubAction(&$controller,UserAccessControl $user) {
+        $subActionName = $this->getParam(0);
+        try {
+            $action = new ReflectionMethod($controller,$subActionName);
+        } catch(ReflectionException $e) {
+            try {
+                $action = new ReflectionMethod($controller,'index');
+            } catch (ReflectionException $e) {
+                header('404 Not Found');
+                die('404 Not Found');
+            }
+        }
+        if($user instanceof Root) {
+            return $controller->$subActionName();
+        }
+        $parameters = $action->getParameters();
+        $method = new MethodAccessControl($user);
+        foreach($parameters as $param) {
+            $method->setPropertie($param->name, $param->getDefaultValue());
+        }
+        if($method->checkAccess()) {
+            $controller->$subActionName();
+        }
+    }
+    
 }

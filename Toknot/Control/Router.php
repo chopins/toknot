@@ -193,7 +193,7 @@ class Router implements RouterInterface {
             throw new BadClassCallException($invokeClass);
         }
         header('404 Not Found');
-        if ($this->notFuondController === null) {
+        if ($this->notFuondController !== null) {
             $invokeClass = "{$this->routerNameSpace}\{$this->notFuondController}";
             if (!class_exists($invokeClass, true)) {
                 die('404 Not Found');
