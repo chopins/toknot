@@ -517,6 +517,10 @@ final class FMAI extends Object {
         }
         if(method_exists($clsObj,$subActionName)) {
             $this->checkAccess($clsObj, $user);
+            var_dump($this->getAccessStatus());
+            if ($this->redirectAccessDeniedController($this)) {
+                return;
+            }
             $clsObj->$subActionName();
         } else {
             $invokeClass = null;

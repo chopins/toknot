@@ -128,7 +128,6 @@ abstract class ClassAccessControl extends UserAccessControl {
         if ($user instanceof Root) {
             return true;
         }
-        
         if (($this->permissions ^ 0770) > $perm) {
             return true;
         }
