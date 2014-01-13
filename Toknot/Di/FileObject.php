@@ -277,7 +277,7 @@ class FileObject extends Object {
         if ($casePath) {
             $dirList = scandir($casePath);
             foreach ($dirList as $sub) {
-                if (strcasecmp($dirname, $dirname) === 0) {
+                if (strcasecmp($sub, $dirname) === 0) {
                     if(is_dir("$casePath/$sub")) {
                         return "$casePath/$sub";
                     }

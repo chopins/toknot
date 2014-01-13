@@ -223,12 +223,12 @@ class Router implements RouterInterface {
         } else {
             //if not set routerDepth, controller is first finded class, suffix of url
             //will be ignored and push to paramers
-            $classFile = "{$this->routerNameSpace}\Controller";
+            $classPath = "{$this->routerNameSpace}\Controller";
             $classPart = explode(StandardAutoloader::NS_SEPARATOR, $this->spacePath);
             foreach($classPart as $key =>$part) {
                 if(empty($part))  continue;
-                $classFile = StandardAutoloader::transformClassNameToFilename("$classFile/$part", $this->routerPath);
-                
+                $classPath .= "/$part";
+                $classFile = StandardAutoloader::transformClassNameToFilename($classPath, $this->routerPath);
                 $caseClassFile = FileObject::fileExistCase($classFile);
                 if($caseClassFile) {
                     $this->suffixPart = array_slice($classPart, $key + 1);
@@ -236,7 +236,6 @@ class Router implements RouterInterface {
                 }
             }
         }
-        
         if ($caseClassFile) {
             include_once $caseClassFile;
             $invokeClass = str_replace($this->routerPath, '', $caseClassFile);

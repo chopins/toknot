@@ -538,14 +538,14 @@ final class FMAI extends Object {
         return microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
     }
     
-    public function invokeSubAction(&$controller,UserAccessControl $user) {
+    public function invokeSubAction(&$controller) {
         $subActionName = $this->getParam(0);
         try {
-            $action = new ReflectionMethod($controller,$subActionName);
-        } catch(ReflectionException $e) {
+            $action = new \ReflectionMethod($controller,$subActionName);
+        } catch(\ReflectionException $e) {
             try {
-                $action = new ReflectionMethod($controller,'index');
-            } catch (ReflectionException $e) {
+                $action = new \ReflectionMethod($controller,'index');
+            } catch (\ReflectionException $e) {
                 header('404 Not Found');
                 die('404 Not Found');
             }
@@ -553,6 +553,7 @@ final class FMAI extends Object {
         if($user instanceof Root) {
             return $controller->$subActionName();
         }
+        var_dump($action->getDocComment());return;
         $parameters = $action->getParameters();
         $method = new MethodAccessControl($user);
         foreach($parameters as $param) {
