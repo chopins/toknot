@@ -18,11 +18,12 @@ use Toknot\User\Nobody;
 use Toknot\User\UserClass;
 use Toknot\Di\Version;
 use Toknot\User\UserAccessControl;
+use Toknot\Control\ControllerInterface AS CI;
 
 /**
  * Admin module base class for user's admin application
  */
-class AdminBase extends ClassAccessControl {
+abstract class AdminBase extends ClassAccessControl implements CI\ControllerInterface{
 
     /**
      * the controller permission, 8bit number like uninx
@@ -88,6 +89,7 @@ class AdminBase extends ClassAccessControl {
         $FMAI->registerAccessDeniedController('\User\Login');
 
         $user = $this->checkUserLogin();
+        $FMAI->setCurrentUser($user);
         $this->currentUser = $user;
         $FMAI->checkAccess($this, $user);
 
@@ -137,7 +139,7 @@ class AdminBase extends ClassAccessControl {
     public function CLI() {
         $this->GET();
     }
-
+   
     /**
      * Check current visiter whether logined
      * 

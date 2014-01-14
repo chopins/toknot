@@ -11,20 +11,20 @@
 namespace Toknot\Control;
 
 use Toknot\Di\Object;
-use Toknot\View\Renderer;
+use Toknot\Di\DataCacheControl;
+use Toknot\Di\ArrayObject;
+use Toknot\Di\Log;
+use Toknot\Di\FileObject;
 use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
 use Toknot\View\ViewCache;
+use Toknot\View\Renderer;
 use Toknot\User\ClassAccessControl;
 use Toknot\User\UserClass;
 use Toknot\User\UserAccessControl;
-use Toknot\Di\DataCacheControl;
-use Toknot\Di\ArrayObject;
+use Toknot\User\Nobody;
 use Toknot\User\Session;
-use Toknot\Di\Log;
-use Toknot\Di\FileObject;
 use Toknot\Control\Router;
-
 
 /**
  * Framework Module Access Interfaces
@@ -112,7 +112,8 @@ final class FMAI extends Object {
      * @access readonly
      */
     private $appNamespace = '';
-    
+    private $currentUser = null;
+    private $noPermissionController = null;
     public static $magicQuotesGpc = 0;
 
     /**
@@ -132,23 +133,40 @@ final class FMAI extends Object {
      * 
      */
     protected function __construct($appNamespace, $appRoot) {
+        self::$magicQuotesGpc = get_magic_quotes_gpc();
         StandardAutoloader::importToknotClass('Config\ConfigLoader');
         ConfigLoader::singleton();
-        
-        if (!file_exists($appRoot . '/Config/config.ini')) {
-            throw new FileIOException('must create ' . $this->appRoot . '/Config/config.ini');
+
+        if (file_exists($appRoot . '/Config/config.ini')) {
+            $this->loadConfigure($appRoot . '/Config/config.ini', $appRoot . '/Data/config');
         }
-        $this->loadConfigure($appRoot . '/Config/config.ini',$appRoot . '/Data/config');
-        
+
+        $CFG = ConfigLoader::CFG();
+        date_default_timezone_set($CFG->App->timeZone);
         $this->appRoot = $appRoot;
         $this->appNamespace = $appNamespace;
-        DataCacheControl::$appRoot = $appRoot;
-        Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
-        Log::$savePath = FileObject::getRealPath($appRoot, ConfigLoader::CFG()->Log->logSavePath);
+        $this->currentUser = new Nobody;
         $this->D = new ArrayObject;
-        //ConfigLoader::CFG()->AppRoot = $this->appRoot;
-        date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
-        self::$magicQuotesGpc = get_magic_quotes_gpc();
+        $this->accessDeniedController = $CFG->App->accessDeniedController;
+        $this->noPermissionController = $CFG->App->noPermissionController;
+
+        DataCacheControl::$appRoot = $appRoot;
+        Log::$enableSaveLog = $CFG->Log->enableLog;
+        Log::$savePath = FileObject::getRealPath($appRoot, $CFG->Log->logSavePath);
+    }
+
+    public static function import($className, $aliases) {
+        StandardAutoloader::import($className, $aliases);
+    }
+
+    /**
+     * 
+     * @param string $key
+     * @return object
+     */
+    public static function call($key) {
+        $name = StandardAutoloader::getImprotList($key);
+        return new $name;
     }
 
     /**
@@ -172,7 +190,11 @@ final class FMAI extends Object {
 
     public function invokeBefore(&$controller) {
         $this->controller = $controller;
-
+        if($controller instanceof ClassAccessControl && $this->noPermissionController) {
+            $noPermissionController = Router::controllerNameTrans($this->noPermissionController);
+            $noPermIns = new $noPermissionController($this);
+            UserAccessControl::updatePermissonController($noPermIns, $this->requestMethod);
+        }
         if ($this->requestMethod == 'GET' && $this->enableCache) {
             ViewCache::outPutCache();
             if (ViewCache::$cacheEffective == ViewCache::CACHE_USE_SUCC) {
@@ -343,7 +365,7 @@ final class FMAI extends Object {
      * @return string
      */
     public function getParam($index, $filter = true) {
-        if(count($this->uriOutRouterPath) <= $index) {
+        if (count($this->uriOutRouterPath) <= $index) {
             return null;
         }
         if ($filter) {
@@ -384,7 +406,7 @@ final class FMAI extends Object {
             return addslashes($_POST[$name]);
         }
     }
-    
+
     /**
      * get value of $_POST and use addslashes
      * 
@@ -446,7 +468,6 @@ final class FMAI extends Object {
     public function redirectAccessDeniedController($class, $queryString = '') {
         if ($class instanceof \Toknot\User\ClassAccessControl && $this->getAccessStatus() === false) {
             $accessDeniedController = $this->getAccessDeniedController();
-            //header("Location:$accessDeniedController");
             $this->redirectController($accessDeniedController, $queryString);
             return true;
         } else {
@@ -484,59 +505,64 @@ final class FMAI extends Object {
      * Check a user object whether can access class object be passed
      * 
      * @param \Toknot\User\ClassAccessControl $clsObj
-     * @param \Toknot\User\UserClass $user
      */
-    public function checkAccess(ClassAccessControl $clsObj, UserAccessControl $user) {
+    public function checkAccess(ClassAccessControl $clsObj) {
         switch ($clsObj->getOperateType()) {
             case ClassAccessControl::CLASS_READ:
-                $this->accessControlStatus = $clsObj->checkRead($user);
+                $this->accessControlStatus = $clsObj->checkRead($this->currentUser);
                 break;
             case ClassAccessControl::CLASS_WRITE:
-                $this->accessControlStatus = $clsObj->checkWrite($user);
+                $this->accessControlStatus = $clsObj->checkWrite($this->currentUser);
                 break;
             case ClassAccessControl::CLASS_UPDATE:
-                $this->accessControlStatus = $clsObj->checkChange($user);
+                $this->accessControlStatus = $clsObj->checkChange($this->currentUser);
                 break;
             default :
                 $this->accessControlStatus = true;
                 break;
         }
     }
-    
+
     /**
      * invoke Sub Action for custom method of Controller
      * the method will check User Access permissions
      * 
      * @param \Toknot\User\ClassAccessControl $clsObj
-     * @param \Toknot\User\UserAccessControl $user
      * @return null
      */
-    public function invokeSubAction(ClassAccessControl &$clsObj, UserAccessControl $user) {
-        if(!($subActionName = $this->getParam(0,false))) {
+    public function invokeSubAction(ClassAccessControl &$clsObj) {
+        if (!($subActionName = $this->getParam(0, false))) {
             $subActionName = 'index';
         }
-        if(method_exists($clsObj,$subActionName)) {
-            $this->checkAccess($clsObj, $user);
-            var_dump($this->getAccessStatus());
-            if ($this->redirectAccessDeniedController($this)) {
+        if (method_exists($clsObj, $subActionName)) {
+            $this->checkAccess($clsObj);
+            if ($this->redirectAccessDeniedController($clsObj)) {
                 return;
             }
             $clsObj->$subActionName();
         } else {
             $invokeClass = null;
             Router::singleton()->invokeNotFoundController($invokeClass);
-            return $invokeClass->GET();  
+            return $invokeClass->GET();
         }
-        
     }
+
     /**
      * Get a user object by uid, recommended ser serialize() the user object instead
      * 
      * @param integer $id
      * @return \Toknot\User\UserClass
      */
-    public function setCurrentUser($id) {
-        return UserClass::getInstanceByUid($id);
+    public function setCurrentUser($user = null) {
+        if ($user === null)
+            return;
+        if ($user instanceof UserClass) {
+            $this->currentUser = $user;
+        }
+    }
+
+    public function getCurrentUser() {
+        return $this->currentUser;
     }
 
     /**
@@ -570,5 +596,5 @@ final class FMAI extends Object {
     public static function getCurrentExecTime() {
         return microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
     }
-    
+
 }

@@ -9,12 +9,16 @@
  */
 
 namespace Toknot\Control;
+use Toknot\Exception\BadPropertyGetException;
+use Toknot\Exception\BadClassCallException;
 
 class StandardAutoloader {
 
     const NS_SEPARATOR = '\\';
 
     private $directory = array();
+    
+    private $importList = array();
 
     public function __construct($path = '') {
         if ($path == '') {
@@ -49,8 +53,12 @@ class StandardAutoloader {
 //            return false;
         $dir = dirname($dir);
         $nsPath = strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
-        $nsPath = ltrim($nsPath,'/');
+        $nsPath = ltrim($nsPath, '/');
         return $dir . DIRECTORY_SEPARATOR . $nsPath . '.php';
+    }
+
+    public static function transformNamespaceToPath($class, $dir) {
+        return rtrim(self::transformClassNameToFilename($class, $dir), '.php');
     }
 
     /**
@@ -62,9 +70,6 @@ class StandardAutoloader {
     public function autoload($class) {
         foreach ($this->directory as $dir) {
             $filename = self::transformClassNameToFilename($class, $dir);
-            if (!$filename)
-                continue;
-            //$resolvedName = stream_resolve_include_path($filename);
             if (file_exists($filename)) {
                 return require_once $filename;
             }
@@ -86,6 +91,49 @@ class StandardAutoloader {
         return require_once $path . '.php';
     }
 
+    public static function import($className, $aliases = null) {
+        $name = substr(strrchr($className, self::NS_SEPARATOR), 1);
+        if ($name == '*') {
+            $namespace = rtrim($className, '\*');
+            
+            foreach ($this->directory as $dir) {
+                $path = self::transformNamespaceToPath($namespace, $dir);
+                if (is_dir($path)) {
+                    $fileList = glob("$path/*.php");
+                    if ($aliases === null) {
+                        foreach ($fileList as $file) {
+                            include_once $file;
+                            $this->importList[$file] = $namespace . $file;
+                        }
+                    } else {
+                        $this->importList[$aliases] = new \stdClass;
+                        foreach ($fileList as $file) {
+                            include_once $file;
+                            $this->importList[$aliases]->$file = $namespace . $file;
+                        }
+                    }
+                    break;
+                }
+            }
+        } else {
+            $aliases || ($aliases = $name);
+            $this->importList[$aliases] = $className;
+        }
+    }
+    public function getImprotList($key = null) {
+        if($key && isset($this->importList[$key])) {
+            return $this->importList[$key];
+        } elseif($key) {
+            throw new BadClassCallException($key);
+        }
+        return $this->importList;
+    }
+    public function __get($name) {
+        if($name == 'importList') {
+            return $this->importList;
+        }
+        throw new BadPropertyGetException(__CLASS__,$name);
+    }
     /**
      * import under namespace all class of toknot
      * 
@@ -101,13 +149,12 @@ class StandardAutoloader {
             include_once "{$path}/{$first}.php";
         }
         $fileList = glob("$path/*.php");
-        foreach($fileList as $file) {
+        foreach ($fileList as $file) {
             if ($file == "{$path}/{$first}.php") {
                 continue;
             }
             include_once $file;
         }
-    
     }
 
     /**

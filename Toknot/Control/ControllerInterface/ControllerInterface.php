@@ -8,6 +8,7 @@
  */
 
 namespace Toknot\Control\ControllerInterface;
+use Toknot\Control\FMAI;
 interface ControllerInterface {
     public function __construct(FMAI $FMAI);
 }

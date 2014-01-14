@@ -14,6 +14,7 @@ use Toknot\Exception\StandardException;
 
 class NoPermissionExecption extends StandardException {
     public static $displayController = null;
+    public static $method = 'GET';
     private $html;
     public function __construct($message) {
         if(!is_object(self::$displayController)) {
@@ -21,7 +22,8 @@ class NoPermissionExecption extends StandardException {
         }
         ob_start();
         self::$displayController->message = $message;
-        self::$displayController->GET();
+        $method = $this->method;
+        self::$displayController->$method();
         $this->html = ob_get_clean();
     }
     

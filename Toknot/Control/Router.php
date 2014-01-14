@@ -14,10 +14,12 @@ use Toknot\Di\Object;
 use Toknot\Control\RouterInterface;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
+use Toknot\Control\Exception\ControllerInvalidException;
 use Toknot\Control\FMAI;
 use Toknot\Control\StandardAutoloader;
 use Toknot\Di\FileObject;
 use Toknot\Config\ConfigLoader;
+use Toknot\Control\ControllerInterface as CI;
 
 class Router extends Object implements RouterInterface {
 
@@ -40,7 +42,7 @@ class Router extends Object implements RouterInterface {
      * @var string 
      * @access private
      */
-    private $routerNameSpace = '';
+    private static $routerNameSpace = '';
 
     /**
      * visit URI to application namespace route
@@ -55,8 +57,9 @@ class Router extends Object implements RouterInterface {
      *
      * @var string
      * @access private
+     * @static
      */
-    private $routerPath = '';
+    private static $routerPath = '';
 
     /**
      * like webserver set index.html, if set null will return 404 when no debug and develop will throw 
@@ -98,8 +101,8 @@ class Router extends Object implements RouterInterface {
      * @var string
      */
     private $methodNotAllowedController = null;
-    
     private $charset = 'UTF-8';
+    private $method = 'GET';
 
     /**
      * use URI of path controller invoke application controller of class
@@ -116,7 +119,7 @@ class Router extends Object implements RouterInterface {
      * use router map table which be configure
      */
     const ROUTER_MAP_TABLE = 3;
-    
+
     /**
      * __construct reject new of outside
      * 
@@ -126,7 +129,7 @@ class Router extends Object implements RouterInterface {
     protected function __construct() {
         
     }
-    
+
     /**
      * 
      * @return Toknot\Control\Router
@@ -192,7 +195,7 @@ class Router extends Object implements RouterInterface {
     }
 
     private function loadRouterMapTable() {
-        $filePath = $this->routerPath . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'router_map.ini';
+        $filePath = self::$routerPath . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'router_map.ini';
         return ConfigLoader::loadCfg($filePath);
     }
 
@@ -202,26 +205,34 @@ class Router extends Object implements RouterInterface {
      * @param string $path
      */
     public function routerPath($path) {
-        $this->routerPath = $path;
+        self::$routerPath = $path;
     }
 
     public function defaultInvoke($defaultClass) {
         $this->defaultClass = $defaultClass;
     }
 
-    private function invokeNotFoundController(&$invokeClass) {
+    public static function controllerNameTrans($controllerName) {
+        $invokeClass = self::$routerNameSpace."\Controller{$controllerName}";
+        $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
+        if (is_file($classFile)) {
+            include $classFile;
+        }
+        return $invokeClass;
+    }
+
+    public function invokeNotFoundController(&$invokeClass) {
         if (DEVELOPMENT) {
             throw new BadClassCallException($invokeClass);
         }
         header('Status:404 Not Found');
-        header("Content-type: text/html; charset={$this->charset}"); 
+        header("Content-type: text/html; charset={$this->charset}");
         if ($this->notFoundController !== null) {
-            $invokeClass = "{$this->routerNameSpace}\Controller{$this->notFoundController}";
-            $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
-            if (is_file($classFile)) {
-                include $classFile;
-            }
-            if (!class_exists($invokeClass, true)) {
+            $invokeClass = self::controllerNameTrans($this->notFoundController);
+            
+            $interface = "\Toknot\Control\ControllerInterface\\{$this->method}";
+            if (!class_exists($invokeClass, true) ||
+                    !$invokeClass instanceof CI\ControllerInterface || !$invokeClass instanceof $interface) {
                 die('404 Not Found');
             }
         } else {
@@ -231,7 +242,7 @@ class Router extends Object implements RouterInterface {
 
     /**
      * Invoke Application Controller, the method will call application of Controller what is
-     * $this->routerNameSpace\Controller{$this->spacePath}, and router action by request method
+     * self::$routerNameSpace\Controller{$this->spacePath}, and router action by request method
      * 
      * @param \Toknot\Control\FMAI $appContext
      * @throws BadClassCallException
@@ -239,8 +250,9 @@ class Router extends Object implements RouterInterface {
      */
     public function invoke(FMAI $FMAI) {
         $method = $this->getRequestMethod();
-        $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}";
-        $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
+        $this->method = $method;
+        $invokeClass = self::$routerNameSpace."\Controller{$this->spacePath}";
+        $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
         $classExist = false;
 
         //not case sensitive check file whether exist
@@ -249,13 +261,13 @@ class Router extends Object implements RouterInterface {
         } else {
             //if not set routerDepth, controller is first finded class, suffix of url
             //will be ignored and push to paramers
-            $classPath = "{$this->routerNameSpace}\Controller";
+            $classPath = "{self::$routerNameSpace}\Controller";
             $classPart = explode(StandardAutoloader::NS_SEPARATOR, $this->spacePath);
             foreach ($classPart as $key => $part) {
                 if (empty($part))
                     continue;
                 $classPath .= "/$part";
-                $classFile = StandardAutoloader::transformClassNameToFilename($classPath, $this->routerPath);
+                $classFile = StandardAutoloader::transformClassNameToFilename($classPath, self::$routerPath);
                 $caseClassFile = FileObject::fileExistCase($classFile);
                 if ($caseClassFile) {
                     $this->suffixPart = array_slice($classPart, $key + 1);
@@ -265,9 +277,9 @@ class Router extends Object implements RouterInterface {
         }
         if ($caseClassFile) {
             include_once $caseClassFile;
-            $invokeClass = str_replace($this->routerPath, '', $caseClassFile);
+            $invokeClass = str_replace(self::$routerPath, '', $caseClassFile);
             $invokeClass = strtr($invokeClass, '/', '\\');
-            $invokeClass = $this->routerNameSpace . strtok($invokeClass, '.');
+            $invokeClass = self::$routerNameSpace . strtok($invokeClass, '.');
             $classExist = class_exists($invokeClass, false);
         }
 
@@ -276,13 +288,10 @@ class Router extends Object implements RouterInterface {
             //The url mapping to a namespace but not a controller class, will invoke 
             //the namespace of under default controller class, it like index.html for
             //web server
-            $dir = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
+            $dir = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
             if (is_dir($dir) && $this->defaultClass != null) {
-                $invokeClass = "{$this->routerNameSpace}\Controller{$this->spacePath}\{$this->defaultClass}";
-                $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
-                if (is_file($classFile)) {
-                    include $classFile;
-                }
+                $invokeClass = self::controllerNameTrans("{$this->spacePath}\\{$this->defaultClass}");
+                
                 if (!class_exists($invokeClass, false)) {
                     $invokeClass = $this->invokeNotFoundController();
                 }
@@ -295,19 +304,23 @@ class Router extends Object implements RouterInterface {
         $FMAI->setURIOutRouterPath($this->suffixPart, $method);
 
         $invokeObject = new $invokeClass($FMAI);
-        if (!method_exists($invokeClass, $method)) {
+        if (!$invokeObject instanceof CI\ControllerInterface) {
+            if (DEVELOPMENT) {
+                throw new ControllerInvalidException($invokeClass);
+            }
+            $this->invokeNotFoundController($invokeClass);
+        }
+        $interface = "\Toknot\Control\ControllerInterface\\{$method}";
+        if (!$invokeObject instanceof $interface) {
             if (DEVELOPMENT) {
                 throw new StandardException("Not Support Request Method ($method)");
             } else {
                 header('Status:405 Method Not Allowed');
                 header("Content-type: text/html; charset={$this->charset}");
                 if ($this->methodNotAllowedController !== null) {
-                    $invokeClass = "{$this->routerNameSpace}\Controller{$this->methodNotAllowedController}";
-                    $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, $this->routerPath);
-                    if (is_file($classFile)) {
-                        include $classFile;
-                    }
-                    if (!class_exists($invokeClass, false)) {
+                    $invokeClass = self::controllerNameTrans($this->methodNotAllowedController);
+                    
+                    if (!class_exists($invokeClass, false) || !$invokeClass instanceof $interface) {
                         die('405 Method Not Allowed');
                     }
                     $invokeObject = new $invokeClass($FMAI);
@@ -356,7 +369,7 @@ class Router extends Object implements RouterInterface {
      * @param string $appspace
      */
     public function routerSpace($appspace) {
-        $this->routerNameSpace = $appspace;
+        self::$routerNameSpace = $appspace;
     }
 
     /**
@@ -373,7 +386,6 @@ class Router extends Object implements RouterInterface {
         }
         return strtoupper($_SERVER['REQUEST_METHOD']);
     }
-
 
     public function getNotFoundController() {
         return $this->notFoundController;
@@ -402,7 +414,7 @@ class Router extends Object implements RouterInterface {
         if (!empty($cfg->App->routerDepth)) {
             $this->routerDepth = $cfg->App->routerDepth;
         }
-        if(!empty($cfg->App->charset)) {
+        if (!empty($cfg->App->charset)) {
             $this->charset = $cfg->App->charset;
         }
     }

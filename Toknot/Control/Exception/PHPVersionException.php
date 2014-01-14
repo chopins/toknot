@@ -14,4 +14,3 @@ class PHPVersionException extends StandardException {
     protected $exceptionMessage = 'only support php version or 5.3 or lastest';
 }
 
-?>

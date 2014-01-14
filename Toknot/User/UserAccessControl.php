@@ -11,8 +11,9 @@
 namespace Toknot\User;
 
 use Toknot\Di\Object;
+use Toknot\User\Exception\NoPermissionExecption;
 
-abstract class UserAccessControl extends Object {
+abstract class UserAccessControl extends Object{
 
 	/**
 	 * current user token id
@@ -77,6 +78,8 @@ abstract class UserAccessControl extends Object {
 	 * @var string
 	 */
 	protected static $hashSalt = '';
+    
+    private static $noPermissonController = null;
 
 	/**
 	 * The password salt string
@@ -344,9 +347,16 @@ abstract class UserAccessControl extends Object {
 				}
 			}
 		}
+        $ipm = 'unknown';
 		preg_match("/[\d\.]{7,15}/", $ip, $ipm);
 		return isset($ipm[0]) ? $ipm[0] : 'unknown';
 	}
+    
+    public static function updatePermissonController($noPermissonController,$method) {
+        self::$noPermissonController = $noPermissonController;
+        NoPermissionExecption::$method = $method;
+        NoPermissionExecption::$displayController = $noPermissonController;
+    }
 	public function __toString() {
 		return $this->userName;
 	}

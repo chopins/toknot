@@ -13,7 +13,9 @@ namespace Toknot\User;
 use Toknot\User\UserAccessControl;
 use Toknot\User\Root;
 use Toknot\User\Nobody;
-use Toknot\Exception\StandardException;
+use Toknot\User\UserClass;
+use Toknot\User\Exception\NoPermissionExecption;
+use Toknot\User\Exception\UndefinedUserExecption;
 
 abstract class ClassAccessControl extends UserAccessControl {
 
@@ -84,7 +86,10 @@ abstract class ClassAccessControl extends UserAccessControl {
         return $this->operateType;
     }
 
-    public function setOperateType($operate) {
+    public function setOperateType(userClass $user,$operate) {
+        if(!$user instanceof Root && $user->uid != $this->uid) { 
+            throw new NoPermissionExecption('no permission to set operate type');
+        }
         if(is_numeric($operate)) {
             if($operate >=1 && $operate <=3) {
                 $this->operateType = $operate;
@@ -107,8 +112,12 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @param \Toknot\User\Root $user
      * @param integer $perms
      */
-    public function changeClassPermissions(Root $user, $perms) {
-        $this->permissions = $perms;
+    public function changeClassPermissions(UserClass $user, $perms) {
+        if($user instanceof Root || $user->uid == $this->uid) { 
+            $this->permissions = $perms;
+        } else {
+            throw new NoPermissionExecption('no permission to set class permisson');
+        }
     }
 
     /**
@@ -117,13 +126,17 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @param \Toknot\User\Root $user
      * @param string $group
      */
-    public function changeClassGroup(Root $user, $group) {
-        $this->classGroup = $group;
+    public function changeClassGroup(UserClass $user, $group) {
+        if($user instanceof Root || $user->uid == $this->uid) { 
+            $this->classGroup = $group;
+        } else {
+            throw new NoPermissionExecption('no permission to set class group');
+        }
     }
 
-    private function checkPermes($user, $perm) {
+    private function checkPerms($user, $perm) {
         if (!($user instanceof UserAccessControl)) {
-            throw new StandardException('Undefined user type');
+            throw new UndefinedUserExecption();
         }
         if ($user instanceof Root) {
             return true;
@@ -150,7 +163,7 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @return boolean
      */
     public function checkRead($user) {
-        return $this->checkPermes($user, 04);
+        return $this->checkPerms($user, 04);
     }
 
     /**
@@ -160,7 +173,7 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @return boolean
      */
     public function checkWrite($user) {
-        return $this->checkPermes($user, 06);
+        return $this->checkPerms($user, 06);
     }
 
     /**
@@ -170,7 +183,7 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @return boolean
      */
     public function checkChange($user) {
-        return $this->checkPermes($user, 07);
+        return $this->checkPerms($user, 07);
     }
 
     public function __toString() {
