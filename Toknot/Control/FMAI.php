@@ -24,6 +24,7 @@ use Toknot\User\UserClass;
 use Toknot\User\UserAccessControl;
 use Toknot\User\Nobody;
 use Toknot\User\Session;
+use Toknot\User\Root;
 use Toknot\Control\Router;
 
 /**
@@ -112,8 +113,30 @@ final class FMAI extends Object {
      * @access readonly
      */
     private $appNamespace = '';
+    
+    /**
+     * Current access user of object
+     *
+     * @var Toknot\User\Root|Toknot\User\UserClass|Toknot\User\Nobody
+     * @access readonly
+     */
     private $currentUser = null;
+    
+    /**
+     * if user no permission be invoked controller
+     *
+     * @var Toknot\Control\ControllerInterface\ControllerInterface
+     * @access private
+     */
     private $noPermissionController = null;
+    
+    /**
+     * The value equal PHP of get_magic_quotes_gpc()
+     *
+     * @var int
+     * @static
+     * @access public 
+     */
     public static $magicQuotesGpc = 0;
 
     /**
@@ -121,7 +144,16 @@ final class FMAI extends Object {
      * @var boolean
      */
     public $enableCache = false;
-
+    
+    private $exitStatus = false;
+    
+    /**
+     * FMAI singleton
+     * 
+     * @param string $appNamespace  Namespace of user app
+     * @param string $appRoot       directory root path of user app
+     * @return Toknot\Control\FMAI
+     */
     public static function singleton($appNamespace, $appRoot) {
         return parent::__singleton($appNamespace, $appRoot);
     }
@@ -131,6 +163,9 @@ final class FMAI extends Object {
      * when invoke Application Controller and construct
      * The method will load framework default configure file
      * 
+     * @access protected
+     * @param string $appNamespace  Namespace of user app
+     * @param string $appRoot       directory root path of user app
      */
     protected function __construct($appNamespace, $appRoot) {
         self::$magicQuotesGpc = get_magic_quotes_gpc();
@@ -154,15 +189,22 @@ final class FMAI extends Object {
         Log::$enableSaveLog = $CFG->Log->enableLog;
         Log::$savePath = FileObject::getRealPath($appRoot, $CFG->Log->logSavePath);
     }
-
+    
+    /**
+     * user namespace import class
+     * 
+     * @param type $className  the name contain full namespace
+     * @param type $aliases
+     */
     public static function import($className, $aliases) {
         StandardAutoloader::import($className, $aliases);
     }
 
     /**
+     * invoke class that be imported
      * 
-     * @param string $key
-     * @return object
+     * @param string $key   the key is aliases or class name without namespace
+     * @return object   instance of class that be impport
      */
     public static function call($key) {
         $name = StandardAutoloader::getImprotList($key);
@@ -187,7 +229,26 @@ final class FMAI extends Object {
     public function getURIOutRouterPath() {
         return $this->uriOutRouterPath;
     }
-
+    
+    /**
+     * do not invoke method of controller
+     * 
+     * @param string $method
+     */
+    public function kill($method = null) {
+        if($method == $this->requestMethod) {
+            $this->exitStatus = true;
+        } elseif($method === null) {
+            $this->exitStatus = true;
+        }
+    }
+    
+    /**
+     * the method be invoked before which method of controller was invoked by router 
+     * 
+     * @param \Toknot\User\ClassAccessControl $controller
+     * @return boolean  if false, do not invoked method of controller
+     */
     public function invokeBefore(&$controller) {
         $this->controller = $controller;
         if($controller instanceof ClassAccessControl && $this->noPermissionController) {
@@ -212,10 +273,16 @@ final class FMAI extends Object {
                 $func($this);
             }
         }
-
+        if($this->exitStatus) {
+            return false;
+        }
         return true;
     }
-
+    /**
+     * the method be invoked after which method of controller was invoked by router
+     * 
+     * @return null
+     */
     public function invokeAfter() {
         if ($this->invokeAfterHandler === null)
             return;
@@ -543,24 +610,25 @@ final class FMAI extends Object {
         } else {
             $invokeClass = null;
             Router::singleton()->invokeNotFoundController($invokeClass);
-            return $invokeClass->GET();
+            return Router::singleton()->instanceController($invokeClass, $this, $this->requestMethod);
         }
     }
 
     /**
-     * Get a user object by uid, recommended ser serialize() the user object instead
+     * Set current user object
      * 
-     * @param integer $id
-     * @return \Toknot\User\UserClass
+     * @param Tokont\User\UserClass|Toknot\User\Root $user
      */
     public function setCurrentUser($user = null) {
-        if ($user === null)
-            return;
-        if ($user instanceof UserClass) {
+        if ($user instanceof UserClass || $user instanceof Root) {
             $this->currentUser = $user;
         }
     }
-
+    
+    /**
+     * 
+     * @return type
+     */
     public function getCurrentUser() {
         return $this->currentUser;
     }

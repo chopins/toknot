@@ -18,7 +18,7 @@ class StandardAutoloader {
 
     private $directory = array();
     
-    private $importList = array();
+    private static $importList = array();
 
     public function __construct($path = '') {
         if ($path == '') {
@@ -103,13 +103,13 @@ class StandardAutoloader {
                     if ($aliases === null) {
                         foreach ($fileList as $file) {
                             include_once $file;
-                            $this->importList[$file] = $namespace . $file;
+                            self::$importList[$file] = $namespace . $file;
                         }
                     } else {
-                        $this->importList[$aliases] = new \stdClass;
+                        self::$importList[$aliases] = new \stdClass;
                         foreach ($fileList as $file) {
                             include_once $file;
-                            $this->importList[$aliases]->$file = $namespace . $file;
+                            self::$importList[$aliases]->$file = $namespace . $file;
                         }
                     }
                     break;
@@ -117,20 +117,20 @@ class StandardAutoloader {
             }
         } else {
             $aliases || ($aliases = $name);
-            $this->importList[$aliases] = $className;
+            self::$importList[$aliases] = $className;
         }
     }
-    public function getImprotList($key = null) {
-        if($key && isset($this->importList[$key])) {
-            return $this->importList[$key];
+    public static function getImprotList($key = null) {
+        if($key && isset(self::$importList[$key])) {
+            return self::$importList[$key];
         } elseif($key) {
             throw new BadClassCallException($key);
         }
-        return $this->importList;
+        return self::$importList;
     }
     public function __get($name) {
         if($name == 'importList') {
-            return $this->importList;
+            return self::$importList;
         }
         throw new BadPropertyGetException(__CLASS__,$name);
     }

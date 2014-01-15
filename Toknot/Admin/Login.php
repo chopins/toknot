@@ -12,8 +12,9 @@ namespace Toknot\Admin;
 
 use Toknot\Admin\AdminBase;
 use Toknot\User\UserClass;
+use Toknot\Control\ControllerInterface AS CI;
 
-class Login extends AdminBase {
+class Login extends AdminBase implements CI\GET,CI\POST{
 
     protected $permissions = 0777;
 
