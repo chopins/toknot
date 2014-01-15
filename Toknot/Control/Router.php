@@ -352,7 +352,7 @@ class Router extends Object implements RouterInterface {
         if (!self::checkController($invokeClass, $method)) {
             if (DEVELOPMENT) {
                 $interface = self::getControllerInterface($method);
-                throw new StandardException("Not Support Request Method ($method) or not implement {$interface}");
+                throw new StandardException("{$invokeClass} not support request method ($method) or not implement {$interface}");
             } else {
                 header('Status:405 Method Not Allowed');
                 header("Content-type: text/html; charset={$this->charset}");

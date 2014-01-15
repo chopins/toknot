@@ -325,7 +325,7 @@ EOS;
     }
 
     public function writeIndex($path) {
-        $toknot = dirname(__DIR__) . '/Control/Application.php';
+        $toknot = dirname(__DIR__) . '/Toknot.php';
         $namespace = '\\' . $this->appName;
         $phpCode = '<?php
 use Toknot\Control\Application;
