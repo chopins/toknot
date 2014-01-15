@@ -316,17 +316,20 @@ final class Application {
             if ($this->routerName instanceof RouterInterface) {
                 throw new StandardException('Router not support');
             }
+            $this->addAppPath($appPath);
+            self::$appRoot = $appPath;
+            
             $routerName = $this->routerName;
             $router = $routerName::singleton();
+            $router->routerSpace($appNameSpace);
+            $router->routerPath($appPath);
+            
             StandardAutoloader::importToknotClass('Control\FMAI');
-            $this->addAppPath($appPath);
             $FMAI = FMAI::singleton($appNameSpace, $appPath);
-            self::$appRoot = $appPath;
+            
             if(!empty($this->routerArgs)) {
                 call_user_func_array(array($router, 'runtimeArgs'), $this->routerArgs);
             }
-            $router->routerSpace($appNameSpace);
-            $router->routerPath($appPath);
             $router->loadConfigure();
             $router->routerRule();
             if (is_null($defaultInvoke)) {

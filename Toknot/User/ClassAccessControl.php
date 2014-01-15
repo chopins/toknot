@@ -13,7 +13,6 @@ namespace Toknot\User;
 use Toknot\User\UserAccessControl;
 use Toknot\User\Root;
 use Toknot\User\Nobody;
-use Toknot\User\UserClass;
 use Toknot\User\Exception\NoPermissionExecption;
 use Toknot\User\Exception\UndefinedUserExecption;
 
@@ -59,39 +58,61 @@ abstract class ClassAccessControl extends UserAccessControl {
      */
     protected $uid = 0;
 
-
     /**
      * current object type of opreate data
      *
      * @var integer
      */
     protected $operateType = self::CLASS_READ;
-    
+
     /**
      * only show data
      */
+
     const CLASS_READ = 1;
-    
+
     /**
      * only add data
      */
     const CLASS_WRITE = 2;
-    
+
     /**
      * only change data of current exists
      */
     const CLASS_UPDATE = 3;
-    
-    public function getOperateType() {
+
+    final public function getOperateType() {
         return $this->operateType;
     }
 
-    public function setOperateType(userClass $user,$operate) {
-        if(!$user instanceof Root && $user->uid != $this->uid) { 
+    public function updateMethodPerms($methodName) {
+        $methodName = "{$methodName}Perms";
+        if (!empty($this->$methodName) && is_array($this->$methodName)) {
+            foreach ($this->$methodName as $k => $v) {
+                switch ($k) {
+                    case 'opType':
+                        $this->setOperateType($this, $v);
+                        break;
+                    case 'permissions':
+                        $this->permissions = $v;
+                        break;
+                    case 'gid':
+                        $this->gid = $v;
+                        break;
+                    case 'uid':
+                        $this->uid = $v;
+                        break;
+                }
+            }
+        }
+    }
+
+    final public function setOperateType(UserAccessControl $user, $operate) {
+        if (!$user instanceof Root && $user->uid != $this->uid) {
             throw new NoPermissionExecption('no permission to set operate type');
         }
-        if(is_numeric($operate)) {
-            if($operate >=1 && $operate <=3) {
+        if (is_numeric($operate)) {
+            if ($operate >= 1 && $operate <= 3) {
                 $this->operateType = $operate;
             } else {
                 $this->operateType = self::CLASS_READ;
@@ -100,20 +121,21 @@ abstract class ClassAccessControl extends UserAccessControl {
         }
         $opStr = 'rwu';
         $idx = strpos($opStr, strtolower($operate));
-        if($idx >=0) {
-            $this->operateType = $idx+1;
+        if ($idx >= 0) {
+            $this->operateType = $idx + 1;
         } else {
             $this->operateType = self::CLASS_READ;
         }
     }
-     /**
+
+    /**
      * Use Root user change class of permission with is temp
      * 
      * @param \Toknot\User\Root $user
      * @param integer $perms
      */
-    public function changeClassPermissions(UserClass $user, $perms) {
-        if($user instanceof Root || $user->uid == $this->uid) { 
+    final public function changeClassPermissions(UserAccessControl $user, $perms) {
+        if ($user instanceof Root || $user->uid == $this->uid) {
             $this->permissions = $perms;
         } else {
             throw new NoPermissionExecption('no permission to set class permisson');
@@ -126,15 +148,15 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @param \Toknot\User\Root $user
      * @param string $group
      */
-    public function changeClassGroup(UserClass $user, $group) {
-        if($user instanceof Root || $user->uid == $this->uid) { 
+    final public function changeClassGroup(UserAccessControl $user, $group) {
+        if ($user instanceof Root || $user->uid == $this->uid) {
             $this->classGroup = $group;
         } else {
             throw new NoPermissionExecption('no permission to set class group');
         }
     }
 
-    private function checkPerms($user, $perm) {
+    final private function checkPerms($user, $perm) {
         if (!($user instanceof UserAccessControl)) {
             throw new UndefinedUserExecption();
         }
@@ -147,7 +169,7 @@ abstract class ClassAccessControl extends UserAccessControl {
         if ($user instanceof Nobody) {
             return false;
         }
-        if ($user->inGroup($this->gid) && $this->permissions > 0707 &&  ($this->permissions ^ 0707) >> 3 >= $perm) {
+        if ($user->inGroup($this->gid) && $this->permissions > 0707 && ($this->permissions ^ 0707) >> 3 >= $perm) {
             return true;
         }
         if ($this->uid == $user->getUid() && ($this->permissions ^ 0077) >> 6 >= $perm) {
@@ -162,7 +184,7 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @param \Toknot\User\UserClass $user
      * @return boolean
      */
-    public function checkRead($user) {
+    final public function checkRead($user) {
         return $this->checkPerms($user, 04);
     }
 
@@ -172,7 +194,7 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @param \Toknot\User\UserClass $user
      * @return boolean
      */
-    public function checkWrite($user) {
+    final public function checkWrite($user) {
         return $this->checkPerms($user, 06);
     }
 
@@ -182,11 +204,12 @@ abstract class ClassAccessControl extends UserAccessControl {
      * @param \Toknot\User\UserClass $user
      * @return boolean
      */
-    public function checkChange($user) {
+    final public function checkChange($user) {
         return $this->checkPerms($user, 07);
     }
 
-    public function __toString() {
+    final public function __toString() {
         return get_called_class();
     }
+
 }

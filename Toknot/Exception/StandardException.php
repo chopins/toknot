@@ -129,8 +129,8 @@ class StandardException extends ErrorException {
         }
         if (empty($this->traceArr)) {
             $traceArr = $this->getTrace();
-            array_shift($traceArr);
-            array_shift($traceArr);
+            //array_shift($traceArr);
+            //array_shift($traceArr);
             $traceArr = array_reverse($traceArr);
             $str .= $this->earch($traceArr);
         } else {

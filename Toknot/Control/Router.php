@@ -19,7 +19,6 @@ use Toknot\Control\FMAI;
 use Toknot\Control\StandardAutoloader;
 use Toknot\Di\FileObject;
 use Toknot\Config\ConfigLoader;
-use Toknot\Control\ControllerInterface as CI;
 
 class Router extends Object implements RouterInterface {
 
@@ -210,7 +209,7 @@ class Router extends Object implements RouterInterface {
     public function routerPath($path) {
         self::$routerPath = $path;
     }
-    
+
     /**
      * Set default controller class name that without namespace
      * 
@@ -219,7 +218,7 @@ class Router extends Object implements RouterInterface {
     public function defaultInvoke($defaultClass) {
         $this->defaultClass = $defaultClass;
     }
-    
+
     /**
      * transfrom relative class name to full class name
      * 
@@ -227,15 +226,17 @@ class Router extends Object implements RouterInterface {
      * @static
      * @return string
      */
-    public static function controllerNameTrans($controllerName) {
-        $invokeClass = self::$routerNameSpace."\Controller{$controllerName}";
+    public static function controllerNameTrans($invokeClass) {
+        if (strpos($invokeClass, self::$routerNameSpace . "\Controller") !== 0) {
+            $invokeClass = self::$routerNameSpace . "\Controller{$invokeClass}";
+        }
         $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
         if (is_file($classFile)) {
-            include $classFile;
+            include_once $classFile;
         }
         return $invokeClass;
     }
-    
+
     /**
      * invoke not found controller
      * 
@@ -249,11 +250,7 @@ class Router extends Object implements RouterInterface {
         header('Status:404 Not Found');
         header("Content-type: text/html; charset={$this->charset}");
         if ($this->notFoundController !== null) {
-            $invokeClass = self::controllerNameTrans($this->notFoundController);
-            
-            $interface = "\Toknot\Control\ControllerInterface\\{$this->method}";
-            if (!class_exists($invokeClass, true) ||
-                    !$invokeClass instanceof CI\ControllerInterface || !$invokeClass instanceof $interface) {
+            if (!self::checkController($invokeClass, $this->method)) {
                 die('404 Not Found');
             }
         } else {
@@ -272,7 +269,7 @@ class Router extends Object implements RouterInterface {
     public function invoke(FMAI $FMAI) {
         $method = $this->getRequestMethod();
         $this->method = $method;
-        $invokeClass = self::$routerNameSpace."\Controller{$this->spacePath}";
+        $invokeClass = self::controllerNameTrans($this->spacePath);
         $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
         $classExist = false;
 
@@ -282,7 +279,7 @@ class Router extends Object implements RouterInterface {
         } else {
             //if not set routerDepth, controller is first finded class, suffix of url
             //will be ignored and push to paramers
-            $classPath = "{self::$routerNameSpace}\Controller";
+            $classPath = self::$routerNameSpace . "\Controller";
             $classPart = explode(StandardAutoloader::NS_SEPARATOR, $this->spacePath);
             foreach ($classPart as $key => $part) {
                 if (empty($part))
@@ -312,7 +309,7 @@ class Router extends Object implements RouterInterface {
             $dir = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
             if (is_dir($dir) && $this->defaultClass != null) {
                 $invokeClass = self::controllerNameTrans("{$this->spacePath}\\{$this->defaultClass}");
-                
+
                 if (!class_exists($invokeClass, false)) {
                     $invokeClass = $this->invokeNotFoundController();
                 }
@@ -322,9 +319,20 @@ class Router extends Object implements RouterInterface {
         }
 
         $FMAI->setURIOutRouterPath($this->suffixPart, $method);
-        $this->instanceController($invokeClass,$FMAI,$method);
+        $this->instanceController($invokeClass, $FMAI, $method);
     }
-    
+
+    public static function checkController(&$invokeClass, $method) {
+        $invokeClass = self::controllerNameTrans($invokeClass);
+        $interface = self::getControllerInterface($method);
+        return is_subclass_of($invokeClass, $interface);
+    }
+
+    public static function getControllerInterface($method = null) {
+        return $method = $method ? "\Toknot\Control\ControllerInterface\\{$method}" :
+                '\Toknot\Control\ControllerInterface\\ControllerInterface';
+    }
+
     /**
      * new instance of controller
      * 
@@ -334,40 +342,38 @@ class Router extends Object implements RouterInterface {
      * @throws ControllerInvalidException
      * @throws StandardException
      */
-    public function instanceController($invokeClass,$FMAI,$method) {
-        $invokeObject = new $invokeClass($FMAI);
-        if (!$invokeObject instanceof CI\ControllerInterface) {
+    public function instanceController($invokeClass, $FMAI, $method) {
+        if (!self::checkController($invokeClass, null)) {
             if (DEVELOPMENT) {
                 throw new ControllerInvalidException($invokeClass);
             }
             $this->invokeNotFoundController($invokeClass);
         }
-        $interface = "\Toknot\Control\ControllerInterface\\{$method}";
-        if (!$invokeObject instanceof $interface) {
+        if (!self::checkController($invokeClass, $method)) {
             if (DEVELOPMENT) {
+                $interface = self::getControllerInterface($method);
                 throw new StandardException("Not Support Request Method ($method) or not implement {$interface}");
             } else {
                 header('Status:405 Method Not Allowed');
                 header("Content-type: text/html; charset={$this->charset}");
                 if ($this->methodNotAllowedController !== null) {
-                    $invokeClass = self::controllerNameTrans($this->methodNotAllowedController);
-                    
-                    if (!class_exists($invokeClass, false) || !$invokeClass instanceof $interface) {
+                    if (!self::checkController($this->methodNotAllowedController, $method)) {
                         die('405 Method Not Allowed');
                     }
-                    $invokeObject = new $invokeClass($FMAI);
+                    $invokeClass = $this->methodNotAllowedController;
                 } else {
                     die('405 Method Not Allowed');
                 }
             }
         }
+        $invokeObject = new $invokeClass($FMAI);
         $stat = $FMAI->invokeBefore($invokeObject);
         if ($stat === true) {
             $invokeObject->$method();
         }
         $FMAI->invokeAfter();
     }
-    
+
     /**
      * implements {@see Toknot\Control\RouterInterface} of method , the method
      * set toknot defualt router of run mode {@see Toknot\Control\Router::$routerMode} and
@@ -418,7 +424,7 @@ class Router extends Object implements RouterInterface {
         }
         return strtoupper($_SERVER['REQUEST_METHOD']);
     }
-    
+
     /**
      * Get relatively name of not found controller
      * 
@@ -427,7 +433,7 @@ class Router extends Object implements RouterInterface {
     public function getNotFoundController() {
         return $this->notFoundController;
     }
-    
+
     /**
      * Get relatively name of method not allowed controller
      * 
@@ -436,7 +442,7 @@ class Router extends Object implements RouterInterface {
     public function getMethodNotAllowedController() {
         return $this->methodNotAllowedController;
     }
-    
+
     /**
      * load configure with Router seted
      */

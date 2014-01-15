@@ -20,11 +20,11 @@ use Toknot\Db\ActiveRecord;
 use Toknot\View\ViewCache;
 use Toknot\View\Renderer;
 use Toknot\User\ClassAccessControl;
-use Toknot\User\UserClass;
 use Toknot\User\UserAccessControl;
 use Toknot\User\Nobody;
 use Toknot\User\Session;
 use Toknot\User\Root;
+use Toknot\User\Exception\NoPermissionExecption;
 use Toknot\Control\Router;
 
 /**
@@ -113,7 +113,7 @@ final class FMAI extends Object {
      * @access readonly
      */
     private $appNamespace = '';
-    
+
     /**
      * Current access user of object
      *
@@ -121,7 +121,7 @@ final class FMAI extends Object {
      * @access readonly
      */
     private $currentUser = null;
-    
+
     /**
      * if user no permission be invoked controller
      *
@@ -129,7 +129,7 @@ final class FMAI extends Object {
      * @access private
      */
     private $noPermissionController = null;
-    
+
     /**
      * The value equal PHP of get_magic_quotes_gpc()
      *
@@ -144,9 +144,8 @@ final class FMAI extends Object {
      * @var boolean
      */
     public $enableCache = false;
-    
     private $exitStatus = false;
-    
+
     /**
      * FMAI singleton
      * 
@@ -182,14 +181,15 @@ final class FMAI extends Object {
         $this->appNamespace = $appNamespace;
         $this->currentUser = new Nobody;
         $this->D = new ArrayObject;
-        $this->accessDeniedController = $CFG->App->accessDeniedController;
-        $this->noPermissionController = $CFG->App->noPermissionController;
+        
+        $this->registerAccessDeniedController($CFG->App->accessDeniedController);
+        $this->registerNoPermissonController($CFG->App->noPermissionController);
 
         DataCacheControl::$appRoot = $appRoot;
         Log::$enableSaveLog = $CFG->Log->enableLog;
         Log::$savePath = FileObject::getRealPath($appRoot, $CFG->Log->logSavePath);
     }
-    
+
     /**
      * user namespace import class
      * 
@@ -229,20 +229,20 @@ final class FMAI extends Object {
     public function getURIOutRouterPath() {
         return $this->uriOutRouterPath;
     }
-    
+
     /**
      * do not invoke method of controller
      * 
      * @param string $method
      */
     public function kill($method = null) {
-        if($method == $this->requestMethod) {
+        if ($method == $this->requestMethod) {
             $this->exitStatus = true;
-        } elseif($method === null) {
+        } elseif ($method === null) {
             $this->exitStatus = true;
         }
     }
-    
+
     /**
      * the method be invoked before which method of controller was invoked by router 
      * 
@@ -251,10 +251,9 @@ final class FMAI extends Object {
      */
     public function invokeBefore(&$controller) {
         $this->controller = $controller;
-        if($controller instanceof ClassAccessControl && $this->noPermissionController) {
-            $noPermissionController = Router::controllerNameTrans($this->noPermissionController);
-            $noPermIns = new $noPermissionController($this);
-            UserAccessControl::updatePermissonController($noPermIns, $this->requestMethod);
+        if ($controller instanceof ClassAccessControl && $this->noPermissionController) {
+            $noPerms = Router::controllerNameTrans($this->noPermissionController);
+            UserAccessControl::updatePermissonController($this,$noPerms, $this->requestMethod);
         }
         if ($this->requestMethod == 'GET' && $this->enableCache) {
             ViewCache::outPutCache();
@@ -273,11 +272,12 @@ final class FMAI extends Object {
                 $func($this);
             }
         }
-        if($this->exitStatus) {
+        if ($this->exitStatus) {
             return false;
         }
         return true;
     }
+
     /**
      * the method be invoked after which method of controller was invoked by router
      * 
@@ -505,9 +505,21 @@ final class FMAI extends Object {
      * @param string $controllerName
      */
     public function registerAccessDeniedController($controllerName) {
-        $this->accessDeniedController = $controllerName;
+        if($controllerName) {
+            if(!Router::checkController($controllerName, $this->requestMethod)) {
+                throw new Exception\ControllerInvalidException($controllerName);
+            }
+            $this->accessDeniedController = $controllerName;
+        }
     }
-
+    public function registerNoPermissonController($controllerName) {
+        if($controllerName) {
+            if(!Router::checkController($controllerName, $this->requestMethod)) {
+                throw new Exception\ControllerInvalidException($controllerName);
+            }
+            $this->noPermissionController = $controllerName;
+        }
+    }
     /**
      * Register a callable that it be call when before invoke controller method
      * 
@@ -532,14 +544,9 @@ final class FMAI extends Object {
      * @param \Toknot\User\ClassAccessControl $class
      * @return boolean
      */
-    public function redirectAccessDeniedController($class, $queryString = '') {
-        if ($class instanceof \Toknot\User\ClassAccessControl && $this->getAccessStatus() === false) {
-            $accessDeniedController = $this->getAccessDeniedController();
-            $this->redirectController($accessDeniedController, $queryString);
-            return true;
-        } else {
-            return false;
-        }
+    public function redirectAccessDeniedController($queryString = '') {
+        $accessDeniedController = $this->getAccessDeniedController();
+        $this->redirectController($accessDeniedController, $queryString);
     }
 
     /**
@@ -550,7 +557,7 @@ final class FMAI extends Object {
      * @access public
      */
     public function redirectController($class, $queryString = '') {
-        $class = str_replace($this->appNamespace . '\Controller', '', $class);
+        $class = Router::controllerNameTrans($class);
         $url = strtr($class, '\\', '/');
         if (!empty($queryString)) {
             $queryString = "?$queryString";
@@ -589,6 +596,20 @@ final class FMAI extends Object {
                 break;
         }
     }
+    public function throwNoPermission($message = null) {
+        throw new NoPermissionExecption("No Permission Access {$message}");
+    }
+    /**
+     * get sub action name
+     * 
+     * @return string
+     */
+    public function getSubAction() {
+        if (!($subActionName = $this->getParam(0, false))) {
+            $subActionName = 'index';
+        }
+        return $subActionName;
+    }
 
     /**
      * invoke Sub Action for custom method of Controller
@@ -598,15 +619,14 @@ final class FMAI extends Object {
      * @return null
      */
     public function invokeSubAction(ClassAccessControl &$clsObj) {
-        if (!($subActionName = $this->getParam(0, false))) {
-            $subActionName = 'index';
-        }
+        $subActionName = $this->getSubAction();
         if (method_exists($clsObj, $subActionName)) {
+            $clsObj->updateMethodPerms($subActionName);
             $this->checkAccess($clsObj);
-            if ($this->redirectAccessDeniedController($clsObj)) {
-                return;
+            if ($this->getAccessStatus()) {
+                return $clsObj->$subActionName();
             }
-            $clsObj->$subActionName();
+            $this->throwNoPermission("$clsObj::$subActionName()");
         } else {
             $invokeClass = null;
             Router::singleton()->invokeNotFoundController($invokeClass);
@@ -620,11 +640,14 @@ final class FMAI extends Object {
      * @param Tokont\User\UserClass|Toknot\User\Root $user
      */
     public function setCurrentUser($user = null) {
-        if ($user instanceof UserClass || $user instanceof Root) {
+        if ($user instanceof UserAccessControl || $user instanceof Root) {
             $this->currentUser = $user;
         }
     }
     
+    public function isNobodyUser() {
+        return $this->currentUser instanceof Nobody;
+    }
     /**
      * 
      * @return type
@@ -655,7 +678,7 @@ final class FMAI extends Object {
     public function getAppNamespace() {
         return $this->appNamespace;
     }
-
+    
     /**
      * get php script exec time
      * 

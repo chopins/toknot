@@ -5,7 +5,7 @@ use Toknot\Admin\AdminBase;
 use Toknot\Control\ControllerInterface as CI;
 
 class Index extends AdminBase implements CI\GET{    
-	public $perms = 0777;
+	public $perms = 0770;
 
     public function GET() {
         //$database = $this->AR->connect();

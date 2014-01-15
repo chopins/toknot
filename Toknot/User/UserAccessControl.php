@@ -352,9 +352,10 @@ abstract class UserAccessControl extends Object{
 		return isset($ipm[0]) ? $ipm[0] : 'unknown';
 	}
     
-    public static function updatePermissonController($noPermissonController,$method) {
+    public static function updatePermissonController($FMAI,$noPermissonController,$method) {
         self::$noPermissonController = $noPermissonController;
         NoPermissionExecption::$method = $method;
+        NoPermissionExecption::$FMAI = $FMAI;
         NoPermissionExecption::$displayController = $noPermissonController;
     }
 	public function __toString() {

@@ -15,19 +15,26 @@ use Toknot\Exception\StandardException;
 class NoPermissionExecption extends StandardException {
     public static $displayController = null;
     public static $method = 'GET';
+    public static $FMAI;
     private $html;
     public function __construct($message) {
-        if(!is_object(self::$displayController)) {
+        if(!self::$displayController) {
+            $this->noCustomController = true;
             return parent::__construct($message);
         }
         ob_start();
-        self::$displayController->message = $message;
-        $method = $this->method;
-        self::$displayController->$method();
+        $clsName = self::$displayController;
+        $ins = new $clsName(self::$FMAI);
+        $ins->message = $message;
+        $method = self::$method;
+        $ins->$method();
         $this->html = ob_get_clean();
     }
     
     public function __toString() {
+        if(!self::$displayController) {
+            return parent::__toString();
+        }
         return $this->html;
     }
 }
