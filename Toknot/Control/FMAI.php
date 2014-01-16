@@ -181,7 +181,7 @@ final class FMAI extends Object {
         $this->appNamespace = $appNamespace;
         $this->currentUser = new Nobody;
         $this->D = new ArrayObject;
-        
+
         $this->registerAccessDeniedController($CFG->App->accessDeniedController);
         $this->registerNoPermissonController($CFG->App->noPermissionController);
 
@@ -253,7 +253,7 @@ final class FMAI extends Object {
         $this->controller = $controller;
         if ($controller instanceof ClassAccessControl && $this->noPermissionController) {
             $noPerms = Router::controllerNameTrans($this->noPermissionController);
-            UserAccessControl::updatePermissonController($this,$noPerms, $this->requestMethod);
+            UserAccessControl::updatePermissonController($this, $noPerms, $this->requestMethod);
         }
         if ($this->requestMethod == 'GET' && $this->enableCache) {
             ViewCache::outPutCache();
@@ -491,11 +491,17 @@ final class FMAI extends Object {
     }
 
     /**
-     * Get current user access status
+     * Get current user access status and default the controller is current accessed
      * 
+     * @param \Toknot\User\ClassAccessControl $clsObj check current user whether access $clsObj 
      * @return boolean if allow access return true otherise false
      */
-    public function getAccessStatus() {
+    public function getAccessStatus($clsObj = null) {
+        if ($clsObj !== null) {
+            $this->checkAccess($clsObj);
+        } elseif ($this->controller instanceof ClassAccessControl) {
+            $this->checkAccess($this->controller);
+        }
         return $this->accessControlStatus;
     }
 
@@ -505,21 +511,23 @@ final class FMAI extends Object {
      * @param string $controllerName
      */
     public function registerAccessDeniedController($controllerName) {
-        if($controllerName) {
-            if(!Router::checkController($controllerName, $this->requestMethod)) {
+        if ($controllerName) {
+            if (!Router::checkController($controllerName, $this->requestMethod)) {
                 throw new Exception\ControllerInvalidException($controllerName);
             }
             $this->accessDeniedController = $controllerName;
         }
     }
+
     public function registerNoPermissonController($controllerName) {
-        if($controllerName) {
-            if(!Router::checkController($controllerName, $this->requestMethod)) {
+        if ($controllerName) {
+            if (!Router::checkController($controllerName, $this->requestMethod)) {
                 throw new Exception\ControllerInvalidException($controllerName);
             }
             $this->noPermissionController = $controllerName;
         }
     }
+
     /**
      * Register a callable that it be call when before invoke controller method
      * 
@@ -557,7 +565,6 @@ final class FMAI extends Object {
      * @access public
      */
     public function redirectController($class, $queryString = '') {
-        $class = Router::controllerNameTrans($class);
         $url = strtr($class, '\\', '/');
         if (!empty($queryString)) {
             $queryString = "?$queryString";
@@ -578,7 +585,7 @@ final class FMAI extends Object {
     /**
      * Check a user object whether can access class object be passed
      * 
-     * @param \Toknot\User\ClassAccessControl $clsObj
+     * @param \Toknot\User\ClassAccessControl $clsObj $clsObj check current user whether access $clsObj 
      */
     public function checkAccess(ClassAccessControl $clsObj) {
         switch ($clsObj->getOperateType()) {
@@ -596,9 +603,11 @@ final class FMAI extends Object {
                 break;
         }
     }
+
     public function throwNoPermission($message = null) {
         throw new NoPermissionExecption("No Permission Access {$message}");
     }
+
     /**
      * get sub action name
      * 
@@ -644,10 +653,11 @@ final class FMAI extends Object {
             $this->currentUser = $user;
         }
     }
-    
+
     public function isNobodyUser() {
         return $this->currentUser instanceof Nobody;
     }
+
     /**
      * 
      * @return type
@@ -678,7 +688,7 @@ final class FMAI extends Object {
     public function getAppNamespace() {
         return $this->appNamespace;
     }
-    
+
     /**
      * get php script exec time
      * 

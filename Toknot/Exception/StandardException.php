@@ -139,7 +139,7 @@ class StandardException extends ErrorException {
         $str .='</ul></div>';
         if (isset($this->sqls) && is_array($this->sqls)) {
             $str .= '<ul class="ToKnotTraceItem">';
-            foreach($this->sqls as $i=>$sql) {
+            foreach ($this->sqls as $i => $sql) {
                 $str .= "<li>{$sql}:({$this->params[$i]})</li>";
             }
             $str .= '</ul>';
@@ -153,21 +153,24 @@ class StandardException extends ErrorException {
     }
 
     public function __toString() {
+        if (PHP_SAPI !== 'cli') {
+            header('500 Internal Server Error');
+        }
         $traceInfo = $this->getDebugTraceAsString();
         if (DEVELOPMENT) {
             return $traceInfo;
         } else {
-            if (PHP_SAPI != 'cli') {
-                header('500 Internal Server Error');
-            }
+
             Log::save($traceInfo);
             return '500 Internal Server Error';
         }
     }
+
     public function save() {
         $traceInfo = $this->getDebugTraceAsString();
         Log::save($traceInfo);
     }
+
     public function earch($traceArr) {
         return Log::formatTrace($traceArr);
     }
