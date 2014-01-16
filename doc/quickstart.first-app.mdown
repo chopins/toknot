@@ -17,7 +17,7 @@ View                页面渲染相关
 ```
 --------------------
 2.创建一个应用程序使用如下命令
-`php /home/Toknot/Tool/CreateApp.php`
+`php /home/Toknot/Toknot.php CreateApp`
 
   该脚本会创建应用程序基本目录结构,并且会创建一些简单的示例代码,
   如果你创建的是后台管理程序,该脚本还会创建后台页面框架结构,你只需要完成每一项管理功能即可
@@ -44,6 +44,12 @@ WebRoot                 HTTP Web 根目录
 ----------------
 5.进入`/home/MyApp/Controller`文件夹，修改Index.php
 用户控制器的构造函数将会接收到了一个FMAI类的实例，这个类提供框架各个组件的标准访问方法，该类所拥有的方法可以建框架类参考http://toknot.com/toknot/class-Toknot.Control.FMAI.html
+
+框架规定所有控制器必须至少实现 Toknot\Control\ControllerInterface\ControllerInterface 接口 
+或者根据你的应用实现 Toknot\Control\ControllerInterface 命名空间下的其他接口 
+通常情况下，提供WEB服务，你必须至少实现 Toknot\Control\ControllerInterface\GET 和 
+Toknot\Control\ControllerInterface\POST 
+对于命令行必须实现 Toknot\Control\ControllerInterface\CLI 接口
 
 如果web服务器已经配置，你可以通过访问`http://localhost/`看到打印了 'hello world' 的页面
 
@@ -73,7 +79,7 @@ Web服务器普通配置情况下，可以通过类似下面的方式访问控�
 ```php
 use Toknot\Control\Application;
 use Toknot\Control\Router;
-require_once '/home/Toknot/Control/Application.php';
+require_once '/home/Toknot/Toknot.php';
 $app = new Application;
 $app->run('\MyApp',dirname(__DIR__),'\Index',Router::ROUTER_GET_QUERY);
 ```
@@ -112,8 +118,9 @@ server {
     http://localhost/Index 将被映射到 `/home/MyApp/Controller/Index.php` 的 `Index` 控制器上，当GET方法请求时调用`Index::GET()`,POST方法请求时调用`Index::POST()`
 ```php
 namespace MyApp\Controller;
+use Toknot\Control\ControllerInterface as CI;
 use MyApp\MyAppBase;
-class Index extends  MyAppBase{
+class Index extends  MyAppBase implements CI\GET,CI\POST,CI\PUT,CI\CLI{
 
         //支持HTTP GET 请求的方法
       public function GET() {
@@ -149,11 +156,13 @@ class Index extends  MyAppBase{
    现在在`/home/MyApp/`下面创建`MyAppBase.php`文件，输入如下代码：
 ```php
 namespace MyApp\MyAppBase;
-class MyAppBase
+use Toknot\Control\FMAI;
+use Toknot\Control\ControllerInterface as CI;
+class MyAppBase implements CI\ControllerInterface {
       public $FMAI = null;
       public $AR = null;
       public $AppPath;
-      public function __construct($FMAI) {
+      public function __construct(FMAI $FMAI) {
           $this->FMAI = $FMAI;
           $this->AppPath = dirname(__DIR__);
           //加载应用的配置文件，默认会加载框架配置文件，如果想覆盖框架的配置项，可以创建同名的进行覆盖

@@ -32,7 +32,7 @@ see (http://toknot.com/toknot/)
 
 1. Simply download the framework, extract it to the folder you would like to keep it in, then create application
 
-2. In command line, use `php -f /yourpath/Toknot/Tool/CreateApp.php` create your application default directory structure flow to the guide  
+2. In command line, use `php -f /yourpath/Toknot/Toknot.php CreateApp` create your application default directory structure flow to the guide  
 
 3. edit /your-app-path/Config/config.ini
 
