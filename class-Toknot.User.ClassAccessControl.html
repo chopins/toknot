@@ -6,8 +6,8 @@
 
 	<title>Class Toknot\User\ClassAccessControl | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -45,6 +45,8 @@
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -73,8 +75,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li class="active"><a href="namespace-Toknot.User.html">User</a>
+				<li class="active"><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -175,10 +180,12 @@
 	<div>
 		<h4>Indirect known subclasses</h4>
 			<a href="class-AppAdmin.Controller.Index.html">AppAdmin\Controller\Index</a>, 
+			<a href="class-AppAdmin.Controller.User.Lists.html">AppAdmin\Controller\User\Lists</a>, 
 			<a href="class-AppAdmin.Controller.User.Login.html">AppAdmin\Controller\User\Login</a>, 
 			<a href="class-AppAdmin.Controller.User.Logout.html">AppAdmin\Controller\User\Logout</a>, 
 			<a href="class-Shop.Controller.Index.html">Shop\Controller\Index</a>, 
-			<a href="class-Toknot.Admin.Login.html">Toknot\Admin\Login</a>
+			<a href="class-Toknot.Admin.Login.html">Toknot\Admin\Login</a>, 
+			<a href="class-Toknot.Admin.Menu.html">Toknot\Admin\Menu</a>
 	</div>
 
 
@@ -191,14 +198,43 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.User.html">User</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.User.ClassAccessControl.html#18-163" title="Go to source code">Toknot/User/ClassAccessControl.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.User.ClassAccessControl.html#19-215" title="Go to source code">Toknot/User/ClassAccessControl.php</a><br />
 	</div>
 
 
 
 	<table class="summary" id="methods">
 	<caption>Methods summary</caption>
-	<tr data-order="getClassType" id="_getClassType">
+	<tr data-order="getOperateType" id="_getOperateType">
+
+		<td class="attributes"><code>
+			final public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getOperateType">#</a>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#84-86" title="Go to source code">getOperateType</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="updateMethodPerms" id="_updateMethodPerms">
 
 		<td class="attributes"><code>
 			 public 
@@ -208,8 +244,37 @@
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#_getClassType">#</a>
-		<code><a href="source-class-Toknot.User.ClassAccessControl.html#83-85" title="Go to source code">getClassType</a>( )</code>
+		<a class="anchor" href="#_updateMethodPerms">#</a>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#88-108" title="Go to source code">updateMethodPerms</a>( <span>mixed <var>$methodName</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="setOperateType" id="_setOperateType">
+
+		<td class="attributes"><code>
+			final public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_setOperateType">#</a>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#110-129" title="Go to source code">setOperateType</a>( <span><code><a href="class-Toknot.User.UserAccessControl.html">Toknot\User\UserAccessControl</a></code> <var>$user</var></span>, <span>mixed <var>$operate</var></span> )</code>
 
 		<div class="description short">
 			
@@ -230,7 +295,7 @@
 	<tr data-order="changeClassPermissions" id="_changeClassPermissions">
 
 		<td class="attributes"><code>
-			 public 
+			final public 
 			
 			
 			</code>
@@ -238,7 +303,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_changeClassPermissions">#</a>
-		<code><a href="source-class-Toknot.User.ClassAccessControl.html#87-95" title="Go to source code">changeClassPermissions</a>( <span><code><a href="class-Toknot.User.Root.html">Toknot\User\Root</a></code> <var>$user</var></span>, <span>integer <var>$perms</var></span> )</code>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#131-143" title="Go to source code">changeClassPermissions</a>( <span><code><a href="class-Toknot.User.UserAccessControl.html">Toknot\User\UserAccessControl</a></code> <var>$user</var></span>, <span>integer <var>$perms</var></span> )</code>
 
 		<div class="description short">
 			
@@ -270,7 +335,7 @@
 	<tr data-order="changeClassGroup" id="_changeClassGroup">
 
 		<td class="attributes"><code>
-			 public 
+			final public 
 			
 			
 			</code>
@@ -278,7 +343,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_changeClassGroup">#</a>
-		<code><a href="source-class-Toknot.User.ClassAccessControl.html#97-105" title="Go to source code">changeClassGroup</a>( <span><code><a href="class-Toknot.User.Root.html">Toknot\User\Root</a></code> <var>$user</var></span>, <span>string <var>$group</var></span> )</code>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#145-157" title="Go to source code">changeClassGroup</a>( <span><code><a href="class-Toknot.User.UserAccessControl.html">Toknot\User\UserAccessControl</a></code> <var>$user</var></span>, <span>string <var>$group</var></span> )</code>
 
 		<div class="description short">
 			
@@ -310,7 +375,7 @@
 	<tr data-order="checkRead" id="_checkRead">
 
 		<td class="attributes"><code>
-			 public 
+			final public 
 			boolean
 			
 			</code>
@@ -318,7 +383,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_checkRead">#</a>
-		<code><a href="source-class-Toknot.User.ClassAccessControl.html#130-138" title="Go to source code">checkRead</a>( <span><code><a href="class-Toknot.User.UserClass.html">Toknot\User\UserClass</a></code> <var>$user</var></span> )</code>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#181-189" title="Go to source code">checkRead</a>( <span><code><a href="class-Toknot.User.UserClass.html">Toknot\User\UserClass</a></code> <var>$user</var></span> )</code>
 
 		<div class="description short">
 			
@@ -352,7 +417,7 @@
 	<tr data-order="checkWrite" id="_checkWrite">
 
 		<td class="attributes"><code>
-			 public 
+			final public 
 			boolean
 			
 			</code>
@@ -360,7 +425,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_checkWrite">#</a>
-		<code><a href="source-class-Toknot.User.ClassAccessControl.html#140-148" title="Go to source code">checkWrite</a>( <span><code><a href="class-Toknot.User.UserClass.html">Toknot\User\UserClass</a></code> <var>$user</var></span> )</code>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#191-199" title="Go to source code">checkWrite</a>( <span><code><a href="class-Toknot.User.UserClass.html">Toknot\User\UserClass</a></code> <var>$user</var></span> )</code>
 
 		<div class="description short">
 			
@@ -394,7 +459,7 @@
 	<tr data-order="checkChange" id="_checkChange">
 
 		<td class="attributes"><code>
-			 public 
+			final public 
 			boolean
 			
 			</code>
@@ -402,7 +467,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_checkChange">#</a>
-		<code><a href="source-class-Toknot.User.ClassAccessControl.html#150-158" title="Go to source code">checkChange</a>( <span><code><a href="class-Toknot.User.UserClass.html">Toknot\User\UserClass</a></code> <var>$user</var></span> )</code>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#201-209" title="Go to source code">checkChange</a>( <span><code><a href="class-Toknot.User.UserClass.html">Toknot\User\UserClass</a></code> <var>$user</var></span> )</code>
 
 		<div class="description short">
 			
@@ -436,7 +501,7 @@
 	<tr data-order="__toString" id="___toString">
 
 		<td class="attributes"><code>
-			 public 
+			final public 
 			
 			
 			</code>
@@ -444,7 +509,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___toString">#</a>
-		<code><a href="source-class-Toknot.User.ClassAccessControl.html#160-162" title="Go to source code">__toString</a>( )</code>
+		<code><a href="source-class-Toknot.User.ClassAccessControl.html#211-213" title="Go to source code">__toString</a>( )</code>
 
 		<div class="description short">
 			
@@ -483,6 +548,7 @@
 			<a href="class-Toknot.User.UserAccessControl.html#_getUserName">getUserName()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_getUserRemoteAddress">getUserRemoteAddress()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_hashPassword">hashPassword()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_updatePermissonController">updatePermissonController()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_verifyHash">verifyHash()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_verifyPassword">verifyPassword()</a>
 		</code></td>
@@ -523,7 +589,7 @@
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.User.ClassAccessControl.html#68-71" title="Go to source code"><b>CLASS_READ</b></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#69-72" title="Go to source code"><b>CLASS_READ</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">1</span></code></td>
 		<td class="description"><div>
@@ -547,7 +613,7 @@
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.User.ClassAccessControl.html#73-76" title="Go to source code"><b>CLASS_WRITE</b></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#74-77" title="Go to source code"><b>CLASS_WRITE</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">2</span></code></td>
 		<td class="description"><div>
@@ -571,7 +637,7 @@
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.User.ClassAccessControl.html#78-81" title="Go to source code"><b>CLASS_UPDATE</b></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#79-82" title="Go to source code"><b>CLASS_UPDATE</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">3</span></code></td>
 		<td class="description"><div>
@@ -613,7 +679,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.ClassAccessControl.html#20-29" title="Go to source code"><var>$permissions</var></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#21-30" title="Go to source code"><var>$permissions</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">0754</span></code></td>
 		<td class="description"><div>
@@ -642,7 +708,7 @@ post nobody get</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.ClassAccessControl.html#31-37" title="Go to source code"><var>$userName</var></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#32-38" title="Go to source code"><var>$userName</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">'root'</span></code></td>
 		<td class="description"><div>
@@ -669,7 +735,7 @@ post nobody get</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.ClassAccessControl.html#39-44" title="Go to source code"><var>$gid</var></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#40-45" title="Go to source code"><var>$gid</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">0</span></code></td>
 		<td class="description"><div>
@@ -696,7 +762,7 @@ post nobody get</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.ClassAccessControl.html#46-51" title="Go to source code"><var>$group</var></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#47-52" title="Go to source code"><var>$group</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">'root'</span></code></td>
 		<td class="description"><div>
@@ -723,7 +789,7 @@ post nobody get</p>
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.ClassAccessControl.html#53-58" title="Go to source code"><var>$uid</var></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#54-59" title="Go to source code"><var>$uid</var></a>
 		</td>
 		<td class="value"><code><span class="php-num">0</span></code></td>
 		<td class="description"><div>
@@ -743,18 +809,18 @@ post nobody get</p>
 			</div>
 		</div></td>
 	</tr>
-	<tr data-order="classType" id="$classType">
+	<tr data-order="operateType" id="$operateType">
 		<td class="attributes"><code>
 			protected  
 			integer
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.User.ClassAccessControl.html#61-66" title="Go to source code"><var>$classType</var></a>
+				<a href="source-class-Toknot.User.ClassAccessControl.html#61-66" title="Go to source code"><var>$operateType</var></a>
 		</td>
 		<td class="value"><code><code><a href="class-Toknot.User.ClassAccessControl.html#CLASS_READ">Toknot\User\ClassAccessControl::<b>CLASS_READ</b></a></code></code></td>
 		<td class="description"><div>
-			<a href="#$classType" class="anchor">#</a>
+			<a href="#$operateType" class="anchor">#</a>
 
 			<div class="description short">
 				

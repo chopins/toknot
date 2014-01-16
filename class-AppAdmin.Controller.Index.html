@@ -6,8 +6,8 @@
 
 	<title>Class AppAdmin\Controller\Index | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -45,6 +45,8 @@
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -73,8 +75,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -88,6 +93,7 @@
 			<h3>Classes</h3>
 			<ul>
 				<li class="active"><a href="class-AppAdmin.Controller.Index.html">Index</a></li>
+				<li><a href="class-AppAdmin.Controller.NotFound.html">NotFound</a></li>
 			</ul>
 
 
@@ -168,12 +174,16 @@
 			<img src="resources/inherit.png" alt="Extended by" />
 			<a href="class-Toknot.Admin.AdminBase.html"><span>Toknot\Admin\AdminBase</span></a>
 			
+			 implements 
+				<a href="class-Toknot.Control.ControllerInterface.ControllerInterface.html"><span>Toknot\Control\ControllerInterface\ControllerInterface</span></a>
 			
 			
 		</dd>
 		<dd style="padding-left:120px">
 			<img src="resources/inherit.png" alt="Extended by" />
 <b><span>AppAdmin\Controller\Index</span></b>			
+			 implements 
+				<a href="class-Toknot.Control.ControllerInterface.GET.html"><span>Toknot\Control\ControllerInterface\GET</span></a>
 			
 			
 		</dd>
@@ -192,7 +202,7 @@
 		<b>Namespace:</b> <a href="namespace-AppAdmin.html">AppAdmin</a>\<a href="namespace-AppAdmin.Controller.html">Controller</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-AppAdmin.Controller.Index.html#6-16" title="Go to source code">demos/AppAdmin/Controller/Index.php</a><br />
+		<b>Located at</b> <a href="source-class-AppAdmin.Controller.Index.html#7-17" title="Go to source code">demos/AppAdmin/Controller/Index.php</a><br />
 	</div>
 
 
@@ -210,7 +220,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_GET">#</a>
-		<code><a href="source-class-AppAdmin.Controller.Index.html#9-15" title="Go to source code">GET</a>( )</code>
+		<code><a href="source-class-AppAdmin.Controller.Index.html#10-16" title="Go to source code">GET</a>( )</code>
 
 		<div class="description short">
 			
@@ -225,6 +235,8 @@
 
 
 
+				<h4>Implementation of</h4>
+				<div class="list"><code><a href="class-Toknot.Control.ControllerInterface.GET.html#_GET">Toknot\Control\ControllerInterface\GET::GET()</a></code></div>
 		</div>
 		</div></td>
 	</tr>
@@ -254,7 +266,9 @@
 			<a href="class-Toknot.User.ClassAccessControl.html#_checkChange">checkChange()</a>, 
 			<a href="class-Toknot.User.ClassAccessControl.html#_checkRead">checkRead()</a>, 
 			<a href="class-Toknot.User.ClassAccessControl.html#_checkWrite">checkWrite()</a>, 
-			<a href="class-Toknot.User.ClassAccessControl.html#_getClassType">getClassType()</a>
+			<a href="class-Toknot.User.ClassAccessControl.html#_getOperateType">getOperateType()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_setOperateType">setOperateType()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_updateMethodPerms">updateMethodPerms()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -275,6 +289,7 @@
 			<a href="class-Toknot.User.UserAccessControl.html#_getUserName">getUserName()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_getUserRemoteAddress">getUserRemoteAddress()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_hashPassword">hashPassword()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_updatePermissonController">updatePermissonController()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_verifyHash">verifyHash()</a>, 
 			<a href="class-Toknot.User.UserAccessControl.html#_verifyPassword">verifyPassword()</a>
 		</code></td>
@@ -340,9 +355,9 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-AppAdmin.Controller.Index.html#7" title="Go to source code"><var>$perms</var></a>
+				<a href="source-class-AppAdmin.Controller.Index.html#8" title="Go to source code"><var>$perms</var></a>
 		</td>
-		<td class="value"><code><span class="php-num">0777</span></code></td>
+		<td class="value"><code><span class="php-num">0770</span></code></td>
 		<td class="description"><div>
 			<a href="#$perms" class="anchor">#</a>
 
@@ -376,9 +391,9 @@
 	<caption>Properties inherited from <a href="class-Toknot.User.ClassAccessControl.html#properties">Toknot\User\ClassAccessControl</a></caption>
 	<tr>
 		<td><code>
-			<a href="class-Toknot.User.ClassAccessControl.html#$classType"><var>$classType</var></a>, 
 			<a href="class-Toknot.User.ClassAccessControl.html#$gid"><var>$gid</var></a>, 
 			<a href="class-Toknot.User.ClassAccessControl.html#$group"><var>$group</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$operateType"><var>$operateType</var></a>, 
 			<a href="class-Toknot.User.ClassAccessControl.html#$uid"><var>$uid</var></a>, 
 			<a href="class-Toknot.User.ClassAccessControl.html#$userName"><var>$userName</var></a>
 		</code></td>

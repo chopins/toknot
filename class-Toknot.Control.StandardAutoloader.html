@@ -6,8 +6,8 @@
 
 	<title>Class Toknot\Control\StandardAutoloader | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -45,6 +45,8 @@
 						</li>
 				<li class="active"><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -73,8 +75,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -155,7 +160,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Control.html">Control</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Control.StandardAutoloader.html#13-120" title="Go to source code">Toknot/Control/StandardAutoloader.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Control.StandardAutoloader.html#15-167" title="Go to source code">Toknot/Control/StandardAutoloader.php</a><br />
 	</div>
 
 
@@ -173,7 +178,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#19-24" title="Go to source code">__construct</a>( <span>mixed <var>$path</var> = <span class="php-quote">''</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#23-28" title="Go to source code">__construct</a>( <span>mixed <var>$path</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -202,7 +207,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addPath">#</a>
-		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#26-34" title="Go to source code">addPath</a>( <span>string <var>$path</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#30-38" title="Go to source code">addPath</a>( <span>string <var>$path</var></span> )</code>
 
 		<div class="description short">
 			
@@ -240,7 +245,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_transformClassNameToFilename">#</a>
-		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#36-54" title="Go to source code">transformClassNameToFilename</a>( <span>string <var>$class</var></span>, <span>string <var>$dir</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#40-58" title="Go to source code">transformClassNameToFilename</a>( <span>string <var>$class</var></span>, <span>string <var>$dir</var></span> )</code>
 
 		<div class="description short">
 			
@@ -273,6 +278,35 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="transformNamespaceToPath" id="_transformNamespaceToPath">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_transformNamespaceToPath">#</a>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#60-62" title="Go to source code">transformNamespaceToPath</a>( <span>mixed <var>$class</var></span>, <span>mixed <var>$dir</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="autoload" id="_autoload">
 
 		<td class="attributes"><code>
@@ -284,7 +318,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_autoload">#</a>
-		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#56-73" title="Go to source code">autoload</a>( <span>string <var>$class</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#64-78" title="Go to source code">autoload</a>( <span>string <var>$class</var></span> )</code>
 
 		<div class="description short">
 			
@@ -326,7 +360,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_importToknotClass">#</a>
-		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#75-87" title="Go to source code">importToknotClass</a>( <span>string <var>$class</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#80-92" title="Go to source code">importToknotClass</a>( <span>string <var>$class</var></span> )</code>
 
 		<div class="description short">
 			
@@ -357,6 +391,93 @@
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="import" id="_import">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_import">#</a>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#94-122" title="Go to source code">import</a>( <span>mixed <var>$className</var></span>, <span>mixed <var>$aliases</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getImprotList" id="_getImprotList">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getImprotList">#</a>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#123-130" title="Go to source code">getImprotList</a>( <span>mixed <var>$key</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="__get" id="___get">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___get">#</a>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#131-136" title="Go to source code">__get</a>( <span>mixed <var>$name</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="importToknotModule" id="_importToknotModule">
 
 		<td class="attributes"><code>
@@ -368,7 +489,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_importToknotModule">#</a>
-		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#89-111" title="Go to source code">importToknotModule</a>( <span>string <var>$module</var></span>, <span>string <var>$first</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#137-158" title="Go to source code">importToknotModule</a>( <span>string <var>$module</var></span>, <span>string <var>$first</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -408,7 +529,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_register">#</a>
-		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#113-118" title="Go to source code">register</a>( )</code>
+		<code><a href="source-class-Toknot.Control.StandardAutoloader.html#160-165" title="Go to source code">register</a>( )</code>
 
 		<div class="description short">
 			
@@ -445,7 +566,7 @@
 
 		<td class="attributes"><code>string</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.Control.StandardAutoloader.html#15" title="Go to source code"><b>NS_SEPARATOR</b></a>
+				<a href="source-class-Toknot.Control.StandardAutoloader.html#17" title="Go to source code"><b>NS_SEPARATOR</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-quote">'\\'</span></code></td>
 		<td class="description"><div>

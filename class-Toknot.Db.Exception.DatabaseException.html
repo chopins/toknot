@@ -6,8 +6,8 @@
 
 	<title>Class Toknot\Db\Exception\DatabaseException | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -45,6 +45,8 @@
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -73,8 +75,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -182,7 +187,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Db.html">Db</a>\<a href="namespace-Toknot.Db.Exception.html">Exception</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Db.Exception.DatabaseException.html#15-24" title="Go to source code">Toknot/Db/Exception/DatabaseException.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Db.Exception.DatabaseException.html#15-34" title="Go to source code">Toknot/Db/Exception/DatabaseException.php</a><br />
 	</div>
 
 
@@ -200,7 +205,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Db.Exception.DatabaseException.html#18-23" title="Go to source code">__construct</a>( <span>string <var>$message</var></span>, <span>integer <var>$code</var> = <span class="php-num">0</span></span>, <span>string <var>$sql</var> = <span class="php-quote">''</span></span>, <span>integer <var>$param</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Toknot.Db.Exception.DatabaseException.html#20-32" title="Go to source code">__construct</a>( <span>string <var>$message</var></span>, <span>integer <var>$code</var> = <span class="php-num">0</span></span>, <span>string <var>$sql</var> = <span class="php-keyword1">null</span></span>, <span>integer <var>$param</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -245,7 +250,8 @@
 			<a href="class-Toknot.Exception.StandardException.html#_earch">earch()</a>, 
 			<a href="class-Toknot.Exception.StandardException.html#_errorReportHandler">errorReportHandler()</a>, 
 			<a href="class-Toknot.Exception.StandardException.html#_getDebugTraceAsString">getDebugTraceAsString()</a>, 
-			<a href="class-Toknot.Exception.StandardException.html#_getErrorType">getErrorType()</a>
+			<a href="class-Toknot.Exception.StandardException.html#_getErrorType">getErrorType()</a>, 
+			<a href="class-Toknot.Exception.StandardException.html#_save">save()</a>
 		</code></td>
 	</tr>
 	</table>
@@ -291,7 +297,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Db.Exception.DatabaseException.html#16" title="Go to source code"><var>$sqls</var></a>
+				<a href="source-class-Toknot.Db.Exception.DatabaseException.html#17" title="Go to source code"><var>$sqls</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">array</span>()</code></td>
 		<td class="description"><div>
@@ -314,7 +320,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Db.Exception.DatabaseException.html#17" title="Go to source code"><var>$params</var></a>
+				<a href="source-class-Toknot.Db.Exception.DatabaseException.html#18" title="Go to source code"><var>$params</var></a>
 		</td>
 		<td class="value"><code><span class="php-keyword1">array</span>()</code></td>
 		<td class="description"><div>
@@ -339,6 +345,7 @@
 			<a href="class-Toknot.Exception.StandardException.html#$code"><var>$code</var></a>, 
 			<a href="class-Toknot.Exception.StandardException.html#$errfile"><var>$errfile</var></a>, 
 			<a href="class-Toknot.Exception.StandardException.html#$errline"><var>$errline</var></a>, 
+			<a href="class-Toknot.Exception.StandardException.html#$exceptionInstance"><var>$exceptionInstance</var></a>, 
 			<a href="class-Toknot.Exception.StandardException.html#$exceptionMessage"><var>$exceptionMessage</var></a>, 
 			<a href="class-Toknot.Exception.StandardException.html#$isException"><var>$isException</var></a>, 
 			<a href="class-Toknot.Exception.StandardException.html#$message"><var>$message</var></a>, 

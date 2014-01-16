@@ -7,8 +7,8 @@
 
 	<title>File Toknot/Di/FileObject.php | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -46,6 +46,8 @@
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -74,8 +76,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -421,7 +426,7 @@
 </span><span id="277" class="l"><a class="l" href="#277">277: </a>        <span class="php-keyword1">if</span> (<span class="php-var">$casePath</span>) {
 </span><span id="278" class="l"><a class="l" href="#278">278: </a>            <span class="php-var">$dirList</span> = <span class="php-keyword2">scandir</span>(<span class="php-var">$casePath</span>);
 </span><span id="279" class="l"><a class="l" href="#279">279: </a>            <span class="php-keyword1">foreach</span> (<span class="php-var">$dirList</span> <span class="php-keyword1">as</span> <span class="php-var">$sub</span>) {
-</span><span id="280" class="l"><a class="l" href="#280">280: </a>                <span class="php-keyword1">if</span> (<span class="php-keyword2">strcasecmp</span>(<span class="php-var">$dirname</span>, <span class="php-var">$dirname</span>) === <span class="php-num">0</span>) {
+</span><span id="280" class="l"><a class="l" href="#280">280: </a>                <span class="php-keyword1">if</span> (<span class="php-keyword2">strcasecmp</span>(<span class="php-var">$sub</span>, <span class="php-var">$dirname</span>) === <span class="php-num">0</span>) {
 </span><span id="281" class="l"><a class="l" href="#281">281: </a>                    <span class="php-keyword1">if</span>(<span class="php-keyword2">is_dir</span>(<span class="php-quote">&quot;</span><span class="php-var">$casePath</span><span class="php-quote">/</span><span class="php-var">$sub</span><span class="php-quote">&quot;</span>)) {
 </span><span id="282" class="l"><a class="l" href="#282">282: </a>                        <span class="php-keyword1">return</span> <span class="php-quote">&quot;</span><span class="php-var">$casePath</span><span class="php-quote">/</span><span class="php-var">$sub</span><span class="php-quote">&quot;</span>;
 </span><span id="283" class="l"><a class="l" href="#283">283: </a>                    }

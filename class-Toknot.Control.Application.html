@@ -6,8 +6,8 @@
 
 	<title>Class Toknot\Control\Application | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -45,6 +45,8 @@
 						</li>
 				<li class="active"><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -73,8 +75,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -184,7 +189,7 @@ class="php-quote">'/path/AppPath'</span>);
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Control.html">Control</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Control.Application.html#23-480" title="Go to source code">Toknot/Control/Application.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Control.Application.html#23-510" title="Go to source code">Toknot/Control/Application.php</a><br />
 	</div>
 
 
@@ -331,7 +336,7 @@ that is $routerMode, $routerDepth, $notFound, $methodNotAllowed</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_run">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#222-346" title="Go to source code">run</a>( <span>string <var>$appNameSpace</var></span>, <span>string <var>$appPath</var></span>, <span>string <var>$defaultInvoke</var> = <span class="php-quote">'\Index'</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#222-366" title="Go to source code">run</a>( <span>string <var>$appNameSpace</var></span>, <span>string <var>$appPath</var></span>, <span>string <var>$defaultInvoke</var> = <span class="php-quote">'\Index'</span></span> )</code>
 
 		<div class="description short">
 			
@@ -490,7 +495,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_tickTraceHandler">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#348-356" title="Go to source code">tickTraceHandler</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#368-376" title="Go to source code">tickTraceHandler</a>( )</code>
 
 		<div class="description short">
 			
@@ -519,7 +524,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_uncaughtExceptionHandler">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#358-370" title="Go to source code">uncaughtExceptionHandler</a>( <span>mixed <var>$e</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#378-394" title="Go to source code">uncaughtExceptionHandler</a>( <span>mixed <var>$e</var></span> )</code>
 
 		<div class="description short">
 			
@@ -548,7 +553,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorReportHandler">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#372-380" title="Go to source code">errorReportHandler</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#396-404" title="Go to source code">errorReportHandler</a>( )</code>
 
 		<div class="description short">
 			
@@ -581,7 +586,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_setUserRouter">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#382-394" title="Go to source code">setUserRouter</a>( <span>string <var>$routerName</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#406-418" title="Go to source code">setUserRouter</a>( <span>string <var>$routerName</var></span> )</code>
 
 		<div class="description short">
 			
@@ -623,7 +628,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorExitReportHandler">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#414-433" title="Go to source code">errorExitReportHandler</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#438-461" title="Go to source code">errorExitReportHandler</a>( )</code>
 
 		<div class="description short">
 			
@@ -652,7 +657,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getMemoryUsage">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#435-444" title="Go to source code">getMemoryUsage</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#463-472" title="Go to source code">getMemoryUsage</a>( )</code>
 
 		<div class="description short">
 			
@@ -681,7 +686,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_pageRunInfo">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#446-463" title="Go to source code">pageRunInfo</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#474-491" title="Go to source code">pageRunInfo</a>( )</code>
 
 		<div class="description short">
 			
@@ -710,7 +715,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_checkXDebug">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#465-470" title="Go to source code">checkXDebug</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#493-498" title="Go to source code">checkXDebug</a>( )</code>
 
 		<div class="description short">
 			
@@ -739,7 +744,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___destruct">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#472-476" title="Go to source code">__destruct</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#500-504" title="Go to source code">__destruct</a>( )</code>
 
 		<div class="description short">
 			
@@ -768,7 +773,7 @@ can not contain application top namespace and Controller layer namespace</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getAppRoot">#</a>
-		<code><a href="source-class-Toknot.Control.Application.html#477-479" title="Go to source code">getAppRoot</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Application.html#506-508" title="Go to source code">getAppRoot</a>( )</code>
 
 		<div class="description short">
 			

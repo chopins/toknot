@@ -6,8 +6,8 @@
 
 	<title>Class Toknot\Admin\Menu | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -45,6 +45,8 @@
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -73,8 +75,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -136,6 +141,11 @@
 	<h1>Class Menu</h1>
 
 
+	<div class="description">
+	
+<p>Admin module base class for user's admin application</p>
+
+	</div>
 
 	<dl class="tree">
 		<dd style="padding-left:0px">
@@ -149,6 +159,29 @@
 			
 		</dd>
 		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by" />
+			<a href="class-Toknot.User.UserAccessControl.html"><span>Toknot\User\UserAccessControl</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:60px">
+			<img src="resources/inherit.png" alt="Extended by" />
+			<a href="class-Toknot.User.ClassAccessControl.html"><span>Toknot\User\ClassAccessControl</span></a>
+			
+			
+			
+		</dd>
+		<dd style="padding-left:90px">
+			<img src="resources/inherit.png" alt="Extended by" />
+			<a href="class-Toknot.Admin.AdminBase.html"><span>Toknot\Admin\AdminBase</span></a>
+			
+			 implements 
+				<a href="class-Toknot.Control.ControllerInterface.ControllerInterface.html"><span>Toknot\Control\ControllerInterface\ControllerInterface</span></a>
+			
+			
+		</dd>
+		<dd style="padding-left:120px">
 			<img src="resources/inherit.png" alt="Extended by" />
 <b><span>Toknot\Admin\Menu</span></b>			
 			
@@ -169,13 +202,44 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Admin.html">Admin</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Admin.Menu.html#18-38" title="Go to source code">Toknot/Admin/Menu.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Admin.Menu.html#18-56" title="Go to source code">Toknot/Admin/Menu.php</a><br />
 	</div>
 
 
 
 	<table class="summary" id="methods">
 	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Toknot.Admin.Menu.html#23-27" title="Go to source code">__construct</a>( <span><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> <var>$FMAI</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+				<h4>Overrides</h4>
+				<div class="list"><code><a href="class-Toknot.Admin.AdminBase.html#___construct">Toknot\Admin\AdminBase::__construct()</a></code></div>
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="getAllMenu" id="_getAllMenu">
 
 		<td class="attributes"><code>
@@ -187,7 +251,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getAllMenu">#</a>
-		<code><a href="source-class-Toknot.Admin.Menu.html#23-35" title="Go to source code">getAllMenu</a>( )</code>
+		<code><a href="source-class-Toknot.Admin.Menu.html#29-53" title="Go to source code">getAllMenu</a>( )</code>
 
 		<div class="description short">
 			
@@ -207,6 +271,58 @@
 	</tr>
 	</table>
 
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.Admin.AdminBase.html#methods">Toknot\Admin\AdminBase</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Admin.AdminBase.html#_CLI">CLI()</a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#_checkUserLogin">checkUserLogin()</a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#_commonTplVarSet">commonTplVarSet()</a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#_initDatabase">initDatabase()</a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#_loadAdminConfig">loadAdminConfig()</a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#_setAdminLogin">setAdminLogin()</a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.User.ClassAccessControl.html#methods">Toknot\User\ClassAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.ClassAccessControl.html#___toString">__toString()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_changeClassGroup">changeClassGroup()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_changeClassPermissions">changeClassPermissions()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_checkChange">checkChange()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_checkRead">checkRead()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_checkWrite">checkWrite()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_getOperateType">getOperateType()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_setOperateType">setOperateType()</a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#_updateMethodPerms">updateMethodPerms()</a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.User.UserAccessControl.html#methods">Toknot\User\UserAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.UserAccessControl.html#_bestHashAlgos">bestHashAlgos()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_checkUserFlag">checkUserFlag()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_generateUserFlag">generateUserFlag()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getGid">getGid()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getGroup">getGroup()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getHashInfo">getHashInfo()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getLogin">getLogin()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getTextHash">getTextHash()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getTextHashCleanSalt">getTextHashCleanSalt()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getUid">getUid()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getUserName">getUserName()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_getUserRemoteAddress">getUserRemoteAddress()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_hashPassword">hashPassword()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_updatePermissonController">updatePermissonController()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_verifyHash">verifyHash()</a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#_verifyPassword">verifyPassword()</a>
+		</code></td>
+	</tr>
+	</table>
 	<table class="summary inherited">
 	<caption>Methods inherited from <a href="class-Toknot.Di.Object.html#methods">Toknot\Di\Object</a></caption>
 	<tr>
@@ -237,6 +353,24 @@
 
 
 
+	<table class="summary inherited">
+	<caption>Constants inherited from <a href="class-Toknot.User.ClassAccessControl.html#constants">Toknot\User\ClassAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.ClassAccessControl.html#CLASS_READ"><b>CLASS_READ</b></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#CLASS_UPDATE"><b>CLASS_UPDATE</b></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#CLASS_WRITE"><b>CLASS_WRITE</b></a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Constants inherited from <a href="class-Toknot.User.UserAccessControl.html#constants">Toknot\User\UserAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.UserAccessControl.html#PASSWORD_SALT"><b>PASSWORD_SALT</b></a>
+		</code></td>
+	</tr>
+	</table>
 
 
 
@@ -288,8 +422,73 @@
 			</div>
 		</div></td>
 	</tr>
+	<tr data-order="FMAI" id="$FMAI">
+		<td class="attributes"><code>
+			public static 
+			<code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code>
+		</code></td>
+
+		<td class="name">
+				<a href="source-class-Toknot.Admin.Menu.html#22" title="Go to source code"><var>$FMAI</var></a>
+		</td>
+		<td class="value"><code></code></td>
+		<td class="description"><div>
+			<a href="#$FMAI" class="anchor">#</a>
+
+			<div class="description short">
+				
+<p><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> instance</p>
+
+			</div>
+
+			<div class="description detailed hidden">
+				
+<p><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> instance</p>
+
+
+			</div>
+		</div></td>
+	</tr>
 	</table>
 
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.Admin.AdminBase.html#properties">Toknot\Admin\AdminBase</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Admin.AdminBase.html#$AR"><var>$AR</var></a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#$CFG"><var>$CFG</var></a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#$SESSION"><var>$SESSION</var></a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#$currentUser"><var>$currentUser</var></a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#$dbConnect"><var>$dbConnect</var></a>, 
+			<a href="class-Toknot.Admin.AdminBase.html#$permissions"><var>$permissions</var></a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.User.ClassAccessControl.html#properties">Toknot\User\ClassAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.ClassAccessControl.html#$gid"><var>$gid</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$group"><var>$group</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$operateType"><var>$operateType</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$uid"><var>$uid</var></a>, 
+			<a href="class-Toknot.User.ClassAccessControl.html#$userName"><var>$userName</var></a>
+		</code></td>
+	</tr>
+	</table>
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.User.UserAccessControl.html#properties">Toknot\User\UserAccessControl</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.User.UserAccessControl.html#$enableAdmin"><var>$enableAdmin</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$groupName"><var>$groupName</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$hashAlgo"><var>$hashAlgo</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$hashSalt"><var>$hashSalt</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$useHashFunction"><var>$useHashFunction</var></a>, 
+			<a href="class-Toknot.User.UserAccessControl.html#$userFlag"><var>$userFlag</var></a>
+		</code></td>
+	</tr>
+	</table>
 	<table class="summary inherited">
 	<caption>Properties inherited from <a href="class-Toknot.Di.Object.html#properties">Toknot\Di\Object</a></caption>
 	<tr>

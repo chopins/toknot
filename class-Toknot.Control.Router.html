@@ -6,8 +6,8 @@
 
 	<title>Class Toknot\Control\Router | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -45,6 +45,8 @@
 						</li>
 				<li class="active"><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -73,8 +75,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -148,6 +153,17 @@
 
 	<dl class="tree">
 		<dd style="padding-left:0px">
+			<a href="class-Toknot.Di.Object.html"><span>Toknot\Di\Object</span></a>
+			
+			 implements 
+				<a href="class-Iterator.html"><span>Iterator</span></a>, 
+			
+				<a href="class-Countable.html"><span>Countable</span></a>
+			
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by" />
 <b><span>Toknot\Control\Router</span></b>			
 			 implements 
 				<a href="class-Toknot.Control.RouterInterface.html"><span>Toknot\Control\RouterInterface</span></a>
@@ -169,13 +185,83 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Control.html">Control</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Control.Router.html#21-355" title="Go to source code">Toknot/Control/Router.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Control.Router.html#25-465" title="Go to source code">Toknot/Control/Router.php</a><br />
 	</div>
 
 
 
 	<table class="summary" id="methods">
 	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 protected 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#124-132" title="Go to source code">__construct</a>( )</code>
+
+		<div class="description short">
+			
+<p>__construct reject new of outside</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>__construct reject new of outside</p>
+
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="singleton" id="_singleton">
+
+		<td class="attributes"><code>
+			 public static
+			<code><a href="class-Toknot.Control.Router.html">Toknot\Control\Router</a></code>
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_singleton">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#134-143" title="Go to source code">singleton</a>( )</code>
+
+		<div class="description short">
+			
+<p>singleton</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>singleton</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Control.Router.html">Toknot\Control\Router</a></code></code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="routerRule" id="_routerRule">
 
 		<td class="attributes"><code>
@@ -187,7 +273,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_routerRule">#</a>
-		<code><a href="source-class-Toknot.Control.Router.html#117-169" title="Go to source code">routerRule</a>( )</code>
+		<code><a href="source-class-Toknot.Control.Router.html#145-199" title="Go to source code">routerRule</a>( )</code>
 
 		<div class="description short">
 			
@@ -224,7 +310,7 @@ method is CLI</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_routerPath">#</a>
-		<code><a href="source-class-Toknot.Control.Router.html#176-183" title="Go to source code">routerPath</a>( <span>string <var>$path</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.Router.html#206-213" title="Go to source code">routerPath</a>( <span>string <var>$path</var></span> )</code>
 
 		<div class="description short">
 			
@@ -264,24 +350,24 @@ method is CLI</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_defaultInvoke">#</a>
-		<code><a href="source-class-Toknot.Control.Router.html#185-187" title="Go to source code">defaultInvoke</a>( <span>string <var>$defaultClass</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.Router.html#215-222" title="Go to source code">defaultInvoke</a>( <span>string <var>$defaultClass</var></span> )</code>
 
 		<div class="description short">
 			
-<p>set default invoke class for router</p>
+<p>Set default controller class name that without namespace</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>set default invoke class for router</p>
+<p>Set default controller class name that without namespace</p>
 
 
 
 				<h4>Parameters</h4>
 				<div class="list"><dl>
 					<dt><var>$defaultClass</var></dt>
-					<dd><code>string</code><br>$defaultInvoke</dd>
+					<dd><code>string</code><br>$defaultClass</dd>
 				</dl></div>
 
 
@@ -290,6 +376,119 @@ method is CLI</p>
 
 				<h4>Implementation of</h4>
 				<div class="list"><code><a href="class-Toknot.Control.RouterInterface.html#_defaultInvoke">Toknot\Control\RouterInterface::defaultInvoke()</a></code></div>
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getRouterMode" id="_getRouterMode">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getRouterMode">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#224-226" title="Go to source code">getRouterMode</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="controllerNameTrans" id="_controllerNameTrans">
+
+		<td class="attributes"><code>
+			 public static
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_controllerNameTrans">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#228-244" title="Go to source code">controllerNameTrans</a>( <span>string <var>$invokeClass</var></span> )</code>
+
+		<div class="description short">
+			
+<p>transfrom relative class name to full class name</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>transfrom relative class name to full class name</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$invokeClass</var></dt>
+					<dd><code>string</code><br>$controllerName</dd>
+				</dl></div>
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="invokeNotFoundController" id="_invokeNotFoundController">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_invokeNotFoundController">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#246-259" title="Go to source code">invokeNotFoundController</a>( <span>type <var>&amp; $invokeClass</var></span> )</code>
+
+		<div class="description short">
+			
+<p>invoke not found controller</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>invoke not found controller</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$invokeClass</var></dt>
+					<dd><code>type</code><br>$invokeClass</dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Exception.BadClassCallException.html">Toknot\Exception\BadClassCallException</a></code></code><br />
+				</div>
+
+
+
 		</div>
 		</div></td>
 	</tr>
@@ -304,12 +503,12 @@ method is CLI</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_invoke">#</a>
-		<code><a href="source-class-Toknot.Control.Router.html#204-292" title="Go to source code">invoke</a>( <span><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> <var>$FMAI</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.Router.html#261-323" title="Go to source code">invoke</a>( <span><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> <var>$FMAI</var></span> )</code>
 
 		<div class="description short">
 			
 <p>Invoke Application Controller, the method will call application of Controller
-what is $this-&gt;routerNameSpace\Controller{$this-&gt;spacePath}, and router
+what is self::$routerNameSpace\Controller{$this-&gt;spacePath}, and router
 action by request method</p>
 
 		</div>
@@ -317,7 +516,7 @@ action by request method</p>
 		<div class="description detailed hidden">
 			
 <p>Invoke Application Controller, the method will call application of Controller
-what is $this-&gt;routerNameSpace\Controller{$this-&gt;spacePath}, and router
+what is self::$routerNameSpace\Controller{$this-&gt;spacePath}, and router
 action by request method</p>
 
 
@@ -342,6 +541,111 @@ action by request method</p>
 		</div>
 		</div></td>
 	</tr>
+	<tr data-order="checkController" id="_checkController">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_checkController">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#325-329" title="Go to source code">checkController</a>( <span>mixed <var>&amp; $invokeClass</var></span>, <span>mixed <var>$method</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getControllerInterface" id="_getControllerInterface">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getControllerInterface">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#331-334" title="Go to source code">getControllerInterface</a>( <span>mixed <var>$method</var> = <span class="php-keyword1">null</span></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="instanceController" id="_instanceController">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_instanceController">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#336-367" title="Go to source code">instanceController</a>( <span>string <var>$invokeClass</var></span>, <span><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code> <var>$FMAI</var></span>, <span>string <var>$method</var></span> )</code>
+
+		<div class="description short">
+			
+<p>new instance of controller</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>new instance of controller</p>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$invokeClass</var></dt>
+					<dd><code>string</code><br>$invokeClass</dd>
+					<dt><var>$FMAI</var></dt>
+					<dd><code><code><a href="class-Toknot.Control.FMAI.html">Toknot\Control\FMAI</a></code></code><br>$FMAI</dd>
+					<dt><var>$method</var></dt>
+					<dd><code>string</code><br>$method</dd>
+				</dl></div>
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Control.Exception.ControllerInvalidException.html">Toknot\Control\Exception\ControllerInvalidException</a></code></code><br />
+					<code><code><a href="class-Toknot.Exception.StandardException.html">Toknot\Exception\StandardException</a></code></code><br />
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
 	<tr data-order="runtimeArgs" id="_runtimeArgs">
 
 		<td class="attributes"><code>
@@ -353,7 +657,7 @@ action by request method</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_runtimeArgs">#</a>
-		<code><a href="source-class-Toknot.Control.Router.html#294-318" title="Go to source code">runtimeArgs</a>( <span>integer <var>$mode</var> = <code><a href="class-Toknot.Control.Router.html#ROUTER_PATH">Toknot\Control\Router::<b>ROUTER_PATH</b></a></code></span>, <span>integer <var>$routeDepth</var> = <span class="php-num">1</span></span>, <span>string <var>$notFound</var> = <span class="php-keyword1">null</span></span>, <span>string <var>$methodNotAllowed</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Toknot.Control.Router.html#369-393" title="Go to source code">runtimeArgs</a>( <span>integer <var>$mode</var> = <code><a href="class-Toknot.Control.Router.html#ROUTER_PATH">Toknot\Control\Router::<b>ROUTER_PATH</b></a></code></span>, <span>integer <var>$routeDepth</var> = <span class="php-num">1</span></span>, <span>string <var>$notFound</var> = <span class="php-keyword1">null</span></span>, <span>string <var>$methodNotAllowed</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -408,7 +712,7 @@ page set The class namespace under Application root , default is null</dd>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_routerSpace">#</a>
-		<code><a href="source-class-Toknot.Control.Router.html#320-328" title="Go to source code">routerSpace</a>( <span>string <var>$appspace</var></span> )</code>
+		<code><a href="source-class-Toknot.Control.Router.html#395-403" title="Go to source code">routerSpace</a>( <span>string <var>$appspace</var></span> )</code>
 
 		<div class="description short">
 			
@@ -439,7 +743,81 @@ Application of top namespace</p>
 		</div>
 		</div></td>
 	</tr>
-	<tr data-order="__construct" id="___construct">
+	<tr data-order="getNotFoundController" id="_getNotFoundController">
+
+		<td class="attributes"><code>
+			 public 
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getNotFoundController">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#420-427" title="Go to source code">getNotFoundController</a>( )</code>
+
+		<div class="description short">
+			
+<p>Get relatively name of not found controller</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Get relatively name of not found controller</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getMethodNotAllowedController" id="_getMethodNotAllowedController">
+
+		<td class="attributes"><code>
+			 public 
+			string
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getMethodNotAllowedController">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#429-436" title="Go to source code">getMethodNotAllowedController</a>( )</code>
+
+		<div class="description short">
+			
+<p>Get relatively name of method not allowed controller</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Get relatively name of method not allowed controller</p>
+
+
+
+
+				<h4>Returns</h4>
+				<div class="list">
+					<code>string</code><br />
+				</div>
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="loadConfigure" id="_loadConfigure">
 
 		<td class="attributes"><code>
 			 public 
@@ -449,18 +827,18 @@ Application of top namespace</p>
 		</td>
 
 		<td class="name"><div>
-		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Control.Router.html#345-353" title="Go to source code">__construct</a>( )</code>
+		<a class="anchor" href="#_loadConfigure">#</a>
+		<code><a href="source-class-Toknot.Control.Router.html#438-463" title="Go to source code">loadConfigure</a>( )</code>
 
 		<div class="description short">
 			
-<p>__construct reject new of outside</p>
+<p>load configure with Router seted</p>
 
 		</div>
 
 		<div class="description detailed hidden">
 			
-<p>__construct reject new of outside</p>
+<p>load configure with Router seted</p>
 
 
 
@@ -474,6 +852,28 @@ Application of top namespace</p>
 	</tr>
 	</table>
 
+	<table class="summary inherited">
+	<caption>Methods inherited from <a href="class-Toknot.Di.Object.html#methods">Toknot\Di\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Di.Object.html#___set">__set()</a>, 
+			<a href="class-Toknot.Di.Object.html#___singleton">__singleton()</a>, 
+			<a href="class-Toknot.Di.Object.html#_constructArgs">constructArgs()</a>, 
+			<a href="class-Toknot.Di.Object.html#_count">count()</a>, 
+			<a href="class-Toknot.Di.Object.html#_current">current()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getDocComment">getDocComment()</a>, 
+			<a href="class-Toknot.Di.Object.html#_getInstance">getInstance()</a>, 
+			<a href="class-Toknot.Di.Object.html#_isChange">isChange()</a>, 
+			<a href="class-Toknot.Di.Object.html#_key">key()</a>, 
+			<a href="class-Toknot.Di.Object.html#_newInstanceWithoutConstruct">newInstanceWithoutConstruct()</a>, 
+			<a href="class-Toknot.Di.Object.html#_next">next()</a>, 
+			<a href="class-Toknot.Di.Object.html#_resetCount">resetCount()</a>, 
+			<a href="class-Toknot.Di.Object.html#_rewind">rewind()</a>, 
+			<a href="class-Toknot.Di.Object.html#_setPropertie">setPropertie()</a>, 
+			<a href="class-Toknot.Di.Object.html#_valid">valid()</a>
+		</code></td>
+	</tr>
+	</table>
 
 
 
@@ -487,7 +887,7 @@ Application of top namespace</p>
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.Control.Router.html#102-105" title="Go to source code"><b>ROUTER_PATH</b></a>
+				<a href="source-class-Toknot.Control.Router.html#109-112" title="Go to source code"><b>ROUTER_PATH</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">1</span></code></td>
 		<td class="description"><div>
@@ -511,7 +911,7 @@ Application of top namespace</p>
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.Control.Router.html#107-110" title="Go to source code"><b>ROUTER_GET_QUERY</b></a>
+				<a href="source-class-Toknot.Control.Router.html#114-117" title="Go to source code"><b>ROUTER_GET_QUERY</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">2</span></code></td>
 		<td class="description"><div>
@@ -537,7 +937,7 @@ controller of class</p>
 
 		<td class="attributes"><code>integer</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.Control.Router.html#112-115" title="Go to source code"><b>ROUTER_MAP_TABLE</b></a>
+				<a href="source-class-Toknot.Control.Router.html#119-122" title="Go to source code"><b>ROUTER_MAP_TABLE</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-num">3</span></code></td>
 		<td class="description"><div>
@@ -563,6 +963,14 @@ controller of class</p>
 
 
 
+	<table class="summary inherited">
+	<caption>Properties inherited from <a href="class-Toknot.Di.Object.html#properties">Toknot\Di\Object</a></caption>
+	<tr>
+		<td><code>
+			<a href="class-Toknot.Di.Object.html#$interatorArray"><var>$interatorArray</var></a>
+		</code></td>
+	</tr>
+	</table>
 
 
 

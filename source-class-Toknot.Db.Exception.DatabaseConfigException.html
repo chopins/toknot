@@ -7,8 +7,8 @@
 
 	<title>File Toknot/Db/Exception/DatabaseConfigException.php | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -46,6 +46,8 @@
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -74,8 +76,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -147,7 +152,7 @@
 </span><span id="13" class="l"><a class="l" href="#13">13: </a>
 </span><span id="14" class="l"><a class="l" href="#14">14: </a><span class="php-keyword1">class</span> <a id="DatabaseConfigException" href="#DatabaseConfigException">DatabaseConfigException</a> <span class="php-keyword1">extends</span> StandardException {
 </span><span id="15" class="l"><a class="l" href="#15">15: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="___construct" href="#___construct">__construct</a>(<span class="php-var">$configParam</span>) {
-</span><span id="16" class="l"><a class="l" href="#16">16: </a>        <span class="php-var">$message</span> = <span class="php-quote">&quot;Must be set </span><span class="php-var">$configParam</span><span class="php-quote"> of database connect in ini of database sections,&lt;br /&gt;\n&quot;</span>;
+</span><span id="16" class="l"><a class="l" href="#16">16: </a>        <span class="php-var">$message</span> = <span class="php-quote">&quot;Must be set '</span><span class="php-var">{$configParam}</span><span class="php-quote">' of database connect in ini of database sections,&lt;br /&gt;\n&quot;</span>;
 </span><span id="17" class="l"><a class="l" href="#17">17: </a>        <span class="php-var">$message</span> .= <span class="php-quote">'database of options has dsn,username,password,dirverOptions(which is array type),prefix(which is table name prefix and option)'</span>;
 </span><span id="18" class="l"><a class="l" href="#18">18: </a>        parent::__construct(<span class="php-var">$message</span>);
 </span><span id="19" class="l"><a class="l" href="#19">19: </a>    }

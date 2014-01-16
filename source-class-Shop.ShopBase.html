@@ -7,8 +7,8 @@
 
 	<title>File demos/Shop/ShopBase.php | toknot</title>
 
-	<script type="text/javascript" src="resources/combined.js?934585053"></script>
-	<script type="text/javascript" src="elementlist.js?3046034885"></script>
+	<script type="text/javascript" src="resources/combined.js?3564046378"></script>
+	<script type="text/javascript" src="elementlist.js?1460038942"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -46,6 +46,8 @@
 						</li>
 				<li><a href="namespace-Toknot.Control.html">Control<span></span></a>
 						<ul>
+				<li><a href="namespace-Toknot.Control.ControllerInterface.html">ControllerInterface</a>
+						</li>
 				<li><a href="namespace-Toknot.Control.Exception.html">Exception</a>
 						</li>
 							</ul></li>
@@ -74,8 +76,11 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Tool.html">Tool</a>
 						</li>
-				<li><a href="namespace-Toknot.User.html">User</a>
+				<li><a href="namespace-Toknot.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.User.Exception.html">Exception</a>
 						</li>
+							</ul></li>
 				<li><a href="namespace-Toknot.View.html">View</a>
 						</li>
 							</ul></li>
@@ -134,7 +139,7 @@
 <pre><code><span id="1" class="l"><a class="l" href="#1"> 1: </a><span class="xlang">&lt;?php</span>
 </span><span id="2" class="l"><a class="l" href="#2"> 2: </a><span class="php-keyword1">namespace</span> Shop;
 </span><span id="3" class="l"><a class="l" href="#3"> 3: </a><span class="php-keyword1">use</span> Toknot\User\ClassAccessControl;
-</span><span id="4" class="l"><a class="l" href="#4"> 4: </a>
+</span><span id="4" class="l"><a class="l" href="#4"> 4: </a><span class="php-keyword1">use</span> Toknot\User\Nobody;
 </span><span id="5" class="l"><a class="l" href="#5"> 5: </a><span class="php-keyword1">class</span> <a id="ShopBase" href="#ShopBase">ShopBase</a> <span class="php-keyword1">extends</span> ClassAccessControl {
 </span><span id="6" class="l"><a class="l" href="#6"> 6: </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">static</span> <span class="php-var"><a id="$FMAI" href="#$FMAI">$FMAI</a></span>;
 </span><span id="7" class="l"><a class="l" href="#7"> 7: </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">static</span> <span class="php-var"><a id="$CFG" href="#$CFG">$CFG</a></span>;
@@ -144,26 +149,25 @@
 </span><span id="11" class="l"><a class="l" href="#11">11: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$permissions" href="#$permissions">$permissions</a></span>;
 </span><span id="12" class="l"><a class="l" href="#12">12: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$classGroup" href="#$classGroup">$classGroup</a></span>;
 </span><span id="13" class="l"><a class="l" href="#13">13: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="___construct" href="#___construct">__construct</a>(<span class="php-var">$FMAI</span>) {
-</span><span id="14" class="l"><a class="l" href="#14">14: </a>        <span class="php-var">$this</span>-&gt;FMAI = <span class="php-var">$FMAI</span>;
-</span><span id="15" class="l"><a class="l" href="#15">15: </a>    <span class="php-comment">//    $this-&gt;CFG = $this-&gt;FMAI-&gt;loadConfigure($FMAI-&gt;appRoot . '/Config/config.ini');</span>
-</span><span id="16" class="l"><a class="l" href="#16">16: </a>
-</span><span id="17" class="l"><a class="l" href="#17">17: </a>   <span class="php-comment">//     $this-&gt;AR = $this-&gt;FMAI-&gt;getActiveRecord();</span>
+</span><span id="14" class="l"><a class="l" href="#14">14: </a>        self::<span class="php-var">$FMAI</span> = <span class="php-var">$FMAI</span>;
+</span><span id="15" class="l"><a class="l" href="#15">15: </a>        self::<span class="php-var">$CFG</span> = self::<span class="php-var">$FMAI</span>-&gt;loadConfigure(self::<span class="php-var">$FMAI</span>-&gt;appRoot . <span class="php-quote">'/Config/config.ini'</span>);
+</span><span id="16" class="l"><a class="l" href="#16">16: </a>        
+</span><span id="17" class="l"><a class="l" href="#17">17: </a>        <span class="php-var">$this</span>-&gt;AR = self::<span class="php-var">$FMAI</span>-&gt;getActiveRecord();
 </span><span id="18" class="l"><a class="l" href="#18">18: </a>
-</span><span id="19" class="l"><a class="l" href="#19">19: </a>        <span class="php-comment">//$this-&gt;AR-&gt;config($this-&gt;CFG-&gt;Database);</span>
-</span><span id="20" class="l"><a class="l" href="#20">20: </a>
-</span><span id="21" class="l"><a class="l" href="#21">21: </a> <span class="php-comment">//       $this-&gt;FMAI-&gt;enableHTMLCache();</span>
-</span><span id="22" class="l"><a class="l" href="#22">22: </a>
-</span><span id="23" class="l"><a class="l" href="#23">23: </a>  <span class="php-comment">//      $this-&gt;view = $this-&gt;FMAI-&gt;newTemplateView($this-&gt;CFG-&gt;View);</span>
+</span><span id="19" class="l"><a class="l" href="#19">19: </a>        <span class="php-var">$this</span>-&gt;AR-&gt;config(self::<span class="php-var">$CFG</span>-&gt;Database);
+</span><span id="20" class="l"><a class="l" href="#20">20: </a>        
+</span><span id="21" class="l"><a class="l" href="#21">21: </a>        self::<span class="php-var">$FMAI</span>-&gt;enableHTMLCache(self::<span class="php-var">$CFG</span>-&gt;View);
+</span><span id="22" class="l"><a class="l" href="#22">22: </a>        
+</span><span id="23" class="l"><a class="l" href="#23">23: </a>        <span class="php-var">$this</span>-&gt;view = self::<span class="php-var">$FMAI</span>-&gt;newTemplateView(self::<span class="php-var">$CFG</span>-&gt;View);
 </span><span id="24" class="l"><a class="l" href="#24">24: </a>
-</span><span id="25" class="l"><a class="l" href="#25">25: </a> <span class="php-comment">//       $FMAI-&gt;checkAccess($this);</span>
+</span><span id="25" class="l"><a class="l" href="#25">25: </a>        <span class="php-var">$FMAI</span>-&gt;checkAccess(<span class="php-var">$this</span>, <span class="php-keyword1">new</span> Nobody());
 </span><span id="26" class="l"><a class="l" href="#26">26: </a>    }
 </span><span id="27" class="l"><a class="l" href="#27">27: </a>
 </span><span id="28" class="l"><a class="l" href="#28">28: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_CLI" href="#_CLI">CLI</a>() {
 </span><span id="29" class="l"><a class="l" href="#29">29: </a>        <span class="php-var">$this</span>-&gt;GET();
-</span><span id="30" class="l"><a class="l" href="#30">30: </a>
-</span><span id="31" class="l"><a class="l" href="#31">31: </a>    }
-</span><span id="32" class="l"><a class="l" href="#32">32: </a>}
-</span><span id="33" class="l"><a class="l" href="#33">33: </a></span></code></pre>
+</span><span id="30" class="l"><a class="l" href="#30">30: </a>    }
+</span><span id="31" class="l"><a class="l" href="#31">31: </a>
+</span><span id="32" class="l"><a class="l" href="#32">32: </a></span>}</code></pre>
 
 	<div id="footer">
 		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
