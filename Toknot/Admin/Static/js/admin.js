@@ -1,4 +1,4 @@
-var init = {
+var global = {
     updateTimeBar: function() {
         var timeBar = TK.$('time-bar');
         var localTime = TK.time();
@@ -10,6 +10,8 @@ var init = {
         };
         setTimeout(setTime, 1000);
     },
+};
+var login = {
     setPageLoadAction : function() {
         TK.Ajax.dataType = 'html';
         clickEvent.currentNav = TK.$('left-index-nav');
@@ -133,6 +135,9 @@ var TKRouter = {
 };
 
 TK.ready(function() {
-    TKRouter.importMethod(init);
+    TKRouter.importMethod(global);
+    if(_user != 'nobody') {
+        TKRouter.importMethod(login);
+    }
     TKRouter.Init();
 });

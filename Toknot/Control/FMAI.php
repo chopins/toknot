@@ -569,7 +569,9 @@ final class FMAI extends Object {
      */
     public function redirectController($class, $queryString = '') {
         $url = strtr($class, '\\', '/');
-        if (!empty($queryString)) {
+        if(Router::getInstance()->getRouterMode() === Router::ROUTER_GET_QUERY) {
+            $url = "?c={$url}&{$queryString}";
+        } elseif (!empty($queryString)) {
             $queryString = "?$queryString";
         }
         header("Location:$url{$queryString}");

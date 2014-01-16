@@ -151,7 +151,7 @@ class Router extends Object implements RouterInterface {
             if (empty($_GET['c'])) {
                 $this->spacePath = $this->defaultClass;
             } else {
-                $this->spacePath = '\\' . strtr($_GET['c'], '.', '\\');
+                $this->spacePath = '\\' . strtr($_GET['c'], '/', '\\');
             }
         } elseif ($this->routerMode == self::ROUTER_MAP_TABLE) {
             $maplist = $this->loadRouterMapTable();
@@ -219,6 +219,10 @@ class Router extends Object implements RouterInterface {
      */
     public function defaultInvoke($defaultClass) {
         $this->defaultClass = $defaultClass;
+    }
+    
+    public function getRouterMode() {
+        return $this->routerMode;
     }
 
     /**
