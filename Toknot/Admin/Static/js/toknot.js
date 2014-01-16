@@ -496,8 +496,7 @@ if (typeof TK == 'undefined') {
             if (!this.bodyNode)
                 this.bodyNode = TK.bodyNode;
             if (!ele) {
-                console.warn('error');
-                return false;
+                throw new Error(ele +' not found');
             }
 
             var eleType = typeof(ele);
@@ -549,6 +548,7 @@ if (typeof TK == 'undefined') {
                     break;
             }
             if (!__element)
+                //throw new Error(ele + ' not found');
                 return false;
             if (typeof(__element) != 'object')
                 return false;
