@@ -14,6 +14,8 @@ use Toknot\Di\Object;
 use Toknot\Control\RouterInterface;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
+use Toknot\Control\Exception\NotFoundException;
+use Toknot\Control\Exception\MethodNotAllowedException;
 use Toknot\Control\Exception\ControllerInvalidException;
 use Toknot\Control\FMAI;
 use Toknot\Control\StandardAutoloader;
@@ -244,18 +246,12 @@ class Router extends Object implements RouterInterface {
      * @throws BadClassCallException
      */
     public function invokeNotFoundController(&$invokeClass) {
-        if (DEVELOPMENT) {
-            throw new BadClassCallException($invokeClass);
+        if (self::checkController($this->notFoundController, $this->method)) {
+            NotFoundException::$displayController = $this->notFoundController;
+            NotFoundException::$FMAI = FMAI::getInstance();
+            NotFoundException::$method = $this->method;
         }
-        header('Status:404 Not Found');
-        header("Content-type: text/html; charset={$this->charset}");
-        if ($this->notFoundController !== null) {
-            if (!self::checkController($invokeClass, $this->method)) {
-                die('404 Not Found');
-            }
-        } else {
-            die('404 Not Found');
-        }
+        throw new NotFoundException("Controller $invokeClass Not Found");
     }
 
     /**
@@ -350,21 +346,13 @@ class Router extends Object implements RouterInterface {
             $this->invokeNotFoundController($invokeClass);
         }
         if (!self::checkController($invokeClass, $method)) {
-            if (DEVELOPMENT) {
-                $interface = self::getControllerInterface($method);
-                throw new StandardException("{$invokeClass} not support request method ($method) or not implement {$interface}");
-            } else {
-                header('Status:405 Method Not Allowed');
-                header("Content-type: text/html; charset={$this->charset}");
-                if ($this->methodNotAllowedController !== null) {
-                    if (!self::checkController($this->methodNotAllowedController, $method)) {
-                        die('405 Method Not Allowed');
-                    }
-                    $invokeClass = $this->methodNotAllowedController;
-                } else {
-                    die('405 Method Not Allowed');
-                }
+            $interface = self::getControllerInterface($method);
+            if (self::checkController($this->methodNotAllowedController, $method)) {
+                MethodNotAllowedException::$displayController = $this->methodNotAllowedController;
+                MethodNotAllowedException::$FMAI = $FMAI;
+                MethodNotAllowedException::$method = $method;
             }
+            throw new MethodNotAllowedException("{$invokeClass} not support request method ($method) or not implement {$interface}");
         }
         $invokeObject = new $invokeClass($FMAI);
         $stat = $FMAI->invokeBefore($invokeObject);
@@ -449,10 +437,10 @@ class Router extends Object implements RouterInterface {
     public function loadConfigure() {
         $cfg = ConfigLoader::CFG();
         if (!empty($cfg->App->notFoundController)) {
-            $this->notFoundController = $cfg->App->notFoundController;
+            $this->notFoundController = self::controllerNameTrans($cfg->App->notFoundController);
         }
         if (!empty($cfg->App->methodNotAllowedController)) {
-            $this->methodNotAllowedController = $cfg->App->methodNotAllowedController;
+            $this->methodNotAllowedController = self::controllerNameTrans($cfg->App->methodNotAllowedController);
         }
         if (!empty($cfg->App->defaultInvokeController)) {
             $this->defaultInvokeController = $cfg->App->defaultInvokeController;

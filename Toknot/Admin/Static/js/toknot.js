@@ -1672,7 +1672,9 @@ if (typeof TK == 'undefined') {
                                     TK.Ajax.openInstance[openId].XMLHttp.responseText);
                             return null;
                         }
-                        if (TK.Ajax.openInstance[openId].XMLHttp.status == 200) {
+                        //if (TK.Ajax.openInstance[openId].XMLHttp.status == 200) {
+                         
+                        if (TK.Ajax.openInstance[openId].XMLHttp.status) {
                             var reData = null;
                             switch (TK.Ajax.dataType.toLowerCase()) {
                                 case 'xml':
@@ -1695,7 +1697,8 @@ if (typeof TK == 'undefined') {
                                     break;
                             }
                             if (TK.Ajax.openInstance[openId].callFunc) {
-                                TK.Ajax.openInstance[openId].callFunc(reData);
+                                TK.Ajax.openInstance[openId].callFunc(reData,
+                                TK.Ajax.openInstance[openId].XMLHttp.status);
                                 /*try { TK.Ajax.openInstance[openId].callFunc(reData);
                                  } catch(e) {
                                  console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);

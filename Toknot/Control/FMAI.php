@@ -25,6 +25,7 @@ use Toknot\User\Nobody;
 use Toknot\User\Session;
 use Toknot\User\Root;
 use Toknot\User\Exception\NoPermissionExecption;
+use Toknot\Control\Exception\ForbiddenException;
 use Toknot\Control\Router;
 
 /**
@@ -72,7 +73,7 @@ final class FMAI extends Object {
      * @var string
      * @access private
      */
-    private $accessDeniedController = null;
+    private $forbiddenController = null;
 
     /**
      * before invoke controller method and call the handler
@@ -182,7 +183,7 @@ final class FMAI extends Object {
         $this->currentUser = new Nobody;
         $this->D = new ArrayObject;
 
-        $this->registerAccessDeniedController($CFG->App->accessDeniedController);
+        $this->registerForbiddenController($CFG->App->forbiddenController);
         $this->registerNoPermissonController($CFG->App->noPermissionController);
 
         DataCacheControl::$appRoot = $appRoot;
@@ -496,7 +497,7 @@ final class FMAI extends Object {
      * @param \Toknot\User\ClassAccessControl $clsObj check current user whether access $clsObj 
      * @return boolean if allow access return true otherise false
      */
-    public function getAccessStatus($clsObj = null) {
+    public function getAccessStatus($clsObj) {
         if ($clsObj !== null) {
             $this->checkAccess($clsObj);
         } elseif ($this->controller instanceof ClassAccessControl) {
@@ -510,12 +511,12 @@ final class FMAI extends Object {
      * 
      * @param string $controllerName
      */
-    public function registerAccessDeniedController($controllerName) {
+    public function registerForbiddenController($controllerName) {
         if ($controllerName) {
             if (!Router::checkController($controllerName, $this->requestMethod)) {
                 throw new Exception\ControllerInvalidException($controllerName);
             }
-            $this->accessDeniedController = $controllerName;
+            $this->forbiddenController = $controllerName;
         }
     }
 
@@ -552,9 +553,11 @@ final class FMAI extends Object {
      * @param \Toknot\User\ClassAccessControl $class
      * @return boolean
      */
-    public function redirectAccessDeniedController($queryString = '') {
-        $accessDeniedController = $this->getAccessDeniedController();
-        $this->redirectController($accessDeniedController, $queryString);
+    public function throwForbidden() {
+        ForbiddenException::$displayController = $this->getForbiddenController();
+        ForbiddenException::$FMAI = $this;
+        ForbiddenException::$method = $this->requestMethod;
+        throw new ForbiddenException('Access Denied');
     }
 
     /**
@@ -578,8 +581,8 @@ final class FMAI extends Object {
      * 
      * @return string
      */
-    public function getAccessDeniedController() {
-        return $this->accessDeniedController;
+    public function getForbiddenController() {
+        return Router::controllerNameTrans($this->forbiddenController);
     }
 
     /**
@@ -631,8 +634,7 @@ final class FMAI extends Object {
         $subActionName = $this->getSubAction();
         if (method_exists($clsObj, $subActionName)) {
             $clsObj->updateMethodPerms($subActionName);
-            $this->checkAccess($clsObj);
-            if ($this->getAccessStatus()) {
+            if ($this->getAccessStatus($clsObj)) {
                 return $clsObj->$subActionName();
             }
             $this->throwNoPermission("$clsObj::$subActionName()");

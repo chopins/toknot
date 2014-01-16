@@ -8,11 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\User\Exception;
+namespace Toknot\Control\Exception;
 
 use Toknot\Exception\CustomHttpStatusExecption;
 
-class NoPermissionExecption extends CustomHttpStatusExecption {
-    protected $httpStatus = '401 Unauthorized';
-}
+class ForbiddenException extends CustomHttpStatusExecption {
 
+    protected $httpStatus = '403 Forbidden';
+
+}

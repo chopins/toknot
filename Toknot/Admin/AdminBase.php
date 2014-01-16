@@ -89,8 +89,7 @@ abstract class AdminBase extends ClassAccessControl implements CI\ControllerInte
         $user = $this->checkUserLogin();
         $FMAI->setCurrentUser($user);
         $this->currentUser = $user;
-        
-        if($FMAI->getAccessStatus() === false) {
+        if($FMAI->getAccessStatus($this) === false) {
             if($FMAI->isNobodyUser()) {
                 $FMAI->redirectController('\User\Login');
             }
