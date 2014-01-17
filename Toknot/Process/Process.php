@@ -15,6 +15,7 @@ use Toknot\Exception\DependExtensionException;
 use Toknot\Process\Exception\ProcessException;
 use Toknot\Process\Exception\PipException;
 use Toknot\Exception\FileIOException;
+use \RuntimeException;
 
 final class Process {
 
@@ -32,7 +33,9 @@ final class Process {
     private $mutexId = 0;
     private $useFileLock = false;
     private $lockFileHanlde = null;
+    private $locker = false;
     private $enableProcessMutex = false;
+
     /**
      * process number in pool
      * 
@@ -71,31 +74,39 @@ final class Process {
     private function checkEnvironment() {
         if (!function_exists('pcntl_fork')) {
             try {
-                dl('pcntl.'.PHP_SHLIB_SUFFIX);
+                dl('pcntl.' . PHP_SHLIB_SUFFIX);
             } catch (DependExtensionException $e) {
                 echo $e;
             }
         }
         if (!function_exists('posix_setuid')) {
             try {
-                dl('posix.'.PHP_SHLIB_SUFFIX);
+                dl('posix.' . PHP_SHLIB_SUFFIX);
             } catch (DependExtensionException $e) {
                 echo $e;
             }
         }
     }
 
+    public function getCurrentSysUid() {
+        return posix_getuid();
+    }
+
+    public function getCurrentSysUser() {
+        return posix_getpwuid(posix_getuid());
+    }
+
     public function setProcessTitle($title) {
         if (!function_exists('setproctitle')) {
             try {
-                dl('proctitle.'.PHP_SHLIB_SUFFIX);
+                dl('proctitle.' . PHP_SHLIB_SUFFIX);
             } catch (StandardException $e) {
                 echo $e;
             }
         }
         setproctitle($title);
     }
-    
+
     /**
      * whether enable use process of metex lock
      * 
@@ -103,31 +114,32 @@ final class Process {
      */
     public function enableProcessLock() {
         $this->enableProcessMutex = true;
-        if (!function_exists('sem_acquire')) { 
+        if (!function_exists('sem_acquire')) {
             try {
-                dl('sysvsem.'.PHP_SHLIB_SUFFIX);
+                dl('sysvsem.' . PHP_SHLIB_SUFFIX);
             } catch (StandardException $e) {
                 $this->useFileLock = true;
             }
         }
-        if($this->useFileLock == false) {
-            if(!function_exists('shmop_open')) {
+        if ($this->useFileLock == false) {
+            if (!function_exists('shmop_open')) {
                 try {
-                    dl('shmop.'.PHP_SHLIB_SUFFIX);
+                    dl('shmop.' . PHP_SHLIB_SUFFIX);
                 } catch (StandardException $e) {
                     $this->useFileLock = true;
                 }
             }
         }
         if ($this->useFileLock) {
-            $this->lockFileHanlde = tmpfile();
+            $this->lockFileHanlde = tempnam('/tmp', 'lock_');
+            unlink($this->lockFileHanlde);
             return 1;
         } else {
             $size = strlen(count($this->processPool)) + 1;
             $key = ftok(__FILE__, 't');
             $this->mutexId = sem_get($key, 1);
             $this->mutex = shmop_open($key, 'c', 0644, $size);
-            shmop_write($this->mutex,0,0);
+            shmop_write($this->mutex, 0, 0);
             return 2;
         }
     }
@@ -136,11 +148,25 @@ final class Process {
         if (!$this->enableProcessMutex)
             return false;
         if ($this->useFileLock) {
-            return flock($this->lockFileHanlde, LOCK_EX|LOCK_NB);
+            if ($this->lockFileHanlde === null) {
+                $this->enableProcessLock();
+            }
+            $f = new \SplFileInfo($this->lockFileHanlde);
+            if (!$f->isFile()) {
+                try {
+                    if ($f->openFile('x')) {
+                        $this->locker = true;
+                        return true;
+                    }
+                } catch (RuntimeException $e) {
+                    return false;
+                }
+            }
+            return false;
         }
         sem_acquire($this->mutexId);
         $locker = shmop_read($this->mutex, 0, shmop_size($this->mutex));
-        if($locker[0] != 0 && $locker != $this->processKeyInPool) {
+        if ($locker[0] != 0 && $locker != $this->processKeyInPool) {
             sem_release($this->mutexId);
             return false;
         }
@@ -150,10 +176,11 @@ final class Process {
     }
 
     public function processUnLock() {
-        if(!$this->enableProcessMutex)
+        if (!$this->enableProcessMutex)
             return false;
-        if($this->useFileLock) {
-            return flock($this->lockFileHanlde, LOCK_UN);
+        if ($this->useFileLock && $this->locker) {
+            $this->locker = false;
+            return unlink($this->lockFileHanlde);
         }
         shmop_write($this->mutex, 0, 0);
     }
@@ -267,7 +294,7 @@ final class Process {
     private function childSignalHandler($signal) {
         if ($signal == SIGCHLD) {
             $status = 0;
-            $childPid = pcntl_waitpid($status);
+            $childPid = pcntl_wait($status);
             $exitCode = pcntl_wexitstatus($status);
             if ($exitCode == self::SUC_EXIT) {
                 unset($this->processPool[$childPid]);
@@ -380,11 +407,13 @@ final class Process {
         if ($subPid > 0)
             exit(0);
     }
+
     public function __destruct() {
-        if($this->useFileLock) {
-            fclose($this->lockFileHanlde);
+        if ($this->useFileLock && $this->locker) {
+            unlink($this->lockFileHanlde);
         }
     }
+
 }
 
 ?>

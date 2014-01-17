@@ -50,18 +50,7 @@ class StandardException extends ErrorException {
     }
 
     static public function errorReportHandler($argv) {
-        $object = new StandardException($argv[1], $argv[0], $argv[2], $argv[3]);
-
-        //when development finally script all error
-        if (DEVELOPMENT === true || $object->fatalError === true) {
-            try {
-                throw $object;
-            } catch (StandardException $e) {
-                echo $e;
-            }
-        } else {
-            echo $object;
-        }
+       throw new StandardException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
     public function getErrorType($code) {

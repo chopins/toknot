@@ -337,7 +337,7 @@ final class FastCGIServer extends HttpResponse {
             $write = array();
             $except = array();
             if ($this->enableEvIo) {
-                $evloop->io($this->socketFileDescriptor, \Ev::READ, function($w) use($read, $evloop) {
+                $evloop->io($this->socketFileDescriptor, \Ev::READ, function() use($read) {
                             //$evloop->invokePending();
                             $this->CGIWorkLoopCallBack($read);
                             //$w->stop();
@@ -401,7 +401,6 @@ final class FastCGIServer extends HttpResponse {
             $this->CGIWorkerProcessIPCWrite(self::WORKER_IDLE);
             unset($this->requestBacklog[$i]);
             //$this->callApplicationRouter();
-            debugPrint('request complete');
         }
         return true;
     }
@@ -474,7 +473,7 @@ final class FastCGIServer extends HttpResponse {
                         break;
                 }
                 $this->workProcessPool[$workerStatus[0]] = $workerStatus[1];
-                debugPrint($this->currentProcessNum);
+                
                 if ($this->idleNum <= 0 && $this->currentProcessNum + 1 <= $this->maxWorkNum) {
                     $this->process->createChildProcess(1, array($this, 'CGIWorkProcessCallbackProxy'));
                     $this->getWorkerList();
