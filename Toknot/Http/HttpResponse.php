@@ -139,6 +139,8 @@ class HttpResponse {
      * @access public
      */
     public $cookieHeader = null;
+    
+    public $responseBodyLen = 0;
 
     /**
      * get_request_body_by_form_urlencode 
@@ -423,6 +425,7 @@ class HttpResponse {
             return false;
         }
         $_SERVER['REQUEST_METHOD'] = $uri_list[0];
+        putenv("REQUEST_METHOD={$uri_list[0]}");
         if (empty($uri_list[1])) {
             $uri_list[1] = '/';
             $_SERVER['DOCUMENT_URI'] = $this->index[0];
@@ -513,7 +516,7 @@ class HttpResponse {
      * @access private
      * @return void
      */
-    private function getRequestBody($connect) {
+    protected  function getRequestBody($connect) {
         if (!empty($this->contentType)) {
             switch ($this->contentType) {
                 case 'application/x-www-form-urlencoded':
@@ -532,7 +535,7 @@ class HttpResponse {
      * @access private
      * @return void
      */
-    private function setLength($len) {
+    protected  function setLength($len) {
         return "Content-Length:$len\r\n";
     }
 
@@ -544,6 +547,7 @@ class HttpResponse {
      * @return void
      */
     protected function getResponseHeader() {
+        $userHeaders = '';
         if (!empty($this->userHeaders)) {
             foreach ($this->userHeaders as $header) {
                 $field = explode(':', $header);
@@ -563,6 +567,7 @@ class HttpResponse {
                         $u_content_language = $field[1];
                         break;
                     default:
+                        $userHeaders .= "$header\r\n";
                         break;
                 }
             }
@@ -586,7 +591,7 @@ class HttpResponse {
         } else {
             $header .= "Connection:Keep-Alive\r\n";
         }
-        $gdate = $this->setServerDate(gtime());
+        $gdate = $this->setServerDate();
         $header .= "Date:{$gdate} GMT\r\n";
         if (!empty($u_content_language)) {
             $header .= "Content-Language:{$u_content_language}\r\n";
@@ -600,19 +605,23 @@ class HttpResponse {
         } else {
             $header .= "Content-Type:text/html;charset=utf-8\r\n";
         }
+        if($this->responseBodyLen > 0) {
+            $header .= $this->setLength($this->responseBodyLen);
+        }
         $header .= "Server:XPHPFramework\r\n";
+        $header .= $userHeaders;
+        $header .= "\r\n";
         return $header;
     }
 
     /**
      * set_server_date 
      * 
-     * @param int $time 
      * @access private
      * @return void
      */
-    private function setServerDate($time) {
-        return gmdate('D, d M Y H:i:s', $time);
+    private function setServerDate() {
+        return gmdate('D, d M Y H:i:s',time());
     }
 
     /**
@@ -624,13 +633,7 @@ class HttpResponse {
      */
     private function getSetCookieHeader() {
         $header = '';
-        $cookie_arr = $this->scheduler->appInstance->R->C->get_cookie_array();
-        if (empty($cookie_arr)) {
-            return '';
-        }
-        foreach ($cookie_arr as $cs) {
-            $header .= $cs;
-        }
+        
         if (!empty($header)) {
             $header = "Set-Cookie:{$header}\r\n";
         }

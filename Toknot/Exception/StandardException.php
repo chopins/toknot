@@ -102,7 +102,7 @@ class StandardException extends ErrorException {
     public function getDebugTraceAsString() {
 
         $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type">';
-        if (PHP_SAPI != 'cli') {
+        if (PHP_SAPI != 'cli'  || TK_SERVER) {
             $str .= Log::traceCss();
         } else {
             $str .= str_repeat('=', 20) . "\n";
@@ -133,7 +133,7 @@ class StandardException extends ErrorException {
             }
             $str .= '</ul>';
         }
-        if (PHP_SAPI == 'cli') {
+        if (PHP_SAPI == 'cli' && !TK_SERVER) {
             $str .= str_repeat('=', 20) . "\n";
             return strip_tags($str);
         } else {

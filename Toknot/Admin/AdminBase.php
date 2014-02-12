@@ -83,20 +83,20 @@ abstract class AdminBase extends ClassAccessControl implements CI\ControllerInte
         self::$adminConstruct = true;
         self::$FMAI = $FMAI;
         $this->loadAdminConfig();
-        $this->initDatabase();
+        $this->initDatabase();        
+
         $this->SESSION = $FMAI->startSession(self::$CFG->Admin->adminSessionName);
 
         $user = $this->checkUserLogin();
         $FMAI->setCurrentUser($user);
         $this->currentUser = $user;
+        
         if($FMAI->getAccessStatus($this) === false) {
             if($FMAI->isNobodyUser()) {
                 $FMAI->redirectController('\User\Login');
             }
             $FMAI->throwNoPermission($this);
         }
-        
-        $this->commonTplVarSet();
         $FMAI->newTemplateView(self::$CFG->View);
         
     }

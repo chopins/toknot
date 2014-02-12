@@ -12,6 +12,7 @@ namespace Toknot\Http;
 
 use Toknot\Http\HttpResponse;
 use Toknot\Process\Process;
+use Toknot\Exception\StandardException;
 
 final class FastCGIServer extends HttpResponse {
 
@@ -132,7 +133,8 @@ final class FastCGIServer extends HttpResponse {
      * 
      * @var array 
      */
-    private $applicationRouter = array();
+    private $applicationInstance = null;
+    private $appliactionArgv = array();
 
     /**
      * IDLE Process counter
@@ -142,6 +144,7 @@ final class FastCGIServer extends HttpResponse {
     private $idleNum = 0;
     private $delayTime = 5;
     private $enableEvIo = true;
+    private $masterPid = 0;
     static private $selfInstance = null;
 
     const CGI_VER = '1.1';
@@ -160,7 +163,11 @@ final class FastCGIServer extends HttpResponse {
      * @return void
      */
     public function __construct() {
+        define('TK_SERVER', true);
+        $_SERVER['COLORTERM'] = '';
+        ini_set('xdebug.cli_color', 0);
         $this->process = new Process();
+        $this->masterPid = posix_getpid();
         self::$selfInstance = $this;
         if (!class_exists('\EvLoop', false)) {
             $this->enableEvIo = false;
@@ -168,29 +175,27 @@ final class FastCGIServer extends HttpResponse {
     }
 
     /**
-     * Register Applicaton Router to CGI server
+     * Register Applicaton instance to CGI server
      * 
-     * @param callable $callback
-     * @return integer 
+     * @param Toknot\Control\Application $instance
      */
-    public function registerApplicationRouter($callback) {
-        $argv = func_get_args();
-        array_shift($argv);
-        array_push($this->applicationRouter, array('func' => $callback,
-            'argv' => $argv));
-        return key($this->applicationRouter);
+    public function registerApplicationInstance($instance) {
+        $this->applicationInstance = $instance;
+        $argc = func_num_args();
+        if ($argc > 1) {
+            $argvs = func_get_args();
+            array_shift($argvs);
+            $this->appliactionArgv = $argvs;
+        }
     }
 
     /**
-     * Remove Application Router
+     * Remove Application instance
      * 
-     * @param integer $idx
-     * @return void 
      */
-    public function removeApplicationRouter($idx) {
-        if (isset($this->applicationRouter[$idx])) {
-            unset($this->applicationRouter[$idx]);
-        }
+    public function removeApplicationInstance() {
+        $this->applicationInstance = null;
+        $this->appliactionArgv = array();
     }
 
     /**
@@ -311,7 +316,7 @@ final class FastCGIServer extends HttpResponse {
                 $lock = $this->process->processLock();
                 if ($lock === false) {
                     if ($this->enableEvIo) {
-                       // \Ev::stop(\Ev::BREAK_ALL);
+                        // \Ev::stop(\Ev::BREAK_ALL);
                     }
                     return false;
                 }
@@ -371,44 +376,57 @@ final class FastCGIServer extends HttpResponse {
         } else {
             $local = "tcp://{$this->localsock}:{$this->port}";
         }
-
         $this->socketFileDescriptor = stream_socket_server($local, $this->socketErrno, $this->socketErrstr);
         stream_set_blocking($this->socketFileDescriptor, 0);
     }
 
     private function CGIAccept() {
-        $this->CGIWorkerProcessIPCWrite(self::WORKER_ACCPT);
-        $this->requestBacklog[] = @stream_socket_accept($this->socketFileDescriptor, 5, $clientAddress);
+        $clientAddress = 'unknown';
+        try {
+            $this->requestBacklog[] = @stream_socket_accept($this->socketFileDescriptor, 5, $clientAddress);
+        } catch (StandardException $e) {
+            return false;
+        }
         $_SERVER['REMOTE_ADDR'] = $clientAddress;
+        putenv("REMOTE_ADDR={$clientAddress}");
         $this->process->processUnLock();
         $this->CGIWorkerProcessIPCWrite(self::WORKER_READ);
+
         foreach ($this->requestBacklog as $i => $conn) {
-            $keepAliveTime = 5;
-            $delay = 1;
-            while (!feof($conn)) {
-                $delay++;
-                if ($delay > - $keepAliveTime) {
-                    break;
-                }
-            }
-            $this->CGIWorkerProcessIPCWrite(self::WORKER_WRIER);
             $this->returnServerStatus(200);
-            $header = $this->responseStatus;
-            $header .= "Connection: close\r\n\r\n";
-            $header .= 'hello world';
+            if (!feof($conn)) {
+                $this->getRequestHeader($conn);
+                $this->getRequestBody($conn);
+            }
+
+            $this->CGIWorkerProcessIPCWrite(self::WORKER_WRIER);
+
+            $body = $this->callApplication();
+
+            $this->responseBodyLen = strlen($body);
+            $this->userHeaders = headers_list();
+            $header = $this->getResponseHeader();
+            $header .= $body;
+
             fwrite($conn, $header);
             fclose($conn);
             $this->CGIWorkerProcessIPCWrite(self::WORKER_IDLE);
             unset($this->requestBacklog[$i]);
-            //$this->callApplicationRouter();
         }
         return true;
     }
 
-    private function callApplicationRouter() {
-        foreach ($this->applicationRouter as $router) {
-            call_user_func_array($router[0], $router[1]);
+    private function callApplication() {
+        ob_start();
+        try {
+            call_user_func_array(array($this->applicationInstance, 'run'), $this->appliactionArgv);
+        } catch (StandardException $e) {
+            echo $e;
+            return '';
         }
+        $body = ob_get_clean();
+ 
+        return $body;
     }
 
     private function CGIWorkerExit() {
@@ -442,10 +460,12 @@ final class FastCGIServer extends HttpResponse {
 
     private function getWorkerList() {
         $workPidList = $this->process->getChildProcessList();
+        $this->workProcessPool = array();
+        $this->workProcessSockList = array();
         foreach ($workPidList as $pid => $pinfo) {
-            if (!isset($this->workProcessPool[$pid])) {
-                $this->workProcessPool[$pid] = self::WORKER_IDLE;
-                $this->workProcessSockList[$pid] = $pinfo[0][0];
+            $this->workProcessPool[$pid] = self::WORKER_IDLE;
+            $this->workProcessSockList[$pid] = $pinfo[0][0];
+            if(is_resource($pinfo[0][1])) {
                 fclose($pinfo[0][1]);
             }
         }
@@ -473,7 +493,7 @@ final class FastCGIServer extends HttpResponse {
                         break;
                 }
                 $this->workProcessPool[$workerStatus[0]] = $workerStatus[1];
-                
+                $this->getWorkerList();
                 if ($this->idleNum <= 0 && $this->currentProcessNum + 1 <= $this->maxWorkNum) {
                     $this->process->createChildProcess(1, array($this, 'CGIWorkProcessCallbackProxy'));
                     $this->getWorkerList();
@@ -498,6 +518,7 @@ final class FastCGIServer extends HttpResponse {
         }
         while (true) {
             $write = $except = array();
+            $this->getWorkerList();
             $read = $this->workProcessSockList;
             if ($this->enableEvIo) {
                 foreach ($this->workProcessSockList as $sock) {
@@ -517,7 +538,11 @@ final class FastCGIServer extends HttpResponse {
                 }
             }
         }
-        pcntl_wait($status);
+        $this->getWorkerList();
+        foreach ($this->workProcessPool as $pid => $info) {
+            pcntl_waitpid($pid, $status);
+            fclose($info[0][1]);
+        }
     }
 
     private function CGIServerExit() {
@@ -536,6 +561,12 @@ final class FastCGIServer extends HttpResponse {
                 count($this->process->getChildProcessList()) <= 0) {
             fclose($this->socketFileDescriptor);
             // exit(0);
+        }
+    }
+
+    public function __destruct() {
+        if (posix_getpid() == $this->masterPid) {
+            $this->CGIServerExit();
         }
     }
 

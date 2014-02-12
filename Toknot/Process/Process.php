@@ -31,7 +31,7 @@ final class Process {
     private $createChildFrontCallbackParam = null;
     private $mutex = null;
     private $mutexId = 0;
-    private $useFileLock = false;
+    private $useFileLock = true;
     private $lockFileHanlde = null;
     private $locker = false;
     private $enableProcessMutex = false;
@@ -116,7 +116,7 @@ final class Process {
         $this->enableProcessMutex = true;
         if (!function_exists('sem_acquire')) {
             try {
-                dl('sysvsem.' . PHP_SHLIB_SUFFIX);
+                @dl('sysvsem.' . PHP_SHLIB_SUFFIX);
             } catch (StandardException $e) {
                 $this->useFileLock = true;
             }
@@ -291,11 +291,12 @@ final class Process {
         pcntl_signal(SIGCHLD, array($this, 'childSignalHandler'));
     }
 
-    private function childSignalHandler($signal) {
+    public function childSignalHandler($signal) {
         if ($signal == SIGCHLD) {
             $status = 0;
             $childPid = pcntl_wait($status);
             $exitCode = pcntl_wexitstatus($status);
+            unset($this->processPool[$childPid]);
             if ($exitCode == self::SUC_EXIT) {
                 unset($this->processPool[$childPid]);
             } else {

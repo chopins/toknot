@@ -128,6 +128,7 @@ final class Application {
         if (!defined('DEVELOPMENT')) {
             define('DEVELOPMENT', true);
         }
+        
         StandardAutoloader::importToknotModule('Di', 'Object');
         StandardAutoloader::importToknotClass('Exception\StandardException');
 
@@ -160,8 +161,8 @@ final class Application {
             throw new PHPVersionException();
         }
         StandardAutoloader::importToknotClass('Exception\StandardException');
-        set_exception_handler(array($this, 'uncaughtExceptionHandler'));
-        set_error_handler(array($this, 'errorReportHandler'));
+        //set_exception_handler(array($this, 'uncaughtExceptionHandler'));
+        //set_error_handler(array($this, 'errorReportHandler'));
         clearstatcache();
 
         if (DEVELOPMENT && self::checkXDebug() == false) {
@@ -298,6 +299,10 @@ final class Application {
      * @throws StandardException
      */
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
+        if (!defined('TK_SERVER')) {
+            define('TK_SERVER', false);
+        }
+        
         $root = substr($appNameSpace, 0, 1);
         $appNameSpace = rtrim($appNameSpace, '\\');
         $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
@@ -318,16 +323,16 @@ final class Application {
             }
             $this->addAppPath($appPath);
             self::$appRoot = $appPath;
-            
+
             $routerName = $this->routerName;
             $router = $routerName::singleton();
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
-            
+
             StandardAutoloader::importToknotClass('Control\FMAI');
             $FMAI = FMAI::singleton($appNameSpace, $appPath);
-            
-            if(!empty($this->routerArgs)) {
+
+            if (!empty($this->routerArgs)) {
                 call_user_func_array(array($router, 'runtimeArgs'), $this->routerArgs);
             }
             $router->loadConfigure();
@@ -339,28 +344,31 @@ final class Application {
                 }
                 $router->defaultInvoke($defaultInvoke);
             }
+
             $router->invoke($FMAI);
         } catch (StandardException $e) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                 $e->save();
-                die;
+                return;
             }
             if (DEVELOPMENT) {
                 echo $e;
             } else {
                 header('500 Internal Server Error');
-                die('500 Internal Server Error');
+                echo ('500 Internal Server Error');
+                return;
             }
         } catch (Exception $e) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                 $e->save();
-                die;
+                return;
             }
             if (DEVELOPMENT) {
                 echo $e;
             } else {
                 header('500 Internal Server Error');
-                die('500 Internal Server Error');
+                echo('500 Internal Server Error');
+                return;
             }
         }
     }
@@ -381,14 +389,15 @@ final class Application {
         } catch (StandardException $se) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                 $se->save();
-                die;
+                return;
             }
             if (DEVELOPMENT) {
                 $se->traceArr = $e->getTrace();
                 echo $se;
             } else {
                 header('500 Internal Server Error');
-                die('500 Internal Server Error');
+                echo '500 Internal Server Error';
+                return;
             }
         }
     }
@@ -445,7 +454,7 @@ final class Application {
             } catch (StandardException $e) {
                 if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                     $e->save();
-                    die;
+                    return;
                 }
                 if (DEVELOPMENT) {
                     array_shift($this->debugTrace);
@@ -454,7 +463,8 @@ final class Application {
                     $this->pageRunInfo();
                 } else {
                     header('500 Internal Server Error');
-                    die('500 Internal Server Error');
+                    echo '500 Internal Server Error';
+                    return;
                 }
             }
         }
@@ -508,4 +518,3 @@ final class Application {
     }
 
 }
-

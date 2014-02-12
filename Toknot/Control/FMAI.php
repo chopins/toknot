@@ -575,7 +575,6 @@ final class FMAI extends Object {
             $queryString = "?$queryString";
         }
         header("Location:$url{$queryString}");
-        exit;
     }
 
     /**
