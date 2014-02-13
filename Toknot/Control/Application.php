@@ -19,6 +19,7 @@ use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
 use Toknot\Control\FMAI;
 use Toknot\Control\RouterInterface;
+use Toknot\Di\TKFunction as TK;
 
 /**
  * Toknot main class and run framework
@@ -161,8 +162,8 @@ final class Application {
             throw new PHPVersionException();
         }
         StandardAutoloader::importToknotClass('Exception\StandardException');
-        //set_exception_handler(array($this, 'uncaughtExceptionHandler'));
-        //set_error_handler(array($this, 'errorReportHandler'));
+        set_exception_handler(array($this, 'uncaughtExceptionHandler'));
+        set_error_handler(array($this, 'errorReportHandler'));
         clearstatcache();
 
         if (DEVELOPMENT && self::checkXDebug() == false) {
@@ -206,6 +207,8 @@ final class Application {
         if (strpos($variables_order, 'G') === false) {
             parse_str($_SERVER['QUERY_STRING'], $_GET);
         }
+        $_SERVER['HEADERS_LIST'] = array();
+        $_SERVER['TK_SERVER'] = false;
     }
 
     /**
@@ -299,10 +302,6 @@ final class Application {
      * @throws StandardException
      */
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
-        if (!defined('TK_SERVER')) {
-            define('TK_SERVER', false);
-        }
-        
         $root = substr($appNameSpace, 0, 1);
         $appNameSpace = rtrim($appNameSpace, '\\');
         $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
@@ -354,7 +353,7 @@ final class Application {
             if (DEVELOPMENT) {
                 echo $e;
             } else {
-                header('500 Internal Server Error');
+                Tk\header('500 Internal Server Error');
                 echo ('500 Internal Server Error');
                 return;
             }
@@ -366,7 +365,7 @@ final class Application {
             if (DEVELOPMENT) {
                 echo $e;
             } else {
-                header('500 Internal Server Error');
+                TK\header('500 Internal Server Error');
                 echo('500 Internal Server Error');
                 return;
             }
@@ -395,7 +394,7 @@ final class Application {
                 $se->traceArr = $e->getTrace();
                 echo $se;
             } else {
-                header('500 Internal Server Error');
+                TK\header('500 Internal Server Error');
                 echo '500 Internal Server Error';
                 return;
             }
@@ -462,7 +461,7 @@ final class Application {
                     echo $e;
                     $this->pageRunInfo();
                 } else {
-                    header('500 Internal Server Error');
+                    TK\header('500 Internal Server Error');
                     echo '500 Internal Server Error';
                     return;
                 }

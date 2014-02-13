@@ -27,6 +27,7 @@ use Toknot\User\Root;
 use Toknot\User\Exception\NoPermissionExecption;
 use Toknot\Control\Exception\ForbiddenException;
 use Toknot\Control\Router;
+use Toknot\Di\TKFunction as TK;
 
 /**
  * Framework Module Access Interfaces
@@ -574,7 +575,7 @@ final class FMAI extends Object {
         } elseif (!empty($queryString)) {
             $queryString = "?$queryString";
         }
-        header("Location:$url{$queryString}");
+        TK\header("Location:$url{$queryString}");
     }
 
     /**

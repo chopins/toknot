@@ -13,7 +13,7 @@ namespace Toknot\Di;
 use Toknot\Di\Object;
 use \ArrayAccess;
 use \Serializable;
-use \RuntimeException;
+use Toknot\Exception\BadPropertyGetException;
 use \InvalidArgumentException;
 
 class ArrayObject extends Object implements ArrayAccess, Serializable {
@@ -86,7 +86,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         if (isset($this->interatorArray[$propertie])) {
             return $this->interatorArray[$propertie];
         } else {
-            throw new RuntimeException("propertie $propertie undefined of ArrayObject");
+            throw new BadPropertyGetException('ArrayObject',$propertie);
         }
     }
 

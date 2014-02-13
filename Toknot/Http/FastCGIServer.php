@@ -13,6 +13,8 @@ namespace Toknot\Http;
 use Toknot\Http\HttpResponse;
 use Toknot\Process\Process;
 use Toknot\Exception\StandardException;
+use Toknot\Exception\HeaderLocationException;
+use Toknot\Di\TKFunction as TK;
 
 final class FastCGIServer extends HttpResponse {
 
@@ -163,7 +165,7 @@ final class FastCGIServer extends HttpResponse {
      * @return void
      */
     public function __construct() {
-        define('TK_SERVER', true);
+        $_SERVER['TK_SERVER'] = true;
         $_SERVER['COLORTERM'] = '';
         ini_set('xdebug.cli_color', 0);
         $this->process = new Process();
@@ -404,7 +406,7 @@ final class FastCGIServer extends HttpResponse {
             $body = $this->callApplication();
 
             $this->responseBodyLen = strlen($body);
-            $this->userHeaders = headers_list();
+            $this->userHeaders = TK\headers_list();
             $header = $this->getResponseHeader();
             $header .= $body;
 
@@ -420,12 +422,14 @@ final class FastCGIServer extends HttpResponse {
         ob_start();
         try {
             call_user_func_array(array($this->applicationInstance, 'run'), $this->appliactionArgv);
-        } catch (StandardException $e) {
-            echo $e;
+        } catch(HeaderLocationException $e) {
             return '';
+        } catch (StandardException $e) {
+            return $e;
+        } catch (\Exception $e) {
+            return $e;
         }
         $body = ob_get_clean();
- 
         return $body;
     }
 
@@ -465,7 +469,7 @@ final class FastCGIServer extends HttpResponse {
         foreach ($workPidList as $pid => $pinfo) {
             $this->workProcessPool[$pid] = self::WORKER_IDLE;
             $this->workProcessSockList[$pid] = $pinfo[0][0];
-            if(is_resource($pinfo[0][1])) {
+            if (is_resource($pinfo[0][1])) {
                 fclose($pinfo[0][1]);
             }
         }

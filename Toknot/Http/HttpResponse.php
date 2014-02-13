@@ -346,6 +346,7 @@ class HttpResponse {
                             break;
                         case 'COOKIE':
                             $_SERVER['HTTP_COOKIE'] = $field_value;
+                            putenv("HTTP_COOKIE={$field_value}");
                             self::parseRequestCookieFromEnvVariable();
                             break;
                         case 'CONTENT-TYPE':
@@ -609,6 +610,7 @@ class HttpResponse {
             $header .= $this->setLength($this->responseBodyLen);
         }
         $header .= "Server:XPHPFramework\r\n";
+        self::getSetCookieHeader();
         $header .= $userHeaders;
         $header .= "\r\n";
         return $header;
@@ -631,11 +633,33 @@ class HttpResponse {
      * @access private
      * @return void
      */
-    private function getSetCookieHeader() {
+    public static  function getSetCookieHeader() {
         $header = '';
-        
+        foreach($_SERVER['COOKIES_LIST'] as $cookie) {
+            $cookieValue = urlencode($cookie[1]);
+            $cookieName = urlencode($cookie[0]);
+            $header .= "{$cookieName}={$cookieValue};";
+            if($cookie[2] > 0 && is_numeric($cookie[2])) {
+                $header .= 'Expires='. gmdate('D, d-M-Y H:i:s GMT', $cookie[2]).';';
+            }
+            if(!empty($cookie[3])) {
+                $cookiePath = str_replace(array(';','='), array('%3B','%3D'), $cookie[3]);
+                $header .= "Path={$cookiePath};";
+            } 
+            if(!empty($cookie[4])) {
+                $cookieDomain = str_replace(array(';','='), array('%3B','%3D'), $cookie[4]);
+                $header .= "Domain={$cookieDomain};";
+            }
+            if(!empty($cookie[5])) {
+                $header .= 'Secure;';
+            }
+            if(!empty($cookie[6])) {
+                $header .= 'HttpOnly;';
+            }
+            $header = rtrim($header, ';')."\r\n";
+        }
         if (!empty($header)) {
-            $header = "Set-Cookie:{$header}\r\n";
+            $header = "Set-Cookie: {$header}\r\n";
         }
         return $header;
     }

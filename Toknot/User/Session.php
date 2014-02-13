@@ -14,6 +14,7 @@ use Toknot\Di\ArrayObject;
 use Toknot\Di\DataCacheControl;
 use Toknot\Config\ConfigLoader;
 use Toknot\Di\StringObject;
+use Toknot\Di\TKFunction as TK;
 
 class Session extends ArrayObject {
 
@@ -73,7 +74,7 @@ class Session extends ArrayObject {
         if (is_object(self::$sessionInstance) && self::$sessionInstance instanceof $class) {
             self::$sessionInstance = $this;
         }
-        if (extension_loaded('session')) {
+        if (extension_loaded('session') && !$_SERVER['TK_SERVER']) {
             $this->checkAPC();
             session_set_save_handler(array($this, 'open'), array($this, 'close'), array($this, 'read'), array($this, 'write'), array($this, 'destroy'), array($this, 'gc'));
             $this->havePHPSession = true;
@@ -157,7 +158,7 @@ class Session extends ArrayObject {
         }
 
         $this->sessionId = StringObject::rand(10);
-        setcookie(self::$sessionName, $this->sessionId);
+        TK\setcookie(self::$sessionName, $this->sessionId);
     }
 
     private function setValue($name, $value) {
