@@ -13,6 +13,7 @@ namespace Toknot\Di;
 use Toknot\Di\Object;
 use Toknot\Exception\FileIOException;
 use \SplFileObject;
+use \finfo;
 
 class FileObject extends Object {
 
@@ -132,7 +133,7 @@ class FileObject extends Object {
             }
         }
         $res = file_put_contents($file, $data, $flag);
-        if($res === false) {
+        if ($res === false) {
             return false;
         }
         return new static($file);
@@ -199,19 +200,19 @@ class FileObject extends Object {
      * @return string
      */
     public static function getRealPath($appPath, $path) {
-        if(self::isWin()) {
+        if (self::isWin()) {
             if (strpos($path, '/') === 0 || strpos($path, '\\') === 0) {
-                $winRoot = substr($appPath,0,2);
-                return strtr($winRoot . $path, '/',DIRECTORY_SEPARATOR);
-            } elseif(preg_match('/^[a-zA-Z]:/', $path)) {
+                $winRoot = substr($appPath, 0, 2);
+                return strtr($winRoot . $path, '/', DIRECTORY_SEPARATOR);
+            } elseif (preg_match('/^[a-zA-Z]:/', $path)) {
                 return $path;
             }
         } else {
-            if(strpos($path,'/') === 0) {
+            if (strpos($path, '/') === 0) {
                 return $path;
             }
         }
-        return $appPath.DIRECTORY_SEPARATOR.$path;
+        return $appPath . DIRECTORY_SEPARATOR . $path;
     }
 
     public function count() {
@@ -278,7 +279,7 @@ class FileObject extends Object {
             $dirList = scandir($casePath);
             foreach ($dirList as $sub) {
                 if (strcasecmp($sub, $dirname) === 0) {
-                    if(is_dir("$casePath/$sub")) {
+                    if (is_dir("$casePath/$sub")) {
                         return "$casePath/$sub";
                     }
                 }
@@ -292,6 +293,20 @@ class FileObject extends Object {
             self::$PHP_OS = (strpos(strtoupper(PHP_OS), 'WIN') === 0);
         }
         return self::$PHP_OS;
+    }
+
+    public static function fileMime($file) {
+        if (function_exists('finfo_open')) {
+            $fo = new finfo(FILEINFO_MIME);
+            $type = $fo->file($file);
+            return $type;
+        } else if (file_exists('mime_content_type')) {
+            return @mime_content_type($file);
+        } else {
+            $file = escapeshellcmd($file);
+            $re = popen("file -ib $file", 'r');
+            return fread($re, 1024);
+        }
     }
 
 }

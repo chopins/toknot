@@ -104,6 +104,7 @@ class Router extends Object implements RouterInterface {
     private $methodNotAllowedController = null;
     private $charset = 'UTF-8';
     private $method = 'GET';
+    private static $selfInstance = null;
 
     /**
      * use URI of path controller invoke application controller of class
@@ -127,19 +128,12 @@ class Router extends Object implements RouterInterface {
      * @access public
      * @return void
      */
-    protected function __construct() {
-        
+    public function __construct() {
+        self::$selfInstance = $this;
     }
-
-    /**
-     * singleton
-     * 
-     * @access public
-     * @static
-     * @return Toknot\Control\Router
-     */
-    public static function singleton() {
-        return parent::__singleton();
+    
+    public static function getSelfInstance() {
+        return self::$selfInstance;
     }
 
     /**
@@ -358,6 +352,7 @@ class Router extends Object implements RouterInterface {
             }
             throw new MethodNotAllowedException("{$invokeClass} not support request method ($method) or not implement {$interface}");
         }
+        
         $invokeObject = new $invokeClass($FMAI);
         $stat = $FMAI->invokeBefore($invokeObject);
         if ($stat === true) {

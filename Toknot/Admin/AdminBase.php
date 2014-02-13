@@ -73,20 +73,14 @@ abstract class AdminBase extends ClassAccessControl implements CI\ControllerInte
      * @var Toknot\User\Session
      */
     protected $SESSION = null;
-    private static $adminConstruct = false;
     protected $currentUser = null;
 
     public function __construct(FMAI $FMAI) {
-        if (self::$adminConstruct) {
-            return;
-        }
-        self::$adminConstruct = true;
         self::$FMAI = $FMAI;
         $this->loadAdminConfig();
         $this->initDatabase();        
 
         $this->SESSION = $FMAI->startSession(self::$CFG->Admin->adminSessionName);
-
         $user = $this->checkUserLogin();
         $FMAI->setCurrentUser($user);
         $this->currentUser = $user;
@@ -98,7 +92,7 @@ abstract class AdminBase extends ClassAccessControl implements CI\ControllerInte
             $FMAI->throwNoPermission($this);
         }
         $FMAI->newTemplateView(self::$CFG->View);
-        
+        $this->commonTplVarSet();
     }
 
     /**

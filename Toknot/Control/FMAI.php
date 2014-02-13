@@ -380,6 +380,7 @@ final class FMAI extends Object {
      * @return Toknot\View\Renderer
      */
     public function newTemplateView(& $CFG) {
+        $this->D = new ArrayObject;;
         StandardAutoloader::importToknotClass('View\Renderer');
         Renderer::$cachePath = FileObject::getRealPath($this->appRoot, $CFG->templateCompileFileSavePath);
         Renderer::$fileExtension = $CFG->templateFileExtensionName;
@@ -570,7 +571,7 @@ final class FMAI extends Object {
      */
     public function redirectController($class, $queryString = '') {
         $url = strtr($class, '\\', '/');
-        if(Router::getInstance()->getRouterMode() === Router::ROUTER_GET_QUERY) {
+        if(Router::getSelfInstance()->getRouterMode() === Router::ROUTER_GET_QUERY) {
             $url = "?c={$url}&{$queryString}";
         } elseif (!empty($queryString)) {
             $queryString = "?$queryString";

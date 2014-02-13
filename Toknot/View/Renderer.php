@@ -162,7 +162,7 @@ class Renderer extends Object {
 			$this->transfromToPHP($tplFile, $transfromFile);
 		}
 
-		include_once $transfromFile;
+		include $transfromFile;
 
 		//HTML Cache write
 		if (self::$enableCache && self::$htmlCachePath != null && self::$cacheFlag == self::CACHE_FLAG_HTML) {

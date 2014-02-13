@@ -76,6 +76,10 @@ abstract class Object implements Iterator, Countable {
         }
     }
 
+    final public static function getNewInstance() {
+        return new static;
+    }
+    
     final public static function constructArgs($argc, $args, $className) {
         if ($argc === 1) {
             return new $className($args[0]);

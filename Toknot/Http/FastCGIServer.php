@@ -189,6 +189,7 @@ final class FastCGIServer extends HttpResponse {
             array_shift($argvs);
             $this->appliactionArgv = $argvs;
         }
+        $this->documentRoot = $argvs[1] . '/WebRoot';
     }
 
     /**
@@ -387,6 +388,7 @@ final class FastCGIServer extends HttpResponse {
         try {
             $this->requestBacklog[] = @stream_socket_accept($this->socketFileDescriptor, 5, $clientAddress);
         } catch (StandardException $e) {
+            echo strip_tags($e);
             return false;
         }
         $_SERVER['REMOTE_ADDR'] = $clientAddress;
@@ -402,14 +404,19 @@ final class FastCGIServer extends HttpResponse {
             }
 
             $this->CGIWorkerProcessIPCWrite(self::WORKER_WRIER);
-
-            $body = $this->callApplication();
-
+            if ($this->requestStaticFile && $this->requestStaticFileState) {
+                $body = file_get_contents($this->requestStaticFile);
+            } else {
+                $body = $this->callApplication();
+                $this->userHeaders = TK\headers_list();
+            }
             $this->responseBodyLen = strlen($body);
-            $this->userHeaders = TK\headers_list();
+            $_SERVER['HEADERS_LIST'] = array();
             $header = $this->getResponseHeader();
             $header .= $body;
-
+            $this->requestStaticFileType = false;
+            $this->requestStaticFile = false;
+            $this->requestStaticFileState = false;
             fwrite($conn, $header);
             fclose($conn);
             $this->CGIWorkerProcessIPCWrite(self::WORKER_IDLE);
@@ -419,10 +426,13 @@ final class FastCGIServer extends HttpResponse {
     }
 
     private function callApplication() {
+        $_SERVER['TK_SERVER_WEB'] = true;
         ob_start();
         try {
-            call_user_func_array(array($this->applicationInstance, 'run'), $this->appliactionArgv);
-        } catch(HeaderLocationException $e) {
+            $app = $this->applicationInstance->newInstance();
+            call_user_func_array(array($app, 'run'), $this->appliactionArgv);
+            unset($app);
+        } catch (HeaderLocationException $e) {
             return '';
         } catch (StandardException $e) {
             return $e;

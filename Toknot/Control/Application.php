@@ -208,7 +208,10 @@ final class Application {
             parse_str($_SERVER['QUERY_STRING'], $_GET);
         }
         $_SERVER['HEADERS_LIST'] = array();
-        $_SERVER['TK_SERVER'] = false;
+        $_SERVER['COOKIES_LIST'] = array();
+        if(empty($_SERVER['TK_SERVER'])) {
+            $_SERVER['TK_SERVER'] = false;
+        }
     }
 
     /**
@@ -302,6 +305,7 @@ final class Application {
      * @throws StandardException
      */
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
+
         $root = substr($appNameSpace, 0, 1);
         $appNameSpace = rtrim($appNameSpace, '\\');
         $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
@@ -324,7 +328,7 @@ final class Application {
             self::$appRoot = $appPath;
 
             $routerName = $this->routerName;
-            $router = $routerName::singleton();
+            $router = new $routerName();
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
 
@@ -515,5 +519,7 @@ final class Application {
     public static function getAppRoot() {
         return self::$appRoot;
     }
-
+    public static function newInstance() {
+        return new static;
+    }
 }

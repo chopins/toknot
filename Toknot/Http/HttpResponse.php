@@ -10,6 +10,8 @@
 
 namespace Toknot\Http;
 
+use Toknot\Di\FileObject;
+
 class HttpResponse {
 
     /**
@@ -141,7 +143,10 @@ class HttpResponse {
     public $cookieHeader = null;
     
     public $responseBodyLen = 0;
+    
+    public $phpFileExt = '.php';
 
+    public $cacheControlTime = 3600;
     /**
      * get_request_body_by_form_urlencode 
      * 
@@ -483,24 +488,27 @@ class HttpResponse {
      */
     protected function getAccessFileInfo($uri) {
         $uri_info = pathinfo($uri);
-        if (isset($uri_info['extension']) && $uri_info['extension'] != $this->php_file_ext) {
+        if (isset($uri_info['extension']) && $uri_info['extension'] != $this->phpFileExt) {
             $this->requestStaticFile = true;
             if (is_dir($this->documentRoot)) {
                 if (file_exists("{$this->documentRoot}{$uri}")) {
                     $this->requestStaticFile = "{$this->documentRoot}{$uri}";
                     $this->requestStaticFileState = true;
-                    $this->requestStaticFileType = get_file_mime($this->requestStaticFile);
+                    $this->requestStaticFileType = FileObject::fileMime($this->requestStaticFile);
                     if ($uri_info['extension'] == 'js') {
                         list(, $charset) = explode(';', $this->requestStaticFileType);
                         $this->requestStaticFileType = "application/x-javascript;$charset";
                     } elseif ($uri_info['extension'] == 'css') {
                         list(, $charset) = explode(';', $this->requestStaticFileType);
                         $this->requestStaticFileType = "text/css;$charset";
+                    } else {
+                        $this->requestStaticFileType = "text/html;charset=utf-8";
                     }
                 } else {
                     return $this->returnServerStatus(404);
                 }
                 if (is_readable($this->requestStaticFile) === false) {
+                    $this->requestStaticFileState = false;
                     return $this->returnServerStatus(403);
                 }
             } else {
@@ -556,16 +564,16 @@ class HttpResponse {
                 switch ($fieldname) {
                     case 'location':
                         $this->returnServerStatus(301);
-                        $u_location = $field[1];
+                        $userLocation = $field[1];
                         break;
                     case 'cache-control':
-                        $u_cache_control = $field[1];
+                        $enableCacheControl = $field[1];
                         break;
                     case 'connection':
-                        $u_connect = $field[1];
+                        $userConnect = $field[1];
                         break;
                     case 'content-language':
-                        $u_content_language = $field[1];
+                        $setContentLanguage = $field[1];
                         break;
                     default:
                         $userHeaders .= "$header\r\n";
@@ -575,34 +583,34 @@ class HttpResponse {
         }
         $header = $this->responseStatus;
         if ($this->requestStaticFileState === true) {
-            $header .= "Cache-Control:max-age={$this->cache_control_time}\r\n";
-        } else if (!empty($u_cache_control)) {
-            $header .= "Cache-Control:{$u_cache_control}\r\n";
+            $header .= "Cache-Control:max-age={$this->cacheControlTime}\r\n";
+        } else if (!empty($enableCacheControl)) {
+            $header .= "Cache-Control:{$enableCacheControl}\r\n";
         } else {
             $header .= "Cache-Control:no-cache\r\n";
             $header .= "Pragma:no-cache\r\n";
         }
-        if (!empty($u_location)) {
-            $header .= "Location:{$u_location}\r\n";
+        if (!empty($userLocation)) {
+            $header .= "Location:{$userLocation}\r\n";
         }
         if (isset($_SERVER['HTTP_CONNECTION'])) {
             $header .= "Connection:{$_SERVER['HTTP_CONNECTION']}\r\n";
-        } else if (!empty($u_connect)) {
-            $header .= "Connection:{$u_connect}\r\n";
+        } else if (!empty($userConnect)) {
+            $header .= "Connection:{$userConnect}\r\n";
         } else {
             $header .= "Connection:Keep-Alive\r\n";
         }
         $gdate = $this->setServerDate();
         $header .= "Date:{$gdate} GMT\r\n";
-        if (!empty($u_content_language)) {
-            $header .= "Content-Language:{$u_content_language}\r\n";
+        if (!empty($setContentLanguage)) {
+            $header .= "Content-Language:{$setContentLanguage}\r\n";
         } else {
             $header .= "Content-Language:zh\r\n";
         }
         if ($this->requestStaticFileType) {
             $header .= "Content-Type:{$this->requestStaticFileType}\r\n";
-            $last_modif = $this->setServerDate(filemtime($this->requestStaticFile));
-            $header .= "Last-Modified:{$last_modif} GMT\r\n";
+            $lastModif = $this->setServerDate(filemtime($this->requestStaticFile));
+            $header .= "Last-Modified:{$lastModif} GMT\r\n";
         } else {
             $header .= "Content-Type:text/html;charset=utf-8\r\n";
         }
@@ -661,6 +669,7 @@ class HttpResponse {
         if (!empty($header)) {
             $header = "Set-Cookie: {$header}\r\n";
         }
+        $_SERVER['COOKIES_LIST'] = array();
         return $header;
     }
 
