@@ -15,6 +15,7 @@ use Toknot\Process\Process;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\HeaderLocationException;
 use Toknot\Di\TKFunction as TK;
+use Toknot\Di\Log;
 
 final class FastCGIServer extends HttpResponse {
 
@@ -379,6 +380,9 @@ final class FastCGIServer extends HttpResponse {
         } else {
             $local = "tcp://{$this->localsock}:{$this->port}";
         }
+        if(DEVELOPMENT) {
+            Log::message($local);
+        }
         $this->socketFileDescriptor = stream_socket_server($local, $this->socketErrno, $this->socketErrstr);
         stream_set_blocking($this->socketFileDescriptor, 0);
     }
@@ -440,6 +444,7 @@ final class FastCGIServer extends HttpResponse {
             return $e;
         }
         $body = ob_get_clean();
+        $_SERVER['TK_SERVER_WEB'] = false;
         return $body;
     }
 

@@ -131,7 +131,7 @@ final class Process {
             }
         }
         if ($this->useFileLock) {
-            $this->lockFileHanlde = tempnam('/tmp', 'lock_');
+            $this->lockFileHanlde = tempnam(sys_get_temp_dir(), 'lock_');
             unlink($this->lockFileHanlde);
             return 1;
         } else {
