@@ -14,6 +14,6 @@ use Toknot\Exception\CustomHttpStatusExecption;
 
 class ForbiddenException extends CustomHttpStatusExecption {
 
-    protected $httpStatus = '403 Forbidden';
+    protected $httpStatus = 'Status:403 Forbidden';
 
 }

@@ -102,7 +102,7 @@ class StandardException extends ErrorException {
     public function getDebugTraceAsString() {
 
         $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type">';
-        if (PHP_SAPI != 'cli' && !empty($_SERVER['TK_SERVER_WEB'])) {
+        if (PHP_SAPI != 'cli' || !empty($_SERVER['TK_SERVER_WEB'])) {
             $str .= Log::traceCss();
         } else {
             $str .= str_repeat('=', 20) . "\n";
@@ -143,7 +143,7 @@ class StandardException extends ErrorException {
 
     public function __toString() {
         if (PHP_SAPI !== 'cli') {
-            header('500 Internal Server Error');
+            header('Status:500 Internal Server Error');
         }
         $traceInfo = $this->getDebugTraceAsString();
         if (DEVELOPMENT) {
@@ -151,7 +151,7 @@ class StandardException extends ErrorException {
         } else {
 
             Log::save($traceInfo);
-            return '500 Internal Server Error';
+            return 'Status:500 Internal Server Error';
         }
     }
 

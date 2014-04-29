@@ -330,7 +330,7 @@ class Router extends Object implements RouterInterface {
      * @throws StandardException
      */
     public function instanceController($invokeClass, $FMAI, $method) {
-        if (!self::checkController($invokeClass, null)) {
+        if (!self::checkController($invokeClass, $method)) {
             if (DEVELOPMENT) {
                 throw new ControllerInvalidException($invokeClass);
             }
