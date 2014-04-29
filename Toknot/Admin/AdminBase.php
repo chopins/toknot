@@ -18,12 +18,11 @@ use Toknot\User\Nobody;
 use Toknot\User\UserClass;
 use Toknot\Di\Version;
 use Toknot\User\UserAccessControl;
-use Toknot\Control\ControllerInterface AS CI;
 
 /**
  * Admin module base class for user's admin application
  */
-abstract class AdminBase extends ClassAccessControl implements CI\ControllerInterface{
+abstract class AdminBase extends ClassAccessControl{
 
     /**
      * the controller permission, 8bit number like uninx

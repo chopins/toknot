@@ -1,7 +1,7 @@
 <?php
 
 namespace AppAdmin\Controller;
-class NotFound implements \Toknot\Control\ControllerInterface\GET {
+class NotFound {
     public function __construct(\Toknot\Control\FMAI $FMAI) {
         ;
     }

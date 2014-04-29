@@ -11,7 +11,6 @@
 namespace Toknot\Control;
 
 use Toknot\Di\Object;
-use Toknot\Control\RouterInterface;
 use Toknot\Exception\StandardException;
 use Toknot\Exception\BadClassCallException;
 use Toknot\Control\Exception\NotFoundException;
@@ -318,13 +317,7 @@ class Router extends Object implements RouterInterface {
 
     public static function checkController(&$invokeClass, $method) {
         $invokeClass = self::controllerNameTrans($invokeClass);
-        $interface = self::getControllerInterface($method);
-        return is_subclass_of($invokeClass, $interface);
-    }
-
-    public static function getControllerInterface($method = null) {
-        return $method = $method ? "\Toknot\Control\ControllerInterface\\{$method}" :
-                '\Toknot\Control\ControllerInterface\\ControllerInterface';
+        return method_exists($invokeClass, $method);
     }
 
     /**

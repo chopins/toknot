@@ -166,7 +166,7 @@ final class Application {
         set_error_handler(array($this, 'errorReportHandler'));
         clearstatcache();
 
-        if (DEVELOPMENT && self::checkXDebug() == false) {
+        if (DEVELOPMENT && self::checkXDebug() == false && function_exists('register_tick_function')) {
             error_reporting(0);
             register_shutdown_function(array($this, 'errorExitReportHandler'));
             declare (ticks = 1);

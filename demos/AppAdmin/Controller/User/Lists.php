@@ -3,9 +3,8 @@
 namespace AppAdmin\Controller\User;
 
 use Toknot\Admin\AdminBase;
-use Toknot\Control\ControllerInterface as CI;
 
-class Lists extends AdminBase implements CI\GET {
+class Lists extends AdminBase{
 
     protected $permissions = 0700;
     protected $gid = 0;
