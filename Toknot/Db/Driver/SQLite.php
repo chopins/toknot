@@ -10,7 +10,9 @@
 namespace Toknot\Db\Driver;
 
 class SQLite {
-    //put your code here
+    public function __construct($dsn, $username, $password, $driverOption = array(0)) {
+        list($prefix, $file) = explode(':', $dsn, 2);
+    }
 }
 
 ?>

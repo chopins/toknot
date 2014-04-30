@@ -243,7 +243,7 @@ class Router extends Object implements RouterInterface {
      * @throws BadClassCallException
      */
     public function invokeNotFoundController(&$invokeClass) {
-        if (self::checkController($this->notFoundController, $this->method)) {
+        if (self::checkController($this->notFoundController, null)) {
             NotFoundException::$displayController = $this->notFoundController;
             NotFoundException::$FMAI = FMAI::getInstance();
             NotFoundException::$method = $this->method;
@@ -316,6 +316,7 @@ class Router extends Object implements RouterInterface {
     }
 
     public static function checkController(&$invokeClass, $method) {
+        if($method === null) return true;
         $invokeClass = self::controllerNameTrans($invokeClass);
         return method_exists($invokeClass, $method);
     }
