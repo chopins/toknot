@@ -63,25 +63,28 @@ abstract class ClassAccessControl extends UserAccessControl {
      *
      * @var integer
      */
-    protected $operateType = self::CLASS_READ;
+    protected $operateType = null;
 
     /**
      * only show data
      */
 
-    const CLASS_READ = 1;
+    const CLASS_READ = 'r';
 
     /**
      * only add data
      */
-    const CLASS_WRITE = 2;
+    const CLASS_WRITE = 'w';
 
     /**
      * only change data of current exists
      */
-    const CLASS_UPDATE = 3;
+    const CLASS_UPDATE = 'u';
 
     final public function getOperateType() {
+        if($this->operateType == null) {
+            $this->operateType = empty($_POST) ? self::CLASS_READ : self::CLASS_WRITE;
+        }
         return $this->operateType;
     }
 
@@ -104,6 +107,8 @@ abstract class ClassAccessControl extends UserAccessControl {
                         break;
                 }
             }
+        } else {
+            $this->operateType = empty($_POST) ? self::CLASS_READ : self::CLASS_WRITE;
         }
     }
 
@@ -111,18 +116,11 @@ abstract class ClassAccessControl extends UserAccessControl {
         if (!$user instanceof Root && $user->uid != $this->uid) {
             throw new NoPermissionExecption('no permission to set operate type');
         }
-        if (is_numeric($operate)) {
-            if ($operate >= 1 && $operate <= 3) {
-                $this->operateType = $operate;
-            } else {
-                $this->operateType = self::CLASS_READ;
-            }
-            return;
-        }
+        
         $opStr = 'rwu';
         $idx = strpos($opStr, strtolower($operate));
         if ($idx >= 0) {
-            $this->operateType = $idx + 1;
+            $this->operateType = $operate;
         } else {
             $this->operateType = self::CLASS_READ;
         }

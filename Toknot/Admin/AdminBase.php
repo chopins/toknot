@@ -163,14 +163,12 @@ abstract class AdminBase extends ClassAccessControl{
         $_SESSION['Flag'] = $user->generateUserFlag();
         $_SESSION['adminUser'] = serialize($user);
         if ($user->loginExpire > 0) {
-            setcookie('uid', $user->getUid(), $user->loginExpire);
-            setcookie('Flag', $_SESSION['Flag'], $user->loginExpire);
-            setcookie('TokenKey', $user->generateLoginKey(), $user->loginExpire);
+            setcookie('uid', $user->getUid(), $user->loginExpire,'/');
+            setcookie('Flag', $_SESSION['Flag'], $user->loginExpire,'/');
+            setcookie('TokenKey', $user->generateLoginKey(), $user->loginExpire,'/');
         } else {
-            setcookie('Flag', $_SESSION['Flag']);
+            setcookie('Flag', $_SESSION['Flag'],0,'/');
         }
     }
 
 }
-
-?>

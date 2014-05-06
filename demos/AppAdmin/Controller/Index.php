@@ -5,6 +5,7 @@ use Toknot\Admin\AdminBase;
 
 class Index extends AdminBase{    
 	public $perms = 0770;
+    //public $operateType = self::CLASS_UPDATE;
 
     public function GET() {
         //$database = $this->AR->connect();
