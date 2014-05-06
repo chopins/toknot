@@ -11,6 +11,7 @@
 namespace Toknot\Di;
 
 use Toknot\Di\FileObject;
+use Toknot\Di\DataCacheServerInterface;
 
 class DataCacheControl {
 
@@ -57,9 +58,13 @@ class DataCacheControl {
      * @param integer $modifyTime option, if use expire time, pass it
      */
     public function __construct($cacheHandle, $modifyTime = 0, $cacheType = self::CACHE_FILE) {
+        if($cacheType == self::CACHE_SERVER && !$cacheHandle instanceof DataCacheServerInterface) {
+            throw new \RuntimeException('Cache Handle instance need implement Toknot\Di\DataCacheServerInterface');
+        }
         $this->cacheHandle = $cacheHandle;
         $this->dataModifyTime = $modifyTime;
         $this->cacheType = $cacheType;
+        
     }
 
     /**
@@ -183,7 +188,20 @@ class DataCacheControl {
         }
         return file_exists($file);
     }
-
+    
+    public function rename($oldKey,$newKey) {
+        if($this->cacheType == self::CACHE_SERVER) {
+            return $this->cacheHandle->rename($oldKey, $newKey);
+        }
+        $newfile = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$newKey}");
+        if(file_exists($newfile)) {
+            return false;
+        }
+        $oldfile = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$oldKey}");
+        if(!file_exists($oldfile)) {
+            return false;
+        }
+        return rename($oldfile, $newfile);
+    }
 }
 
-?>

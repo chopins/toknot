@@ -85,9 +85,9 @@ class Session extends ArrayObject {
     }
 
     private function checkAPC() {
-        if (extension_loaded('apc')) {
+        if (extension_loaded('apc') && version_compare(phpversion('apc'),'4.0.0') <0) {
             if (DEVELOPMENT) {
-                echo '<b style="color:red;border:1px solid blue;">Warning : APC conflict with PHP Session handler,so Toknot\User\Session will clear apc system cache, recommend Opcache extension instead</b>';
+                echo '<b style="color:red;border:1px solid blue;">Warning : APC version less 4.0.0, it conflict with PHP Session handler,so Toknot\User\Session will clear apc system cache, recommend upgrade</b>';
             }
             apc_clear_cache();
         }
@@ -152,12 +152,15 @@ class Session extends ArrayObject {
      * regenerate a session_id and delete old session store file, will not clear
      * $_SESSION data
      */
-    public function regenerate_id() {
-        if ($this->sessionId) {
+    public function regenerate_id($delOldSession = false) {
+        if ($this->sessionId && $delOldSession) {
             $this->destroy($this->sessionId);
+        } else if($this->sessionId && $delOldSession === false && $this->fileStore) {
+            $sessionId = DIRECTORY_SEPARATOR . $this->sessionId;
+            $this->cacheInstance->rename($sessionId);
         }
 
-        $this->sessionId = StringObject::rand(10);
+        $this->sessionId = md5(StringObject::rand(10));
         TK\setcookie(self::$sessionName, $this->sessionId);
     }
 
@@ -226,9 +229,9 @@ class Session extends ArrayObject {
     }
 
     public function write($sessionId, $data) {
-        if ($this->fileStore)
+        if ($this->fileStore) {
             $sessionId = DIRECTORY_SEPARATOR . $sessionId;
-
+        }
         return $this->cacheInstance->save($data, $sessionId);
     }
 
@@ -239,7 +242,7 @@ class Session extends ArrayObject {
 
     public function gc($lifetime) {
         if ($this->fileStore) {
-            foreach (glob($this->fileStorePath . DIRECTORY_SEPARATOR . '*.php') as $file) {
+            foreach (glob($this->fileStorePath . DIRECTORY_SEPARATOR . '*') as $file) {
                 if (file_exists($file) && filemtime($file) + $lifetime < time()) {
                     unlink($file);
                 }
