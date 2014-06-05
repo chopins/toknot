@@ -19,12 +19,12 @@ use Toknot\Exception\BadPropertyGetException;
  */
 final class Root extends UserAccessControl {
 
-    protected $userName = 'root';
-    protected $uid = 0;
+    private $userName = 'root';
+    private $uid = 0;
     private static $password = null;
     private static $allowLogin = false;
-    protected $groupName = 'root';
-    protected $gid = 0;
+    private $groupName = 'root';
+    private $gid = 0;
     private $suUser = null;
     private $loginExpire = 0;
 
