@@ -136,7 +136,7 @@ hassub = false
 action = User\Add
 
 EOF;
-        file_put_contents($dir . '/Config/managelist.ini', $configure);
+        file_put_contents($dir . '/Config/navigation.ini', $configure);
     }
 
     public function versionInfo() {

@@ -41,7 +41,7 @@ class Log {
 
     public static function message($info) {
         $day = date('Y-m-d');
-        $time = date('Y-m-d H:i:s');
+        $time = date('Y-m-d H:i:s T');
         $message = "[$time] $info\r\n";
         if(self::$enableSaveLog && !empty(self::$savePath)) {
             FileObject::saveContent(self::$savePath . DIRECTORY_SEPARATOR . $day, $message, FILE_APPEND);
@@ -87,7 +87,7 @@ class Log {
             return;
         }
         $day = date('Y-m-d');
-        $time = date('Y-m-d H:i:s');
+        $time = date('Y-m-d H:i:s T');
         $message = "$time [{$_SERVER['REMOTE_ADDR']}]:{$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']}";
         $traceInfo = $message . strip_tags($traceInfo);
         $traceInfo = "\r\n";
