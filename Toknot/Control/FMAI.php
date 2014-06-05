@@ -380,7 +380,7 @@ final class FMAI extends Object {
      * @return Toknot\View\Renderer
      */
     public function newTemplateView(& $CFG) {
-        $this->D = new ArrayObject;;
+        $this->D = new ArrayObject;
         StandardAutoloader::importToknotClass('View\Renderer');
         Renderer::$cachePath = FileObject::getRealPath($this->appRoot, $CFG->templateCompileFileSavePath);
         Renderer::$fileExtension = $CFG->templateFileExtensionName;
@@ -594,6 +594,7 @@ final class FMAI extends Object {
      * @param \Toknot\User\ClassAccessControl $clsObj $clsObj check current user whether access $clsObj 
      */
     public function checkAccess(ClassAccessControl $clsObj) {
+        $this->accessControlStatus = $clsObj->checkClassAccess();
         switch ($clsObj->getOperateType()) {
             case ClassAccessControl::CLASS_READ:
                 $this->accessControlStatus = $clsObj->checkRead($this->currentUser);

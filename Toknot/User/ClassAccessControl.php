@@ -89,25 +89,9 @@ abstract class ClassAccessControl extends UserAccessControl {
     }
 
     public function updateMethodPerms($methodName) {
-        $methodName = "{$methodName}Perms";
-        if (!empty($this->$methodName) && is_array($this->$methodName)) {
-            foreach ($this->$methodName as $k => $v) {
-                switch ($k) {
-                    case 'opType':
-                        $this->setOperateType($this, $v);
-                        break;
-                    case 'permissions':
-                        $this->permissions = $v;
-                        break;
-                    case 'gid':
-                        $this->gid = $v;
-                        break;
-                    case 'uid':
-                        $this->uid = $v;
-                        break;
-                }
-            }
-        } else {
+        $const = 'self::'.strtoupper($methodName);
+        $this->parsePermissionString($const);
+        if (!defined($const)) {
             $this->operateType = empty($_POST) ? self::CLASS_READ : self::CLASS_WRITE;
         }
     }
@@ -152,6 +136,33 @@ abstract class ClassAccessControl extends UserAccessControl {
         } else {
             throw new NoPermissionExecption('no permission to set class group');
         }
+    }
+    final public function parsePermissionString($const) {
+        if(defined($const)) {
+            $permissions = explode(',',constant($const));
+            foreach($permissions as $item) {
+                list($k,$v) = explode(':', $item);
+                $k = strtolower($k);
+                switch ($k) {
+                    case 'M':
+                        $this->permissions = $v;
+                        break;
+                    case 'P':
+                        $this->operateType = $v;
+                        break;
+                    case 'G':
+                        $this->gid = (int)$v;
+                        break;
+                    case 'U':
+                        $this->uid = (int)$v;
+                        break;
+                }
+            }
+        }
+    }
+    final public function checkClassAccess() {
+        $const = 'self::'.strtoupper(get_called_class());
+        $this->parsePermissionString($const);
     }
 
     final private function checkPerms($user, $perm) {

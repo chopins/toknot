@@ -1,14 +1,10 @@
 <?php
+class t {
+    const B =1;
+    public function __construct() {
+        var_dump(defined('self::B'));
+    }
+}
 
-//Server
-use Toknot\Control\Application;
-use Toknot\Http\FastCGIServer;
-include_once __DIR__.'/Toknot/Toknot.php';
-
-$app = new Application;
-$cgi = new FastCGIServer;
-$cgi->registerApplicationInstance($app,"\AppAdmin",__DIR__.'/demos/AppAdmin');
-$cgi->setWorkOnCurrentUser();
-$cgi->startServer();
-
+new t;
 

@@ -221,7 +221,7 @@ class Router extends Object implements RouterInterface {
     /**
      * transfrom relative class name to full class name
      * 
-     * @param string $controllerName
+     * @param string $invokeClass
      * @static
      * @return string
      */
@@ -255,7 +255,7 @@ class Router extends Object implements RouterInterface {
      * Invoke Application Controller, the method will call application of Controller what is
      * self::$routerNameSpace\Controller{$this->spacePath}, and router action by request method
      * 
-     * @param \Toknot\Control\FMAI $appContext
+     * @param \Toknot\Control\FMAI $FMAI
      * @throws BadClassCallException
      * @throws StandardException
      */
@@ -374,9 +374,9 @@ class Router extends Object implements RouterInterface {
      *                                  The class namespace under Application root ,
      *                                     default is null
      */
-    public function runtimeArgs($mode = self::ROUTER_PATH, $routeDepth = 1, $notFound = null, $methodNotAllowed = null) {
+    public function runtimeArgs($mode = self::ROUTER_PATH, $routerDepth = 1, $notFound = null, $methodNotAllowed = null) {
         $this->routerMode = $mode;
-        $this->routerDepth = $routeDepth;
+        $this->routerDepth = $routerDepth;
         $this->notFoundController = $notFound;
         $this->methodNotAllowedController = $methodNotAllowed;
     }

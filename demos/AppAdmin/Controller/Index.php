@@ -5,6 +5,8 @@ use Toknot\Admin\AdminBase;
 
 class Index extends AdminBase{    
 	public $perms = 0770;
+    const INDEX = 'M:0770,P:r,G:0,U:0';
+
     //public $operateType = self::CLASS_UPDATE;
 
     public function GET() {
