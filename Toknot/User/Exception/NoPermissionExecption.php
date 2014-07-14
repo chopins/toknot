@@ -13,6 +13,6 @@ namespace Toknot\User\Exception;
 use Toknot\Exception\CustomHttpStatusExecption;
 
 class NoPermissionExecption extends CustomHttpStatusExecption {
-    protected $httpStatus = '401 Unauthorized';
+    protected $httpStatus = 'Status: 401 Unauthorized';
 }
 

@@ -14,10 +14,10 @@ use Toknot\User\UserAccessControl;
 /**
  * The Nobody class
  */
-class Nobody extends UserAccessControl{
-    private $userName = 'nobody';
-    private $uid = -1;
-    private $gid = -1;
+final class Nobody extends UserAccessControl{
+    protected $userName = 'nobody';
+    protected $uid = -1;
+    protected $gid = -1;
     public function __get($name) {
         return $this->$name;
     }
