@@ -254,7 +254,7 @@ class FileObject extends Object {
             $dirList = scandir($caseDir);
             foreach ($dirList as $sub) {
                 if (strcasecmp($filename, $sub) === 0) {
-                    return "$caseDir/$sub";
+                    return $caseDir.DIRECTORY_SEPARATOR.$sub;
                 }
             }
         }
@@ -279,8 +279,9 @@ class FileObject extends Object {
             $dirList = scandir($casePath);
             foreach ($dirList as $sub) {
                 if (strcasecmp($sub, $dirname) === 0) {
-                    if (is_dir("$casePath/$sub")) {
-                        return "$casePath/$sub";
+                    $p = $casePath . DIRECTORY_SEPARATOR . $sub;
+                    if (is_dir($p)) {
+                        return $p;
                     }
                 }
             }

@@ -16,6 +16,8 @@ class StandardAutoloader {
 
     const NS_SEPARATOR = '\\';
 
+    public static $fileSuffix = '.php';
+
     private $directory = array();
     
     private static $importList = array();
@@ -53,12 +55,12 @@ class StandardAutoloader {
 //            return false;
         $dir = dirname($dir);
         $nsPath = strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
-        $nsPath = ltrim($nsPath, '/');
-        return $dir . DIRECTORY_SEPARATOR . $nsPath . '.php';
+        $nsPath = ltrim($nsPath, DIRECTORY_SEPARATOR);
+        return $dir . DIRECTORY_SEPARATOR . $nsPath . self::$fileSuffix;
     }
 
     public static function transformNamespaceToPath($class, $dir) {
-        return rtrim(self::transformClassNameToFilename($class, $dir), '.php');
+        return rtrim(self::transformClassNameToFilename($class, $dir), self::$fileSuffix);
     }
 
     /**
@@ -88,7 +90,7 @@ class StandardAutoloader {
     public static function importToknotClass($class) {
         $toknotRoot = dirname(__DIR__);
         $path = $toknotRoot . DIRECTORY_SEPARATOR . strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
-        return require_once $path . '.php';
+        return require_once $path . self::$fileSuffix;
     }
 
     public static function import($className, $aliases = null) {
@@ -99,7 +101,7 @@ class StandardAutoloader {
             foreach ($this->directory as $dir) {
                 $path = self::transformNamespaceToPath($namespace, $dir);
                 if (is_dir($path)) {
-                    $fileList = glob("$path/*.php");
+                    $fileList = glob($path.DIRECTORY_SEPARATOR.'*'.self::$fileSuffix);
                     if ($aliases === null) {
                         foreach ($fileList as $file) {
                             include_once $file;
@@ -144,13 +146,13 @@ class StandardAutoloader {
      */
     public static function importToknotModule($module, $first = null) {
         $toknotRoot = dirname(__DIR__);
-        $path = $toknotRoot . '/' . $module;
+        $path = $toknotRoot . DIRECTORY_SEPARATOR . $module;
         if ($first) {
-            include_once "{$path}/{$first}.php";
+            include_once $path.DIRECTORY_SEPARATOR.$first.self::$fileSuffix;
         }
-        $fileList = glob("$path/*.php");
+        $fileList = glob($path.DIRECTORY_SEPARATOR.'*'.self::$fileSuffix);
         foreach ($fileList as $file) {
-            if ($file == "{$path}/{$first}.php") {
+            if ($file == $path.DIRECTORY_SEPARATOR.$first.self::$fileSuffix) {
                 continue;
             }
             include_once $file;

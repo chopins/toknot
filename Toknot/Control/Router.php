@@ -144,7 +144,7 @@ class Router extends Object implements RouterInterface {
             if (empty($_GET['c'])) {
                 $this->spacePath = $this->defaultClass;
             } else {
-                $this->spacePath = '\\' . strtr($_GET['c'], '/', '\\');
+                $this->spacePath = StandardAutoloader::NS_SEPARATOR . strtr($_GET['c'], '/', StandardAutoloader::NS_SEPARATOR);
             }
         } elseif ($this->routerMode == self::ROUTER_MAP_TABLE) {
             $maplist = $this->loadRouterMapTable();
@@ -277,7 +277,7 @@ class Router extends Object implements RouterInterface {
             foreach ($classPart as $key => $part) {
                 if (empty($part))
                     continue;
-                $classPath .= "/$part";
+                $classPath .= DIRECTORY_SEPARATOR .$part;
                 $classFile = StandardAutoloader::transformClassNameToFilename($classPath, self::$routerPath);
                 $caseClassFile = FileObject::fileExistCase($classFile);
                 if ($caseClassFile) {
@@ -289,7 +289,7 @@ class Router extends Object implements RouterInterface {
         if ($caseClassFile) {
             include_once $caseClassFile;
             $invokeClass = str_replace(self::$routerPath, '', $caseClassFile);
-            $invokeClass = strtr($invokeClass, '/', '\\');
+            $invokeClass = strtr($invokeClass, DIRECTORY_SEPARATOR, StandardAutoloader::NS_SEPARATOR);
             $invokeClass = self::$routerNameSpace . strtok($invokeClass, '.');
             $classExist = class_exists($invokeClass, false);
         }

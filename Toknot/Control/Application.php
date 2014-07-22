@@ -308,10 +308,10 @@ final class Application {
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
 
         $root = substr($appNameSpace, 0, 1);
-        $appNameSpace = rtrim($appNameSpace, '\\');
+        $appNameSpace = rtrim($appNameSpace, StandardAutoloader::NS_SEPARATOR);
         $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
         try {
-            if ($root != '\\') {
+            if ($root != StandardAutoloader::NS_SEPARATOR) {
                 throw new BadNamespaceException($appNameSpace);
             }
             StandardAutoloader::importToknotClass('Control\RouterInterface');
@@ -343,7 +343,7 @@ final class Application {
             $router->routerRule();
             if (is_null($defaultInvoke)) {
                 $root = substr($defaultInvoke, 0, 1);
-                if ($root != '\\') {
+                if ($root != StandardAutoloader::NS_SEPARATOR) {
                     throw new BadNamespaceException($defaultInvoke);
                 }
                 $router->defaultInvoke($defaultInvoke);
@@ -424,7 +424,7 @@ final class Application {
      */
     public function setUserRouter($routerName) {
         $root = substr($routerName, 0, 1);
-        if ($root != '\\') {
+        if ($root != StandardAutoloader::NS_SEPARATOR) {
             throw new BadNamespaceException($routerName);
         }
         $this->routerName = $routerName;
