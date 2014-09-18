@@ -28,9 +28,9 @@ function CLI($command) {
     switch ($command) {
         case 'CreateApp':
             include_once __DIR__ . '/Tool/CreateApp.php';
-            return;
+            exit;
         case 'GeneratePassword':
             include_once __DIR__ . '/Tool/GeneratePassword.php';
-            return;
+            exit;
     }
 }
