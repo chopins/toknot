@@ -50,22 +50,23 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
      */
     public function replace_recursive(ArrayObject $arrayObj) {
         $args = func_get_args();
+        $className = get_called_class();
         foreach ($args as $key => $arrObj) {
-            if (!$arrObj instanceof ArrayObject) {
+            if (!$arrObj instanceof $className) {
                 throw new InvalidArgumentException("Passed parameter of $key is not ArrayObject");
             }
         }
         foreach ($args as $arrObj) {
             foreach ($arrObj as $key => $var) {
                 if (isset($this->interatorArray[$key])) {
-                    if ($var instanceof ArrayObject &&
-                            $this->interatorArray[$key] instanceof ArrayObject) {
+                    if ($var instanceof $className &&
+                            $this->interatorArray[$key] instanceof $className) {
 
                         $this->interatorArray[$key]->replace_recursive($var);
                         continue;
                     } elseif (is_array($var) &&
-                            $this->interatorArray[$key] instanceof ArrayObject) {
-                        $this->interatorArray[$key]->replace_recursive(new ArrayObject($var));
+                            $this->interatorArray[$key] instanceof $className) {
+                        $this->interatorArray[$key]->replace_recursive(new $className($var));
                         continue;
                     }
                 }
@@ -75,8 +76,9 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
     }
 
     public function setPropertie($propertie, $value) {
+        $className = get_called_class();
         if (is_array($value)) {
-            $this->interatorArray[$propertie] = new ArrayObject($value);
+            $this->interatorArray[$propertie] = new $className($value);
         } else {
             $this->interatorArray[$propertie] = $value;
         }
@@ -86,7 +88,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         if (isset($this->interatorArray[$propertie])) {
             return $this->interatorArray[$propertie];
         } else {
-            throw new BadPropertyGetException('ArrayObject',$propertie);
+            return null;
         }
     }
 
@@ -110,8 +112,9 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
     public function slice($offset, $length = NULL, $preserve_keys = false) {
         $array = array_slice($this->interatorArray, $offset, $length, $preserve_keys);
         $return = array();
+        $className = get_called_class();
         foreach ($array as $value) {
-            if ($this->$value instanceof ArrayObject) {
+            if ($this->$value instanceof $className) {
                 $return[$value] = $this->$value->transformToArray();
             } else {
                 $return[$value] = $this->$value;
@@ -142,8 +145,9 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
 
     public function transformToArray() {
         $return = array();
+        $className = get_called_class();
         foreach ($this->interatorArray as $key => $value) {
-            if ($this->$key instanceof ArrayObject) {
+            if ($this->$key instanceof $className) {
                 $return[$key] = $value->transformToArray();
             } else {
                 $return[$key] = $value;

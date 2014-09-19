@@ -179,7 +179,7 @@ class UserClass extends UserAccessControl {
 	 * }
 	 * </code>
 	 * 
-	 * @param integer $id
+	 * @param array $userinfo
 	 * @access protected
 	 * @throws Toknot\Exception\StandardException
 	 */
@@ -246,7 +246,7 @@ class UserClass extends UserAccessControl {
 	 * 
 	 * @static
 	 * @access public
-	 * @param string $id  The account of user
+	 * @param string $userName  The account of user
 	 * @param string $password    The account of password
 	 * @return boolean|Toknot\User\UserClass
 	 */

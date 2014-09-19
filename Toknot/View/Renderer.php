@@ -92,7 +92,7 @@ class Renderer extends Object {
 	const CACHE_FLAG_DATA = 2;
 
 	protected function __construct() {
-		$this->varList = new ArrayObject;
+		$this->varList = new ViewData;
 	}
 
 	public static function singleton() {
@@ -105,7 +105,7 @@ class Renderer extends Object {
 	 * @param array|Toknot\Di\ArrayObject $vars
 	 */
 	public function importVars(& $vars) {
-		if ($vars instanceof ArrayObject) {
+		if ($vars instanceof ViewData) {
 			$this->varList = $vars;
 		} else {
 			$this->varList->importPropertie($vars);
@@ -161,7 +161,6 @@ class Renderer extends Object {
 				filemtime($transfromFile) < filemtime($tplFile)) {
 			$this->transfromToPHP($tplFile, $transfromFile);
 		}
-
 		include $transfromFile;
 
 		//HTML Cache write
@@ -233,13 +232,29 @@ class Renderer extends Object {
 				}, $content);
 
 		//clean the whitespace from beginning and end of line and html comment
-		$content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
-
+        if(!DEVELOPMENT) {
+            $content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
+        }
+        $content = preg_replace_callback('/\{table\s+\$([\.a-zA-Z0-9_\[\]]+)\s+\$([\.a-zA-Z0-9_\[\]]+)\}/i', function($matches) {
+            $matches[1] = str_replace('.', '->', $matches[1]);
+            $matches[2] = str_replace('.', '->', $matches[2]);
+            if(empty($matches[3])) {
+                return "<?php \$this->table(\$this->varList->{$matches[1]},\$this->varList->{$matches[2]});?>";
+            } else {
+                return "<?php \$this->table(\$this->varList->{$matches[1]},\$this->varList->{$matches[2]},{$matches[3]});?>";
+            }
+        }, $content);
+        
 		FileObject::saveContent($transfromFile, $content);
 	}
 
 	protected function importFile($file) {
 		$this->display($file);
 	}
-
+    public function table($nav, $dataList, $defaultTpl = true) {
+        $t = new Table($defaultTpl);
+        $t->setNav($nav);
+        $t->setListData($dataList);
+        $t->renderer();
+    }
 }

@@ -19,6 +19,7 @@ use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
 use Toknot\View\ViewCache;
 use Toknot\View\Renderer;
+use Toknot\View\ViewData;
 use Toknot\User\ClassAccessControl;
 use Toknot\User\UserAccessControl;
 use Toknot\User\Nobody;
@@ -182,7 +183,7 @@ final class FMAI extends Object {
         $this->appRoot = $appRoot;
         $this->appNamespace = $appNamespace;
         $this->currentUser = new Nobody;
-        $this->D = new ArrayObject;
+        $this->D = new ViewData;
 
         $this->registerForbiddenController($CFG->App->forbiddenController);
         $this->registerNoPermissonController($CFG->App->noPermissionController);
@@ -389,6 +390,10 @@ final class FMAI extends Object {
         Renderer::$outCacheThreshold = $CFG->defaultPrintCacheThreshold;
         Renderer::$dataCachePath = $CFG->dataCachePath;
         return Renderer::singleton();
+    }
+
+    public function getView() {
+        return Renderer::getInstance();
     }
 
     /**
