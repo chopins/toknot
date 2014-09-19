@@ -563,7 +563,7 @@ final class FMAI extends Object {
     }
 
     /**
-     * Redirect to a controller, must contain namespace
+     * Redirect to a controller, must give full namespace
      * 
      * @param string $class The class name without Controller of level namespace
      * @param string $queryString redirect url params sting

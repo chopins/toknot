@@ -50,6 +50,7 @@ abstract class Object implements Iterator, Countable {
      * @param mixed $_ options,  instance of  for construct parameters
      * @static
      * @access public
+     * @final
      * @return object
      */
     final protected static function &__singleton() {
@@ -67,6 +68,14 @@ abstract class Object implements Iterator, Countable {
         return self::$instance[$className];
     }
 
+    /**
+     * get singletion instance of class
+     * 
+     * @static
+     * @access public
+     * @final
+     * @return object|null
+     */
     final public static function getInstance() {
         $className = get_called_class();
         if (isset(self::$instance[$className])) {
@@ -76,11 +85,30 @@ abstract class Object implements Iterator, Countable {
         }
     }
 
+    /**
+     * create instance of class with use static method
+     * 
+     * @static
+     * @access public
+     * @final
+     * @return object
+     */
     final public static function getNewInstance() {
         return new static;
     }
-    
-    final public static function constructArgs($argc, $args, $className) {
+
+    /**
+     * new instance of class 
+     * 
+     * @param int $argc
+     * @param array $args
+     * @param string $className
+     * @static
+     * @access public
+     * @final
+     * @return object
+     */
+    final public static function constructArgs($argc, array $args, $className) {
         if ($argc === 1) {
             return new $className($args[0]);
         } elseif ($argc === 2) {
@@ -106,6 +134,69 @@ abstract class Object implements Iterator, Countable {
     }
 
     /**
+     * call un-static method use static method invoke when the un-static-method name prefixed S char
+     * 
+     * @param string $name
+     * @param array $arguments
+     * @static
+     * @access public
+     * @final
+     * @return mix
+     * @throws \BadMethodCallException
+     */
+    public static function __callStatic($name, array $arguments = array()) {
+        $className = get_called_class();
+        if (substr($name, 0, 1) === 'S') {
+            $that = self::getInstance();
+            $methodName = substr($name, 1);
+            if (!method_exists($className, $methodName)) {
+                throw new \BadMethodCallException("Call to undefined method $className::$name()");
+            }
+            return $that->callMethod($methodName, $arguments);
+        }
+        if (!method_exists($className, $name)) {
+            throw new \BadMethodCallException("Call to undefined method $className::$name()");
+        }
+    }
+
+    /**
+     * invoke method
+     * 
+     * @param string $methodName
+     * @param array $args
+     * @access public
+     * @final
+     * @return mix
+     */
+    final public function callMethod($methodName, array $args) {
+        $argc = count($args);
+        if ($argc === 0) {
+            return $this->$methodName();
+        } elseif ($argc === 1) {
+            return $this->$methodName($args[0]);
+        } elseif ($argc === 2) {
+            return $this->$methodName($args[0], $args[1]);
+        } elseif ($argc === 3) {
+            return $this->$methodName($args[0], $args[1], $args[2]);
+        } elseif ($argc === 4) {
+            return $this->$methodName($args[0], $args[1], $args[2], $args[3]);
+        } elseif ($argc === 5) {
+            return $this->$methodName($args[0], $args[1], $args[2], $args[3], $args[4]);
+        } elseif ($argc === 6) {
+            return $this->$methodName($args[0], $args[1], $args[2], $args[3], $args[4], $args[5]);
+        } else {
+            $argStr = '';
+            foreach ($args as $k => $v) {
+                $argStr .= "\$args[$k],";
+            }
+            $argStr = rtrim($argStr, ',');
+            $ins = null;
+            eval("\$ins = \$this->{$methodName}($argStr);");
+            return $ins;
+        }
+    }
+
+    /**
      * __set 
      * set propertie value and save changed status and baned child cover __set method
      * 
@@ -120,11 +211,15 @@ abstract class Object implements Iterator, Countable {
         $this->setPropertie($propertie, $value);
     }
 
+    final public static function bindToClass($className, $args) {
+        return $className::constructArgs($args);
+    }
+
     /**
      * 
      * @param string $propertie
      * @param mixed $value
-     * @access public
+     * @access protected
      * @return void 
      */
     protected function setPropertie($propertie, $value) {
@@ -176,6 +271,21 @@ abstract class Object implements Iterator, Countable {
         }
     }
 
+    /**
+     * 
+     * @return object
+     */
+    public function __invoke() {
+        return $this;
+    }
+
+    /**
+     * @return string current called class name
+     */
+    public function __toString() {
+        return get_called_class();
+    }
+
     public function rewind() {
         $ref = new ReflectionObject($this);
         $propertiesList = $ref->getProperties();
@@ -225,4 +335,3 @@ abstract class Object implements Iterator, Countable {
     }
 
 }
-
