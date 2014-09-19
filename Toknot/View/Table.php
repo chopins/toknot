@@ -18,12 +18,29 @@ class Table {
     private $nav;
     private $dataList;
 
+    /**
+     * 
+     * @param boolean $defaultTpl whether use Toknot given table template
+     */
     public function __construct($defaultTpl = true) {
         $this->defaultTpl = $defaultTpl;
         $this->nav = new ViewData;
         $this->dataList = new ViewData;
     }
 
+    /**
+     * set Table title list
+     * data like:
+     * <code>
+     * array(
+     *      array('type'=>'checkbox','name'=>''), // one item set
+     *      array('type=>'string','name'=>'test')
+     *      //....
+     * )
+     * </code>
+     * @access public
+     * @param ArrayObject $nav
+     */
     public function setNav($nav) {
         foreach ($nav as $item) {
             if (empty($item->type)) {
@@ -37,6 +54,24 @@ class Table {
         $this->nav = $nav;
     }
 
+    /**
+     * set table data
+     * data like:
+     * <code>
+     * array(
+     *      array( //one table line
+     *          array('type'=>'checkbox', 'selected'=>1), //one item
+     *          array('value'=>'test1')
+     *      ),
+     *      array(
+     *          array('type'=>'checkbox'),
+     *          array('value'=>'test2')
+     *      )
+     *      
+     *  )
+     * </code>
+     * @param ArrayObject $dataList
+     */
     public function setListData($dataList) {
         foreach ($dataList as $item) {
             foreach ($item as $it) {
@@ -46,7 +81,7 @@ class Table {
                 if (empty($it->value)) {
                     $it->setPropertie('value', '');
                 }
-                if(empty($it->selected)) {
+                if (empty($it->selected)) {
                     $it->setPropertie('selected', '');
                 }
             }
@@ -54,6 +89,11 @@ class Table {
         $this->dataList = $dataList;
     }
 
+    /**
+     * render the table and print it
+     * 
+     * @access public
+     */
     public function renderer() {
         $FMAI = FMAI::getInstance();
         if ($this->defaultTpl) {
