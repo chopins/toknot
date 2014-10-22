@@ -157,7 +157,8 @@ class Session extends ArrayObject {
             $this->destroy($this->sessionId);
         } else if($this->sessionId && $delOldSession === false && $this->fileStore) {
             $sessionId = DIRECTORY_SEPARATOR . $this->sessionId;
-            $this->cacheInstance->rename($sessionId);
+            $newSession = DIRECTORY_SEPARATOR . md5(StringObject::rand(10));
+            $this->cacheInstance->rename($sessionId, $newSession);
         }
 
         $this->sessionId = md5(StringObject::rand(10));
@@ -182,12 +183,13 @@ class Session extends ArrayObject {
         $this->setValue($name, $value);
     }
 
-    public function __invoke($name) {
+    public function __invoke() {
         $num = func_num_args();
+        $args = func_get_args();
         if ($num > 2) {
-            $this->setValue($name, func_get_arg(1));
+            $this->setValue($args[0], $args[1]);
         } else {
-            $this->getValue($name);
+            $this->getValue($args[0]);
         }
     }
 
