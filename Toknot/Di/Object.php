@@ -15,6 +15,8 @@ use \ReflectionMethod;
 use \ReflectionProperty;
 use \Iterator;
 use \Countable;
+use \SplObjectStorage;
+use Toknot\Exception\BadPropertyGetException;
 
 abstract class Object implements Iterator, Countable {
 
@@ -43,6 +45,56 @@ abstract class Object implements Iterator, Countable {
     private static $instance = array();
     private $counter = 0;
     private $countNumber = 0;
+    private $extendsClass = null;
+
+    final public function __construct() {
+        $this->extendsClass = new SplObjectStorage();
+        $args = func_get_args();
+        if (count($args) > 0) {
+            foreach ($args as $arg) {
+                if (is_object($arg)) {
+                    $this->extendsClass->attach($arg);
+                    //array_shift($args);
+                }
+            }
+        }
+        $this->callMethod('__init', $args);
+    }
+
+    final public function __call($name, $arguments) {
+        if ($this->extendsClass->count()) {
+            foreach ($this->extendsClass as $obj) {
+                if (method_exists($obj, $name)) {
+                    return $obj->callMethod($name, $arguments);
+                }
+            }
+        }
+        throw new \BadMethodCallException();
+    }
+
+    protected function __init() {
+        
+    }
+
+    final public function __get($name) {
+        try {
+            return $this->getPropertie($name);
+        } catch (BadPropertyGetException $e) {
+            if ($this->extendsClass->count()) {
+                foreach ($this->extendsClass as $obj) {
+                    if (property_exists($obj, $name)) {
+                        return $obj->$name;
+                    }
+                }
+            }
+            throw $e;
+        }
+    }
+
+    public function getPropertie($name) {
+        $class = get_called_class();
+        throw new BadPropertyGetException($class, $name);
+    }
 
     /**
      * provide singleton pattern for Object child class

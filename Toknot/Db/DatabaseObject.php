@@ -31,7 +31,7 @@ final class DatabaseObject extends DbCRUD {
     protected $tableValueList = array();
     protected $databaseStructInfoCache = '';
     protected $databaseCacheExpire = 100;
-    protected function __construct() {
+    protected function __init() {
         
     }
 
@@ -112,7 +112,7 @@ final class DatabaseObject extends DbCRUD {
         throw new DatabaseException("undefined property $class::$name", 0);
     }
 
-    public function __get($propertie) {
+    public function getPropertie($propertie) {
         if (isset($this->$propertie)) {
             return $this->$propertie;
         } elseif (in_array($this->tablePrefix . $propertie, $this->tableList)) {

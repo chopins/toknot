@@ -22,7 +22,7 @@ class FileObject extends Object {
     private $key = 0;
     private static $PHP_OS = null;
 
-    public function __construct($path) {
+    public function __init($path) {
         $this->path = $path;
         if (!file_exists($this->path)) {
             throw new FileIOException("$path not exists");
@@ -85,7 +85,7 @@ class FileObject extends Object {
         return $this->path;
     }
 
-    public function __get($name) {
+    public function getPropertie($name) {
         if (isset($this->$name)) {
             return $this->$name;
         }
@@ -98,6 +98,7 @@ class FileObject extends Object {
                 return $this->interatorArray[$name];
             }
         }
+        parent::getPropertie($name);
     }
 
     /**

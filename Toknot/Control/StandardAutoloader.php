@@ -9,24 +9,19 @@
  */
 
 namespace Toknot\Control;
-use Toknot\Exception\BadPropertyGetException;
-use Toknot\Exception\BadClassCallException;
 
 class StandardAutoloader {
 
     const NS_SEPARATOR = '\\';
 
     public static $fileSuffix = '.php';
-
-    private $directory = array();
-    
-    private static $importList = array();
+    private static $directory = array();
 
     public function __construct($path = '') {
         if ($path == '') {
             $path = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR;
         }
-        $this->directory[] = $path;
+        self::$directory[] = $path;
     }
 
     /**
@@ -34,9 +29,10 @@ class StandardAutoloader {
      * 
      * @param string $path
      * @access public
+     * @static
      */
-    public function addPath($path) {
-        $this->directory[] = $path;
+    public static function addPath($path) {
+        self::$directory[] = $path;
     }
 
     /**
@@ -70,10 +66,10 @@ class StandardAutoloader {
      * @return boolean
      */
     public function autoload($class) {
-        foreach ($this->directory as $dir) {
+        foreach (self::$directory as $dir) {
             $filename = self::transformClassNameToFilename($class, $dir);
             if (file_exists($filename)) {
-                return require_once $filename;
+                return require $filename;
             }
         }
         return false;
@@ -97,45 +93,29 @@ class StandardAutoloader {
         $name = substr(strrchr($className, self::NS_SEPARATOR), 1);
         if ($name == '*') {
             $namespace = rtrim($className, '\*');
-            
-            foreach ($this->directory as $dir) {
+            foreach (self::$directory as $dir) {
                 $path = self::transformNamespaceToPath($namespace, $dir);
                 if (is_dir($path)) {
-                    $fileList = glob($path.DIRECTORY_SEPARATOR.'*'.self::$fileSuffix);
-                    if ($aliases === null) {
-                        foreach ($fileList as $file) {
-                            include_once $file;
-                            self::$importList[$file] = $namespace . $file;
-                        }
-                    } else {
-                        self::$importList[$aliases] = new \stdClass;
-                        foreach ($fileList as $file) {
-                            include_once $file;
-                            self::$importList[$aliases]->$file = $namespace . $file;
-                        }
+                    $fileList = glob($path . DIRECTORY_SEPARATOR . '*' . self::$fileSuffix);
+                    foreach ($fileList as $file) {
+                        include_once $file;
+                        $aliases = basename($file, self::$fileSuffix);
+                        class_alias($className, $aliases, false);
                     }
                     break;
                 }
             }
         } else {
-            $aliases || ($aliases = $name);
-            self::$importList[$aliases] = $className;
+            foreach (self::$directory as $dir) {
+                $file = self::transformClassNameToFilename($namespace, $dir);
+                if($aliases === null) {
+                    $aliases = basename($file, self::$fileSuffix);
+                }
+                class_alias($className, $aliases);
+            }
         }
     }
-    public static function getImprotList($key = null) {
-        if($key && isset(self::$importList[$key])) {
-            return self::$importList[$key];
-        } elseif($key) {
-            throw new BadClassCallException($key);
-        }
-        return self::$importList;
-    }
-    public function __get($name) {
-        if($name == 'importList') {
-            return self::$importList;
-        }
-        throw new BadPropertyGetException(__CLASS__,$name);
-    }
+
     /**
      * import under namespace all class of toknot
      * 
@@ -148,11 +128,11 @@ class StandardAutoloader {
         $toknotRoot = dirname(__DIR__);
         $path = $toknotRoot . DIRECTORY_SEPARATOR . $module;
         if ($first) {
-            include_once $path.DIRECTORY_SEPARATOR.$first.self::$fileSuffix;
+            include_once $path . DIRECTORY_SEPARATOR . $first . self::$fileSuffix;
         }
-        $fileList = glob($path.DIRECTORY_SEPARATOR.'*'.self::$fileSuffix);
+        $fileList = glob($path . DIRECTORY_SEPARATOR . '*' . self::$fileSuffix);
         foreach ($fileList as $file) {
-            if ($file == $path.DIRECTORY_SEPARATOR.$first.self::$fileSuffix) {
+            if ($file == $path . DIRECTORY_SEPARATOR . $first . self::$fileSuffix) {
                 continue;
             }
             include_once $file;

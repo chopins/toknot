@@ -169,7 +169,8 @@ final class FMAI extends Object {
      * @param string $appNamespace  Namespace of user app
      * @param string $appRoot       directory root path of user app
      */
-    protected function __construct($appNamespace, $appRoot) {
+    protected function __init() {
+        list($appNamespace, $appRoot) = func_get_args();
         self::$magicQuotesGpc = get_magic_quotes_gpc();
         StandardAutoloader::importToknotClass('Config\ConfigLoader');
         ConfigLoader::singleton();
@@ -412,12 +413,13 @@ final class FMAI extends Object {
      * @param string $name
      * @return mixed
      */
-    public function &__get($name) {
+    public function &getPropertie($name) {
         $readOnlyList = array('D', 'controller', 'appRoot',
             'appNamespace', 'requestMethod');
         if (in_array($name, $readOnlyList)) {
             return $this->$name;
         }
+        parent::getPropertie($name);
     }
 
     /**

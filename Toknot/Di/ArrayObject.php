@@ -13,7 +13,6 @@ namespace Toknot\Di;
 use Toknot\Di\Object;
 use \ArrayAccess;
 use \Serializable;
-use Toknot\Exception\BadPropertyGetException;
 use \InvalidArgumentException;
 
 class ArrayObject extends Object implements ArrayAccess, Serializable {
@@ -23,7 +22,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
      * 
      * @param array $value Option
      */
-    public function __construct(array $value = array()) {
+    public function __init(array $value = array()) {
         $this->importPropertie($value);
     }
 
@@ -71,6 +70,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
                     }
                 }
                 $this->interatorArray[$key] = $var;
+                $this->$key = $var;
             }
         }
     }
@@ -79,17 +79,18 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         $className = get_called_class();
         if (is_array($value)) {
             $this->interatorArray[$propertie] = new $className($value);
+            $this->$propertie = new $className($value);
         } else {
             $this->interatorArray[$propertie] = $value;
+            $this->$propertie = $value;
         }
     }
 
-    public function __get($propertie) {
+    public function getPropertie($propertie) {
         if (isset($this->interatorArray[$propertie])) {
             return $this->interatorArray[$propertie];
-        } else {
-            return null;
         }
+        parent::getPropertie($propertie);
     }
 
     public function __isset($name) {

@@ -29,7 +29,7 @@ final class DbTableObject extends DbCRUD {
     public $where = 1;
     public $logical = ActiveQuery::LOGICAL_AND;
 
-    public function __construct($tableName, DatabaseObject &$databaseObject, $newTable = false) {
+    public function __init($tableName, DatabaseObject &$databaseObject, $newTable = false) {
         $this->tableName = $tableName;
         $this->dbObject = $databaseObject;
         $this->connectInstance = $databaseObject->connectInstance;
@@ -50,7 +50,7 @@ final class DbTableObject extends DbCRUD {
         }
     }
 
-    public function __get($name) {
+    public function getPropertie($name) {
         if (isset($this->$name)) {
             return $this->$name;
         }

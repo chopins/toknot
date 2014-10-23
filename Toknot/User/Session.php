@@ -69,7 +69,7 @@ class Session extends ArrayObject {
      * 
      * @access protected
      */
-    public function __construct() {
+    public function __init() {
         $class = __CLASS__;
         if (is_object(self::$sessionInstance) && self::$sessionInstance instanceof $class) {
             self::$sessionInstance = $this;

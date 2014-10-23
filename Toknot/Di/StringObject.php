@@ -101,7 +101,7 @@ class StringObject extends Object implements ArrayAccess {
         69 => 'str_rot13',
     );
 
-    public function __construct($string = '') {
+    public function __init($string = '') {
         $this->interatorArray = (string) $string;
         if (empty(self::$supportStringMethodList)) {
             self::$supportStringMethodList = self::supportStringMethod();

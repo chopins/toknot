@@ -29,7 +29,7 @@ final class DbTableJoinObject extends DbCRUD {
      * @param \Toknot\Db\DbTableObject $table2
      * @throws InvalidArgumentException
      */
-    public function __construct(DbTableObject $table1, DbTableObject $table2) {
+    public function __init(DbTableObject $table1, DbTableObject $table2) {
         if(ActiveQuery::getDbDriverType() == ActiveQuery::DRIVER_SQLITE) {
             throw new DatabaseException('Unsupport mult-table query for sqlite, you must write SQL by self');
         }
@@ -44,7 +44,7 @@ final class DbTableJoinObject extends DbCRUD {
         $this->dbINSType = $table1->dbINSType;
     }
 
-    public function __get($name) {
+    public function getPropertie($name) {
         if (isset($this->interatorArray[$name])) {
             return $this->interatorArray[$name];
         }

@@ -91,7 +91,7 @@ class Renderer extends Object {
 	 */
 	const CACHE_FLAG_DATA = 2;
 
-	protected function __construct() {
+	protected function __init() {
 		$this->varList = new ViewData;
 	}
 
@@ -161,8 +161,9 @@ class Renderer extends Object {
 				filemtime($transfromFile) < filemtime($tplFile)) {
 			$this->transfromToPHP($tplFile, $transfromFile);
 		}
+        $TPL_VARS = $this->varList;
 		include $transfromFile;
-
+        
 		//HTML Cache write
 		if (self::$enableCache && self::$htmlCachePath != null && self::$cacheFlag == self::CACHE_FLAG_HTML) {
 			$html = ob_get_contents();
@@ -182,13 +183,13 @@ class Renderer extends Object {
 		$content = preg_replace_callback('/\{foreach\040+\$(\S+)\040+as\040+([\$a-zA-Z0-9_=>\040]+)}/is', function($matches) {
 					$matches[1] = str_replace('.', '->', $matches[1]);
 					if (preg_match('/\$([a-zA-Z0-9_]+)\040*=>\040*\$([a-zA-Z0-9_]+)/i', $matches[2], $setValue)) {
-						$varName = "\$this->varList->{$setValue[2]}";
-						$keyName = "\$this->varList->{$setValue[1]}=>";
+						$varName = "\$TPL_VARS->{$setValue[2]}";
+						$keyName = "\$TPL_VARS->{$setValue[1]}=>";
 					} elseif (preg_match('/\$([a-zA-Z0-9_]+)/i', $matches[2], $setValue)) {
-						$varName = "\$this->varList->{$setValue[1]}";
+						$varName = "\$TPL_VARS->{$setValue[1]}";
 						$keyName = '';
 					}
-					$str = "<?php foreach(\$this->varList->$matches[1] as $keyName $varName) { ?>";
+					$str = "<?php foreach(\$TPL_VARS->$matches[1] as $keyName $varName) { ?>";
 
 					return $str;
 				}, $content);
@@ -197,7 +198,7 @@ class Renderer extends Object {
 
 		//transfrom variable
 		$content = preg_replace_callback('/\{\$([\.a-zA-Z0-9_\[\]]+)\}/i', function($matches) {
-					$str = '<?php echo $this->varList->';
+					$str = '<?php echo (string)$TPL_VARS->';
 					$str .= str_replace('.', '->', $matches[1]);
 					$str .= ';?>';
 					return $str;
@@ -205,16 +206,16 @@ class Renderer extends Object {
 
 
 		//transfrom define variable which is not controller set
-		$content = preg_replace('/\{set\s+\$([\.a-zA-Z0-9_\x7f-\xff\[\]]+)\s*=\s*(.*)\}/i', "<?php \$this->varList->$1=$2;?>", $content);
+		$content = preg_replace('/\{set\s+\$([\.a-zA-Z0-9_\x7f-\xff\[\]]+)\s*=\s*(.*)\}/i', "<?php \$TPL_VARS->$1=$2;?>", $content);
 
 		//transfrom if statement
 		$content = preg_replace_callback('/\{if\s+([^\{^\}]+)\}/i', function($matches) {
-					$matches[1] = preg_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$this->varList->$1', $matches[1]);
+					$matches[1] = preg_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$TPL_VARS->$1', $matches[1]);
 					$matches[1] = str_replace('.', '->', $matches[1]);
 					return "<?php if($matches[1]) { ?>";
 				}, $content);
 		$content = preg_replace_callback('/\{elseif\s+([^\}\{]+)\}/i', function($matches) {
-					$matches[1] = preg_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$this->varList->$1', $matches[1]);
+					$matches[1] = preg_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$TPL_VARS->$1', $matches[1]);
 					$matches[1] = str_replace('.', '->', $matches[1]);
 					return "<?php } elseif({$matches[1]}){ ?>";
 				}, $content);
@@ -227,7 +228,7 @@ class Renderer extends Object {
 		//transfrom invoke php function and echo return value
 		$content = preg_replace_callback('/\{func\s+([a-zA-Z_\d]+)\((.*)\)\}/i', function ($matches) {
 					$matches[2] = str_replace('.', '->', $matches[2]);
-					$matches[2] = preg_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$this->varList->$1', $matches[2]);
+					$matches[2] = preg_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$TPL_VARS->$1', $matches[2]);
 					return "<?php echo {$matches[1]}({$matches[2]});?>";
 				}, $content);
 
@@ -239,9 +240,9 @@ class Renderer extends Object {
             $matches[1] = str_replace('.', '->', $matches[1]);
             $matches[2] = str_replace('.', '->', $matches[2]);
             if(empty($matches[3])) {
-                return "<?php \$this->table(\$this->varList->{$matches[1]},\$this->varList->{$matches[2]});?>";
+                return "<?php \$this->table(\$TPL_VARS->{$matches[1]},\$TPL_VARS->{$matches[2]});?>";
             } else {
-                return "<?php \$this->table(\$this->varList->{$matches[1]},\$this->varList->{$matches[2]},{$matches[3]});?>";
+                return "<?php \$this->table(\$TPL_VARS->{$matches[1]},\$TPL_VARS->{$matches[2]},{$matches[3]});?>";
             }
         }, $content);
         

@@ -10,7 +10,6 @@
 
 namespace Toknot\Admin;
 
-use Toknot\Control\FMAI;
 use Toknot\User\ClassAccessControl;
 use Toknot\Exception\FileIOException;
 use Toknot\Config\ConfigLoader;
@@ -74,23 +73,23 @@ abstract class AdminBase extends ClassAccessControl{
     protected $SESSION = null;
     protected $currentUser = null;
 
-    public function __construct(FMAI $FMAI) {
-        self::$FMAI = $FMAI;
+    public function __init() {
+        //self::$FMAI = $FMAI;
         $this->loadAdminConfig();
         $this->initDatabase();        
 
-        $this->SESSION = $FMAI->startSession(self::$CFG->Admin->adminSessionName);
+        $this->SESSION = $this->startSession(self::$CFG->Admin->adminSessionName);
         $user = $this->checkUserLogin();
-        $FMAI->setCurrentUser($user);
+        $this->setCurrentUser($user);
         $this->currentUser = $user;
         
-        if($FMAI->getAccessStatus($this) === false) {
-            if($FMAI->isNobodyUser()) {
-                $FMAI->redirectController('\User\Login');
+        if($this->getAccessStatus($this) === false) {
+            if($this->isNobodyUser()) {
+                $this->redirectController('\User\Login');
             }
-            $FMAI->throwNoPermission($this);
+            $this->throwNoPermission($this);
         }
-        $FMAI->newTemplateView(self::$CFG->View);
+        $this->newTemplateView(self::$CFG->View);
         $this->commonTplVarSet();
     }
 
@@ -98,16 +97,16 @@ abstract class AdminBase extends ClassAccessControl{
      * set view value
      */
     public function commonTplVarSet() {
-        self::$FMAI->D->title = 'ToKnot Admin';
-        self::$FMAI->D->toknotVersion = Version::VERSION . '-' . Version::STATUS;
-        self::$FMAI->D->currentUser = $this->currentUser;
+        $this->D->title = 'ToKnot Admin';
+        $this->D->toknotVersion = Version::VERSION . '-' . Version::STATUS;
+        $this->D->currentUser = $this->currentUser;
     }
 
     /**
      * init database connect
      */
     public function initDatabase() {
-        $this->AR = self::$FMAI->getActiveRecord();
+        $this->AR = $this->getActiveRecord();
         $dbSectionName = self::$CFG->Admin->databaseOptionSectionName;
         $this->AR->config(self::$CFG->$dbSectionName);
         $this->dbConnect = $this->AR->connect();
@@ -120,11 +119,11 @@ abstract class AdminBase extends ClassAccessControl{
      * @throws FileIOException
      */
     public function loadAdminConfig() {
-        if (!file_exists(self::$FMAI->appRoot . '/Config/config.ini')) {
-            throw new FileIOException('must create ' . self::$FMAI->appRoot . '/Config/config.ini');
+        if (!file_exists($this->appRoot . '/Config/config.ini')) {
+            throw new FileIOException('must create ' . $this->appRoot . '/Config/config.ini');
         }
-        ConfigLoader::$cacheFile = self::$FMAI->appRoot . '/Data/config';
-        self::$CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
+        ConfigLoader::$cacheFile = $this->appRoot . '/Data/config';
+        self::$CFG = $this->loadConfigure($this->appRoot . '/Config/config.ini');
     }
 
     /**
@@ -145,8 +144,8 @@ abstract class AdminBase extends ClassAccessControl{
             if ($user->checkUserFlag($_SESSION['Flag'])) {
                 return $user;
             }
-        } elseif (null !== self::$FMAI->getCOOKIE('uid') && null !== $_COOKIE['Flag'] && null !== self::$FMAI->getCOOKIE('TokenKey')) {
-            $user = UserClass::checkLogin(self::$FMAI->getCOOKIE('uid'), self::$FMAI->getCOOKIE('Flag'), self::$FMAI->getCOOKIE('TokenKey'));
+        } elseif (null !== $this->getCOOKIE('uid') && null !== $_COOKIE['Flag'] && null !== $this->getCOOKIE('TokenKey')) {
+            $user = UserClass::checkLogin($this->getCOOKIE('uid'), $this->getCOOKIE('Flag'), $this->getCOOKIE('TokenKey'));
             if ($user) {
                 return $user;
             }

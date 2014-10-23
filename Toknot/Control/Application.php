@@ -413,6 +413,9 @@ final class Application {
      */
     public function errorReportHandler() {
         $argv = func_get_args();
+        if($argv[0] == 2048 && strpos($argv[1],'Declaration') === 0) {
+            return;
+        }
         StandardException::errorReportHandler($argv);
     }
 

@@ -43,7 +43,7 @@ class Connect extends Object {
      * 
      * @param \Toknot\Db\DatabaseObject $connectObject
      */
-    public function __construct(DatabaseObject &$connectObject) {
+    public function __init(DatabaseObject &$connectObject) {
         $this->dsn = $connectObject->dsn;
         $this->username = $connectObject->username;
         $this->password = $connectObject->password;

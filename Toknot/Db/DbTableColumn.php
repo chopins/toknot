@@ -23,12 +23,11 @@ class DbTableColumn extends StringObject{
     public $isPK = false;
     public $autoIncrement = false;
     public $value = '';
-    public function __construct($columnName, DbTableObject &$tableObject) {
+    public function __init($columnName) {
         $this->columnName = $columnName;
-        $this->tableObject = $tableObject;
         parent::__construct($columnName);
     }
-    public function __get($name) {
+    public function getPropertie($name) {
         if(isset($this->$name)) {
             return $this->$name;
         }

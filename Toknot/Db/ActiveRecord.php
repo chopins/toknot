@@ -20,7 +20,7 @@ class ActiveRecord extends Object {
 
     private $dbObject = null;
 
-    protected function __construct() {
+    protected function __init() {
         $this->dbObject = DatabaseObject::singleton();
     }
     public static function singleton() {

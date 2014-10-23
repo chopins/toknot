@@ -183,7 +183,7 @@ class UserClass extends UserAccessControl {
 	 * @access protected
 	 * @throws Toknot\Exception\StandardException
 	 */
-	protected function __construct($userinfo) {
+	protected function __init($userinfo) {
 		if (self::$DBConnect == null) {
 			throw new StandardException('Must set Db connect instance');
 		}

@@ -127,7 +127,7 @@ class Router extends Object implements RouterInterface {
      * @access public
      * @return void
      */
-    public function __construct() {
+    public function __init() {
         self::$selfInstance = $this;
     }
     

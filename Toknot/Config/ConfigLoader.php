@@ -19,16 +19,26 @@ final class ConfigLoader extends Object {
     private static $_CFG = null;
     public static $cacheFile = '';
 
-    protected function __construct() {
+    protected function __init() {
         $file = __DIR__ . '/default.ini';
         self::$_CFG = new ArrayObject;
         self::importCfg($file);
     }
 
+    /**
+     * Get ConfigLoader instance
+     * 
+     * @return Toknot\Config\ConfigLoader
+     */
     public static function singleton() {
         return parent::__singleton();
     }
 
+    /**
+     * Get app configure data
+     * 
+     * @return Toknot\Di\ArrayObject
+     */
     public static function CFG() {
         return self::$_CFG;
     }

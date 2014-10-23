@@ -18,25 +18,26 @@ class Login extends AdminBase{
     protected $permissions = 0777;
 
     public function GET() {
-        self::$FMAI->D->act = 'login';
-        self::$FMAI->D->message = '';
-        self::$FMAI->display('login');
+        
+        $this->D->act = 'login';
+        $this->D->message = '';
+        $this->display('login');
     }
 
     public function POST() {
-        $userName = self::$FMAI->getPOST('username');
-        $password = self::$FMAI->getPOST('password');
+        $userName = $this->getPOST('username');
+        $password = $this->getPOST('password');
         $user = UserClass::login($userName, $password);
         if ($user) {
-            if (null!== self::$FMAI->getPOST('week')) {
+            if (null!== $this->getPOST('week')) {
                 $user->setLoginExpire('1w');
             }
             $this->setAdminLogin($user);
-            self::$FMAI->redirectController('\Index');
+            $this->redirectController('\Index');
         } else {
-            self::$FMAI->D->act = 'login';
-            self::$FMAI->D->message = 'Username or password invaild';
-            self::$FMAI->display('login');
+            $this->D->act = 'login';
+            $this->D->message = 'Username or password invaild';
+            $this->display('login');
         }
     }
     public function logout() {
