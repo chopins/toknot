@@ -18,11 +18,7 @@ class ViewData extends ArrayObject{
         try {
             return parent::getPropertie($propertie);
         } catch (BadPropertyGetException $e) {
-            if(DEVELOPMENT) {
-                return '[null]';
-            } else {
-                return '';
-            }
+            return '';
         }
     }
 }
