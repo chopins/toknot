@@ -28,7 +28,7 @@ final class Root extends UserAccessControl {
     private $suUser = null;
     private $loginExpire = 0;
 
-    private function __construct() {
+    protected function __init() {
         $this->suUser = 0;
         $this->uid = 0;
         $this->gid = 0;
@@ -36,7 +36,7 @@ final class Root extends UserAccessControl {
         $this->groupName = 'root';
         $this->loginExpire = 0;
     }
-    public function __get($name) {
+    public function getPropertie($name) {
         if($name == 'password') {
             throw new BadPropertyGetException(__CLASS__,$name);
         }

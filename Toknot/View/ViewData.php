@@ -16,7 +16,7 @@ use Toknot\Exception\BadPropertyGetException;
 class ViewData extends ArrayObject{
     public function getPropertie($propertie) {
         try {
-            return parent::__get($propertie);
+            return parent::getPropertie($propertie);
         } catch (BadPropertyGetException $e) {
             if(DEVELOPMENT) {
                 return '[null]';
