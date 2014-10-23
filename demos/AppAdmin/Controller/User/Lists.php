@@ -13,7 +13,7 @@ class Lists extends AdminBase{
 
     public function GET() {
         //self::$FMAI->setCurrentUser(new \Toknot\User\Nobody);
-        self::$FMAI->invokeSubAction($this);
+        $this->invokeSubAction($this);
     }
     const INDEX = 'M:0400,P:r,G:0,U:0';
     public function index() {

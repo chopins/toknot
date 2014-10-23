@@ -4,6 +4,6 @@ use Toknot\Admin\Login;
 class Logout extends Login {
 	public function GET() {
 		parent::logout();	
-		self::$FMAI->redirectController('\User\Login');
+		$this->redirectController('\User\Login');
 	}
 }
