@@ -27,12 +27,12 @@ class Connect extends Object {
     private static $supportDriver = array();
     private $connectInstance = null;
     private $dbINSType = null;
-    
+
     /**
      * Use PHP PDO extension
      */
     const DB_INS_PDO = 1;
-    
+
     /**
      * Use Framework PDO driver
      */
