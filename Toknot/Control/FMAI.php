@@ -393,6 +393,10 @@ final class FMAI extends Object {
         return Renderer::singleton();
     }
 
+    /**
+     * 
+     * @return Toknot\View\Renderer
+     */
     public function getView() {
         return Renderer::getInstance();
     }
@@ -672,8 +676,9 @@ final class FMAI extends Object {
     }
 
     /**
+     * Get current user instance
      * 
-     * @return type
+     * @return Toknot\User\UserAccessControl
      */
     public function getCurrentUser() {
         return $this->currentUser;

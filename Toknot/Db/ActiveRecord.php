@@ -26,6 +26,12 @@ class ActiveRecord extends Object {
     public static function singleton() {
        return parent::__singleton();
     }
+    
+    /**
+     * Get new connect instance of databases
+     * 
+     * @return Toknot\Db\DatabaseObject
+     */
     public function connect() {
         new Connect($this->dbObject);
         return clone $this->dbObject;
