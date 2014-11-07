@@ -60,10 +60,19 @@ class Log {
                 $number = 32;
                 break;
             case 'blue':
-                $number = 44;
+                $number = 34;
                 break;
             case 'yellow':
-                $number = 43;
+                $number = 33;
+                break;
+            case 'black':
+                $number = 30;
+                break;
+            case 'white':
+                $number = 37;
+                break;
+            case 'purple':
+                $number = 35;
                 break;
         }
         if ($number) {
