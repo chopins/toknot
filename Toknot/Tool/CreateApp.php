@@ -269,9 +269,14 @@ EOS;
         if ($this->isAdmin) {
             $phpCode .= <<<'EOS'
         $menu = new Menu;
-        self::$FMAI->D->navList = $menu->getAllMenu();
-        self::$FMAI->D->act = 'list';
-        self::$FMAI->display('index');
+        //self::$FMAI->D->navList = $menu->getAllMenu();
+        $this->D->navList = $menu->getAllMenu();
+        
+        //self::$FMAI->D->act = 'list';
+        $this->D->act = 'list';
+
+        //self::$FMAI->display('index');
+        $this->display('index');
 EOS;
         }
         $phpCode .= <<<'EOS'
@@ -293,7 +298,7 @@ class {$this->appName}Base extends ClassAccessControl {
 EOS;
         $phpCode .= <<<'EOS'
 
-    protected static $FMAI;
+    //protected static $FMAI;
     protected static $CFG;
     protected $AppPath;
     protected $AR;
@@ -302,17 +307,18 @@ EOS;
     protected $operateType = 'r';
     protected $gid =0;
     protected $uid =0;
-    public function __construct($FMAI) {
-        self::$FMAI = $FMAI;
-        
-        $this->AR = self::$FMAI->getActiveRecord();
+    public function __init(FMAI $FMAI) {
+       
+        //$this->AR = self::$FMAI->getActiveRecord(); 
+        $this->AR = $this->getActiveRecord();
 
         //$this->AR->config(self::$CFG->Database);
         
         //self::$FMAI->enableHTMLCache(self::$CFG->View);
         
         //$this->view = self::$FMAI->newTemplateView(self::$CFG->View);
-
+        
+        //$this->checkAccess($this, new Nobody());
         $FMAI->checkAccess($this, new Nobody());
     }
 
