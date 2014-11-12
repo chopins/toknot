@@ -1,0 +1,18 @@
+{
+    "name" : "toknot/tonot",
+    "description": "A PHP MVC Framework",
+    "keywords" : "framework",
+    "homepage" : "http://toknot.com",
+    "license": "New BSD License",
+    "authors": [
+        {
+         "name" : "Szopen Xiao", 
+         "email" : "chopins.xiao@gmail.com",
+         "homepage": "http://toknot.com",
+         "role" : "Developer"
+         }
+    ],
+    "require": {
+        "php" : ">=5.3.0"
+    }
+}
