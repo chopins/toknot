@@ -1,7 +1,7 @@
 {
     "name" : "toknot/tonot",
     "description": "A PHP MVC Framework",
-    "keywords" : "framework",
+    "keywords" : ["framework"],
     "homepage" : "http://toknot.com",
     "license": "New BSD License",
     "authors": [
