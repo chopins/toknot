@@ -180,6 +180,7 @@ final class FMAI extends Object {
         DataCacheControl::$appRoot = $appRoot;
 
         StandardAutoloader::importToknotClass('Config\ConfigLoader');
+        ConfigLoader::$cacheDir = FileObject::getRealPath($this->appRoot, 'Data/Config');
         ConfigLoader::singleton();
 
         if (file_exists($appRoot . '/Config/config.ini')) {
@@ -312,7 +313,6 @@ final class FMAI extends Object {
      * @return ArrayObject
      */
     public function loadConfigure($ini) {
-        ConfigLoader::$cacheDir = FileObject::getRealPath($this->appRoot, 'Data/Config');
         ConfigLoader::importCfg($ini);
         Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
         Log::$savePath = FileObject::getRealPath($this->appRoot, ConfigLoader::CFG()->Log->logSavePath);

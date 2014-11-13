@@ -1,5 +1,14 @@
 <?php
-$s = '<img onerror="console.log(1);" src="x" img_id="166076"><br>&nbsp;dgfgfregrewg<br>&lt;img  onerror=&gt;&lt;<br>';
-echo preg_replace_callback('/<img([^\>]*)>/im', function($m) {
-    return preg_replace('/on([^=^\s]*)=/i', '_on$1=', $m[1]);
-}, $s);
+
+$st = microtime(true);
+
+for($i=0;$i<10000;$i++) {
+    $ini = file_get_contents(__DIR__.'/demos/AppAdmin/Data/Config/config.ini.cache', true);
+    $a = unserialize($ini);
+} 
+
+$et= microtime(true);
+echo $st."\n";
+echo $et."\n";
+
+echo $et - $st ."\n";
