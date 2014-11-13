@@ -17,7 +17,7 @@ use Toknot\Di\DataCacheControl;
 final class ConfigLoader extends Object {
 
     private static $_CFG = null;
-    public static $cacheFile = '';
+    public static $cacheDir = '';
 
     protected function __init() {
         $file = __DIR__ . '/default.ini';
@@ -63,14 +63,22 @@ final class ConfigLoader extends Object {
      */
     public static function importCfg($file) {
         if (file_exists($file)) {
-            $cacheControl = new DataCacheControl(self::$cacheFile, filemtime($file));
-            $cache = $cacheControl->get();
+ 
+            if (self::$cacheDir) {
+                $cacheFile = self::$cacheDir . DIRECTORY_SEPARATOR . basename($file) . '.cache';
+                $cacheControl = new DataCacheControl($cacheFile, filemtime($file));
+                $cache = $cacheControl->get();
+            } else {
+                $cache = false;
+            }
             if ($cache === false) {
                 $userConfig = parse_ini_file($file, true);
                 $userConfig = self::detach($userConfig);
                 self::$_CFG->replace_recursive($userConfig);
-                $cacheData = self::$_CFG->transformToArray();
-                $cacheControl->save($cacheData);
+                if (self::$cacheDir) {
+                    $cacheData = self::$_CFG->transformToArray();
+                    $cacheControl->save($cacheData);
+                }
             } else {
                 self::$_CFG = self::detach($cache);
             }
@@ -85,7 +93,17 @@ final class ConfigLoader extends Object {
      * @return array
      */
     public static function loadCfg($file) {
-        return parse_ini_file($file, true);
+        if (self::$cacheDir) {
+            $cacheFile = self::$cacheDir . DIRECTORY_SEPARATOR . basename($file) . '.cache';
+            $cacheControl = new DataCacheControl($cacheFile, filemtime($file));
+            $cache = $cacheControl->get();
+            if ($cache === false) {
+                $arr = parse_ini_file($file, true);
+                $cacheControl->save($arr);
+                return $arr;
+            }
+            return $cache;
+        }
     }
-}
 
+}

@@ -11,8 +11,6 @@
 namespace Toknot\Admin;
 
 use Toknot\User\ClassAccessControl;
-use Toknot\Exception\FileIOException;
-use Toknot\Config\ConfigLoader;
 use Toknot\User\Nobody;
 use Toknot\User\UserClass;
 use Toknot\Di\Version;
@@ -75,7 +73,7 @@ abstract class AdminBase extends ClassAccessControl{
 
     public function __init() {
         //self::$FMAI = $FMAI;
-        $this->loadAdminConfig();
+        self::$CFG = $this->getCFG();
         $this->initDatabase();        
 
         $this->SESSION = $this->startSession(self::$CFG->Admin->adminSessionName);
@@ -111,19 +109,6 @@ abstract class AdminBase extends ClassAccessControl{
         $this->AR->config(self::$CFG->$dbSectionName);
         $this->dbConnect = $this->AR->connect();
         UserClass::$DBConnect = $this->dbConnect;
-    }
-
-    /**
-     * load admin application config
-     * 
-     * @throws FileIOException
-     */
-    public function loadAdminConfig() {
-        if (!file_exists($this->appRoot . '/Config/config.ini')) {
-            throw new FileIOException('must create ' . $this->appRoot . '/Config/config.ini');
-        }
-        ConfigLoader::$cacheFile = $this->appRoot . '/Data/config';
-        self::$CFG = $this->loadConfigure($this->appRoot . '/Config/config.ini');
     }
 
     /**

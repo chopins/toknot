@@ -118,11 +118,10 @@ class DataCacheControl {
         if (empty($this->cacheHandle)) {
             return false;
         }
-
-        if ($this->expire == 0 && $this->cacheTime($key) <= $this->dataModifyTime) {
-            return false;
+        
+        if ($this->expire == 0 && ($this->cacheTime($key) >= $this->dataModifyTime)) {
+            return true;
         }
-
 
         $dataString = serialize($data);
         $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
@@ -152,7 +151,7 @@ class DataCacheControl {
         }
 
         $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
-        
+
         if (file_exists($file)) {
             return unserialize(file_get_contents($file));    
         } else {

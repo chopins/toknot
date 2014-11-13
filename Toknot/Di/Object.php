@@ -69,7 +69,7 @@ abstract class Object implements Iterator, Countable {
                 }
             }
         }
-        throw new \BadMethodCallException();
+        throw new \BadMethodCallException("Call undefined Method $name");
     }
 
     protected function __init() {

@@ -172,24 +172,27 @@ final class FMAI extends Object {
     protected function __init() {
         list($appNamespace, $appRoot) = func_get_args();
         self::$magicQuotesGpc = get_magic_quotes_gpc();
-        StandardAutoloader::importToknotClass('Config\ConfigLoader');
-        ConfigLoader::singleton();
-
-        if (file_exists($appRoot . '/Config/config.ini')) {
-            $this->loadConfigure($appRoot . '/Config/config.ini', $appRoot . '/Data/config');
-        }
-
-        $CFG = ConfigLoader::CFG();
-        date_default_timezone_set($CFG->App->timeZone);
         $this->appRoot = $appRoot;
         $this->appNamespace = $appNamespace;
         $this->currentUser = new Nobody;
         $this->D = new ViewData;
+        
+        DataCacheControl::$appRoot = $appRoot;
+
+        StandardAutoloader::importToknotClass('Config\ConfigLoader');
+        ConfigLoader::singleton();
+
+        if (file_exists($appRoot . '/Config/config.ini')) {
+            $this->loadConfigure($appRoot . '/Config/config.ini');
+        }
+
+        $CFG = ConfigLoader::CFG();
+        date_default_timezone_set($CFG->App->timeZone);
+        
 
         $this->registerForbiddenController($CFG->App->forbiddenController);
         $this->registerNoPermissonController($CFG->App->noPermissionController);
 
-        DataCacheControl::$appRoot = $appRoot;
         Log::$enableSaveLog = $CFG->Log->enableLog;
         Log::$savePath = FileObject::getRealPath($appRoot, $CFG->Log->logSavePath);
     }
@@ -308,12 +311,21 @@ final class FMAI extends Object {
      *                              the file relative to your application root directory
      * @return ArrayObject
      */
-    public function loadConfigure($ini, $iniCacheFile = '') {
-        ConfigLoader::$cacheFile = $iniCacheFile;
+    public function loadConfigure($ini) {
+        ConfigLoader::$cacheDir = FileObject::getRealPath($this->appRoot, 'Data/Config');
         ConfigLoader::importCfg($ini);
         Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
         Log::$savePath = FileObject::getRealPath($this->appRoot, ConfigLoader::CFG()->Log->logSavePath);
         date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
+        return ConfigLoader::CFG();
+    }
+
+    /**
+     * Get current Configure option list
+     * 
+     * @return Toknot\Di\ArrayObject
+     */
+    public function getCFG() {
         return ConfigLoader::CFG();
     }
 
@@ -582,7 +594,7 @@ final class FMAI extends Object {
      */
     public function redirectController($class, $queryString = '') {
         $url = strtr($class, '\\', '/');
-        if(Router::getSelfInstance()->getRouterMode() === Router::ROUTER_GET_QUERY) {
+        if (Router::getSelfInstance()->getRouterMode() === Router::ROUTER_GET_QUERY) {
             $url = "?c={$url}&{$queryString}";
         } elseif (!empty($queryString)) {
             $queryString = "?$queryString";
