@@ -4,7 +4,7 @@ use Toknot\Control\Router;
 
 //If developement set true, product set false
 define('DEVELOPMENT', true);
-require_once "/home/chopin/NetBeansProjects/toknot/Toknot/Control/Application.php";
+require_once "../../../Toknot/Control/Application.php";
 
 $app = new Application;
 
