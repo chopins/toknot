@@ -307,7 +307,7 @@ EOS;
     protected $operateType = 'r';
     protected $gid =0;
     protected $uid =0;
-    public function __init() {
+    public function __init($FMAI) {
        
         //$this->AR = self::$FMAI->getActiveRecord(); 
         $this->AR = $this->getActiveRecord();
