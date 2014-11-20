@@ -21,7 +21,7 @@ class GeneratePassword {
         new Toknot\Control\Application;
         $config = false;
         
-        if(!empty($argv[1])) {
+        if(!empty($argv[1]) && $argv[1] != 'GeneratePassword') {
             $config = $this->checkIni($argv[1]);
         }
         if (!$config) {
