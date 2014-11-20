@@ -7,7 +7,6 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
-
 if (CLIEnv()) {
     isset($argv[1]) && CLI($argv[1]);
     echo 'Usage: php Toknot.php command
@@ -23,15 +22,14 @@ function CLIEnv() {
     global $argv;
     return PHP_SAPI == 'cli' && basename($argv[0]) == 'Toknot.php';
 }
- 
+
 function CLI($command) {
-    global $argv,$argc;
-    switch ($command) {
-        case 'CreateApp':
-            include_once __DIR__ . '/Tool/CreateApp.php';
-            exit;
-        case 'GeneratePassword':
-            include_once __DIR__ . '/Tool/GeneratePassword.php';
-            exit;
+    global $argv, $argc;
+    $filename = __DIR__ . "/Tool/{$command}.php";
+    if (file_exists($filename)) {
+        include_once $filename;
+    } else {
+        echo "Undefined $command";
     }
+    exit;
 }

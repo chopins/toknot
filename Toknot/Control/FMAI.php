@@ -464,7 +464,7 @@ final class FMAI extends Object {
      *                          and without {@see Toknot\View\Renderer::$scanPath} set path
      */
     public function display($tplName) {
-        $view = Renderer::singleton();
+        $view = $this->getView();
         $view->importVars($this->D);
         $view->display($tplName);
     }

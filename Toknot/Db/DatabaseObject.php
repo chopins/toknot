@@ -28,6 +28,11 @@ final class DatabaseObject extends DbCRUD {
     private $tableList = array();
     protected $driverOptions = array();
     protected $tablePrefix = '';
+    /**
+     *
+     * @var array
+     * @access protected
+     */
     protected $tableValueList = array();
     protected $databaseStructInfoCache = '';
     protected $databaseCacheExpire = 100;
@@ -107,9 +112,9 @@ final class DatabaseObject extends DbCRUD {
         return $tableList;
     }
 
-    protected function setPropertie($name, $value) {
-        $class = __CLASS__;
-        throw new DatabaseException("undefined property $class::$name", 0);
+    protected function setPropertie($name, $value = null) {
+        $this->tableValueList[$this->tablePrefix.$name] = $value;
+        //throw new DatabaseException("undefined property $class::$name", 0);
     }
 
     public function getPropertie($propertie) {
