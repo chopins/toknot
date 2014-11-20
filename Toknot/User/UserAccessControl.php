@@ -12,6 +12,7 @@ namespace Toknot\User;
 
 use Toknot\Di\Object;
 use Toknot\User\Exception\NoPermissionExecption;
+use Toknot\Exception\StandardException;
 
 abstract class UserAccessControl extends Object{
 
@@ -169,9 +170,9 @@ abstract class UserAccessControl extends Object{
 	 * @return string the hashed string and salt, like {@see crypt()) of PHP
 	 */
 	public static function getTextHash($password, $algo, $salt = '', $rounds = 500) {
-		if (!preg_match('/^[0-9A-Za-z]+$/', $salt)) {
-			return false;
-		}
+		if (!preg_match('/^[^$]+$/', $salt)) {
+			throw new StandardException('hash salt must not contain $');
+        }
 		switch (strtoupper($algo)) {
 			case 'SHA512':
 				$salt = '$6$rounds=' . $rounds . '$' . $salt . '$';

@@ -24,12 +24,18 @@ class GeneratePassword {
         if(!empty($argv[1]) && $argv[1] != 'GeneratePassword') {
             $config = $this->checkIni($argv[1]);
         }
+        if(!empty($argv[1]) && $argv[1] == 'GeneratePassword' && !empty($argv[2])) {
+            $config = $this->checkIni($argv[2]);
+        }
         if (!$config) {
             while (true) {
                 Toknot\Di\Log::colorMessage('Enter path of config file:', null, false);
                 $config = trim(fgets(STDIN));
                 if (!empty($config)) {
                     $config = $this->checkIni($config);
+                    if($config) {
+                        break;
+                    }
                 }
             }
         }
@@ -41,13 +47,17 @@ class GeneratePassword {
         $cfg = Toknot\Config\ConfigLoader::importCfg($config);
 
         if (empty($cfg->User->userPasswordEncriyptionAlgorithms)) {
-            Toknot\Di\Log::colorMessage('config of Algorithm is empty', 'red');
+            Toknot\Di\Log::colorMessage('config of Algorithm is empty, must set in config.ini', 'red');
+            return;
         }
         if (empty($cfg->User->userPasswordEncriyptionSalt)) {
-            Toknot\Di\Log::colorMessage('config of salt is empty', 'red');
+            Toknot\Di\Log::colorMessage('config of salt is empty,must set in config.ini', 'red');
+            return;
         }
+  
          \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserAccessControl');
         $password = Toknot\User\Root::getTextHashCleanSalt($password, $cfg->User->userPasswordEncriyptionAlgorithms, $cfg->User->userPasswordEncriyptionSalt);
+        Toknot\Di\Log::colorMessage('Set Root Password is below string in config.ini','green');
         Toknot\Di\Log::colorMessage($password,'green');
     }
 
