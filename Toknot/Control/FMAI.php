@@ -189,7 +189,6 @@ final class FMAI extends Object {
 
         $CFG = ConfigLoader::CFG();
         //date_default_timezone_set(self::timezoneString($CFG->App->timeZone));
-        echo date('Y m d H i s');
 
         $this->registerForbiddenController($CFG->App->forbiddenController);
         $this->registerNoPermissonController($CFG->App->noPermissionController);
