@@ -25,6 +25,7 @@ function CLIEnv() {
 }
  
 function CLI($command) {
+    global $argv,$argc;
     switch ($command) {
         case 'CreateApp':
             include_once __DIR__ . '/Tool/CreateApp.php';
