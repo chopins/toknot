@@ -176,7 +176,7 @@ final class FMAI extends Object {
         $this->appNamespace = $appNamespace;
         $this->currentUser = new Nobody;
         $this->D = new ViewData;
-        
+
         DataCacheControl::$appRoot = $appRoot;
 
         StandardAutoloader::importToknotClass('Config\ConfigLoader');
@@ -188,14 +188,34 @@ final class FMAI extends Object {
         }
 
         $CFG = ConfigLoader::CFG();
-        date_default_timezone_set($CFG->App->timeZone);
-        
+        //date_default_timezone_set(self::timezoneString($CFG->App->timeZone));
+        echo date('Y m d H i s');
 
         $this->registerForbiddenController($CFG->App->forbiddenController);
         $this->registerNoPermissonController($CFG->App->noPermissionController);
 
         Log::$enableSaveLog = $CFG->Log->enableLog;
         Log::$savePath = FileObject::getRealPath($appRoot, $CFG->Log->logSavePath);
+    }
+
+    public static function timezoneString($timezone) {
+        if ($timezone[0] == '+') {
+            $timedirection = '-';
+        } elseif ($timezone[0] == '-') {
+            $timedirection = '+';
+        } elseif (is_numeric($timezone)) {
+            $timedirection = '-';
+            $offset = $timezone;
+        } else {
+            return $timezone;
+        }
+        if (empty($offset)) {
+            $offset = substr($timezone, 1, 2);
+            if (strlen($offset) == 2 && $offset[0] == '0') {
+                $offset = substr($offset, 1);
+            }
+        }
+        return "Etc/GMT{$timedirection}{$offset}";
     }
 
     /**
@@ -316,7 +336,7 @@ final class FMAI extends Object {
         ConfigLoader::importCfg($ini);
         Log::$enableSaveLog = ConfigLoader::CFG()->Log->enableLog;
         Log::$savePath = FileObject::getRealPath($this->appRoot, ConfigLoader::CFG()->Log->logSavePath);
-        date_default_timezone_set(ConfigLoader::CFG()->App->timeZone);
+        date_default_timezone_set(self::timezoneString(ConfigLoader::CFG()->App->timeZone));
         return ConfigLoader::CFG();
     }
 
