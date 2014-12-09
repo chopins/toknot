@@ -489,7 +489,9 @@ final class Application {
             $et = $et . ' seconds';
         }
         $str .= '<br />PHP Script Execure Time: ' . $et . "\n";
-        echo PHP_SAPI == 'cli' && is_resource(STDOUT) ? strip_tags($str) : $str;
+        if(empty($_SERVER['TK_DISABLE_OUTRUNINFO'])) {
+            echo PHP_SAPI == 'cli' && is_resource(STDOUT) ? strip_tags($str) : $str;
+        }
     }
 
     public static function checkXDebug() {
