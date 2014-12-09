@@ -1459,7 +1459,7 @@ if (typeof TK == 'undefined') {
                     var protocol = window.location.protocol == "https:" ? 'https' : 'http';
                     url = protocol + '://' + TK.Ajax.defaultDomain + url;
                 }
-                TK.Ajax.url = url.strpos('?') != false ? url + '&is_ajax=1' : url + '?is_ajax=1';
+                TK.Ajax.url = url.strpos('?') != false ? url + '&'+TK.Ajax.dataType.toLowerCase()+'=1' : url + '?is_ajax=1';
                 TK.Ajax.url += '&t=' + (new Date().getTime());
             },
             del: function (url, callFunc) {
