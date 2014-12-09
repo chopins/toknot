@@ -108,7 +108,6 @@ class Router extends Object implements RouterInterface {
     /**
      * use URI of path controller invoke application controller of class
      */
-
     const ROUTER_PATH = 1;
 
     /**
@@ -130,7 +129,7 @@ class Router extends Object implements RouterInterface {
     public function __init() {
         self::$selfInstance = $this;
     }
-    
+
     public static function getSelfInstance() {
         return self::$selfInstance;
     }
@@ -141,10 +140,11 @@ class Router extends Object implements RouterInterface {
      */
     public function routerRule() {
         if ($this->routerMode == self::ROUTER_GET_QUERY) {
-            if (empty($_GET['c'])) {
+            $key = each($_GET);
+            if (!empty($key[1]) || substr($key[0], 0, 1) !== '/') {
                 $this->spacePath = $this->defaultClass;
             } else {
-                $this->spacePath = StandardAutoloader::NS_SEPARATOR . strtr($_GET['c'], '/', StandardAutoloader::NS_SEPARATOR);
+                $this->spacePath = strtr($key[0], '/', StandardAutoloader::NS_SEPARATOR);
             }
         } elseif ($this->routerMode == self::ROUTER_MAP_TABLE) {
             $maplist = $this->loadRouterMapTable();
@@ -213,7 +213,7 @@ class Router extends Object implements RouterInterface {
     public function defaultInvoke($defaultClass) {
         $this->defaultClass = $defaultClass;
     }
-    
+
     public function getRouterMode() {
         return $this->routerMode;
     }
@@ -277,7 +277,7 @@ class Router extends Object implements RouterInterface {
             foreach ($classPart as $key => $part) {
                 if (empty($part))
                     continue;
-                $classPath .= DIRECTORY_SEPARATOR .$part;
+                $classPath .= DIRECTORY_SEPARATOR . $part;
                 $classFile = StandardAutoloader::transformClassNameToFilename($classPath, self::$routerPath);
                 $caseClassFile = FileObject::fileExistCase($classFile);
                 if ($caseClassFile) {
@@ -316,7 +316,8 @@ class Router extends Object implements RouterInterface {
     }
 
     public static function checkController(&$invokeClass, $method) {
-        if($method === null) return true;
+        if ($method === null)
+            return true;
         $invokeClass = self::controllerNameTrans($invokeClass);
         return method_exists($invokeClass, $method);
     }
@@ -346,7 +347,7 @@ class Router extends Object implements RouterInterface {
             }
             throw new MethodNotAllowedException("{$invokeClass} not support request method ($method) or not implement {$interface}");
         }
-        
+
         $invokeObject = new $invokeClass($FMAI);
         $stat = $FMAI->invokeBefore($invokeObject);
         if ($stat === true) {
