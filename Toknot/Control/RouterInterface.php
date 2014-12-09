@@ -42,11 +42,6 @@ interface RouterInterface {
      * @param string $path
      */
     public function routerPath($path);
-
-    /**
-     * set router runtime all args or configure
-     */
-    public function runtimeArgs();
     
     /**
      * set default invoke class for router

@@ -16,6 +16,7 @@ use Toknot\Di\ArrayObject;
 use Toknot\Di\FileObject;
 use Toknot\Di\DataCacheControl;
 use Toknot\View\ViewCache;
+use Toknot\Control\Router;
 
 class Renderer extends Object {
 
@@ -231,7 +232,10 @@ class Renderer extends Object {
 					$matches[2] = preg_replace('/\$([\[\]a-zA-Z0-9_\x7f-\xff]+)/i', '$TPL_VARS->$1', $matches[2]);
 					return "<?php echo {$matches[1]}({$matches[2]});?>";
 				}, $content);
-
+                
+        $content = preg_replace('/\{url\s+(\S+)\s+(\S+)\}/i', '<?php $this->bulidURL("$1","$2");?>', $content);
+        $content = preg_replace('/\{url\s+(\S+)\}/i', '<?php $this->bulidURL("$1");?>', $content);
+        
 		//clean the whitespace from beginning and end of line and html comment
         if(!DEVELOPMENT) {
             $content = preg_replace('/^\s*|\s*$|<!--.*-->|[\n\t\r]+/m', '', $content);
@@ -249,7 +253,15 @@ class Renderer extends Object {
 		FileObject::saveContent($transfromFile, $content);
 	}
 
-	protected function importFile($file) {
+    protected function bulidURL($url, $query='') {
+        if(Router::getSelfInstance()->getRouterMode() === Router::ROUTER_GET_QUERY) {
+            echo "?c={$url}&$query";
+        } else {
+            echo "{$url}?{$query}";
+        }
+    }
+    
+    protected function importFile($file) {
 		$this->display($file);
 	}
     public function table($nav, $dataList, $defaultTpl = true) {

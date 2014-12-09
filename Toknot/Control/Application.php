@@ -216,18 +216,6 @@ final class Application {
     }
 
     /**
-     * The method set router need parameters,
-     * the method can recived variable number of arguments, parameter info same your runtimeArgs()
-     * method paramters of your Router, if default, {@see Toknot\Control\Router::runtimeArgs()} use 4 parameters 
-     * that is $routerMode, $routerDepth, $notFound, $methodNotAllowed
-     * 
-     * @param mixed $*   Variable list of router need of paramers on runtime, the toknot default router support
-     */
-    public function setRouterArgs() {
-        $this->routerArgs = func_get_args();
-    }
-
-    /**
      * Run application, the method will invoke router with implements interface of 
      * {@link Toknot\Control\RouterInterface} of all method, Toknot Freamework default
      * invoke class under application of Controller Dicetory, scan file path is under $appPath 
@@ -336,9 +324,6 @@ final class Application {
             StandardAutoloader::importToknotClass('Control\FMAI');
             $FMAI = FMAI::singleton($appNameSpace, $appPath);
 
-            if (!empty($this->routerArgs)) {
-                call_user_func_array(array($router, 'runtimeArgs'), $this->routerArgs);
-            }
             $router->loadConfigure();
             $router->routerRule();
             if (is_null($defaultInvoke)) {

@@ -356,32 +356,6 @@ class Router extends Object implements RouterInterface {
     }
 
     /**
-     * implements {@see Toknot\Control\RouterInterface} of method , the method
-     * set toknot defualt router of run mode {@see Toknot\Control\Router::$routerMode} and
-     * set the controller max level namespace which on PATH mode in effect
-     * 
-     * @param int $mode  Router of run mode Use set {@see Toknot\Control\Router::ROUTER_PATH}
-     *                      is default or {@see Toknot\Control\Router::ROUTER_GET_QUERY}, 
-     *                      or {@see Toknot\Control\Router::ROUTER_MAP_TABLE}
-     *                      only use framework router the parameter is set router mode
-     * @param int $routerDepth  The under controller of namespace max level, 
-     *                              if set 0 will not limit
-     * @param string $notFound  When controller not found be invoked simailar 
-     *                              web 404 page set, The class namespace under
-     *                              Application root, default is null
-     * @param string $methodNotAllowed  When controller not has method be invoked 
-     *                                     simailar web 405 page set
-     *                                  The class namespace under Application root ,
-     *                                     default is null
-     */
-    public function runtimeArgs($mode = self::ROUTER_PATH, $routerDepth = 1, $notFound = null, $methodNotAllowed = null) {
-        $this->routerMode = $mode;
-        $this->routerDepth = $routerDepth;
-        $this->notFoundController = $notFound;
-        $this->methodNotAllowedController = $methodNotAllowed;
-    }
-
-    /**
      * implements {@see Toknot\Control\RouterInterface} of method, the method set Application
      * of top namespace 
      * 
@@ -440,8 +414,6 @@ class Router extends Object implements RouterInterface {
         }
         if (!empty($cfg->App->routerMode)) {
             $this->routerMode = constant("self::{$cfg->App->routerMode}");
-        } else {
-            $this->routerMode = self::ROUTER_PATH;
         }
         if (!empty($cfg->App->routerDepth)) {
             $this->routerDepth = $cfg->App->routerDepth;
