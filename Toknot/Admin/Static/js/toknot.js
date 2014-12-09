@@ -1,27 +1,27 @@
 if (typeof TK == 'undefined') {
     "use strict";
-    String.prototype.isEmail = function() {
+    String.prototype.isEmail = function () {
         return /^([a-z0-9+_]|\-|\.)+@(([a-z0-9_]|\-)+\.)+[a-z]{2,6}$/.test(this);
     };
-    String.prototype.isCNMoblie = function() {
+    String.prototype.isCNMoblie = function () {
         return /^(13|15|18)\d{9}$/i.test(this);
     };
-    String.prototype.trim = function() {
+    String.prototype.trim = function () {
         return this.replace(/(^\s*)|(\s*$)/g, "");
     };
-    String.prototype.strpos = function(needle, offset) {
+    String.prototype.strpos = function (needle, offset) {
         var i = (this + '').indexOf(needle, (offset || 0));
         return i === -1 ? false : i;
     };
-    String.prototype.ucwords = function() {
-        return (str + '').replace(/^([a-z])|\s+([a-z])/g, function($1) {
+    String.prototype.ucwords = function () {
+        return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($1) {
             return $1.toUpperCase();
         });
     };
-    String.prototype.isWord = function() {
+    String.prototype.isWord = function () {
         return /^(A-za-z0-9_)/i.test(this);
     };
-    String.prototype.ucfirst = function() {
+    String.prototype.ucfirst = function () {
         var f = this.charAt(0).toUpperCase();
         return f + this.substr(1);
     };
@@ -38,10 +38,10 @@ if (typeof TK == 'undefined') {
     ;
     if (typeof console == 'undefined') {
         console = {};
-        console.warn = function(str) {
+        console.warn = function (str) {
             throw new Error(str);
         };
-        console.log = function(str) {
+        console.log = function (str) {
             throw new Error(str);
         };
     }
@@ -50,7 +50,7 @@ if (typeof TK == 'undefined') {
     navigator.ugent = navigator.userAgent.toLowerCase()
     navigator.FIREFOX = /gecko/.test(navigator.ugent);
     navigator.WEBKIT = /webkit/.test(navigator.ugent);
-    navigator.IEV =  navigator.IE && !document.documentMode ? 6 : document.documentMode;
+    navigator.IEV = navigator.IE && !document.documentMode ? 6 : document.documentMode;
     var TK = {
         doc: window.document,
         bodyNode: window.document.body, //TK.$(ele)方法返回对象的父对象
@@ -72,52 +72,53 @@ if (typeof TK == 'undefined') {
             mouseout: [],
             click: [[], [], [], []]
         },
-        path : (function(){
-            if(document.currentScript) {
+        path: (function () {
+            if (document.currentScript) {
                 return document.currentScript.src;
             }
             try {
                 throw new Error("Get Filename");
-            } catch(e) {
-                if(typeof e.fileName !== 'undefined') {
+            } catch (e) {
+                if (typeof e.fileName !== 'undefined') {
                     return e.fileName;
                 }
             }
-            return document.scripts[document.scripts.length-1].src;
+            return document.scripts[document.scripts.length - 1].src;
         })(),
-        requirePath : 0,
+        requirePath: 0,
         //窗口滚动事件注册函数列表
         windowScrollEventCallFunctionList: [],
         windowResizeCallFunctionList: [],
-        isArray : function(it) {
+        isArray: function (it) {
             return Object.prototype.toString.call(it) === '[object Array]';
         },
-        isFunction: function(it) {
+        isFunction: function (it) {
             return Object.prototype.toString.call(it) === '[object Function]';
         },
-        isNumeric : function(it) {
-            return  !isNaN(parseFloat(it)) && isFinite(it);;
+        isNumeric: function (it) {
+            return  !isNaN(parseFloat(it)) && isFinite(it);
+            ;
         },
-        createNode: function(t) {
+        createNode: function (t) {
             return TK.$(TK.doc.createElement(t));
         },
-        realpath : function(srcPath) {
+        realpath: function (srcPath) {
             return srcPath.split("?")[0].split("#")[0];
         },
-        basename : function(path) {
+        basename: function (path) {
             path = TK.realpath(path);
-            var shash = path.lastIndexOf("/") +1;
-            return path.substring(shash,path.length);
+            var shash = path.lastIndexOf("/") + 1;
+            return path.substring(shash, path.length);
         },
-        dirname : function(path) {
+        dirname: function (path) {
             var shash = path.lastIndexOf("/");
-            return path.substring(0,shash);
+            return path.substring(0, shash);
         },
-        jsPath: function(cidx) {
-            var scripts = TK.doc.scripts,scriptPath;
-            if(typeof cidx == "string") {
+        jsPath: function (cidx) {
+            var scripts = TK.doc.scripts, scriptPath;
+            if (typeof cidx == "string") {
                 var scriptfile, i = 0;
-                while(cidx != scriptfile) {
+                while (cidx != scriptfile) {
                     scriptPath = TK.realpath(scripts[i].src);
                     scriptfile = TK.basename(scripts[i].src);
                     i++;
@@ -125,9 +126,9 @@ if (typeof TK == 'undefined') {
             }
             if (!cidx) {
                 cidx = 0;
-            } else if(TK.isNumeric(cidx)) {
+            } else if (TK.isNumeric(cidx)) {
                 cidx = parseInt(cidx);
-                scriptPath= scripts[cidx].src;
+                scriptPath = scripts[cidx].src;
                 scriptPath = TK.realpath(scriptPath);
             }
             var shash = scriptPath.lastIndexOf("/");
@@ -146,27 +147,27 @@ if (typeof TK == 'undefined') {
             INPUT_IMAGE: 8,
             INPUT_SELECT: 9
         },
-
-        require: function(fs, options) {
+        require: function (fs, options) {
             options = options || 0;
             if (typeof fs === 'string') {
                 var requirePath = TK.requirePath || TK.dirname(TK.realpath(TK.path));
-                while(true) {
-                    if(fs.substring(0,2) == '..') {
+                while (true) {
+                    if (fs.substring(0, 2) == '..') {
                         requirePath = TK.dirname(requirePath);
-                        fs = fs.substring(2,fs.length);
+                        fs = fs.substring(2, fs.length);
                     } else {
                         break;
                     }
                 }
-                if(fs.substring(0,1) != '/') fs= '/'+fs;
-                return TK.loadJSFile(requirePath+fs+'.js',options);
+                if (fs.substring(0, 1) != '/')
+                    fs = '/' + fs;
+                return TK.loadJSFile(requirePath + fs + '.js', options);
             }
         },
-        script : function() {
+        script: function () {
             return TK.doc.getElementsByTagName('script');
         },
-        loadJSFile: function(fs, bodyEnd) {
+        loadJSFile: function (fs, bodyEnd) {
             var f = TK.createNode('script');
             f.setAttribute('type', 'text/javascript');
             f.setAttribute('src', fs);
@@ -176,17 +177,17 @@ if (typeof TK == 'undefined') {
                     return f;
                 }
                 TK.doc.getElementsByTagName('head')[0].appendChild(f);
-                f.onerror = function(e) {
-                    TK.error(fs+' Load Failure');
+                f.onerror = function (e) {
+                    TK.error(fs + ' Load Failure');
                 }
-            } catch(e) {
-                TK.error(fs+' Load Failure');
+            } catch (e) {
+                TK.error(fs + ' Load Failure');
             }
             return f;
         },
         unloadExecList: [],
         eventList: [],
-        unload: function(cf) {
+        unload: function (cf) {
             if (typeof cf == 'string') {
                 TK.unloadExecMessage = cf;
                 return;
@@ -194,7 +195,7 @@ if (typeof TK == 'undefined') {
             TK.unloadExecList.push(cf);
         },
         unloadExecMessage: null,
-        unloadExec: function() {
+        unloadExec: function () {
             if (TK.doc && TK.isReady) {
                 TK.doc.onkeydown = null;
                 TK.doc.onkeyup = null;
@@ -225,13 +226,12 @@ if (typeof TK == 'undefined') {
                 return TK.unloadExecMessage;
             delete TK;
         },
-                
         /**
          * 
          * @param {String} msg
          * @returns {void}
-         */   
-        log : function(msg) {
+         */
+        log: function (msg) {
             console.log(msg);
         },
         /**
@@ -239,11 +239,11 @@ if (typeof TK == 'undefined') {
          * @param {String} msg
          * @returns {void}
          */
-        error: function(msg) {
+        error: function (msg) {
             console.error(msg);
         },
-        init: function() {
-            window.onload = function() {
+        init: function () {
+            window.onload = function () {
                 window.onerror = TK.error;
                 if (TK.doc) {
                     TK.doc.onkeydown = TK.keyboardEventCallFunction;
@@ -273,15 +273,15 @@ if (typeof TK == 'undefined') {
          * @param {type} func
          * @returns {void}
          */
-        ready: function(func) {
+        ready: function (func) {
             TK.readyFunctionList.push(func);
             TK.init();
         },
-        getURIHash: function() {
+        getURIHash: function () {
             var hash = window.location.hash.substr(1);
             return hash;
         },
-        scrollOffset: function() {
+        scrollOffset: function () {
             var YOffset = window.pageYOffset ? window.pageYOffset : TK.doc.body.scrollTop;
             var XOffset = window.pageXOffset ? window.pageXOffset : TK.doc.body.scrollLeft;
             return {
@@ -290,24 +290,24 @@ if (typeof TK == 'undefined') {
             };
         },
         //窗口滚动事件
-        windowScrollCallback: function(e) {
+        windowScrollCallback: function (e) {
             e = e || event;
             for (var i in TK.windowScrollEventCallFunctionList)
                 if (!isNaN(i))
                     TK.windowScrollEventCallFunctionList[i].call(TK.windowScrollEventCallFunctionList[i].handObj, e);
         },
         //窗口改变大小事件
-        windowResizeCallback: function(e) {
+        windowResizeCallback: function (e) {
             for (var i in TK.windowResizeCallFunctionList)
                 if (!isNaN(i))
                     TK.windowResizeCallFunctionList[i].func(TK.windowResizeCallFunctionList[i].obj);
         },
         //添加鼠标移动事件函数
-        addMouseMoveCallFunction: function(func, type) {
+        addMouseMoveCallFunction: function (func, type) {
             return TK.bodyMouseEventCallFuncitonList[type].push(func);
         },
         //添加document鼠标点击事件
-        addMouseClickCallFunction: function(func, type, button) {
+        addMouseClickCallFunction: function (func, type, button) {
             if (!type)
                 type = click;
             if (!button)
@@ -315,7 +315,7 @@ if (typeof TK == 'undefined') {
             return TK.bodyMouseEventCallFuncitonList[type][button].push(func);
         },
         //document鼠标移动事件回调函数
-        mouseMoveEventFunction: function(e) {
+        mouseMoveEventFunction: function (e) {
             e = e || event;
             fL = TK.bodyMouseEventCallFuncitonList[e.type];
             if (fL.eventObj == TK.getEventNode(e)) {
@@ -328,91 +328,91 @@ if (typeof TK == 'undefined') {
             }
         },
         //document鼠标点击事件回调函数
-        mouseClickEventCallFunction: function(e) {
+        mouseClickEventCallFunction: function (e) {
             e = e || event, fL = TK.bodyMouseEventCallFuncitonList[e.type][e.button], fL = fL.concat(TK.bodyMouseEventCallFuncitonList[e.type][3]);
             for (var i in fL)
                 !isNaN(i) && fL[i](e);
         },
         //document键盘事件回调函数
-        keyboardEventCallFunction: function(e) {
+        keyboardEventCallFunction: function (e) {
             e = e || event, k = e.keyCode, fL = TK.keyList[e.type];
             for (var key in fL)
                 key != '' && k == key && fL[k](e);
             if (fL['any'])
                 fL['any'](e);
         },
-        addKeyListener: function(key, func, type) {
+        addKeyListener: function (key, func, type) {
             TK.keyList[type][key] = func;
         },
-        delKeyListener: function(key, type) {
+        delKeyListener: function (key, type) {
             delete TK.keyList[type][key];
         },
         //常用键盘事件注册
-        keyboardEventRegisterController: function(obj) {
+        keyboardEventRegisterController: function (obj) {
             return {
-                esc: function(func) {
+                esc: function (func) {
                     obj.key(27, func);
                 },
-                enter: function(func) {
+                enter: function (func) {
                     obj.key(13, func);
                 },
-                tab: function(func) {
+                tab: function (func) {
                     obj.key(9, func);
                 },
-                space: function(func) {
+                space: function (func) {
                     obj.key(32, func);
                 },
-                backspace: function(func) {
+                backspace: function (func) {
                     obj.key(8, func);
                 },
-                up: function(func) {
+                up: function (func) {
                     obj.key(38, func);
                 },
-                down: function(func) {
+                down: function (func) {
                     obj.key(40, func);
                 },
-                left: function(func) {
+                left: function (func) {
                     obj.key(37, func);
                 },
-                right: function(func) {
+                right: function (func) {
                     obj.key(39, func);
                 },
-                any: function(func) {
+                any: function (func) {
                     obj.key('any', func);
                 },
                 key: obj.key
             };
         },
-        keyDown: function() {
-            this.key = function(key, func) {
+        keyDown: function () {
+            this.key = function (key, func) {
                 TK.addKeyListener(key, func, 'keydown');
             };
             return TK.keyboardEventRegisterController(this);
         },
-        keyUp: function() {
-            this.key = function(key, func) {
+        keyUp: function () {
+            this.key = function (key, func) {
                 TK.addKeyListener(key, func, 'keyup');
             };
             return TK.keyboardEventRegisterController(this);
         },
         //鼠标点击事件注册原型
-        addMouseEventController: function(type) {
+        addMouseEventController: function (type) {
             return {
-                left: function(func) {
+                left: function (func) {
                     return TK.addMouseClickCallFunction(func, type, 0) - 1;
                 },
-                right: function(func) {
+                right: function (func) {
                     return TK.addMouseClickCallFunction(func, type, 2) - 1;
                 },
-                middle: function(func) {
+                middle: function (func) {
                     return TK.addMouseClickCallFunction(func, type, 1) - 1;
                 },
-                any: function(func) {
+                any: function (func) {
                     return TK.addMouseClickCallFunction(func, type, 3) - 1;
                 }
             };
         },
-        delMouseEventFunction: function(type, idx, button) {
+        delMouseEventFunction: function (type, idx, button) {
             if (type == 'mouseover' || type == 'mouseout') {
                 delete TK.bodyMouseEventCallFuncitonList[type][idx];
             } else {
@@ -434,40 +434,40 @@ if (typeof TK == 'undefined') {
                 delete TK.bodyMouseEventCallFuncitonList[type][button][idx];
             }
         },
-        mouseover: function(func, eventObj) {
+        mouseover: function (func, eventObj) {
             func.eventObj = eventObj;
             return TK.addMouseMoveCallFunction(func, 'mouseover') - 1;
         },
-        mouseout: function(func, eventObj) {
+        mouseout: function (func, eventObj) {
             return TK.addMouseMoveCallFunction(func, 'mouseout', eventObj) - 1;
         },
-        mousedown: function() {
+        mousedown: function () {
             return TK.addMouseEventController('mousedown');
         },
-        mouseup: function() {
+        mouseup: function () {
             return TK.addMouseEventController('mouseup');
         },
-        click : function() {
+        click: function () {
             return TK.addMouseEventController('click');
         },
-        setTimeout: function(func, time) {
+        setTimeout: function (func, time) {
             var id = window.setTimeout(func, time);
             TK.timeoutHandle.push(id);
             return id;
         },
-        setInterval: function(func, time) {
+        setInterval: function (func, time) {
             var id = window.setInterval(func, time);
             TK.intervalHandle.push(id);
             return id;
         },
-        clearTimeout: function(id) {
+        clearTimeout: function (id) {
             window.clearTimeout(id);
             for (var i in TK.timeoutHandle) {
                 if (TK.timeoutHandle[i] == id)
                     delete TK.timeoutHandle[i];
             }
         },
-        clearInterval: function(id) {
+        clearInterval: function (id) {
             window.clearInterval(id);
             for (var i in TK.intervalHandle) {
                 if (TK.intervalHandle[i] == id)
@@ -492,15 +492,15 @@ if (typeof TK == 'undefined') {
          * TK.$(ele).copyNode()  复制元素, 返回TK.$(ele)对象
          * ...........................见方法注释
          */
-        $: function(ele) {
+        $: function (ele) {
             if (!this.bodyNode)
                 this.bodyNode = TK.bodyNode;
             if (!ele) {
-                throw new Error(ele +' not found');
+                throw new Error(ele + ' not found');
             }
 
-            var eleType = typeof(ele);
-            if(eleType == 'string' && typeof TK.cache[ele] != 'undefined') {
+            var eleType = typeof (ele);
+            if (eleType == 'string' && typeof TK.cache[ele] != 'undefined') {
                 return TK.cache[ele];
             }
             switch (eleType) {
@@ -509,7 +509,7 @@ if (typeof TK == 'undefined') {
                     var param = ele.substr(1);
                     switch (firstWord) {
                         case '.': //样式名
-                            return (function(clsName) {
+                            return (function (clsName) {
                                 var list = Array();
                                 var childList = TK.$(this.bodyNode).getChilds();
                                 for (var t in childList)
@@ -517,7 +517,7 @@ if (typeof TK == 'undefined') {
                                 return list;
                             })(param);
                         case '@'://标签名
-                            return (function(tagName) {
+                            return (function (tagName) {
                                 var list = Array();
                                 var childList = TK.$(this.bodyNode).getChilds();
                                 for (var t in childList)
@@ -525,7 +525,7 @@ if (typeof TK == 'undefined') {
                                 return list;
                             })(param);
                         case '%'://NAME名
-                            return (function(name) {
+                            return (function (name) {
                                 var list = Array();
                                 var childList = TK.$(this.bodyNode).getChilds();
                                 for (var t in childList)
@@ -550,7 +550,7 @@ if (typeof TK == 'undefined') {
             if (!__element)
                 //throw new Error(ele + ' not found');
                 return false;
-            if (typeof(__element) != 'object')
+            if (typeof (__element) != 'object')
                 return false;
             if (!__element.nodeType)
                 return false;
@@ -559,7 +559,7 @@ if (typeof TK == 'undefined') {
             __element.tag = __element.tagName ? __element.tagName.toLowerCase() : false;
             __element.$ = TK.$;
             __element.$.bodyNode = __element;
-            __element.inputType = (function() {
+            __element.inputType = (function () {
                 if (__element.tag == 'select')
                     return TK.inputType.INPUT_SELECT;
                 if (__element.tag == 'textarea')
@@ -589,24 +589,27 @@ if (typeof TK == 'undefined') {
                 }
             })();
             var __extend = {
-                getIframeBody: function() {
+                getIframeBody: function () {
                     return navigator.IE ? this.TK.doc.body : this.contentDocument.body;
                 },
-                setAttr : function(att, value) {
+                setAttr: function (att, value) {
                     return this.setAttribute(att, value);
                 },
-                getAttr : function(att) {
+                getAttr: function (att) {
                     return this.getAttribute(att);
                 },
-                getText : function() {
-                    if(typeof(this.textContent) != 'undefined') return this.textContent;
+                getText: function () {
+                    if (typeof (this.textContent) != 'undefined')
+                        return this.textContent;
                     return this.innerText;
                 },
-                setText : function(text) {
-                    if(typeof(this.textContent) != 'undefined') this.textContent = text;
-                    else this.innerText = text;
+                setText: function (text) {
+                    if (typeof (this.textContent) != 'undefined')
+                        this.textContent = text;
+                    else
+                        this.innerText = text;
                 },
-                getPos: function() {
+                getPos: function () {
                     var y = this.offsetTop;
                     var x = this.offsetLeft;
                     var height = this.offsetHeight;
@@ -626,11 +629,11 @@ if (typeof TK == 'undefined') {
                         'w': width
                     };
                 },
-                copyNode: function(deep) {
+                copyNode: function (deep) {
                     return TK.$(this.cloneNode(deep));
                 },
                 //根据样式名找子元素
-                getNodeByCls: function(clsName) {
+                getNodeByCls: function (clsName) {
                     var childList = this.getChilds();
                     var list = Array();
                     for (var t in childList)
@@ -639,7 +642,7 @@ if (typeof TK == 'undefined') {
                     return list;
                 },
                 //根据指定属性及属性值找子元素
-                getChildNodeByAttr: function(attr, value) {
+                getChildNodeByAttr: function (attr, value) {
                     var childList = this.getChilds();
                     var list = Array();
                     for (var t in childList)
@@ -648,7 +651,7 @@ if (typeof TK == 'undefined') {
                     return list;
                 },
                 //根据指定属性及属性值找上级元素,最多查找到body
-                getParentNodeByAttr: function(attr, value) {
+                getParentNodeByAttr: function (attr, value) {
                     if (this.parentNode && this.parentNode.nodeType == Node.ELEMENT_NODE) {
                         if (this.parentNode.getAttribute(attr) == value)
                             return TK.$(this.parentNode);
@@ -658,7 +661,7 @@ if (typeof TK == 'undefined') {
                     return false;
                 },
                 //获取第一ELEMENT_NODE子元素
-                getFirstNode: function() {
+                getFirstNode: function () {
                     var fNode = this.firstChild;
                     while (fNode) {
                         if (fNode.nodeType == Node.ELEMENT_NODE)
@@ -668,7 +671,7 @@ if (typeof TK == 'undefined') {
                     return false;
                 },
                 //获取最后一个ELEMENT_NODE子元素
-                getLastNode: function() {
+                getLastNode: function () {
                     var lNode = this.lastChild;
                     while (lNode) {
                         if (lNode.nodeType == Node.ELEMENT_NODE)
@@ -678,21 +681,21 @@ if (typeof TK == 'undefined') {
                     return false;
                 },
                 //检测当前元素是否是参数指定元素的子元素
-                isNodeChild: function(parentNode) {
+                isNodeChild: function (parentNode) {
                     if (this.compareDocumentPosition) {
                         return this.compareDocumentPosition(parentNode) == 10;
                     }
                     return parentNode.contains(this);
                 },
                 //在第一个子元素前插入一个新节点
-                unshiftChild: function(new_node) {
+                unshiftChild: function (new_node) {
                     if (this.firstChild) {
                         return this.insertBefore(new_node, this.firstChild);
                     }
                     return this.appendChild(new_node);
                 },
                 //根据标签名查找上级元素,最多查找到body
-                getParentNodeByTag: function(tagName) {
+                getParentNodeByTag: function (tagName) {
                     if (this.parentNode) {
                         if (this.parentNode.tagName.toUpperCase() == 'HTML')
                             return false;
@@ -704,7 +707,7 @@ if (typeof TK == 'undefined') {
                     return false;
                 },
                 //根据标签名查找子元素
-                getSubNodeByTag: function(tagName) {
+                getSubNodeByTag: function (tagName) {
                     var childList = this.getChilds();
                     var list = Array();
                     for (var t in childList) {
@@ -714,12 +717,12 @@ if (typeof TK == 'undefined') {
                     return list;
                 },
                 //检查是否有指定样式名
-                hasClass: function(cls) {
+                hasClass: function (cls) {
                     var re = new RegExp('(\\s|^)' + cls + '(\\s|$)');
                     return re.test(this.className);
                 },
                 //移除指定样式名
-                removeClass: function(cls) {
+                removeClass: function (cls) {
                     if (this.className == cls) {
                         return this.className = '';
                     }
@@ -728,7 +731,7 @@ if (typeof TK == 'undefined') {
                         this.className = this.className.replace(reg, '');
                     }
                 },
-                replaceClass: function(oldCls, newCls) {
+                replaceClass: function (oldCls, newCls) {
                     if (this.hasClass(oldCls)) {
                         var reg = new RegExp('(\\s|^)' + oldCls + '(\\s|$)');
                         this.className = this.className.replace(reg, ' ' + newCls + ' ').trim();
@@ -737,7 +740,7 @@ if (typeof TK == 'undefined') {
                     }
                 },
                 //添加一个样式名
-                addClass: function(cls) {
+                addClass: function (cls) {
                     if (!this.hasClass(cls)) {
                         if (this.className != '') {
                             this.className = this.className += ' ' + cls;
@@ -747,36 +750,36 @@ if (typeof TK == 'undefined') {
                     }
                 },
                 //设置样式名，会替换原有样式
-                setClass: function(cls) {
+                setClass: function (cls) {
                     this.className = cls;
                 },
                 //设置style属性值，会替换原有属性值
-                setCss: function(value) {
+                setCss: function (value) {
                     if (navigator.IE)
                         return this.style.cssText = value;
                     this.setAttribute('style', value);
                 },
-                setOpacity : function(num) {
+                setOpacity: function (num) {
                     num = navigator.IE ? num : num / 100;
-                    return navigator.IE ? this.setStyle("filter","alpha(opacity=" + num + ");") : this.setStyle('opacity',num);
+                    return navigator.IE ? this.setStyle("filter", "alpha(opacity=" + num + ");") : this.setStyle('opacity', num);
                 },
-                appendCss : function(value) {
+                appendCss: function (value) {
                     if (navigator.IE)
                         return this.style.cssText = this.style.cssText + value;
                     this.setAttribute('style', this.getAttribute('style') + value);
                 },
                 //获取元素style属性中指定名字的值
-                getStyle: function(ns) {
+                getStyle: function (ns) {
                     ns = this.convStyleName(ns);
                     if (TK.doc.defaultView)
                         return TK.doc.defaultView.getComputedStyle(this, null)[ns];
-                    if (this.currentStyle) 
+                    if (this.currentStyle)
                         return this.currentStyle[ns];
                     if (this.style[ns])
                         return this.style[ns];
                     return null;
                 },
-                convStyleName: function(ns) {
+                convStyleName: function (ns) {
                     var b = ns.strpos('-');
                     if (b && b > 0) {
                         var l = ns.split('-');
@@ -788,24 +791,24 @@ if (typeof TK == 'undefined') {
                     return ns;
                 },
                 //设置一个style属性值
-                setStyle: function(ns, value) {
+                setStyle: function (ns, value) {
                     ns = this.convStyleName(ns);
                     this.style[ns] = value;
                 },
                 //绝对定位时，让元素位于顶部
-                setOnTop: function() {
+                setOnTop: function () {
                     var index = TK.maxZIndex + 1;
                     TK.maxZIndex = index;
                     this.setStyle('z-index', index);
                 },
                 //设置元素z-index值
-                setZIndex: function(idx) {
+                setZIndex: function (idx) {
                     if (idx > TK.maxZIndex)
                         TK.maxZIndex = idx;
                     this.setStyle('z-index', idx);
                 },
                 //元素下一个ELEMENT_NODE元素
-                nextNode: function() {
+                nextNode: function () {
                     var nNode = this.nextSibling;
                     while (nNode) {
                         if (nNode.nodeType == Node.ELEMENT_NODE)
@@ -815,7 +818,7 @@ if (typeof TK == 'undefined') {
                     return false;
                 },
                 //元素上一个ELEMENT_NODE元素
-                previousNode: function() {
+                previousNode: function () {
                     var pNode = this.previousSibling;
                     while (pNode) {
                         if (pNode.nodeType == Node.ELEMENT_NODE)
@@ -824,7 +827,7 @@ if (typeof TK == 'undefined') {
                     }
                     return false;
                 },
-                delListener: function(e, call_action) {
+                delListener: function (e, call_action) {
                     if (e == 'scroll') {
                         for (var i in TK.scrollFuncList) {
                             if (TK.scrollFuncList[i] == call_action) {
@@ -834,16 +837,17 @@ if (typeof TK == 'undefined') {
                     }
                     if (typeof call_action == 'number') {
                         call_action = TK.eventList[e][call_action];
+                        delete TK.eventList[e][call_action];
                     }
-                    if (this.delEventListener) {
-                        this.delEventListener(e, call_action, false);
+                    if (this.removeEventListener) {
+                        this.removeEventListener(e, call_action, false);
                     } else if (this.detachEvent) {
                         this.detachEvent(e, call_action);
                     } else {
                         this[e] = null;
                     }
                 },
-                addListener: function(e, call_action) {
+                addListener: function (e, call_action) {
                     call_action.handObj = this;
                     var iserr = false;
                     var l = null;
@@ -867,7 +871,7 @@ if (typeof TK == 'undefined') {
                             iserr = true;
                         case 'load':
                             if (navigator.IE && this.tag == 'script') {
-                                this.onreadystatechange = function(e) {
+                                this.onreadystatechange = function (e) {
                                     if (script.readyState == 'loaded') {
                                         if (iserr)
                                             call_action(e);
@@ -882,14 +886,19 @@ if (typeof TK == 'undefined') {
                     }
                     if (typeof TK.eventList[e] == 'undefined')
                         TK.eventList[e] = [];
-                    l = TK.eventList[e].push(call_action) - 1;
+                    l = TK.eventList[e].length;
+                    TK.eventList[e].push(function () {
+                        this.eventId = l;
+                        call_action.apply(this, arguments);
+                    }
+                    );
                     if (this.addEventListener) {
                         this.addEventListener(e, TK.eventList[e][l], false);
                     } else if (this.attachEvent) {
                         this.attachEvent('on' + e, TK.eventList[e][l]);
                     } else {
                         var elementEvent = this[e];
-                        this[e] = function() {
+                        this[e] = function () {
                             var callEvent = elementEvent.apply(this, arguments);
                             var actEvent = TK.eventList[e][l].apply(this, arguments);
                             return (callEvent == undefined) ? actEvent : (actEvent == undefined ? TK.eventList[e][l] : (actEvent && TK.eventList[e][l]));
@@ -897,7 +906,7 @@ if (typeof TK == 'undefined') {
                     }
                     return l;
                 },
-                getChilds: function(cache) {
+                getChilds: function (cache) {
                     var list = Array();
                     var obj = this;
                     //    var cacheData = TK.getCache('getChildsList',obj);
@@ -926,9 +935,9 @@ if (typeof TK == 'undefined') {
                     return list;
                 },
                 //提交表单
-                submitForm: function(func, enter) {
+                submitForm: function (func, enter) {
                     var eventObj = this;
-                    var _submitForm = function(e) {
+                    var _submitForm = function (e) {
                         TK.submitForm(eventObj, func);
                     };
                     this.addListener('click', _submitForm);
@@ -936,7 +945,7 @@ if (typeof TK == 'undefined') {
                         TK.keyDown().enter(_submitForm);
                     }
                 },
-                toCenterProto: function(eff, spec) {
+                toCenterProto: function (eff, spec) {
                     if (this.style.display == 'none')
                         this.style.display = 'block';
                     this.style.position = 'absolute';
@@ -970,7 +979,7 @@ if (typeof TK == 'undefined') {
                             TK.clearInterval(this.interOffsetEff);
                         var MoveDown = objPos.y <= topY;
                         var step = Math.abs(topY - objPos.y) / 100;
-                        this.interOffsetEff = TK.setInterval(function() {
+                        this.interOffsetEff = TK.setInterval(function () {
                             var y = obj.getPos().y;
                             if (y >= topY && !MoveDown) {
                                 y = y - step;
@@ -990,30 +999,30 @@ if (typeof TK == 'undefined') {
                     return false;
                 },
                 //让元素对象居中,spec为true标识是否在页面滚动时居中
-                toCenter: function(eff, spec) {
+                toCenter: function (eff, spec) {
                     if (!spec)
                         this.addListener('scroll', this.scrollMove);
                     this.toCenterProto(eff, spec);
                 },
                 scrollOffset: {},
-                scrollMove: function(e) {
+                scrollMove: function (e) {
                     this.toCenterProto(1);
                 },
                 mousePopNearX: 5,
                 mousePopNearY: 5,
                 //元素跟随鼠标
-                mousePop: function(e) {
+                mousePop: function (e) {
                     var mousePos = TK.mousePos(e);
                     var scroll = TK.scrollOffset();
                     this.toPos(mousePos.x + this.mousePopNearX + scroll.x, mousePos.y + this.mousePopNearY + scroll.y);
                 },
                 //元素跟随指定对象
-                byNodePop: function(byObj, direct) {
+                byNodePop: function (byObj, direct) {
                     if (!byObj.getPos)
                         byObj = TK.$(byObj);
                     var pop = this;
 
-                    var setPos = function(direct) {
+                    var setPos = function (direct) {
                         var pos = byObj.getPos();
                         var popPos = pop.getPos();
                         var left = 0;
@@ -1048,7 +1057,7 @@ if (typeof TK == 'undefined') {
                                 return;
                         }
                     };
-                    var pmof = function(e) {
+                    var pmof = function (e) {
                         var overNode = TK.getEventNode(e);
                         if (overNode == byObj || overNode == pop || overNode.isNodeChild(byObj) || overNode.isNodeChild(pop)) {
                             if (pop.style.display == 'none') {
@@ -1063,11 +1072,11 @@ if (typeof TK == 'undefined') {
                     setPos(direct);
                 },
                 //放大图片
-                maxImg: function(cls, bsrc, altShow, altClose) {
+                maxImg: function (cls, bsrc, altShow, altClose) {
                     if (this.tag != 'img')
                         return;
                     this.setAttribute('title', altShow);
-                    this.addListener('click', function(e) {
+                    this.addListener('click', function (e) {
                         var pPos = TK.pageShowSize();
                         var src = bsrc ? bsrc : TK.getEventNode(e).src;
                         var bg = TK.createNode('div');
@@ -1075,7 +1084,7 @@ if (typeof TK == 'undefined') {
                         var img = TK.createNode('img');
                         img.setAttribute('src', src);
                         img.setAttribute('title', altClose);
-                        var hide = function(e) {
+                        var hide = function (e) {
                             bg.destroy();
                             img.destroy();
                         };
@@ -1093,14 +1102,14 @@ if (typeof TK == 'undefined') {
                     });
                 },
                 //将元素移动到指定坐标
-                toPos: function(x, y) {
+                toPos: function (x, y) {
                     this.style.position = 'absolute';
                     this.setStyle('top', y + 'px');
                     this.setStyle('left', x + 'px');
                     this.setOnTop();
                 },
                 //元素可移动，down为鼠标按下该元素时可移动,spec为只能在该元素范围内移动
-                move: function(down, spec) {
+                move: function (down, spec) {
                     var NodeMoveObj = {};
                     NodeMoveObj.pointerNode = down ? down : this;
                     if (!NodeMoveObj.pointerNode.setStyle)
@@ -1118,17 +1127,17 @@ if (typeof TK == 'undefined') {
                         NodeMoveObj.moveRange.maxX = RangePos.x + RangePos.w;
                         NodeMoveObj.moveRange.maxY = RangePos.y + RangePos.h;
                     }
-                    var mousDown = function(e) {
+                    var mousDown = function (e) {
                         TK.delDefultEvent(e);
                         NodeMoveObj.startPos = NodeMoveObj.moveNode.getPos();
                         NodeMoveObj.mousedown = true;
                         NodeMoveObj.mosePos = TK.mousePos(e);
                     };
-                    var endMove = function(e) {
+                    var endMove = function (e) {
                         TK.delDefultEvent(e);
                         NodeMoveObj.mousedown = false;
                     };
-                    var moveNode = function(e) {
+                    var moveNode = function (e) {
                         TK.delDefultEvent(e);
                         if (NodeMoveObj.mousedown == false)
                             return;
@@ -1158,13 +1167,13 @@ if (typeof TK == 'undefined') {
                     down.addListener('mouseup', endMove);
                 },
                 //双击时放大对象，spec为只能放大到该元素范围，part为点击对象,type为true时为单击，否则为双击
-                maxsize: function(spec, part, type) {
+                maxsize: function (spec, part, type) {
                     var maxSizeNode = spec ? spec : TK.$(TK.doc.body);
                     var clickNode = part ? TK.$(part) : this;
                     var maxSize = maxSizeNode.getPos ? maxSizeNode.getPos() : TK.$(maxSizeNode).getPos;
                     var initSize = this.getPos();
                     var changeNode = this;
-                    var nodeToMaxSize = function(e) {
+                    var nodeToMaxSize = function (e) {
                         var nodePos = changeNode.getPos();
                         if (nodePos.w < maxSize.w || nodePos.h < maxSize.h) {
                             initSize = changeNode.getPos();
@@ -1186,7 +1195,7 @@ if (typeof TK == 'undefined') {
                     }
                 },
                 //使元素可修改尺寸,spec为只能在该元素范围内，sens为鼠标灵敏度
-                resize: function(sens, spec) {
+                resize: function (sens, spec) {
                     var resizeNodeObj = {};
                     resizeNodeObj.node = this;
                     resizeNodeObj.cursorList = {
@@ -1201,7 +1210,7 @@ if (typeof TK == 'undefined') {
                     };
                     resizeNodeObj.sens = sens ? sens : 10;
                     resizeNodeObj.startResize = false;
-                    var setMouseCursor = function(e) {
+                    var setMouseCursor = function (e) {
                         TK.delDefultEvent(e);
                         var nodePos = resizeNodeObj.node.getPos();
                         var mousePos = TK.mousePos(e);
@@ -1299,21 +1308,21 @@ if (typeof TK == 'undefined') {
                     }
                 },
                 //隐藏元素，spec为点击该元素隐藏
-                close: function(spec) {
+                close: function (spec) {
                     var clickNode = spec ? (spec.getPos ? spec : TK.$(spec)) : this;
-                    clickNode.addListener('click', function(e) {
+                    clickNode.addListener('click', function (e) {
                         clickNode.style.display = 'none';
                     });
                 },
                 //隐藏元素，visibility为隐藏后是否保留位置
-                hide: function(visibility) {
+                hide: function (visibility) {
                     if (visibility) {
                         this.style.visibility = 'hidden';
                     } else {
                         this.style.display = 'none';
                     }
                 },
-                show: function(visibility) {
+                show: function (visibility) {
                     if (visibility) {
                         this.style.visibility = 'visible';
                     } else {
@@ -1321,7 +1330,7 @@ if (typeof TK == 'undefined') {
                     }
                 },
                 //销毁元素
-                destroy: function() {
+                destroy: function () {
                     this.parentNode.removeChild(this);
                     delete this;
                 }
@@ -1332,7 +1341,7 @@ if (typeof TK == 'undefined') {
             return __element;
         },
         //设置光标偏移量
-        setCursorOffset: function(offset, start) {
+        setCursorOffset: function (offset, start) {
             if (!TK.doc.hasFocus()) {
                 return;
             }
@@ -1354,7 +1363,7 @@ if (typeof TK == 'undefined') {
                 rangeObj.select();
             }
         },
-        addCursorSelect: function(start, offset) {
+        addCursorSelect: function (start, offset) {
             if (!TK.doc.hasFocus()) {
                 return false;
             }
@@ -1369,7 +1378,7 @@ if (typeof TK == 'undefined') {
             }
         },
         //获取当前输入区，光标偏移量
-        getCursorOffset: function() {
+        getCursorOffset: function () {
             if (window.getSelection)
                 return window.getSelection().getRangeAt(0).startOffset;
             if (TK.doc.selection) {
@@ -1431,7 +1440,7 @@ if (typeof TK == 'undefined') {
             hiddenStatus: true,
             openInstance: [],
             openInstanceId: 0,
-            setMimeType: function() {
+            setMimeType: function () {
                 mime = 'text/html';
                 if (TK.Ajax.dataType.toLowerCase() == 'json') {
                     mime = 'text/html';
@@ -1440,7 +1449,7 @@ if (typeof TK == 'undefined') {
                 }
                 TK.Ajax.MimeType = mime + ';charset=' + TK.Ajax.charset;
             },
-            setUrl: function(url) {
+            setUrl: function (url) {
                 if (url.substr(0, 4).toLowerCase() != 'http://' &&
                         url.substr(0, 5).toLowerCase() != 'https://') {
                     var protocol = window.location.protocol == "https:" ? 'https' : 'http';
@@ -1449,42 +1458,42 @@ if (typeof TK == 'undefined') {
                 TK.Ajax.url = url.strpos('?') != false ? url + '&is_ajax=1' : url + '?is_ajax=1';
                 TK.Ajax.url += '&t=' + (new Date().getTime());
             },
-            del: function(url, callFunc) {
+            del: function (url, callFunc) {
                 TK.Ajax.__get(url, callFunc, 'DELETE');
             },
-            head: function(url, callFunc) {
+            head: function (url, callFunc) {
                 TK.Ajax.__get(url, callFunc, 'HEAD');
             },
-            get: function(url, callFunc) {
+            get: function (url, callFunc) {
                 TK.Ajax.__get(url, callFunc, 'GET');
             },
-            options: function(url, callFunc) {
+            options: function (url, callFunc) {
                 TK.Ajax.__get(url, callFunc, 'OPTIONS');
             },
-            trace: function(url, callFunc) {
+            trace: function (url, callFunc) {
                 TK.Ajax.__get(url, callFunc, 'TRACE');
             },
-            __get: function(url, callFunc, method) {
+            __get: function (url, callFunc, method) {
                 TK.Ajax.init();
                 TK.Ajax.setUrl(url);
                 TK.Ajax.method = method;
                 TK.Ajax.callServer(callFunc);
             },
-            put: function(url, data, callFunc) {
+            put: function (url, data, callFunc) {
                 TK.Ajax.init();
                 TK.Ajax.setUrl(url);
                 TK.Ajax.setData(data);
                 TK.Ajax.method = 'PUT';
                 TK.Ajax.callServer(callFunc);
             },
-            post: function(url, data, callFunc) {
+            post: function (url, data, callFunc) {
                 TK.Ajax.init();
                 TK.Ajax.setUrl(url);
                 TK.Ajax.setData(data);
                 TK.Ajax.method = 'POST';
                 TK.Ajax.callServer(callFunc);
             },
-            jsonp: function(url, callFunc) {
+            jsonp: function (url, callFunc) {
                 var openId = TK.Ajax.openInstanceId;
                 TK.Ajax.setUrl(url);
                 TK.Ajax.url += '&jsonp=TK.Ajax.callback';
@@ -1496,12 +1505,12 @@ if (typeof TK == 'undefined') {
                 TK.Ajax.openInstance[openId].js.addListener('error', TK.Ajax.jsonperror);
                 TK.Ajax.openInstanceId++;
             },
-            jsonperror: function(e) {
+            jsonperror: function (e) {
                 var js = TK.getEventNode(e);
                 js.destroy();
                 console.warn('JSONP Load Error');
             },
-            callback: function(reData) {
+            callback: function (reData) {
                 var csrc = TK.doc.scripts;
                 csrc = csrc[csrc.length - 1];
                 for (var i in TK.Ajax.openInstanceId) {
@@ -1511,11 +1520,11 @@ if (typeof TK == 'undefined') {
                     }
                 }
             },
-            socket: function(url, openFunc, receiveFunc) {
+            socket: function (url, openFunc, receiveFunc) {
                 var socket = null;
-                if (navigator.FIREFOX && typeof(WebSocket) == 'undefined') {
+                if (navigator.FIREFOX && typeof (WebSocket) == 'undefined') {
                     socket = new MozWebSocket(url);
-                } else if (typeof(WebSocket) == 'undefined') {
+                } else if (typeof (WebSocket) == 'undefined') {
                     return false;
                 }
                 if (url.substr(0, 4).toLowerCase() != 'ws://' && url.substr(0, 5).toLowerCase() != 'wss://') {
@@ -1527,7 +1536,7 @@ if (typeof TK == 'undefined') {
                 socket.onmessage = receiveFunc;
                 return socket;
             },
-            file: function(form, callFunc) {
+            file: function (form, callFunc) {
                 var enc = form.getAttribute('enctype');
                 if (enc != 'multipart/form-data') {
                     form.setAttribute('enctype', 'multipart/form-data');
@@ -1541,14 +1550,14 @@ if (typeof TK == 'undefined') {
                 upload_target.setCss('border:none;height:0;width:0;');
                 upload_target.setAttribute('frameboder', 'none');
                 TK.doc.body.appendChild(upload_target);
-                upload_target.addListener('readystatechange', function() {
+                upload_target.addListener('readystatechange', function () {
                     if (document.readyState == 'loaded') {
                         console.warn('Ajax Uplad File Error');
                         return false;
                     }
                     if (document.readyState == 'complete') {
                         var restr = upload_target.getIframeBody().innerHTML;
-                        setTimeout(function() {
+                        setTimeout(function () {
                             upload_target.destroy();
                         }, 1000);
                         if (restr == '') {
@@ -1584,25 +1593,25 @@ if (typeof TK == 'undefined') {
                 });
                 form.submit();
             },
-            setData: function(data) {
+            setData: function (data) {
                 var str = '';
                 for (i in data)
                     if (isNaN(i))
                         str += i + '=' + encodeURIComponent(data[i]) + '&';
                 TK.Ajax.data = str;
             },
-            complete: function() {
+            complete: function () {
                 TK.Ajax.message = TK.Ajax.messageList.complete;
                 TK.Ajax.showMessageNode();
                 TK.setTimeout(TK.Ajax.hiddenMessageNode, TK.Ajax.showTime);
             },
-            hiddenMessageNode: function() {
+            hiddenMessageNode: function () {
                 if (TK.Ajax.hiddenStatus)
                     return;
                 if (TK.Ajax.messageNode)
                     TK.Ajax.messageNode.style.display = 'none';
             },
-            showMessageNode: function() {
+            showMessageNode: function () {
                 if (TK.Ajax.hiddenStatus)
                     return;
                 if (TK.Ajax.messageNode != null) {
@@ -1610,13 +1619,13 @@ if (typeof TK == 'undefined') {
                     TK.Ajax.messageNode.innerHTML = TK.Ajax.message;
                 }
             },
-            showStatus: function() {
-                TK.Ajax.statusObj = TK.setTimeout(function() {
+            showStatus: function () {
+                TK.Ajax.statusObj = TK.setTimeout(function () {
                     TK.Ajax.message = TK.Ajax.messageList.still;
                     TK.Ajax.showMessageNode();
                 }, 3000);
             },
-            callServer: function(callFunc) {
+            callServer: function (callFunc) {
                 if (!TK.Ajax.XMLHttp)
                     return;
                 TK.Ajax.message = TK.Ajax.messageList.current;
@@ -1632,14 +1641,14 @@ if (typeof TK == 'undefined') {
                 if (TK.Ajax.method == "POST")
                     TK.Ajax.openInstance[openId].XMLHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 TK.Ajax.openInstance[openId].XMLHttp.send(TK.Ajax.data);
-                TK.Ajax.openInstance[openId].outObj = TK.setTimeout(function() {
+                TK.Ajax.openInstance[openId].outObj = TK.setTimeout(function () {
                     TK.Ajax.openInstance[openId].XMLHttp.abort();
                     delete TK.Ajax.openInstance[openId];
                     TK.Ajax.complete();
                 }, TK.Ajax.waitTime);
                 TK.Ajax.openInstance[openId].method = TK.Ajax.method;
                 TK.Ajax.showStatus();
-                TK.Ajax.openInstance[openId].XMLHttp.onreadystatechange = function() {
+                TK.Ajax.openInstance[openId].XMLHttp.onreadystatechange = function () {
                     if (TK.Ajax.openInstance[openId].XMLHttp.readyState == 4) {
                         TK.clearTimeout(TK.Ajax.openInstance[openId].outObj);
                         TK.clearTimeout(TK.Ajax.statusObj);
@@ -1654,7 +1663,7 @@ if (typeof TK == 'undefined') {
                             var headerArr = headerStr.split("\r\n");
                             var header = [];
                             for (var h in headerArr) {
-                                if (typeof(headerArr[h]) == 'string') {
+                                if (typeof (headerArr[h]) == 'string') {
                                     var fvs = headerArr[h].trim();
                                     if (fvs == '')
                                         continue;
@@ -1673,7 +1682,7 @@ if (typeof TK == 'undefined') {
                             return null;
                         }
                         //if (TK.Ajax.openInstance[openId].XMLHttp.status == 200) {
-                         
+
                         if (TK.Ajax.openInstance[openId].XMLHttp.status) {
                             var reData = null;
                             switch (TK.Ajax.dataType.toLowerCase()) {
@@ -1698,7 +1707,7 @@ if (typeof TK == 'undefined') {
                             }
                             if (TK.Ajax.openInstance[openId].callFunc) {
                                 TK.Ajax.openInstance[openId].callFunc(reData,
-                                TK.Ajax.openInstance[openId].XMLHttp.status);
+                                        TK.Ajax.openInstance[openId].XMLHttp.status);
                                 /*try { TK.Ajax.openInstance[openId].callFunc(reData);
                                  } catch(e) {
                                  console.warn('Callback Function Error:'+e.message + ' in File '+e.fileName+' line '+e.lineNumber);
@@ -1711,7 +1720,7 @@ if (typeof TK == 'undefined') {
                     }
                 };
             },
-            init: function() {
+            init: function () {
                 TK.Ajax.setMimeType();
                 if (window.XMLHttpRequest) {
                     TK.Ajax.XMLHttp = new XMLHttpRequest();
@@ -1755,7 +1764,7 @@ if (typeof TK == 'undefined') {
          *
          * @return ELEMENT_NODE 返回控件元素对象
          */
-        carousel: function(data, obj, type, eff, cls, waitTime) {
+        carousel: function (data, obj, type, eff, cls, waitTime) {
             var preInter = null;
             var nextInter = null;
             var autoTimeout = null;
@@ -1764,12 +1773,12 @@ if (typeof TK == 'undefined') {
             var preOpacity = 100;
             var nextOpacity = 0;
             var changeStatus = false;
-            var startCarousel = function(e) {
+            var startCarousel = function (e) {
                 if (autoTimeout)
                     TK.clearTimeout(autoTimeout);
                 autoTimeout = TK.setTimeout(hideShow, waitTime);
             };
-            var hideShow = function() {
+            var hideShow = function () {
                 if (changeStatus)
                     return;
                 var currentObj = mainDiv.getNodeByAttr('rol', current)[0];
@@ -1800,7 +1809,7 @@ if (typeof TK == 'undefined') {
                     var sLeft = showObj.getPos().x;
                     showObj.setStyle('visibility', 'visible');
                     changeStatus = true;
-                    preInter = TK.setInterval(function() {
+                    preInter = TK.setInterval(function () {
                         cLeft = cLeft + step;
                         sLeft = sLeft + step;
                         currentObj.setStyle('left', cLeft + 'px');
@@ -1813,7 +1822,7 @@ if (typeof TK == 'undefined') {
                         }
                     }, 1);
                 } else {
-                    preInter = TK.setInterval(function() {
+                    preInter = TK.setInterval(function () {
                         preOpacity = preOpacity - 10;
                         var opacityStr = TK.getOpacityStr(preOpacity);
                         currentObj.setCss(opacityStr);
@@ -1822,7 +1831,7 @@ if (typeof TK == 'undefined') {
                             preOpacity = 100;
                             currentObj.setStyle('display', 'none');
                             changeStatus = true;
-                            nextInter = TK.setInterval(function() {
+                            nextInter = TK.setInterval(function () {
                                 nextOpacity = nextOpacity + 10;
                                 var opacityStr = TK.getOpacityStr(nextOpacity);
                                 showObj.setCss(opacityStr);
@@ -1838,11 +1847,11 @@ if (typeof TK == 'undefined') {
                     }, 20);
                 }
             };
-            var stopCarousel = function(e) {
+            var stopCarousel = function (e) {
                 if (autoTimeout)
                     TK.clearTimeout(autoTimeout);
             };
-            var changeItem = function(e) {
+            var changeItem = function (e) {
                 var i = TK.getEventNode(e).getAttribute('rol');
                 if (!i)
                     return;
@@ -1850,12 +1859,12 @@ if (typeof TK == 'undefined') {
                 force = i;
                 hideShow();
             };
-            var preItem = function(e) {
+            var preItem = function (e) {
                 stopCarousel();
                 force = current <= 0 ? 7 : current--;
                 hideShow();
             };
-            var nextItem = function(e) {
+            var nextItem = function (e) {
                 stopCarousel();
                 hideShow();
             };
@@ -1938,7 +1947,7 @@ if (typeof TK == 'undefined') {
          *
          *  @return box : ELEMENT_NODE   返回控件所在DIV对象
          */
-        msgBox: function(msg, cls, zIndex, waitTime) {
+        msgBox: function (msg, cls, zIndex, waitTime) {
             var box = TK.createNode('div');
             box.innerHTML = msg;
             if (cls)
@@ -1949,7 +1958,7 @@ if (typeof TK == 'undefined') {
             TK.doc.body.appendChild(box);
             box.toCenter();
             waitTime = waitTime || 3000;
-            TK.setTimeout(function() {
+            TK.setTimeout(function () {
                 box.destroy();
             }, waitTime);
             box.setOnTop();
@@ -1974,7 +1983,7 @@ if (typeof TK == 'undefined') {
          *
          * @return box : ELEMENT_NODE   返回控件所在DIV对象
          */
-        alertBox: function(tit, msg, func, cls, cover, zIndex) {
+        alertBox: function (tit, msg, func, cls, cover, zIndex) {
             return TK.confirmBoxProto(1, tit, msg, func, cls, cover, zIndex);
         },
         /**
@@ -1997,7 +2006,7 @@ if (typeof TK == 'undefined') {
          *
          * @return box : ELEMENT_NODE   返回控件所在DIV对象
          */
-        confirmBox: function(tit, msg, func, cls, cover, zIndex) {
+        confirmBox: function (tit, msg, func, cls, cover, zIndex) {
             return TK.confirmBoxProto(2, tit, msg, func, cls, cover, zIndex);
         },
         /**
@@ -2011,7 +2020,7 @@ if (typeof TK == 'undefined') {
          * @param {int} zIndex
          * @returns {ELEMENT_NODE} box 返回控件所在DIV对象
          */
-        confirmBoxProto: function(type, tit, msg, func, cls, cover, zIndex) {
+        confirmBoxProto: function (type, tit, msg, func, cls, cover, zIndex) {
             var box = TK.createNode('div');
             var title = box.copyNode(true);
             var msgDiv = box.copyNode(true);
@@ -2033,7 +2042,7 @@ if (typeof TK == 'undefined') {
             okButton.innerHTML = '确定';
             if (type == 2) {
                 cancelButton.innerHTML = '取消';
-                cancelButton.addListener('click', function(e) {
+                cancelButton.addListener('click', function (e) {
                     if (func)
                         func(e, false);
                     box.destroy();
@@ -2041,7 +2050,7 @@ if (typeof TK == 'undefined') {
                         TK.hiddenPageCover();
                 });
             }
-            okButton.addListener('click', function(e) {
+            okButton.addListener('click', function (e) {
                 if (func)
                     func(e, true);
                 box.destroy();
@@ -2060,10 +2069,10 @@ if (typeof TK == 'undefined') {
             box.setOnTop();
             return box;
         },
-        time: function() {
+        time: function () {
             return new Date().getTime();
         },
-        repeat: function(str, n) {
+        repeat: function (str, n) {
             if (n < 1)
                 return '';
             var result = '';
@@ -2081,7 +2090,7 @@ if (typeof TK == 'undefined') {
          * @param {int} bit     a specified digits
          * @returns {string}
          */
-        preZero: function(num, bit) {
+        preZero: function (num, bit) {
             bit = bit || 2;
             var max = 10 ^ (bit - 1);
             bit = bit - num.toString().length;
@@ -2089,7 +2098,7 @@ if (typeof TK == 'undefined') {
             return num < max ? str + num : num;
         },
         dateStatic: [0],
-        date: function(time, cache) {
+        date: function (time, cache) {
             var seconds = '00';
             if (TK.dateStatic[0] == 0) {
                 var d = time ? new Date(time) : new Date;
@@ -2114,11 +2123,11 @@ if (typeof TK == 'undefined') {
             }
             return  TK.dateStatic[1] + seconds;
         },
-        localDate: function() {
+        localDate: function () {
             var d = new Date();
             return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
         },
-        rand: function(bit) {
+        rand: function (bit) {
             return Math.random() * (10 ^ bit);
         },
         /**
@@ -2185,7 +2194,7 @@ if (typeof TK == 'undefined') {
          *                              return boolean 返回false将阻止表单提交,true提交表单
          * </code>
          */
-        inputBox: function(tit, msg, inputList, buttonList, cls, cover, zIndex) {
+        inputBox: function (tit, msg, inputList, buttonList, cls, cover, zIndex) {
             var box = TK.createNode('div');
             var titleDiv = box.copyNode(true);
             var closeDiv = box.copyNode(true);
@@ -2207,7 +2216,7 @@ if (typeof TK == 'undefined') {
             }
             if (zIndex)
                 box.setZIndex(zIndex);
-            box.iHide = function() {
+            box.iHide = function () {
                 if (cover)
                     TK.hiddenPageCover();
                 box.destroy();
@@ -2257,7 +2266,7 @@ if (typeof TK == 'undefined') {
                 mainDiv.appendChild(inputDiv);
             }
             box.appendChild(mainDiv);
-            box.submitInput = function(url, func, validFunc) {
+            box.submitInput = function (url, func, validFunc) {
                 var data = TK.getFormInputData(box);
                 if (validFunc) {
                     var objData = JSON.parse(data.data);
@@ -2266,12 +2275,12 @@ if (typeof TK == 'undefined') {
                 }
                 TK.Ajax.post(url, data, func);
             };
-            box.msg = function(message, cls, visibility) {
+            box.msg = function (message, cls, visibility) {
                 msgDiv.show(visibility);
                 msgDiv.innerHTML = message;
                 if (cls)
                     msgDiv.addClass(cls);
-                setTimeout(function() {
+                setTimeout(function () {
                     msgDiv.hide(visibility);
                 }, 2000);
             };
@@ -2326,7 +2335,7 @@ if (typeof TK == 'undefined') {
          *
          * @return {ELEMENT_NODE} box  返回控件元素对象
          */
-        selectDiv: function(optionList, name, func, def, cls) {
+        selectDiv: function (optionList, name, func, def, cls) {
             var box = TK.createNode('div');
             var defDiv = box.copyNode(true);
             var defOption = box.copyNode(true);
@@ -2345,7 +2354,7 @@ if (typeof TK == 'undefined') {
             listDiv.addClass(cls + 'SelectOptionDiv');
             listDiv.setCss('position:absolute;z-index:10;max-height:200px;overflow:auto;');
             arrow.setCss('border-color:#000 transparent transparent;border-style:solid dashed dashed;border-width:6px 5px 0;height:0;width:0;cursor:pointer;float:left;');
-            defDiv.addListener('click', function(e) {
+            defDiv.addListener('click', function (e) {
                 if (listDiv.getStyle('display') == 'block') {
                     return listDiv.hide();
                 }
@@ -2379,7 +2388,7 @@ if (typeof TK == 'undefined') {
                     listDiv.appendChild(op);
                 }
             }
-            listDiv.addListener('click', function(e) {
+            listDiv.addListener('click', function (e) {
                 var op = TK.getEventNode(e);
                 if (op.getAttribute('rol') != 'option')
                     return;
@@ -2398,14 +2407,14 @@ if (typeof TK == 'undefined') {
                 if (func)
                     func(value);
             });
-            listDiv.addListener('mouseover', function(e) {
+            listDiv.addListener('mouseover', function (e) {
                 var op = TK.getEventNode(e);
                 if (op.getAttribute('disabled'))
                     return;
                 if (op.getAttribute('rol') == 'option')
                     op.addClass(cls + 'OptionMouseOver');
             });
-            listDiv.addListener('mouseout', function(e) {
+            listDiv.addListener('mouseout', function (e) {
                 var op = TK.getEventNode(e);
                 if (op.getAttribute('disabled'))
                     return;
@@ -2425,7 +2434,7 @@ if (typeof TK == 'undefined') {
             borderW = borderW >= 15 ? borderW - 10 : borderW - 5;
             var borderH = borderW - 2;
             arrow.setStyle('border-width', borderW + 'px ' + borderH + 'px 0');
-            box.addListener('leftmouse', function(e) {
+            box.addListener('leftmouse', function (e) {
                 listDiv.hide();
             });
             return box;
@@ -2435,15 +2444,15 @@ if (typeof TK == 'undefined') {
          *
          * @e  : EventObject  当前触发事件对象
          */
-        getEventNode: function() {
+        getEventNode: function () {
             var obj = navigator.IE ? event.srcElement : arguments[0].target;
             return TK.$(obj);
         },
-        getFocusNode: function() {
+        getFocusNode: function () {
             var obj = TK.doc.activeElement;
             return obj ? TK.$(obj) : false;
         },
-        setCache: function(obj, data, key) {
+        setCache: function (obj, data, key) {
             var ec = TK.getCache(key, obj);
             if (ec) {
                 ec.data = data;
@@ -2466,7 +2475,7 @@ if (typeof TK == 'undefined') {
          *                w : int 宽度
          *               }
          */
-        pageShowSize: function() {
+        pageShowSize: function () {
             var h = navigator.IE ? window.screen.availHeight : document.documentElement.clientHeight;
             var w = navigator.IE ? window.screen.availWidth : document.documentElement.clientWidth;
             return {
@@ -2474,7 +2483,7 @@ if (typeof TK == 'undefined') {
                 w: w
             };
         },
-        getCache: function(hay, need) {
+        getCache: function (hay, need) {
             for (var i in TK.cache[hay]) {
                 if (!isNaN(i) && TK.cache[hay][i].obj == need) {
                     return TK.cache[hay][i].data;
@@ -2482,7 +2491,7 @@ if (typeof TK == 'undefined') {
                 return false;
             }
         },
-        delDefultEvent: function(e) {
+        delDefultEvent: function (e) {
             if (e.preventDefault)
                 return e.preventDefault();
             else
@@ -2497,7 +2506,7 @@ if (typeof TK == 'undefined') {
          *                          y : int   Y坐标值
          *                        }
          */
-        mousePos: function(e) {
+        mousePos: function (e) {
             e = typeof event == 'undefined' ? e : event;
             return {
                 x: e.clientX,
@@ -2511,11 +2520,10 @@ if (typeof TK == 'undefined') {
          *
          * @return {string}  返回样式字符串
          */
-        getOpacityStr: function(num) {
+        getOpacityStr: function (num) {
             num = navigator.IE ? num : num / 100;
             return navigator.IE ? "filter:alpha(opacity=" + num + ");" : 'opacity:' + num;
         },
-        
         /**
          * 页面cover对象
          */
@@ -2523,7 +2531,7 @@ if (typeof TK == 'undefined') {
         /**
          * 显示cover 元素
          */
-        showPageCover: function() {
+        showPageCover: function () {
             var viewSize = TK.pageShowSize();
             var height = TK.doc.body.offsetHeight > viewSize.h ? TK.doc.body.offsetHeight + 15 : viewSize.h;
             var width = TK.doc.body.offsetWidth > viewSize.w ? TK.doc.body.offsetWidth + 15 : viewSize.w;
@@ -2543,7 +2551,7 @@ if (typeof TK == 'undefined') {
             TK.pageCover.style.width = width + 'px';
             TK.pageCover.addListener('resize', TK.resizePageCover);
         },
-        resizePageCover: function() {
+        resizePageCover: function () {
             var viewSize = TK.pageShowSize();
             var height = TK.doc.body.offsetHeight > viewSize.h ? TK.doc.body.offsetHeight + 15 : viewSize.h;
             var width = TK.doc.body.offsetWidth > viewSize.w ? TK.doc.body.offsetWidth + 15 : viewSize.w;
@@ -2551,7 +2559,7 @@ if (typeof TK == 'undefined') {
             TK.pageCover.style.width = width + 'px';
 
         },
-        hiddenPageCover: function() {
+        hiddenPageCover: function () {
             TK.pageCover.style.display = 'none';
         },
         /**
@@ -2563,7 +2571,7 @@ if (typeof TK == 'undefined') {
          * @return {JSON}   返回一个JSON对象，格式为{ data : formData}
          *                                         formData为一个JSON格式字符串
          */
-        getFormInputData: function(frm, disable_no_name) {
+        getFormInputData: function (frm, disable_no_name) {
             if (!frm.getSubNodeByTag)
                 frm = TK.$(frm);
             if (!disable_no_name)
@@ -2584,7 +2592,7 @@ if (typeof TK == 'undefined') {
                     continue;
                 var value = inputEelement.value;
                 if (eleType == TK.inputType.INPUT_CHECKBOX) {
-                    if (typeof(formData[key]) == 'undefined')
+                    if (typeof (formData[key]) == 'undefined')
                         formData[key] = Array();
                     formData[key][formData[key].length] = value;
                 } else {
@@ -2633,7 +2641,7 @@ if (typeof TK == 'undefined') {
          *                                  @formObj : ELEMENT_NODE 表单对象
          *
          */
-        submitForm: function(ele, callFunc, validFunc) {
+        submitForm: function (ele, callFunc, validFunc) {
             if (!ele.getParentNodeByTag)
                 ele = TK.$(ele);
             if (ele.tag == 'form') {
@@ -2661,7 +2669,7 @@ if (typeof TK == 'undefined') {
             }
         },
         AjaxDebugMessageDiv: null,
-        debugInnerHTML: function(html) {
+        debugInnerHTML: function (html) {
             if (!TK.AjaxDebugMessageDiv)
                 TK.AjaxDebugMessageDiv = TK.createNode('div');
             var m = '<h2>Ajax Return Server Debug Message</h2>';
@@ -2670,7 +2678,7 @@ if (typeof TK == 'undefined') {
             TK.AjaxDebugMessageDiv.innerHTML = m;
             document.body.appendChild(TK.AjaxDebugMessageDiv);
         },
-        drawRect: function(x, y, w, h, color) {
+        drawRect: function (x, y, w, h, color) {
             var canvas = TK.createNode('canvas');
             var ctx = canvas.getContext('2d');
             ctx.fillStyle = color;
@@ -2685,7 +2693,7 @@ if (typeof TK == 'undefined') {
          * @param {int} padding
          * @returns {Boolean}
          */
-        drawLineTrends: function(style, initData, padding) {
+        drawLineTrends: function (style, initData, padding) {
             var canvas = TK.createNode('canvas');
             canvas.setAttribute('width', style.w + 'px');
             canvas.setAttribute('height', style.h + 'px');
@@ -2722,7 +2730,7 @@ if (typeof TK == 'undefined') {
             var st = style.x.stantard ? 'x' : 'y';
             var trendLinePointer = Array();
             //create Trend
-            var createTrend = function(x, y, st) {
+            var createTrend = function (x, y, st) {
                 trendLinePointer = [];
                 for (var k in initData) {
                     if (isNaN(k))
@@ -2761,7 +2769,7 @@ if (typeof TK == 'undefined') {
                     ctx.stroke();
                 }
             };
-            var initCoord = function() {
+            var initCoord = function () {
                 //Y
                 ctx.font = style.y.labelFont;
                 ctx.fillStyle = style.y.labelColor;
@@ -2804,7 +2812,7 @@ if (typeof TK == 'undefined') {
                 ctx.stroke();
                 createTrend(padding, xYEnd, st);
             };
-            var searchNear = function(arr, na) {
+            var searchNear = function (arr, na) {
                 for (var k in arr) {
                     if (arr[k][0] + 5 > na[0] && arr[k][0] - 5 < na[0] &&
                             arr[k][1] + 5 > na[1] && arr[k][1] - 5 < na[1]) {
@@ -2813,7 +2821,7 @@ if (typeof TK == 'undefined') {
                 }
                 return -1;
             };
-            var showPointerPopInfoDiv = function(x, y) {
+            var showPointerPopInfoDiv = function (x, y) {
                 if (canvas.popDiv) {
                     canvas.popDiv.style.display = 'block';
                 } else {
@@ -2825,7 +2833,7 @@ if (typeof TK == 'undefined') {
                 }
                 canvas.popDiv.innerHTML = x + ',' + y;
             };
-            var showPointerPopInfo = function(e) {
+            var showPointerPopInfo = function (e) {
                 var mPos = TK.mousePos(e);
                 var nPos = this.getPos();
                 var scroll = TK.scrollOffset();
@@ -2856,13 +2864,13 @@ if (typeof TK == 'undefined') {
                     }
                 }
             };
-            var clearPointerPopInfo = function(e) {
+            var clearPointerPopInfo = function (e) {
                 if (canvas.popDiv) {
                     canvas.popDiv.style.display = 'none';
                 }
                 canvas.popShow = false;
             };
-            canvas.addPoint = function(addData) {
+            canvas.addPoint = function (addData) {
                 ctx.save();
                 ctx.clearRect(0, 0, style.w, style.h);
                 for (var k in addData) {
@@ -2889,7 +2897,7 @@ if (typeof TK == 'undefined') {
          * @argument {string} v 一个cookie value值
          * @argument {int} ex cookie有效期
          */
-        setCookie: function(cn, v, ex) {
+        setCookie: function (cn, v, ex) {
             var e = new Date(), n = e.getTime();
             ex = n + ex * 1000;
             e.setTime(ex);
@@ -2903,7 +2911,7 @@ if (typeof TK == 'undefined') {
          *
          * @return : string  返回cookie value 值,没有将返回null
          */
-        getCookie: function(cn) {
+        getCookie: function (cn) {
             var i, x, y, a = TK.doc.cookie.split(";");
             for (i = 0; i < a.length; i++) {
                 x = a[i].substr(0, a[i].indexOf("="));
