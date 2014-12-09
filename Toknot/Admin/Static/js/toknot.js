@@ -1004,7 +1004,7 @@ if (typeof TK == 'undefined') {
                 },
                 //让元素对象居中,spec为true标识是否在页面滚动时居中
                 toCenter: function (eff, spec) {
-                    if (!spec)
+                    if (spec)
                         this.addListener('scroll', this.scrollMove);
                     this.toCenterProto(eff, spec);
                 },
