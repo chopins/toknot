@@ -888,7 +888,11 @@ if (typeof TK == 'undefined') {
                         TK.eventList[e] = [];
                     l = TK.eventList[e].length;
                     TK.eventList[e].push(function () {
+                        var that = this;
                         this.eventId = l;
+                        this.clear = function() {
+                            that.delListener(e,that.eventId);
+                        };
                         call_action.apply(this, arguments);
                     }
                     );
