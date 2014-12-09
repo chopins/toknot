@@ -255,9 +255,15 @@ class Renderer extends Object {
 
     protected function bulidURL($url, $query='') {
         if(Router::getSelfInstance()->getRouterMode() === Router::ROUTER_GET_QUERY) {
-            echo "?{$url}&$query";
+            echo "?{$url}";
+            if(!empty($query)) {
+                echo "&{$query}";
+            }
         } else {
-            echo "{$url}?{$query}";
+            echo "{$url}";
+            if(!empty($query)) {
+                echo "?{$query}";
+            }
         }
     }
     
