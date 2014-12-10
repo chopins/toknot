@@ -121,9 +121,9 @@ class StandardException extends ErrorException {
             //array_shift($traceArr);
             //array_shift($traceArr);
             $traceArr = array_reverse($traceArr);
-            $str .= $this->earch($traceArr);
+            $str .= $this->each($traceArr);
         } else {
-            $str .= $this->earch($this->traceArr);
+            $str .= $this->each($this->traceArr);
         }
         $str .='</ul></div>';
         if (isset($this->sqls) && is_array($this->sqls)) {
@@ -160,7 +160,7 @@ class StandardException extends ErrorException {
         Log::save($traceInfo);
     }
 
-    public function earch($traceArr) {
+    public function each($traceArr) {
         return Log::formatTrace($traceArr);
     }
 
