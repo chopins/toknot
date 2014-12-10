@@ -53,7 +53,7 @@ if (typeof TK == 'undefined') {
     navigator.IEV = navigator.IE && !document.documentMode ? 6 : document.documentMode;
     var TK = {
         doc: window.document,
-        bodyNode: window.document.body, //TK.$(ele)方法返回对象的父对象
+        bodyNode:window.document.body, //TK.$(ele)方法返回对象的父对象
         isReady: false,
         ugent: navigator.userAgent.toLowerCase(),
         intervalHandle: [],
@@ -246,6 +246,7 @@ if (typeof TK == 'undefined') {
             window.onload = function () {
                 window.onerror = TK.error;
                 if (TK.doc) {
+                    TK.bodyNode = window.document.body;
                     TK.doc.onkeydown = TK.keyboardEventCallFunction;
                     TK.doc.onkeyup = TK.keyboardEventCallFunction;
                     TK.doc.onmousedown = TK.mouseClickEventCallFunction;
@@ -493,8 +494,8 @@ if (typeof TK == 'undefined') {
          * ...........................见方法注释
          */
         $: function (ele) {
-            if (!this.bodyNode)
-                this.bodyNode = TK.bodyNode;
+            if (!this.parentNode)
+                this.parentNode = TK.bodyNode;
             if (!ele) {
                 throw new Error(ele + ' not found');
             }
@@ -511,7 +512,7 @@ if (typeof TK == 'undefined') {
                         case '.': //样式名
                             return (function (clsName) {
                                 var list = Array();
-                                var childList = TK.$(this.bodyNode).getChilds();
+                                var childList = TK.$(this.parentNode).getChilds();
                                 for (var t in childList)
                                     !isNaN(t) && TK.$(childList[t]).hasClass(clsName) && (list[list.length] = TK.$(childList[t]));
                                 return list;
@@ -519,7 +520,7 @@ if (typeof TK == 'undefined') {
                         case '@'://标签名
                             return (function (tagName) {
                                 var list = Array();
-                                var childList = TK.$(this.bodyNode).getChilds();
+                                var childList = TK.$(this.parentNode).getChilds();
                                 for (var t in childList)
                                     !isNaN(t) && TK.$(childList[t]).tag == tagName.toLowerCase() && (list[list.length] = TK.$(childList[t]));
                                 return list;
@@ -527,7 +528,7 @@ if (typeof TK == 'undefined') {
                         case '%'://NAME名
                             return (function (name) {
                                 var list = Array();
-                                var childList = TK.$(this.bodyNode).getChilds();
+                                var childList = TK.$(this.parentNode).getChilds();
                                 for (var t in childList)
                                     !isNaN(t) && childList[t].getAttribute('name') == name && (list[list.length] = TK.$(childList[t]));
                                 return list;
@@ -589,6 +590,10 @@ if (typeof TK == 'undefined') {
                 }
             })();
             var __extend = {
+                $ : function() {
+                    this.parentNode = this;
+                    return TK.$.apply(this, arguments);
+                },
                 getIframeBody: function () {
                     return navigator.IE ? this.TK.doc.body : this.contentDocument.body;
                 },
@@ -887,6 +892,7 @@ if (typeof TK == 'undefined') {
                     if (typeof TK.eventList[e] == 'undefined')
                         TK.eventList[e] = [];
                     l = TK.eventList[e].length;
+                    
                     TK.eventList[e].push(function () {
                         var that = this;
                         this.eventId = l;
