@@ -665,6 +665,15 @@ if (typeof TK == 'undefined') {
                     }
                     return false;
                 },
+                getParentNodeByClass : function(value) {
+                    if (this.parentNode && this.parentNode.nodeType == Node.ELEMENT_NODE) {
+                        if ($(this.parentNode).hasClass(value)) 
+                            return TK.$(this.parentNode);
+                        else
+                            return TK.$(this.parentNode).getParentNodeByClass(value);
+                    }
+                    return false;
+                },
                 //获取第一ELEMENT_NODE子元素
                 getFirstNode: function () {
                     var fNode = this.firstChild;
