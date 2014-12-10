@@ -50,7 +50,7 @@ class StandardException extends ErrorException {
     }
 
     static public function errorReportHandler($argv) {
-       throw new StandardException($argv[1], $argv[0], $argv[2], $argv[3]);
+        throw new StandardException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
     public function getErrorType($code) {
@@ -129,7 +129,12 @@ class StandardException extends ErrorException {
         if (isset($this->sqls) && is_array($this->sqls)) {
             $str .= '<ul class="ToKnotTraceItem">';
             foreach ($this->sqls as $i => $sql) {
-                $str .= "<li>{$sql}:({$this->params[$i]})</li>";
+                if (is_string($this->params[$i])) {
+                    $str .= "<li>{$sql} <--- [Params:({$this->params[$i]})]</li>";
+                } else {
+                    $paramsVar = var_export($this->params[$i],true);
+                    $str .= "<li>{$sql} <--- [Params:({$paramsVar})]</li>";
+                }
             }
             $str .= '</ul>';
         }
