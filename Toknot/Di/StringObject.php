@@ -28,6 +28,7 @@ class StringObject extends Object implements ArrayAccess {
      */
     protected $interatorArray = '';
     private $walkIndex = 0;
+    const WORDS = '0987654321qwertyuiopasdfghjklmnbvcxzQWERTYUIUIOPLKJHGFDSAZXCVBNM';
     private static $supportStringMethodList = array(
         0 => 'strptime',
         1 => 'wordwrap',
@@ -181,7 +182,7 @@ class StringObject extends Object implements ArrayAccess {
         } else {
             $randlen = $min;
         }
-        $char = '0987654321qwertyuiopasdfghjklmnbvcxzQWERTYUIUIOPLKJHGFDSAZXCVBNM';
+        $char = self::WORDS;
         if ($all) {
             $char .= '~`!@#$%^&*()_+-={}|[]\\:";\',./<>?';
         }
