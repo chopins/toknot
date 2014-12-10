@@ -53,7 +53,7 @@ if (typeof TK == 'undefined') {
     navigator.IEV = navigator.IE && !document.documentMode ? 6 : document.documentMode;
     var TK = {
         doc: window.document,
-        bodyNode:window.document.body, //TK.$(ele)方法返回对象的父对象
+        bodyNode: window.document.body, //TK.$(ele)方法返回对象的父对象
         isReady: false,
         ugent: navigator.userAgent.toLowerCase(),
         intervalHandle: [],
@@ -319,6 +319,8 @@ if (typeof TK == 'undefined') {
         mouseMoveEventFunction: function (e) {
             e = e || event;
             fL = TK.bodyMouseEventCallFuncitonList[e.type];
+            if (fL.length == 0)
+                return;
             if (fL.eventObj == TK.getEventNode(e)) {
                 e.eventObj = eventObj;
                 for (var i in fL)
@@ -331,6 +333,8 @@ if (typeof TK == 'undefined') {
         //document鼠标点击事件回调函数
         mouseClickEventCallFunction: function (e) {
             e = e || event, fL = TK.bodyMouseEventCallFuncitonList[e.type][e.button], fL = fL.concat(TK.bodyMouseEventCallFuncitonList[e.type][3]);
+            if (fL.length == 0)
+                return;
             for (var i in fL)
                 !isNaN(i) && fL[i](e);
         },
@@ -494,16 +498,17 @@ if (typeof TK == 'undefined') {
          * ...........................见方法注释
          */
         $: function (ele) {
-            if (!this.parentNode)
-                this.parentNode = TK.bodyNode;
+            if (!this.upNode)
+                this.upNode = TK.bodyNode;
             if (!ele) {
                 throw new Error(ele + ' not found');
             }
-
+            
             var eleType = typeof (ele);
             if (eleType == 'string' && typeof TK.cache[ele] != 'undefined') {
                 return TK.cache[ele];
             }
+            var that = this;
             switch (eleType) {
                 case  'string':
                     var firstWord = ele.substr(0, 1);
@@ -512,7 +517,7 @@ if (typeof TK == 'undefined') {
                         case '.': //样式名
                             return (function (clsName) {
                                 var list = Array();
-                                var childList = TK.$(this.parentNode).getChilds();
+                                var childList = $(that.upNode).getChilds();
                                 for (var t in childList)
                                     !isNaN(t) && TK.$(childList[t]).hasClass(clsName) && (list[list.length] = TK.$(childList[t]));
                                 return list;
@@ -520,7 +525,7 @@ if (typeof TK == 'undefined') {
                         case '@'://标签名
                             return (function (tagName) {
                                 var list = Array();
-                                var childList = TK.$(this.parentNode).getChilds();
+                                var childList = $(that.upNode).getChilds();
                                 for (var t in childList)
                                     !isNaN(t) && TK.$(childList[t]).tag == tagName.toLowerCase() && (list[list.length] = TK.$(childList[t]));
                                 return list;
@@ -528,7 +533,7 @@ if (typeof TK == 'undefined') {
                         case '%'://NAME名
                             return (function (name) {
                                 var list = Array();
-                                var childList = TK.$(this.parentNode).getChilds();
+                                var childList = $(that.upNode).getChilds();
                                 for (var t in childList)
                                     !isNaN(t) && childList[t].getAttribute('name') == name && (list[list.length] = TK.$(childList[t]));
                                 return list;
@@ -558,8 +563,8 @@ if (typeof TK == 'undefined') {
             if (__element.nodeType != Node.ELEMENT_NODE)
                 return false;
             __element.tag = __element.tagName ? __element.tagName.toLowerCase() : false;
-            __element.$ = TK.$;
-            __element.$.bodyNode = __element;
+            //__element.$ = TK.$;
+            //__element.$.bodyNode = __element;
             __element.inputType = (function () {
                 if (__element.tag == 'select')
                     return TK.inputType.INPUT_SELECT;
@@ -590,8 +595,8 @@ if (typeof TK == 'undefined') {
                 }
             })();
             var __extend = {
-                $ : function() {
-                    this.parentNode = this;
+                $: function () {
+                    this.upNode = this;
                     return TK.$.apply(this, arguments);
                 },
                 getIframeBody: function () {
@@ -665,9 +670,9 @@ if (typeof TK == 'undefined') {
                     }
                     return false;
                 },
-                getParentNodeByClass : function(value) {
+                getParentNodeByClass: function (value) {
                     if (this.parentNode && this.parentNode.nodeType == Node.ELEMENT_NODE) {
-                        if ($(this.parentNode).hasClass(value)) 
+                        if ($(this.parentNode).hasClass(value))
                             return TK.$(this.parentNode);
                         else
                             return TK.$(this.parentNode).getParentNodeByClass(value);
@@ -901,12 +906,12 @@ if (typeof TK == 'undefined') {
                     if (typeof TK.eventList[e] == 'undefined')
                         TK.eventList[e] = [];
                     l = TK.eventList[e].length;
-                    
+
                     TK.eventList[e].push(function () {
                         var that = this;
                         this.eventId = l;
-                        this.clear = function() {
-                            that.delListener(e,that.eventId);
+                        this.clear = function () {
+                            that.delListener(e, that.eventId);
                         };
                         call_action.apply(this, arguments);
                     }
@@ -932,6 +937,7 @@ if (typeof TK == 'undefined') {
                     //    if(cacheData) {
                     //        return cacheData;
                     //    }
+                    
                     var f = obj.getFirstNode();
                     if (f) {
                         list[list.length] = f;
@@ -1350,13 +1356,16 @@ if (typeof TK == 'undefined') {
                 },
                 //销毁元素
                 destroy: function () {
+                    if (this == window)
+                        return;
                     this.parentNode.removeChild(this);
                     delete this;
                 }
             };
-            for (var fn in __extend)
+            for (var fn in __extend) {
                 __element[fn] = __extend[fn];
-            TK.cache[ele] = __element;
+            }
+            //TK.cache[ele] = __element;
             return __element;
         },
         //设置光标偏移量
@@ -1474,7 +1483,7 @@ if (typeof TK == 'undefined') {
                     var protocol = window.location.protocol == "https:" ? 'https' : 'http';
                     url = protocol + '://' + TK.Ajax.defaultDomain + url;
                 }
-                TK.Ajax.url = url.strpos('?') != false ? url + '&'+TK.Ajax.dataType.toLowerCase()+'=1' : url + '?is_ajax=1';
+                TK.Ajax.url = url.strpos('?') != false ? url + '&' + TK.Ajax.dataType.toLowerCase() + '=1' : url + '?is_ajax=1';
                 TK.Ajax.url += '&t=' + (new Date().getTime());
             },
             del: function (url, callFunc) {
