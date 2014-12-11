@@ -623,6 +623,20 @@ final class FMAI extends Object {
         }
         TK\header("Location:$url{$queryString}");
     }
+    
+    /**
+     * 
+     * @param string $class The class name without Controller of level namespace
+     * @return string
+     * @access public
+     */
+    public function convertClassToUri($class) {
+        $url = strtr($class, '\\', '/');
+        if (Router::getSelfInstance()->getRouterMode() === Router::ROUTER_GET_QUERY) {
+            return "?{$url}";
+        }
+        return $url;
+    }
 
     /**
      * Get current registered controller name of access denied 
