@@ -503,7 +503,7 @@ if (typeof TK == 'undefined') {
             if (!ele) {
                 throw new Error(ele + ' not found');
             }
-            
+
             var eleType = typeof (ele);
             if (eleType == 'string' && typeof TK.cache[ele] != 'undefined') {
                 return TK.cache[ele];
@@ -937,7 +937,7 @@ if (typeof TK == 'undefined') {
                     //    if(cacheData) {
                     //        return cacheData;
                     //    }
-                    
+
                     var f = obj.getFirstNode();
                     if (f) {
                         list[list.length] = f;
@@ -1481,7 +1481,14 @@ if (typeof TK == 'undefined') {
                 if (url.substr(0, 4).toLowerCase() != 'http://' &&
                         url.substr(0, 5).toLowerCase() != 'https://') {
                     var protocol = window.location.protocol == "https:" ? 'https' : 'http';
-                    url = protocol + '://' + TK.Ajax.defaultDomain + url;
+                    if (url.substr(0, 1) != '/' || url.substr(0, 2) == './') {
+                        if (url.substr(0, 2) == './') {
+                            url = url.substr(2, url.length);
+                        }
+                        url = TK.dirname(TK.realpath(window.location.href)) + '/' + url;
+                    } else {
+                        url = protocol + '://' + TK.Ajax.defaultDomain + url;
+                    }
                 }
                 TK.Ajax.url = url.strpos('?') != false ? url + '&' + TK.Ajax.dataType.toLowerCase() + '=1' : url + '?is_ajax=1';
                 TK.Ajax.url += '&t=' + (new Date().getTime());
