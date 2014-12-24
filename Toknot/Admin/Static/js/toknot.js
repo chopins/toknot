@@ -1136,6 +1136,7 @@ if (typeof TK == 'undefined') {
                 //元素可移动，down为鼠标按下该元素时可移动,spec为只能在该元素范围内移动
                 move: function (down, spec) {
                     var NodeMoveObj = {};
+                    var eventCount = 0;
                     NodeMoveObj.pointerNode = down ? down : this;
                     if (!NodeMoveObj.pointerNode.setStyle)
                         NodeMoveObj.pointerNode = TK.$(NodeMoveObj.pointerNode);
@@ -1159,13 +1160,19 @@ if (typeof TK == 'undefined') {
                         NodeMoveObj.mosePos = TK.mousePos(e);
                     };
                     var endMove = function (e) {
+                        setTimeout(function() {
                         TK.delDefultEvent(e);
-                        NodeMoveObj.mousedown = false;
+                        console.log(e);
+                        NodeMoveObj.mousedown = false;},100);
                     };
                     var moveNode = function (e) {
                         TK.delDefultEvent(e);
                         if (NodeMoveObj.mousedown == false)
                             return;
+//                        eventCount++;
+//                        if(eventCount % 2 === 0) {
+//                            return;
+//                        }
                         var mousePrePos = NodeMoveObj.mosePos;
                         NodeMoveObj.mousePos = TK.mousePos(e);
                         var offsetX = NodeMoveObj.mousePos.x - mousePrePos.x;
@@ -1182,8 +1189,8 @@ if (typeof TK == 'undefined') {
                             if (NodeMoveObj.moveRange.maxY <= moveToY + NodeMoveObj.startPos.h)
                                 moveToY = NodeMoveObj.moveRange.maxY - NodeMoveObj.startPos.h;
                         }
-                        NodeMoveObj.moveNode.style.top = moveToY + 'px';
-                        NodeMoveObj.moveNode.style.left = moveToX + 'px';
+                        NodeMoveObj.moveNode.style.top = Math.ceil(moveToY) + 'px';
+                        NodeMoveObj.moveNode.style.left = Math.ceil(moveToX) + 'px';
                         return;
                     };
                     down.addListener('mousemove', moveNode);
