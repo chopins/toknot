@@ -1158,21 +1158,30 @@ if (typeof TK == 'undefined') {
                         NodeMoveObj.startPos = NodeMoveObj.moveNode.getPos();
                         NodeMoveObj.mousedown = true;
                         NodeMoveObj.mosePos = TK.mousePos(e);
+                        NodeMoveObj.pointerNode.setStyle('cursor', 'move');
+
                     };
                     var endMove = function (e) {
-                        setTimeout(function() {
+                        if (TK.getEventNode(e) !== down) {
+                            return;
+                        }
                         TK.delDefultEvent(e);
-                        console.log(e);
-                        NodeMoveObj.mousedown = false;},100);
+                        NodeMoveObj.mousedown = false;
+                        NodeMoveObj.pointerNode.setStyle('cursor', 'default');
+
+                    };
+                    var endMoveUp = function (e) {
+                        NodeMoveObj.mousedown = false;
+                        NodeMoveObj.pointerNode.setStyle('cursor', 'default');
                     };
                     var moveNode = function (e) {
                         TK.delDefultEvent(e);
                         if (NodeMoveObj.mousedown == false)
                             return;
-//                        eventCount++;
-//                        if(eventCount % 2 === 0) {
-//                            return;
-//                        }
+                        eventCount++;
+                        if (eventCount % 2 === 0) {
+                            return;
+                        }
                         var mousePrePos = NodeMoveObj.mosePos;
                         NodeMoveObj.mousePos = TK.mousePos(e);
                         var offsetX = NodeMoveObj.mousePos.x - mousePrePos.x;
@@ -1196,7 +1205,7 @@ if (typeof TK == 'undefined') {
                     down.addListener('mousemove', moveNode);
                     down.addListener('mousedown', mousDown);
                     down.addListener('mouseout', endMove);
-                    down.addListener('mouseup', endMove);
+                    down.addListener('mouseup', endMoveUp);
                 },
                 //双击时放大对象，spec为只能放大到该元素范围，part为点击对象,type为true时为单击，否则为双击
                 maxsize: function (spec, part, type) {
