@@ -124,7 +124,9 @@ final class Application {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
-        date_default_timezone_set('UTC');
+        if(empty(ini_get('date.timezone'))) {
+            date_default_timezone_set('UTC');
+        }
         $this->scriptStartTime = microtime(true);
         //define Application status, DEVELOPMENT is true will show Exeption
         if (!defined('DEVELOPMENT')) {
