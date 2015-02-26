@@ -16,7 +16,7 @@ use Toknot\Di\Log;
 /**
  * Toknot Statndrad Exception
  */
-class StandardException extends ErrorException {
+class TKException extends ErrorException {
 
     protected $code = 0;
     protected $message = '';
@@ -50,7 +50,7 @@ class StandardException extends ErrorException {
     }
 
     static public function errorReportHandler($argv) {
-        throw new StandardException($argv[1], $argv[0], $argv[2], $argv[3]);
+        throw new TKException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
     public function getErrorType($code) {

@@ -10,9 +10,9 @@
 
 namespace Toknot\Exception;
 
-use Toknot\Exception\StandardException;
+use Toknot\Exception\TKException;
 
-class FileIOException extends StandardException {
+class FileIOException extends TKException {
     
 }
 

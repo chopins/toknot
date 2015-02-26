@@ -9,8 +9,8 @@
 
 namespace Toknot\Control\Exception;
 
-use Toknot\Exception\StandardException;
-class PHPVersionException extends StandardException {
+use Toknot\Exception\TKException;
+class PHPVersionException extends TKException {
     protected $exceptionMessage = 'only support php version or 5.3 or lastest';
 }
 

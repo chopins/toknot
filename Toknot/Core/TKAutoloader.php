@@ -8,9 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Control;
+namespace Toknot\Core;
 
-class StandardAutoloader {
+class TKAutoloader {
 
     const NS_SEPARATOR = '\\';
 
@@ -72,7 +72,7 @@ class StandardAutoloader {
                 return require $filename;
             }
         }
-        return false;
+        throw new \Toknot\Exception\BadClassCallException($class);
     }
 
     /**
@@ -89,32 +89,6 @@ class StandardAutoloader {
         return require_once $path . self::$fileSuffix;
     }
 
-    public static function import($className, $aliases = null) {
-        $name = substr(strrchr($className, self::NS_SEPARATOR), 1);
-        if ($name == '*') {
-            $namespace = rtrim($className, '\*');
-            foreach (self::$directory as $dir) {
-                $path = self::transformNamespaceToPath($namespace, $dir);
-                if (is_dir($path)) {
-                    $fileList = glob($path . DIRECTORY_SEPARATOR . '*' . self::$fileSuffix);
-                    foreach ($fileList as $file) {
-                        include_once $file;
-                        $aliases = basename($file, self::$fileSuffix);
-                        class_alias($className, $aliases, false);
-                    }
-                    break;
-                }
-            }
-        } else {
-            foreach (self::$directory as $dir) {
-                $file = self::transformClassNameToFilename($namespace, $dir);
-                if($aliases === null) {
-                    $aliases = basename($file, self::$fileSuffix);
-                }
-                class_alias($className, $aliases);
-            }
-        }
-    }
 
     /**
      * import under namespace all class of toknot

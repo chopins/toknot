@@ -10,16 +10,16 @@
 
 namespace Toknot\Control;
 
-include_once __DIR__ . '/StandardAutoloader.php';
-
-use Toknot\Control\StandardAutoloader;
-use Toknot\Exception\StandardException;
-use Toknot\Contorl\Exception\PHPVersionException;
+include_once __DIR__ . '/TKAutoloader.php';
+TK::form('Toknot\Core','*');
+use Toknot\Core\TKAutoloader;
+use Toknot\Exception\TKException;
+use Toknot\Core\Exception\PHPVersionException;
 use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
-use Toknot\Control\FMAI;
-use Toknot\Control\RouterInterface;
-use Toknot\Di\TKFunction as TK;
+use Toknot\Core\FMAI;
+use Toknot\Core\RouterInterface;
+use Toknot\Object\TKFunction as TK;
 
 /**
  * Toknot main class and run framework
@@ -29,8 +29,8 @@ use Toknot\Di\TKFunction as TK;
  * //Note the constant default set true
  * define('DEVELOPMENT', true); 
  * 
- * use Toknot\Control\Application;
- * require_once '/path/Toknot/Control/Application.php';
+ * use Toknot\Core\Application;
+ * require_once '/path/Toknot/Core/Application.php';
  * $app = new Application;
  * $app->run('\AppTopNamespace', '/path/AppPath');
  * </code>
@@ -39,7 +39,7 @@ use Toknot\Di\TKFunction as TK;
 final class Application {
 
     /**
-     * This save toknot of standard autoloader ({@see Toknot\Control\StandardAutoloader}) instance
+     * This save toknot of standard autoloader ({@see Toknot\Core\TKAutoloader}) instance
      * current do not use user's autoloader class, so will call toknot standard
      * autoloader class when application instantiate 
      *
@@ -65,7 +65,7 @@ final class Application {
      * @var string 
      * @access private
      */
-    private $routerName = '\Toknot\Control\Router';
+    private $routerName = '\Toknot\Core\Router';
 
     /**
      * @access private
@@ -98,7 +98,7 @@ final class Application {
      * message, is false only return 500 Internal Server Error status code
      * 
      * <code>
-     * use Toknot\Control\Application;
+     * use Toknot\Core\Application;
      * 
      * require_once '/path/Toknot/Control/Application.php';
      * 
@@ -133,8 +133,8 @@ final class Application {
             define('DEVELOPMENT', true);
         }
         
-        StandardAutoloader::importToknotModule('Di', 'Object');
-        StandardAutoloader::importToknotClass('Exception\StandardException');
+        TKAutoloader::importToknotModule('Di', 'Object');
+        TKAutoloader::importToknotClass('Exception\StandardException');
 
         $this->iniEnv($argv, $argc);
         $this->registerAutoLoader();
@@ -164,7 +164,7 @@ final class Application {
         if (version_compare(PHP_VERSION, '5.3.0') < 0) {
             throw new PHPVersionException();
         }
-        StandardAutoloader::importToknotClass('Exception\StandardException');
+        TKAutoloader::importToknotClass('Exception\StandardException');
         set_exception_handler(array($this, 'uncaughtExceptionHandler'));
         set_error_handler(array($this, 'errorReportHandler'));
         clearstatcache();
@@ -219,15 +219,15 @@ final class Application {
 
     /**
      * Run application, the method will invoke router with implements interface of 
-     * {@link Toknot\Control\RouterInterface} of all method, Toknot Freamework default
+     * {@link Toknot\Core\RouterInterface} of all method, Toknot Freamework default
      * invoke class under application of Controller Dicetory, scan file path is under $appPath 
      * parameter set path(like: /path/appPath/Controller). The class be invoke by toknot of router 
      * invoke method with passed instance of Toknot 
-     * {@see \Toknot\Control\FMAI}, you can receive the object of instance when class construct
+     * {@see \Toknot\Core\FMAI}, you can receive the object of instance when class construct
      * 
      * Usual use toknot of router, run framework like below:
      * <code>
-     * use Toknot\Control\Application;
+     * use Toknot\Core\Application;
      *
      * require_once './Toknot/Control/Application.php';
      *
@@ -235,10 +235,10 @@ final class Application {
      * $app->run('\AppTopNamespace', '/path/AppPath');
      * </code>
      * 
-     * if use application of router ,use {@see \Toknot\Control\Application::setUserRouter} define,
+     * if use application of router ,use {@see \Toknot\Core\Application::setUserRouter} define,
      * run framework like below:
      * <code>
-     * use Toknot\Control\Application;
+     * use Toknot\Core\Application;
      *
      * require_once './Toknot/Control/Application.php';
      *
@@ -253,7 +253,7 @@ final class Application {
      * define your websiet index page of root when router of toknot,
      * like this:
      * <code>
-     * use Toknot\Control\Application;
+     * use Toknot\Core\Application;
      *
      * require_once './Toknot/Control/Application.php';
      *
@@ -266,8 +266,8 @@ final class Application {
      * if change router mode,
      * like this:
      * <code>
-     * use Toknot\Control\Application;
-     * use Toknot\Control\Router.php;
+     * use Toknot\Core\Application;
+     * use Toknot\Core\Router.php;
      * require_once './Toknot/Control/Application.php';
      *
      * $app = new Application;
@@ -293,27 +293,27 @@ final class Application {
      *                                Controller layer namespace
      * @throws BadNamespaceException
      * @throws BadClassCallException
-     * @throws StandardException
+     * @throws TKException
      */
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
 
         $root = substr($appNameSpace, 0, 1);
-        $appNameSpace = rtrim($appNameSpace, StandardAutoloader::NS_SEPARATOR);
+        $appNameSpace = rtrim($appNameSpace, TKAutoloader::NS_SEPARATOR);
         $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
         try {
-            if ($root != StandardAutoloader::NS_SEPARATOR) {
+            if ($root != TKAutoloader::NS_SEPARATOR) {
                 throw new BadNamespaceException($appNameSpace);
             }
-            StandardAutoloader::importToknotClass('Control\RouterInterface');
-            if ($this->routerName == '\Toknot\Control\Router') {
-                StandardAutoloader::importToknotClass('Control\Router');
+            TKAutoloader::importToknotClass('Core\RouterInterface');
+            if ($this->routerName == '\Toknot\Core\Router') {
+                TKAutoloader::importToknotClass('Core\Router');
             }
             if (!class_exists($this->routerName, false)) {
                 throw new BadClassCallException($this->routerName);
             }
 
             if ($this->routerName instanceof RouterInterface) {
-                throw new StandardException('Router not support');
+                throw new TKException('Router not support');
             }
             $this->addAppPath($appPath);
             self::$appRoot = $appPath;
@@ -323,21 +323,21 @@ final class Application {
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
 
-            StandardAutoloader::importToknotClass('Control\FMAI');
+            TKAutoloader::importToknotClass('Core\FMAI');
             $FMAI = FMAI::singleton($appNameSpace, $appPath);
 
             $router->loadConfigure();
             $router->routerRule();
             if (is_null($defaultInvoke)) {
                 $root = substr($defaultInvoke, 0, 1);
-                if ($root != StandardAutoloader::NS_SEPARATOR) {
+                if ($root != TKAutoloader::NS_SEPARATOR) {
                     throw new BadNamespaceException($defaultInvoke);
                 }
                 $router->defaultInvoke($defaultInvoke);
             }
 
             $router->invoke($FMAI);
-        } catch (StandardException $e) {
+        } catch (TKException $e) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                 $e->save();
                 return;
@@ -376,8 +376,8 @@ final class Application {
 
     public function uncaughtExceptionHandler($e) {
         try {
-            throw new StandardException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
-        } catch (StandardException $se) {
+            throw new TKException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
+        } catch (TKException $se) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                 $se->save();
                 return;
@@ -403,7 +403,7 @@ final class Application {
         if($argv[0] == 2048 && strpos($argv[1],'Declaration') === 0) {
             return;
         }
-        StandardException::errorReportHandler($argv);
+        TKException::errorReportHandler($argv);
     }
 
     /**
@@ -414,7 +414,7 @@ final class Application {
      */
     public function setUserRouter($routerName) {
         $root = substr($routerName, 0, 1);
-        if ($root != StandardAutoloader::NS_SEPARATOR) {
+        if ($root != TKAutoloader::NS_SEPARATOR) {
             throw new BadNamespaceException($routerName);
         }
         $this->routerName = $routerName;
@@ -434,7 +434,7 @@ final class Application {
      * Register Autoloader Class
      */
     private function registerAutoLoader() {
-        $this->standardAutoLoader = new StandardAutoloader();
+        $this->standardAutoLoader = new TKAutoloader();
         $this->standardAutoLoader->register();
     }
 
@@ -444,8 +444,8 @@ final class Application {
             return;
         if (in_array($err['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING))) {
             try {
-                throw new StandardException($err['message'], $err['type'], $err['file'], $err['line']);
-            } catch (StandardException $e) {
+                throw new TKException($err['message'], $err['type'], $err['file'], $err['line']);
+            } catch (TKException $e) {
                 if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                     $e->save();
                     return;

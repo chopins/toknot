@@ -10,9 +10,9 @@
 
 namespace Toknot\Exception;
 
-use Toknot\Exception\StandardException;
+use Toknot\Exception\TKException;
 
-class DependExtensionException extends StandardException {
+class DependExtensionException extends TKException {
     public function __construct() {
         parent::__construct('Miss Depend PHP Extension');
     }

@@ -9,9 +9,9 @@
  */
 namespace Toknot\Exception;
 
-use Toknot\Exception\StandardException;
+use Toknot\Exception\TKException;
 
-class HeaderLocationException extends StandardException{
+class HeaderLocationException extends TKException{
 }
 
 ?>

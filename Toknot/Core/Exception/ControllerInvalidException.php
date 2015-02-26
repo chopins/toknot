@@ -9,8 +9,8 @@
 
 namespace Toknot\Control\Exception;
 
-use Toknot\Exception\StandardException;
-class ControllerInvalidException extends StandardException {
+use Toknot\Exception\TKException;
+class ControllerInvalidException extends TKException {
     protected $exceptionMessage = 'Controller %s Invalid';
     public function __construct($class) {
         $this->exceptionMessage = sprintf($this->exceptionMessage, $class);

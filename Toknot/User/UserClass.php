@@ -12,7 +12,7 @@ namespace Toknot\User;
 
 use Toknot\User\UserAccessControl;
 use Toknot\User\Root;
-use Toknot\Exception\StandardException;
+use Toknot\Exception\TKException;
 use Toknot\Config\ConfigLoader;
 
 class UserClass extends UserAccessControl {
@@ -181,11 +181,11 @@ class UserClass extends UserAccessControl {
 	 * 
 	 * @param array $userinfo
 	 * @access protected
-	 * @throws Toknot\Exception\StandardException
+	 * @throws Toknot\Exception\TKException
 	 */
 	protected function __init($userinfo) {
 		if (self::$DBConnect == null) {
-			throw new StandardException('Must set Db connect instance');
+			throw new TKException('Must set Db connect instance');
 		}
 		$this->loginTime = time();
 		$this->uid = $userinfo[self::$uidColumn];
@@ -535,24 +535,24 @@ class UserClass extends UserAccessControl {
 	private static function loadConfigure() {
 		$cfg = ConfigLoader::CFG();
 		if (!isset($cfg->User)) {
-			throw new StandardException('Must add User section in configure');
+			throw new TKException('Must add User section in configure');
 		}
 		if (empty($cfg->User->userTableName)) {
-			throw new StandardException('Must set userTabelName in User section of configure');
+			throw new TKException('Must set userTabelName in User section of configure');
 		}
 		self::$tableName = $cfg->User->userTableName;
 		if (empty($cfg->User->userIdColumnName)) {
-			throw new StandardException('Must set userIdColumnName in User section of configure');
+			throw new TKException('Must set userIdColumnName in User section of configure');
 		} else {
 			self::$uidColumn = $cfg->User->userIdColumnName;
 		}
 		if (empty($cfg->User->userNameColumnName)) {
-			throw new StandardException('Must set userNameColumnName in User section of configure');
+			throw new TKException('Must set userNameColumnName in User section of configure');
 		} else {
 			self::$userNameColumn = $cfg->User->userNameColumnName;
 		}
 		if (empty($cfg->User->userPasswordColumnName)) {
-			throw new StandardException('Must set userPasswordColumnName in User section of configure');
+			throw new TKException('Must set userPasswordColumnName in User section of configure');
 		} else {
 			self::$passColumn = $cfg->User->userPasswordColumnName;
 		}

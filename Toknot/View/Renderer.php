@@ -11,7 +11,7 @@
 namespace Toknot\View;
 
 use Toknot\Di\Object;
-use Toknot\Exception\StandardException;
+use Toknot\Exception\TKException;
 use Toknot\Di\ArrayObject;
 use Toknot\Di\FileObject;
 use Toknot\Di\DataCacheControl;
@@ -123,7 +123,7 @@ class Renderer extends Object {
 	public function display($tplName) {
 		$tplFile = self::$scanPath . '/' . $tplName . '.' . self::$fileExtension;
 		if (!file_exists($tplFile)) {
-			throw new StandardException("{$tplFile} not exists");
+			throw new TKException("{$tplFile} not exists");
 		}
 		$useCache = false;
 		//HTML cache control

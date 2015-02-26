@@ -9,7 +9,7 @@
  */
 
 namespace Toknot\Exception;
-class CustomHttpStatusExecption extends StandardException {
+class CustomHttpStatusExecption extends TKException {
    public static $displayController = null;
     public static $method = 'GET';
     public static $FMAI;

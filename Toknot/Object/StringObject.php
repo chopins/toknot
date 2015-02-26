@@ -14,7 +14,7 @@ use Toknot\Di\Object;
 use \BadMethodCallException;
 use \ArrayAccess;
 use Toknot\Di\ArrayObject;
-use Toknot\Exception\StandardException;
+use Toknot\Exception\TKException;
 
 /**
  * String object
@@ -171,11 +171,11 @@ class StringObject extends Object implements ArrayAccess {
      * @param integer $max The random string max length, default is 0
      * @param boolean $all Whether the random string contians all printable char
      * @return string
-     * @throws StandardException
+     * @throws TKException
      */
     public static function rand($min, $max = 0, $all = false) {
         if ($min < 1) {
-            throw new StandardException("StringObject::rand() 1 parameter must greater 1, $min given");
+            throw new TKException("StringObject::rand() 1 parameter must greater 1, $min given");
         }
         if ($max > 1) {
             $randlen = mt_rand($min, $max);

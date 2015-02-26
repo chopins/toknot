@@ -8,26 +8,26 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Control;
+namespace Toknot\Core;
 
 use Toknot\Di\Object;
-use Toknot\Exception\StandardException;
+use Toknot\Exception\TKException;
 use Toknot\Exception\BadClassCallException;
-use Toknot\Control\Exception\NotFoundException;
-use Toknot\Control\Exception\MethodNotAllowedException;
-use Toknot\Control\Exception\ControllerInvalidException;
-use Toknot\Control\FMAI;
-use Toknot\Control\StandardAutoloader;
+use Toknot\Core\Exception\NotFoundException;
+use Toknot\Core\Exception\MethodNotAllowedException;
+use Toknot\Core\Exception\ControllerInvalidException;
+use Toknot\Core\FMAI;
+use Toknot\Core\StandardAutoloader;
 use Toknot\Di\FileObject;
 use Toknot\Config\ConfigLoader;
 
-class Router extends Object implements RouterInterface {
+class Router extends Object {
 
     /**
-     * The property value is {@see Toknot\Control\Router::ROUTER_PATH} or 
-     * {@see Toknot\Control\Router::ROUTER_GET_QUERY},
-     * {@see Toknot\Control\Router::ROUTER_MAP_TABLE}
-     * the property set by {@see Toknot\Control\Application::run} 
+     * The property value is {@see Toknot\Core\Router::ROUTER_PATH} or 
+     * {@see Toknot\Core\Router::ROUTER_GET_QUERY},
+     * {@see Toknot\Core\Router::ROUTER_MAP_TABLE}
+     * the property set by {@see Toknot\Core\Application::run} 
      * be invoke with passed of 4th parameter, Toknot default router of runtimeArgs method
      * will set be passed of first parameter
      * 
@@ -255,9 +255,9 @@ class Router extends Object implements RouterInterface {
      * Invoke Application Controller, the method will call application of Controller what is
      * self::$routerNameSpace\Controller{$this->spacePath}, and router action by request method
      * 
-     * @param \Toknot\Control\FMAI $FMAI
+     * @param \Toknot\Core\FMAI $FMAI
      * @throws BadClassCallException
-     * @throws StandardException
+     * @throws TKException
      */
     public function invoke(FMAI $FMAI) {
         $method = $this->getRequestMethod();
@@ -326,10 +326,10 @@ class Router extends Object implements RouterInterface {
      * new instance of controller
      * 
      * @param string $invokeClass
-     * @param Toknot\Control\FMAI $FMAI
+     * @param Toknot\Core\FMAI $FMAI
      * @param string $method
      * @throws ControllerInvalidException
-     * @throws StandardException
+     * @throws TKException
      */
     public function instanceController($invokeClass, $FMAI, $method) {
         if (!self::checkController($invokeClass, $method)) {
@@ -357,7 +357,7 @@ class Router extends Object implements RouterInterface {
     }
 
     /**
-     * implements {@see Toknot\Control\RouterInterface} of method, the method set Application
+     * implements {@see Toknot\Core\RouterInterface} of method, the method set Application
      * of top namespace 
      * 
      * @param string $appspace

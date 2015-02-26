@@ -12,7 +12,7 @@ namespace Toknot\User;
 
 use Toknot\Di\Object;
 use Toknot\User\Exception\NoPermissionExecption;
-use Toknot\Exception\StandardException;
+use Toknot\Exception\TKException;
 
 abstract class UserAccessControl extends Object{
 
@@ -171,7 +171,7 @@ abstract class UserAccessControl extends Object{
 	 */
 	public static function getTextHash($password, $algo, $salt = '', $rounds = 500) {
 		if (!preg_match('/^[^$]+$/', $salt)) {
-			throw new StandardException('hash salt must not contain $');
+			throw new TKException('hash salt must not contain $');
         }
 		switch (strtoupper($algo)) {
 			case 'SHA512':
@@ -264,7 +264,7 @@ abstract class UserAccessControl extends Object{
 	 * @return string
 	 * @access public
 	 * @static
-	 * @throws Toknot\Exception\StandardException if set use hash function and hash function not exists
+	 * @throws Toknot\Exception\TKException if set use hash function and hash function not exists
 	 */
 	public static function hashPassword($password) {
 		$salt = empty(self::$hashSalt) ? self::PASSWORD_SALT : self::$hashSalt;
