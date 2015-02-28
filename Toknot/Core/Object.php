@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Di;
+namespace Toknot\Core;
 
 use \ReflectionObject;
 use \ReflectionMethod;
@@ -16,7 +16,7 @@ use \ReflectionProperty;
 use \Iterator;
 use \Countable;
 use \SplObjectStorage;
-use Toknot\Exception\BadPropertyGetException;
+use \Toknot\Exception\BadPropertyGetException;
 
 abstract class Object implements Iterator, Countable {
 

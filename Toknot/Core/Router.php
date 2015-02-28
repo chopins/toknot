@@ -10,15 +10,16 @@
 
 namespace Toknot\Core;
 
-use Toknot\Di\Object;
 use Toknot\Exception\TKException;
 use Toknot\Exception\BadClassCallException;
+
+use Toknot\Core\Object;
 use Toknot\Core\Exception\NotFoundException;
 use Toknot\Core\Exception\MethodNotAllowedException;
 use Toknot\Core\Exception\ControllerInvalidException;
-use Toknot\Core\FMAI;
 use Toknot\Core\StandardAutoloader;
-use Toknot\Di\FileObject;
+use Toknot\Core\FileObject;
+
 use Toknot\Config\ConfigLoader;
 
 class Router extends Object {

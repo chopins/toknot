@@ -10,7 +10,7 @@
 
 namespace Toknot\Core;
 
-class TKAutoloader {
+class Autoloader {
 
     const NS_SEPARATOR = '\\';
 

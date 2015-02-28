@@ -10,16 +10,13 @@
 
 namespace Toknot\Control;
 
-include_once __DIR__ . '/TKAutoloader.php';
-TK::form('Toknot\Core','*');
-use Toknot\Core\TKAutoloader;
+include_once __DIR__ . '/Autoloader.php';
+
+use Toknot\Core\Autoloader;
 use Toknot\Exception\TKException;
 use Toknot\Core\Exception\PHPVersionException;
 use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
-use Toknot\Core\FMAI;
-use Toknot\Core\RouterInterface;
-use Toknot\Object\TKFunction as TK;
 
 /**
  * Toknot main class and run framework
@@ -39,7 +36,7 @@ use Toknot\Object\TKFunction as TK;
 final class Application {
 
     /**
-     * This save toknot of standard autoloader ({@see Toknot\Core\TKAutoloader}) instance
+     * This save toknot of standard autoloader ({@see Toknot\Core\Autoloader}) instance
      * current do not use user's autoloader class, so will call toknot standard
      * autoloader class when application instantiate 
      *
@@ -56,22 +53,6 @@ final class Application {
      * @var string
      */
     private static $appRoot = '';
-
-    /**
-     * This is router class name, if do not use setUserRouter method set a router 
-     * after new Application and before invoke run method, and will use toknot default router
-     * router class name must use full namespace rather than short name
-     *
-     * @var string 
-     * @access private
-     */
-    private $routerName = '\Toknot\Core\Router';
-
-    /**
-     * @access private
-     * @var array
-     */
-    private $routerArgs = array();
 
     /**
      * @access private
@@ -124,7 +105,7 @@ final class Application {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
-        if(empty(ini_get('date.timezone'))) {
+        if (empty(ini_get('date.timezone'))) {
             date_default_timezone_set('UTC');
         }
         $this->scriptStartTime = microtime(true);
@@ -132,9 +113,9 @@ final class Application {
         if (!defined('DEVELOPMENT')) {
             define('DEVELOPMENT', true);
         }
-        
-        TKAutoloader::importToknotModule('Di', 'Object');
-        TKAutoloader::importToknotClass('Exception\StandardException');
+
+        Autoloader::importToknotModule('Di', 'Object');
+        Autoloader::importToknotClass('Exception\StandardException');
 
         $this->iniEnv($argv, $argc);
         $this->registerAutoLoader();
@@ -160,13 +141,15 @@ final class Application {
                 $_SERVER['argv'] = $argv;
             }
         }
-
+        
+        Autoloader::importToknotClass('Exception\StandardException');
+        set_exception_handler(array($this, 'uncaughtExceptionHandler'));
+        set_error_handler(array($this, 'errorReportHandler'));
+        
         if (version_compare(PHP_VERSION, '5.3.0') < 0) {
             throw new PHPVersionException();
         }
-        TKAutoloader::importToknotClass('Exception\StandardException');
-        set_exception_handler(array($this, 'uncaughtExceptionHandler'));
-        set_error_handler(array($this, 'errorReportHandler'));
+        
         clearstatcache();
 
         if (DEVELOPMENT && self::checkXDebug() == false && function_exists('register_tick_function')) {
@@ -212,7 +195,7 @@ final class Application {
         }
         $_SERVER['HEADERS_LIST'] = array();
         $_SERVER['COOKIES_LIST'] = array();
-        if(empty($_SERVER['TK_SERVER'])) {
+        if (empty($_SERVER['TK_SERVER'])) {
             $_SERVER['TK_SERVER'] = false;
         }
     }
@@ -222,8 +205,7 @@ final class Application {
      * {@link Toknot\Core\RouterInterface} of all method, Toknot Freamework default
      * invoke class under application of Controller Dicetory, scan file path is under $appPath 
      * parameter set path(like: /path/appPath/Controller). The class be invoke by toknot of router 
-     * invoke method with passed instance of Toknot 
-     * {@see \Toknot\Core\FMAI}, you can receive the object of instance when class construct
+     * invoke method, you can receive the object of instance when class construct
      * 
      * Usual use toknot of router, run framework like below:
      * <code>
@@ -298,45 +280,34 @@ final class Application {
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
 
         $root = substr($appNameSpace, 0, 1);
-        $appNameSpace = rtrim($appNameSpace, TKAutoloader::NS_SEPARATOR);
+        $appNameSpace = rtrim($appNameSpace, Autoloader::NS_SEPARATOR);
         $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
         try {
-            if ($root != TKAutoloader::NS_SEPARATOR) {
+            if ($root != Autoloader::NS_SEPARATOR) {
                 throw new BadNamespaceException($appNameSpace);
             }
-            TKAutoloader::importToknotClass('Core\RouterInterface');
-            if ($this->routerName == '\Toknot\Core\Router') {
-                TKAutoloader::importToknotClass('Core\Router');
-            }
-            if (!class_exists($this->routerName, false)) {
-                throw new BadClassCallException($this->routerName);
-            }
 
-            if ($this->routerName instanceof RouterInterface) {
-                throw new TKException('Router not support');
-            }
+            Autoloader::importToknotClass('Toknot\Core\Router');
+
             $this->addAppPath($appPath);
             self::$appRoot = $appPath;
 
             $routerName = $this->routerName;
-            $router = new $routerName();
+            $router = new Router();
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
-
-            TKAutoloader::importToknotClass('Core\FMAI');
-            $FMAI = FMAI::singleton($appNameSpace, $appPath);
 
             $router->loadConfigure();
             $router->routerRule();
             if (is_null($defaultInvoke)) {
                 $root = substr($defaultInvoke, 0, 1);
-                if ($root != TKAutoloader::NS_SEPARATOR) {
+                if ($root != Autoloader::NS_SEPARATOR) {
                     throw new BadNamespaceException($defaultInvoke);
                 }
                 $router->defaultInvoke($defaultInvoke);
             }
 
-            $router->invoke($FMAI);
+            $router->invoke();
         } catch (TKException $e) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                 $e->save();
@@ -345,7 +316,7 @@ final class Application {
             if (DEVELOPMENT) {
                 echo $e;
             } else {
-                Tk\header('500 Internal Server Error');
+                header('500 Internal Server Error');
                 echo ('500 Internal Server Error');
                 return;
             }
@@ -357,7 +328,7 @@ final class Application {
             if (DEVELOPMENT) {
                 echo $e;
             } else {
-                TK\header('500 Internal Server Error');
+                header('500 Internal Server Error');
                 echo('500 Internal Server Error');
                 return;
             }
@@ -386,7 +357,7 @@ final class Application {
                 $se->traceArr = $e->getTrace();
                 echo $se;
             } else {
-                TK\header('500 Internal Server Error');
+                header('500 Internal Server Error');
                 echo '500 Internal Server Error';
                 return;
             }
@@ -400,24 +371,10 @@ final class Application {
      */
     public function errorReportHandler() {
         $argv = func_get_args();
-        if($argv[0] == 2048 && strpos($argv[1],'Declaration') === 0) {
+        if ($argv[0] == 2048 && strpos($argv[1], 'Declaration') === 0) {
             return;
         }
         TKException::errorReportHandler($argv);
-    }
-
-    /**
-     * set user router instead of toknot default router
-     * 
-     * @param string $routerName   The string of need of router name
-     * @throws BadNamespaceException
-     */
-    public function setUserRouter($routerName) {
-        $root = substr($routerName, 0, 1);
-        if ($root != TKAutoloader::NS_SEPARATOR) {
-            throw new BadNamespaceException($routerName);
-        }
-        $this->routerName = $routerName;
     }
 
     /**
@@ -434,7 +391,7 @@ final class Application {
      * Register Autoloader Class
      */
     private function registerAutoLoader() {
-        $this->standardAutoLoader = new TKAutoloader();
+        $this->standardAutoLoader = new Autoloader();
         $this->standardAutoLoader->register();
     }
 
@@ -456,7 +413,7 @@ final class Application {
                     echo $e;
                     $this->pageRunInfo();
                 } else {
-                    TK\header('500 Internal Server Error');
+                    header('500 Internal Server Error');
                     echo '500 Internal Server Error';
                     return;
                 }
@@ -491,7 +448,7 @@ final class Application {
             $et = $et . ' seconds';
         }
         $str .= '<br />PHP Script Execure Time: ' . $et . "\n";
-        if(empty($_SERVER['TK_DISABLE_OUTRUNINFO'])) {
+        if (empty($_SERVER['TK_DISABLE_OUTRUNINFO'])) {
             echo PHP_SAPI == 'cli' && is_resource(STDOUT) ? strip_tags($str) : $str;
         }
     }
@@ -512,7 +469,9 @@ final class Application {
     public static function getAppRoot() {
         return self::$appRoot;
     }
+
     public static function newInstance() {
         return new static;
     }
+
 }

@@ -8,9 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Di;
+namespace Toknot\Core;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 use Toknot\Exception\FileIOException;
 use \SplFileObject;
 use \finfo;
