@@ -9,9 +9,9 @@
  */
 namespace Toknot\Exception;
 
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
-class BadClassCallException extends TKException {
+class BadClassCallException extends BaseException {
     protected $exceptionMessage = 'Bad Class Call (%s)';
     public function __construct($class) {
         $this->exceptionMessage = sprintf($this->exceptionMessage, $class);

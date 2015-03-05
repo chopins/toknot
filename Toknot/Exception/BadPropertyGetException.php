@@ -9,9 +9,9 @@
  */
 namespace Toknot\Exception;
 
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
-class BadPropertyGetException extends TKException {
+class BadPropertyGetException extends BaseException {
     protected $exceptionMessage = 'Bad Property Get (%s::$%s)';
     public function __construct($class,$property) {
         $this->exceptionMessage = sprintf($this->exceptionMessage, $class,$property);

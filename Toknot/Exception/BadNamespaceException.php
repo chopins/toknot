@@ -10,9 +10,9 @@
 
 namespace Toknot\Exception;
 
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
-class BadNamespaceException extends TKException {
+class BadNamespaceException extends BaseException {
 
     protected $exceptionMessage = 'Bad Namespace Declaration (%s)';
 

@@ -6,7 +6,7 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
-namespace Toknot\Tool;
+namespace Toknot\Lib;
 
 class Logs {
     public function __construct($message) {

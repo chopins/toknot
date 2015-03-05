@@ -37,17 +37,19 @@ abstract class Object implements Iterator, Countable {
     private $propertieChange = false;
 
     /**
-     * Object instance of the child class
+     * Object instance of the child class when singleton mode
      * 
      * @var object
      * @access private 
      */
-    private static $instance = array();
+    private static $singletonInstanceStorage = array();
+    private static $thisInstance = null;
     private $counter = 0;
     private $countNumber = 0;
     private $extendsClass = null;
 
     final public function __construct() {
+        self::$thisInstance = $this;
         $this->extendsClass = new SplObjectStorage();
         $args = func_get_args();
         if (count($args) > 0) {
@@ -107,21 +109,21 @@ abstract class Object implements Iterator, Countable {
      */
     final protected static function &__singleton() {
         $className = get_called_class();
-        if (isset(self::$instance[$className]) && is_object(self::$instance[$className]) && self::$instance[$className] instanceof $className) {
-            return self::$instance[$className];
+        if (isset(self::$singletonInstanceStorage[$className]) && is_object(self::$singletonInstanceStorage[$className]) && self::$singletonInstanceStorage[$className] instanceof $className) {
+            return self::$singletonInstanceStorage[$className];
         }
         $argc = func_num_args();
         if ($argc > 0) {
             $args = func_get_args();
-            self::$instance[$className] = self::constructArgs($argc, $args, $className);
+            self::$singletonInstanceStorage[$className] = self::constructArgs($argc, $args, $className);
         } else {
-            self::$instance[$className] = new $className;
+            self::$singletonInstanceStorage[$className] = new $className;
         }
-        return self::$instance[$className];
+        return self::$singletonInstanceStorage[$className];
     }
 
     /**
-     * get singletion instance of class
+     * get singletion instance
      * 
      * @static
      * @access public
@@ -130,11 +132,22 @@ abstract class Object implements Iterator, Countable {
      */
     final public static function getInstance() {
         $className = get_called_class();
-        if (isset(self::$instance[$className])) {
-            return self::$instance[$className];
+        if (isset(self::$singletonInstanceStorage[$className])) {
+            return self::$singletonInstanceStorage[$className];
         } else {
             return null;
         }
+    }
+    
+    /**
+     * 
+     * @static
+     * @access public
+     * @final
+     * @return object|null
+     */
+    final public static function getClassInstance() {
+        return self::$thisInstance;
     }
 
     /**

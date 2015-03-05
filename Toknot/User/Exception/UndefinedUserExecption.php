@@ -10,8 +10,8 @@
 
 namespace Toknot\User\Exception;
 
-use Toknot\Exception\TKException;
-class UndefinedUserExecption extends TKException {
+use Toknot\Exception\BaseException;
+class UndefinedUserExecption extends BaseException {
     protected $message = 'Undefined User';
 }
 

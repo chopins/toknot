@@ -10,9 +10,9 @@
 
 namespace Toknot\Process\Eception;
 
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
-class PipException extends TKException {
+class PipException extends BaseException {
     protected $exceptionMessage = 'Socket Opreate Exception';
 }
 

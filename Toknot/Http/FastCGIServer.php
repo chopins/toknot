@@ -12,7 +12,7 @@ namespace Toknot\Http;
 
 use Toknot\Http\HttpResponse;
 use Toknot\Process\Process;
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 use Toknot\Exception\HeaderLocationException;
 use Toknot\Di\TKFunction as TK;
 use Toknot\Di\Log;
@@ -391,7 +391,7 @@ final class FastCGIServer extends HttpResponse {
         $clientAddress = 'unknown';
         try {
             $this->requestBacklog[] = @stream_socket_accept($this->socketFileDescriptor, 5, $clientAddress);
-        } catch (TKException $e) {
+        } catch (BaseException $e) {
             echo strip_tags($e);
             return false;
         }
@@ -438,7 +438,7 @@ final class FastCGIServer extends HttpResponse {
             unset($app);
         } catch (HeaderLocationException $e) {
             return '';
-        } catch (TKException $e) {
+        } catch (BaseException $e) {
             return $e;
         } catch (\Exception $e) {
             return $e;

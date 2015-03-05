@@ -13,10 +13,13 @@ namespace Toknot\Control;
 include_once __DIR__ . '/Autoloader.php';
 
 use Toknot\Core\Autoloader;
-use Toknot\Exception\TKException;
 use Toknot\Core\Exception\PHPVersionException;
+use Toknot\Core\Router;
+use Toknot\Config\ConfigLoader;
+use Toknot\Exception\BaseException;
 use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
+
 
 /**
  * Toknot main class and run framework
@@ -81,7 +84,7 @@ final class Application {
      * <code>
      * use Toknot\Core\Application;
      * 
-     * require_once '/path/Toknot/Control/Application.php';
+     * require_once '/path/Toknot/Core/Application.php';
      * 
      * $app = new Application;
      * </code>
@@ -119,6 +122,39 @@ final class Application {
 
         $this->iniEnv($argv, $argc);
         $this->registerAutoLoader();
+
+        if (PHP_SAPI == 'cli' && basename($argv[0]) == 'Toknot.php') {
+            $this->runCLI();
+        }
+    }
+
+    private function importConfig($appRoot) {
+        StandardAutoloader::importToknotClass('Config\ConfigLoader');
+        ConfigLoader::$cacheDir = FileObject::getRealPath($this->appRoot, 'Data/Config');
+        ConfigLoader::singleton();
+
+        if (file_exists($appRoot . '/Config/config.ini')) {
+            $this->loadConfigure($appRoot . '/Config/config.ini');
+        }
+    }
+
+
+    private function runCLI() {
+        if (isset($_SERVER['argv'][1])) {
+            $filename = __DIR__ . "/Command/{$_SERVER['argv'][1]}.php";
+            if (file_exists($filename)) {
+                include_once $filename;
+                return new $_SERVER['argv'][1]($_SERVER['argv'], $_SERVER['argc']);
+            }
+        }
+        echo "Undefined {$_SERVER['argv'][1]}";
+        echo 'Usage: php Toknot.php command
+            command :
+                CreateApp           Create a application follow one by one
+                GeneratePassword    Use current configure encrypt text
+';
+
+        exit;
     }
 
     /**
@@ -141,15 +177,15 @@ final class Application {
                 $_SERVER['argv'] = $argv;
             }
         }
-        
+
         Autoloader::importToknotClass('Exception\StandardException');
         set_exception_handler(array($this, 'uncaughtExceptionHandler'));
         set_error_handler(array($this, 'errorReportHandler'));
-        
+
         if (version_compare(PHP_VERSION, '5.3.0') < 0) {
             throw new PHPVersionException();
         }
-        
+
         clearstatcache();
 
         if (DEVELOPMENT && self::checkXDebug() == false && function_exists('register_tick_function')) {
@@ -211,7 +247,7 @@ final class Application {
      * <code>
      * use Toknot\Core\Application;
      *
-     * require_once './Toknot/Control/Application.php';
+     * require_once './Toknot/Core/Application.php';
      *
      * $app = new Application;
      * $app->run('\AppTopNamespace', '/path/AppPath');
@@ -222,7 +258,7 @@ final class Application {
      * <code>
      * use Toknot\Core\Application;
      *
-     * require_once './Toknot/Control/Application.php';
+     * require_once './Toknot/Core/Application.php';
      *
      * $app = new Application;
      * 
@@ -237,7 +273,7 @@ final class Application {
      * <code>
      * use Toknot\Core\Application;
      *
-     * require_once './Toknot/Control/Application.php';
+     * require_once './Toknot/Core/Application.php';
      *
      * $app = new Application;
      * 
@@ -250,7 +286,7 @@ final class Application {
      * <code>
      * use Toknot\Core\Application;
      * use Toknot\Core\Router.php;
-     * require_once './Toknot/Control/Application.php';
+     * require_once './Toknot/Core/Application.php';
      *
      * $app = new Application;
      * 
@@ -275,10 +311,10 @@ final class Application {
      *                                Controller layer namespace
      * @throws BadNamespaceException
      * @throws BadClassCallException
-     * @throws TKException
+     * @throws BaseException
      */
     public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
-
+        $this->importConfig($appPath);
         $root = substr($appNameSpace, 0, 1);
         $appNameSpace = rtrim($appNameSpace, Autoloader::NS_SEPARATOR);
         $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
@@ -308,7 +344,7 @@ final class Application {
             }
 
             $router->invoke();
-        } catch (TKException $e) {
+        } catch (BaseException $e) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                 $e->save();
                 return;
@@ -347,8 +383,8 @@ final class Application {
 
     public function uncaughtExceptionHandler($e) {
         try {
-            throw new TKException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
-        } catch (TKException $se) {
+            throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
+        } catch (BaseException $se) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                 $se->save();
                 return;
@@ -374,7 +410,7 @@ final class Application {
         if ($argv[0] == 2048 && strpos($argv[1], 'Declaration') === 0) {
             return;
         }
-        TKException::errorReportHandler($argv);
+        BaseException::errorReportHandler($argv);
     }
 
     /**
@@ -401,8 +437,8 @@ final class Application {
             return;
         if (in_array($err['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING))) {
             try {
-                throw new TKException($err['message'], $err['type'], $err['file'], $err['line']);
-            } catch (TKException $e) {
+                throw new BaseException($err['message'], $err['type'], $err['file'], $err['line']);
+            } catch (BaseException $e) {
                 if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
                     $e->save();
                     return;

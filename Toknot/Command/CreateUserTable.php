@@ -12,7 +12,7 @@ class CreateUserTable {
     public function __construct($argv) {
         $this->toknotDir = dirname(__DIR__);
         $this->workDir = getcwd();
-        require_once $this->toknotDir . '/Control/Application.php';
+
         define('DEVELOPMENT', true);
         new Toknot\Control\Application;
         
@@ -25,7 +25,7 @@ class CreateUserTable {
         }
         if (!$appPath) {
             while (true) {
-                Toknot\Di\Log::colorMessage('Enter path of app path:', null, false);
+                Toknot\Core\Log::colorMessage('Enter path of app path:', null, false);
                 $appPath = trim(fgets(STDIN));
                 if (!empty($appPath)) {
                     $appPath = $this->checkAppPath($appPath);
@@ -53,7 +53,7 @@ class CreateUserTable {
         $sql .= "KEY `{$cfg->User->userGroupIdColumnName}` (`{$cfg->User->userGroupIdColumnName}`)";
         $sql .= ") ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
         $db->create($sql);
-        Toknot\Di\Log::colorMessage('create user table success', 'green');
+        Toknot\Core\Log::colorMessage('create user table success', 'green');
     }
 
     public function checkAppPath($file) {
@@ -61,7 +61,7 @@ class CreateUserTable {
         if ($config) {
             return $config;
         }
-        Toknot\Di\Log::colorMessage("$file not exits", 'red');
+        Toknot\Core\Log::colorMessage("$file not exits", 'red');
         return false;
     }
 

@@ -12,7 +12,7 @@ namespace Toknot\Db;
 
 use Toknot\Db\DbTableObject;
 use Toknot\Di\StringObject;
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
 class DbTableColumn extends StringObject{
     private $columnName = null;
@@ -31,7 +31,7 @@ class DbTableColumn extends StringObject{
         if(isset($this->$name)) {
             return $this->$name;
         }
-        throw new TKException("bad call property of {$this->columnName}::{$name}");
+        throw new BaseException("bad call property of {$this->columnName}::{$name}");
     }
 
     public function __toString() {

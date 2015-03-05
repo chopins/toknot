@@ -8,9 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Tool;
+namespace Toknot\Lib;
 use Toknot\Config\ConfigLoader;
-use Toknot\Tool\SSH2;
+use Toknot\Lib\SSH2;
 
 class InotifySync {
 

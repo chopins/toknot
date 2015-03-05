@@ -10,9 +10,9 @@
 
 namespace Toknot\Db\Exception;
 
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
-class DatabaseException extends TKException {
+class DatabaseException extends BaseException {
 
     public $sqls = array();
     public $params = array();

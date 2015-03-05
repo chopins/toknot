@@ -11,9 +11,9 @@
  *
  */
 
-namespace Toknot\Tool;
+namespace Toknot\Lib;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 
 class SimpleCaptcha extends Object {
 

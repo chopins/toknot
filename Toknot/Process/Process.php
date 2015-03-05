@@ -10,7 +10,7 @@
 
 namespace Toknot\Process;
 
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 use Toknot\Exception\DependExtensionException;
 use Toknot\Process\Exception\ProcessException;
 use Toknot\Process\Exception\PipException;
@@ -100,7 +100,7 @@ final class Process {
         if (!function_exists('setproctitle')) {
             try {
                 dl('proctitle.' . PHP_SHLIB_SUFFIX);
-            } catch (TKException $e) {
+            } catch (BaseException $e) {
                 echo $e;
             }
         }
@@ -117,7 +117,7 @@ final class Process {
         if (!function_exists('sem_acquire')) {
             try {
                 @dl('sysvsem.' . PHP_SHLIB_SUFFIX);
-            } catch (TKException $e) {
+            } catch (BaseException $e) {
                 $this->useFileLock = true;
             }
         }
@@ -125,7 +125,7 @@ final class Process {
             if (!function_exists('shmop_open')) {
                 try {
                     dl('shmop.' . PHP_SHLIB_SUFFIX);
-                } catch (TKException $e) {
+                } catch (BaseException $e) {
                     $this->useFileLock = true;
                 }
             }
@@ -271,7 +271,7 @@ final class Process {
                 if (is_callable($callback, true)) {
                     try {
                         call_user_func_array($callback, $callBackArgv);
-                    } catch (TKException $e) {
+                    } catch (BaseException $e) {
                         $exitStatus = self::CALLFUNC_ERR;
                         echo $e;
                     }

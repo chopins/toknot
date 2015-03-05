@@ -10,9 +10,9 @@
 
 namespace Toknot\Http\TransportsException;
 
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
-class TransportsException extends TKException{
+class TransportsException extends BaseException{
        protected $exceptionMessage = 'Socket Transports Un-support'; 
 }
 

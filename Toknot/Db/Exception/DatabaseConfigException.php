@@ -9,9 +9,9 @@
  */
 
 namespace Toknot\Db\Exception;
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
-class DatabaseConfigException extends TKException {
+class DatabaseConfigException extends BaseException {
     public function __construct($configParam) {
         $message = "Must be set '{$configParam}' of database connect in ini of database sections,<br />\n";
         $message .= 'database of options has dsn,username,password,dirverOptions(which is array type),prefix(which is table name prefix and option)';

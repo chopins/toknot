@@ -10,9 +10,9 @@
 
 namespace Toknot\Process\Exception;
 
-use Toknot\Exception\TKException;
+use Toknot\Exception\BaseException;
 
-class ProcessException extends TKException {
+class ProcessException extends BaseException {
 
     public function __construct() {
         parent::__construct('Process Opreate Exception');
