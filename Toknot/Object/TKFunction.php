@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Di\TKFunction;
+namespace Toknot\Object\TKFunction;
 use Toknot\Exception\HeaderLocationException;
 
 function header($string, $replace = true, $http_response_code = null) {

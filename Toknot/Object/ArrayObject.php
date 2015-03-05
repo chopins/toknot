@@ -8,9 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Di;
+namespace Toknot\Object;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 use \ArrayAccess;
 use \Serializable;
 use \InvalidArgumentException;

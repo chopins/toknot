@@ -8,10 +8,10 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Di;
+namespace Toknot\Object;
 
-use Toknot\Di\FileObject;
-use Toknot\Di\DataCacheServerInterface;
+use Toknot\Core\FileObject;
+use Toknot\Core\DataCacheServerInterface;
 
 class DataCacheControl {
 

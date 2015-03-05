@@ -8,12 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Di;
+namespace Toknot\Object;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 use \BadMethodCallException;
 use \ArrayAccess;
-use Toknot\Di\ArrayObject;
+use Toknot\Object\ArrayObject;
 use Toknot\Exception\BaseException;
 
 /**

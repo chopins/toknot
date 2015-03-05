@@ -10,9 +10,9 @@
 
 namespace Toknot\Config;
 
-use Toknot\Di\Object;
-use Toknot\Di\ArrayObject;
-use Toknot\Di\DataCacheControl;
+use Toknot\Core\Object;
+use Toknot\Object\ArrayObject;
+use Toknot\Object\DataCacheControl;
 
 final class ConfigLoader extends Object {
 
