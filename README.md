@@ -1,4 +1,5 @@
-##Toknot 2.0-beta
+##Toknot 3.0-devel
+**master is devel**
 
 ####About
 ToKnot is php MVC framework
