@@ -1,8 +1,8 @@
 ##Toknot 3.0-devel
-**master is devel**
+**master is develop**
 
 ####About
-ToKnot is php MVC framework
+ToKnot is php develop framework
 
 ####License
 The PHP framework is under New BSD License (http://toknot.com/LICENSE.txt)
@@ -17,13 +17,12 @@ see (http://toknot.com/toknot/)
 ####Directory Structure
     Toknot/             framework sources code
           Config/       default ini file and load config of class
-          Control/      Router
           Db/           Database opreate
-          Di/           framework of object
+          Core/           framework of object
           Exception/    Framework Exception class
           Http/         Http opreate
           Process/      Process manage
-          Tool/
+          Command/
           View/         view layer
           User/         User Control model that is like unix file access permissions
           Admin/        Admin model
