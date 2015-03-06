@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Object;
+namespace Toknot\Core;
 
 use Toknot\Core\Object;
 use \ArrayAccess;
@@ -171,8 +171,4 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         reset($this->interatorArray);
         $this->resetCount();
     }
-}
-
-function _l(array $array) {
-    return new ArrayObject($array);
 }

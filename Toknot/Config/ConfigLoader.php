@@ -11,8 +11,8 @@
 namespace Toknot\Config;
 
 use Toknot\Core\Object;
-use Toknot\Object\ArrayObject;
-use Toknot\Object\DataCacheControl;
+use Toknot\Core\ArrayObject;
+use Toknot\Core\DataCacheControl;
 
 final class ConfigLoader extends Object {
 
@@ -65,7 +65,7 @@ final class ConfigLoader extends Object {
         if (file_exists($file)) {
  
             if (self::$cacheDir) {
-                $cacheFile = self::$cacheDir . DIRECTORY_SEPARATOR . basename($file) . '.cache';
+                $cacheFile = self::$cacheDir . DIRECTORY_SEPARATOR . basename($file) . '.php';
                 $cacheControl = new DataCacheControl($cacheFile, filemtime($file));
                 $cache = $cacheControl->get();
             } else {

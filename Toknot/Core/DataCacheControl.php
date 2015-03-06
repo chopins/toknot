@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Object;
+namespace Toknot\Core;
 
 use Toknot\Core\FileObject;
 use Toknot\Core\DataCacheServerInterface;
@@ -123,7 +123,7 @@ class DataCacheControl {
             return true;
         }
 
-        $dataString = serialize($data);
+        $dataString = '<?php return '.var_export($data, true) .';';
         $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
         $fileObject = FileObject::saveContent($file, $dataString);
         
@@ -153,7 +153,7 @@ class DataCacheControl {
         $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
 
         if (file_exists($file)) {
-            return unserialize(file_get_contents($file));    
+            return include $file;    
         } else {
             return false;
         }

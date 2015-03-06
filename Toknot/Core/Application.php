@@ -249,72 +249,6 @@ final class Application {
      * parameter set path(like: /path/appPath/Controller). The class be invoke by toknot of router 
      * invoke method, you can receive the object of instance when class construct
      * 
-     * Usual use toknot of router, run framework like below:
-     * <code>
-     * use Toknot\Core\Application;
-     *
-     * require_once './Toknot/Core/Application.php';
-     *
-     * $app = new Application;
-     * $app->run('\AppTopNamespace', '/path/AppPath');
-     * </code>
-     * 
-     * if use application of router ,use {@see \Toknot\Core\Application::setUserRouter} define,
-     * run framework like below:
-     * <code>
-     * use Toknot\Core\Application;
-     *
-     * require_once './Toknot/Core/Application.php';
-     *
-     * $app = new Application;
-     * 
-     * //set self router with TopNamespace
-     * $app->setUserRouter('\AppTopNamespace\Router');
-     * 
-     * $app->run('\AppTopNamespace', '/path/AppPath');
-     * </code>
-     * 
-     * define your websiet index page of root when router of toknot,
-     * like this:
-     * <code>
-     * use Toknot\Core\Application;
-     *
-     * require_once './Toknot/Core/Application.php';
-     *
-     * $app = new Application;
-     * 
-     * //set index page without TopNamespace and ControllerNamespace
-     * $app->run('\AppTopNamespace', '/path/AppPath', '\Index');
-     * </code>
-     * 
-     * if change router mode,
-     * like this:
-     * <code>
-     * use Toknot\Core\Application;
-     * use Toknot\Core\Router.php;
-     * require_once './Toknot/Core/Application.php';
-     *
-     * $app = new Application;
-     * 
-     * //set index page without TopNamespace and ControllerNamespace
-     * //set router mode is PATH query mode
-     * //set router namespace level is 2
-     * $app->setRouterArgs(Router::ROUTER_PATH, 2);
-     * 
-     * $app->run('\AppTopNamespace', '/path/AppPath', '\Index');
-     * </code>
-     * 
-     * @param string $appNameSpace  Application of Namespace with top without 
-     *                                  full namespace, the suffix without DIRECTORY_SEPARATOR
-     * @param string $appPath   Application of directory with full path, 
-     *                             and not is Controller layer full path
-     * @param string $defaultInvoke  The parameter of default invoke class for 
-     *                                   router when no request uri,
-     *                                if it is not set,will throw BadClassCallException
-     *                                   when user request site root and no query,
-     *                                   The class name of default with not full namespace
-     *                                class name can not contain application top namespace and
-     *                                Controller layer namespace
      * @throws BadNamespaceException
      * @throws BadClassCallException
      * @throws BaseException
@@ -341,7 +275,7 @@ final class Application {
 
             $router->loadConfigure();
             $router->routerRule();
-            if (is_null($defaultInvoke)) {
+            if (empty($defaultInvoke)) {
                 $root = substr($defaultInvoke, 0, 1);
                 if ($root != Autoloader::NS_SEPARATOR) {
                     throw new BadNamespaceException($defaultInvoke);

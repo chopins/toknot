@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Object;
+namespace Toknot\Core;
 
 /**
  * Data cache handle interface for server cache

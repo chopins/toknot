@@ -8,12 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Object;
+namespace Toknot\Core;
 
 use Toknot\Core\Object;
 use \BadMethodCallException;
 use \ArrayAccess;
-use Toknot\Object\ArrayObject;
+use Toknot\Core\ArrayObject;
 use Toknot\Exception\BaseException;
 
 /**
@@ -246,8 +246,4 @@ class StringObject extends Object implements ArrayAccess {
         $this->interatorArray = substr_replace($this->interatorArray, '', $offset, 1);
     }
 
-}
-
-function _s($str = '') {
-    return new StringObject($str);
 }
