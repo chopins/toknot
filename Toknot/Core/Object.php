@@ -16,6 +16,7 @@ use \ReflectionProperty;
 use \Iterator;
 use \Countable;
 use \SplObjectStorage;
+use \BadMethodCallException;
 use \Toknot\Exception\BadPropertyGetException;
 
 abstract class Object implements Iterator, Countable {
@@ -60,22 +61,27 @@ abstract class Object implements Iterator, Countable {
                 }
             }
         }
-        $this->callMethod('__init', $args);
+        $this->invokeMethod('__init', $args);
     }
 
     final public function __call($name, $arguments) {
         if ($this->extendsClass->count()) {
             foreach ($this->extendsClass as $obj) {
                 if (method_exists($obj, $name)) {
-                    return $obj->callMethod($name, $arguments);
+                    return $obj->invokeMethod($name, $arguments);
                 }
             }
         }
-        throw new \BadMethodCallException("Call undefined Method $name");
+        return $this->__callMethod($name, $arguments);
     }
 
     protected function __init() {
         
+    }
+
+    public function __callMethod($name) {
+        $class = get_called_class();
+        throw new BadMethodCallException("Call undefined Method $name in object $class");
     }
 
     final public function __get($name) {
@@ -138,7 +144,7 @@ abstract class Object implements Iterator, Countable {
             return null;
         }
     }
-    
+
     /**
      * 
      * @static
@@ -217,7 +223,7 @@ abstract class Object implements Iterator, Countable {
             if (!method_exists($className, $methodName)) {
                 throw new \BadMethodCallException("Call to undefined method $className::$name()");
             }
-            return $that->callMethod($methodName, $arguments);
+            return $that->invokeMethod($methodName, $arguments);
         }
         if (!method_exists($className, $name)) {
             throw new \BadMethodCallException("Call to undefined method $className::$name()");
@@ -233,7 +239,7 @@ abstract class Object implements Iterator, Countable {
      * @final
      * @return mix
      */
-    final public function callMethod($methodName, array $args) {
+    final public function invokeMethod($methodName, array $args) {
         $argc = count($args);
         if ($argc === 0) {
             return $this->$methodName();
@@ -255,9 +261,9 @@ abstract class Object implements Iterator, Countable {
                 $argStr .= "\$args[$k],";
             }
             $argStr = rtrim($argStr, ',');
-            $ins = null;
-            eval("\$ins = \$this->{$methodName}($argStr);");
-            return $ins;
+            $ret = null;
+            eval("\$ret = \$this->{$methodName}($argStr);");
+            return $ret;
         }
     }
 

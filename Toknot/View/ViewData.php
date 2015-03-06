@@ -10,7 +10,7 @@
 
 namespace Toknot\View;
 
-use Toknot\Di\ArrayObject;
+use Toknot\Core\ArrayObject;
 use Toknot\Exception\BadPropertyGetException;
 
 class ViewData extends ArrayObject{

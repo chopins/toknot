@@ -10,7 +10,7 @@
 
 namespace Toknot\Db;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 use Toknot\Db\ActiveQuery;
 use Toknot\Db\Connect;
 use Toknot\Db\Exception\DatabaseException;

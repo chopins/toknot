@@ -14,8 +14,8 @@ use Toknot\Http\HttpResponse;
 use Toknot\Process\Process;
 use Toknot\Exception\BaseException;
 use Toknot\Exception\HeaderLocationException;
-use Toknot\Di\TKFunction as TK;
-use Toknot\Di\Log;
+use Toknot\Core\TKFunction as TK;
+use Toknot\Core\Log;
 
 final class FastCGIServer extends HttpResponse {
 

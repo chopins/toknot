@@ -10,11 +10,11 @@
 
 namespace Toknot\User;
 
-use Toknot\Di\ArrayObject;
-use Toknot\Di\DataCacheControl;
+use Toknot\Core\ArrayObject;
+use Toknot\Core\DataCacheControl;
 use Toknot\Config\ConfigLoader;
-use Toknot\Di\StringObject;
-use Toknot\Di\TKFunction as TK;
+use Toknot\Core\StringObject;
+use Toknot\Core\TKFunction as TK;
 
 class Session extends ArrayObject {
 
@@ -26,7 +26,7 @@ class Session extends ArrayObject {
 
     /**
      * if use file store the properties can not be set, otherwise must set one opreate 
-     * of class of instance be called by {@see Toknot\Di\DataCacheControl}
+     * of class of instance be called by {@see Toknot\Core\DataCacheControl}
      *
      * @var mixed
      * <code>

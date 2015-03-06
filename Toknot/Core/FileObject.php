@@ -41,7 +41,7 @@ class FileObject extends Object {
     /**
      * Get current path of parent directory
      * 
-     * @return \Toknot\Di\FileObject
+     * @return \Toknot\Core\FileObject
      */
     public function parentDir() {
         return new FileObject(dirname($this->path));
@@ -72,7 +72,7 @@ class FileObject extends Object {
      * Create a directory
      * 
      * @param string $path
-     * @return \Toknot\Di\FileObject|boolean
+     * @return \Toknot\Core\FileObject|boolean
      */
     public static function mkdir($path) {
         if (mkdir($path)) {
@@ -122,7 +122,7 @@ class FileObject extends Object {
      * @param string $file file name
      * @param string $data  data
      * @param integer $flag 
-     * @return \Toknot\Di\FileObject
+     * @return \Toknot\Core\FileObject
      * @throws FileIOException
      */
     public static function saveContent($file, $data, $flag = 0) {

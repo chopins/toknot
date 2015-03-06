@@ -10,11 +10,11 @@
 
 namespace Toknot\View;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 use Toknot\Exception\BaseException;
-use Toknot\Di\ArrayObject;
-use Toknot\Di\FileObject;
-use Toknot\Di\DataCacheControl;
+use Toknot\Core\ArrayObject;
+use Toknot\Core\FileObject;
+use Toknot\Core\DataCacheControl;
 use Toknot\View\ViewCache;
 use Toknot\Control\Router;
 
@@ -103,7 +103,7 @@ class Renderer extends Object {
 	/**
 	 * import variable of template
 	 * 
-	 * @param array|Toknot\Di\ArrayObject $vars
+	 * @param array|Toknot\Core\ArrayObject $vars
 	 */
 	public function importVars(& $vars) {
 		if ($vars instanceof ViewData) {

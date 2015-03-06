@@ -10,10 +10,10 @@
 
 namespace Toknot\Db;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 use Toknot\Db\DatabaseObject;
 use Toknot\Db\Connect;
-use Toknot\Di\ArrayObject;
+use Toknot\Core\ArrayObject;
 use Toknot\Db\Exception\DatabaseConfigException;
 
 class ActiveRecord extends Object {

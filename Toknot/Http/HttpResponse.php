@@ -10,7 +10,7 @@
 
 namespace Toknot\Http;
 
-use Toknot\Di\FileObject;
+use Toknot\Core\FileObject;
 
 class HttpResponse {
 

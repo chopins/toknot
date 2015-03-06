@@ -16,8 +16,9 @@ use Toknot\Core\Object;
 use Toknot\Core\Exception\NotFoundException;
 use Toknot\Core\Exception\MethodNotAllowedException;
 use Toknot\Core\Exception\ControllerInvalidException;
-use Toknot\Core\StandardAutoloader;
+use Toknot\Core\Autoloader;
 use Toknot\Core\FileObject;
+use Toknot\Core\StringObject;
 use Toknot\Config\ConfigLoader;
 
 class Router extends Object {
@@ -102,7 +103,8 @@ class Router extends Object {
     private $methodNotAllowedController = null;
     private $charset = 'UTF-8';
     private $method = 'GET';
-    private static $selfInstance = null;
+    private $beforeInvoke = null;
+    private $afterInvoke = null;
 
     /**
      * use URI of path controller invoke application controller of class
@@ -125,54 +127,67 @@ class Router extends Object {
      */
     public function routerRule() {
         if ($this->routerMode == self::ROUTER_GET_QUERY) {
-            $key = each($_GET);
-            if (!empty($key[1]) || substr($key[0], 0, 1) !== '/') {
-                $this->spacePath = $this->defaultClass;
-            } else {
-                $this->spacePath = strtr($key[0], '/', Autoloader::NS_SEPARATOR);
-            }
+            $this->queryMode();
         } elseif ($this->routerMode == self::ROUTER_MAP_TABLE) {
-            $maplist = $this->loadRouterMapTable();
-            $matches = array();
-            foreach ($maplist as $map) {
-                $map['pattern'] = str_replace('/', '\/', $map['pattern']);
-                if (preg_match("/{$map['pattern']}/i", $_SERVER['REQUEST_URI'], $matches)) {
-                    $this->spacePath = $map['action'];
-                    $this->suffixPart = $matches;
-                    break;
+            $this->mapMode();
+        } else {
+            $this->defaultMode();
+        }
+    }
+
+    private function mapMode() {
+        $maplist = $this->loadRouterMapTable();
+        $matches = array();
+        foreach ($maplist as $map) {
+            $map['pattern'] = str_replace('/', '\/', $map['pattern']);
+            if (preg_match("/{$map['pattern']}/i", $_SERVER['REQUEST_URI'], $matches)) {
+                $this->spacePath = $map['action'];
+                $this->suffixPart = $matches;
+                break;
+            }
+        }
+    }
+
+    private function defaultMode() {
+        if (empty($_SERVER['REQUEST_METHOD']) && PHP_SAPI == 'cli') {
+            if (isset($_SERVER['argv'][1])) {
+                $_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
+            } else {
+                $_SERVER['REQUEST_URI'] = '/';
+            }
+        }
+        $requestUri = new StringObject($_SERVER['REQUEST_URI']);
+        if (($pos = $requestUri->strpos('?')) !== false) {
+            $urlPath = $requestUri->substr(0, $pos);
+        } else {
+            $urlPath = new StringObject($_SERVER['REQUEST_URI']);
+        }
+        $spacePath = $urlPath->strtr('/', Autoloader::NS_SEPARATOR);
+        $spacePath = $spacePath == Autoloader::NS_SEPARATOR ? $this->defaultClass : $spacePath;
+        if ($this->routerDepth > 0) {
+            $name = strtok($spacePath, Autoloader::NS_SEPARATOR);
+            $this->spacePath = '';
+            $depth = 0;
+            while ($name) {
+                if ($depth <= $this->routerDepth) {
+                    $this->spacePath .= Autoloader::NS_SEPARATOR . ucfirst($name);
+                } else {
+                    $this->suffixPart[] = $name;
                 }
+                $name = strtok(Autoloader::NS_SEPARATOR);
+                $depth++;
             }
         } else {
-            if (empty($_SERVER['REQUEST_METHOD']) && PHP_SAPI == 'cli') {
-                if (isset($_SERVER['argv'][1])) {
-                    $_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
-                } else {
-                    $_SERVER['REQUEST_URI'] = '/';
-                }
-            }
-            if (($pos = strpos($_SERVER['REQUEST_URI'], '?')) !== false) {
-                $urlPath = substr($_SERVER['REQUEST_URI'], 0, $pos);
-            } else {
-                $urlPath = $_SERVER['REQUEST_URI'];
-            }
-            $spacePath = strtr($urlPath, '/', Autoloader::NS_SEPARATOR);
-            $spacePath = $spacePath == Autoloader::NS_SEPARATOR ? $this->defaultClass : $spacePath;
-            if ($this->routerDepth > 0) {
-                $name = strtok($spacePath, Autoloader::NS_SEPARATOR);
-                $this->spacePath = '';
-                $depth = 0;
-                while ($name) {
-                    if ($depth <= $this->routerDepth) {
-                        $this->spacePath .= Autoloader::NS_SEPARATOR . ucfirst($name);
-                    } else {
-                        $this->suffixPart[] = $name;
-                    }
-                    $name = strtok(Autoloader::NS_SEPARATOR);
-                    $depth++;
-                }
-            } else {
-                $this->spacePath = $spacePath;
-            }
+            $this->spacePath = $spacePath;
+        }
+    }
+
+    private function queryMode() {
+        $key = each($_GET);
+        if (!empty($key[1]) || substr($key[0], 0, 1) !== '/') {
+            $this->spacePath = $this->defaultClass;
+        } else {
+            $this->spacePath = strtr($key[0], '/', Autoloader::NS_SEPARATOR);
         }
     }
 
@@ -328,9 +343,31 @@ class Router extends Object {
             throw new MethodNotAllowedException("{$invokeClass} not support request method ($method) or not implement {$interface}");
         }
 
-        $invokeObject = new $invokeClass();
+        $status = $this->invokeBefore($method);
 
-        $invokeObject->$method();
+        if ($status !== false) {
+            $invokeObject = new $invokeClass();
+            $invokeObject->$method();
+        }
+        
+        $this->invokeAfter($method);
+    }
+
+    private function invokeBefore($method) {
+        $status = null;
+        if ($this->beforeInvoke) {
+            $bf = new $this->beforeInvoke;
+            $status = $bf->$method();
+        }
+        return $status;
+    }
+
+    private function invokeAfter($method) {
+        $status = null;
+        if ($this->afterInvoke) {
+            $bf = new $this->afterInvoke;
+            $status = $bf->$method();
+        }
     }
 
     /**
@@ -398,6 +435,14 @@ class Router extends Object {
         }
         if (!empty($cfg->App->charset)) {
             $this->charset = $cfg->App->charset;
+        }
+
+        if (!empty($cfg->App->beforeInvokeController)) {
+            $this->beforeInvoke = $cfg->App->beforeInvokeController;
+        }
+
+        if (!empty($cfg->App->afterInvokeController)) {
+            $this->beforeInvoke = $cfg->App->afterInvokeController;
         }
     }
 

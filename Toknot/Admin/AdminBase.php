@@ -13,8 +13,10 @@ namespace Toknot\Admin;
 use Toknot\User\ClassAccessControl;
 use Toknot\User\Nobody;
 use Toknot\User\UserClass;
-use Toknot\Di\Version;
+use Toknot\Core\Version;
 use Toknot\User\UserAccessControl;
+use Toknot\Config\ConfigLoader;
+use Toknot\Db\ActiveRecord;
 
 /**
  * Admin module base class for user's admin application
@@ -49,7 +51,7 @@ abstract class AdminBase extends ClassAccessControl{
     /**
      * Object of the configure data
      *
-     * @var Toknot\Di\ArrayObject
+     * @var Toknot\Core\ArrayObject
      * @access protected
      * @static
      */
@@ -73,7 +75,7 @@ abstract class AdminBase extends ClassAccessControl{
 
     public function __init() {
         //self::$FMAI = $FMAI;
-        self::$CFG = $this->getCFG();
+        self::$CFG = ConfigLoader::CFG();
         $this->initDatabase();        
 
         $this->SESSION = $this->startSession(self::$CFG->Admin->adminSessionName);
@@ -104,7 +106,7 @@ abstract class AdminBase extends ClassAccessControl{
      * init database connect
      */
     public function initDatabase() {
-        $this->AR = $this->getActiveRecord();
+        $this->AR = ActiveRecord::singleton();
         $dbSectionName = self::$CFG->Admin->databaseOptionSectionName;
         $this->AR->config(self::$CFG->$dbSectionName);
         $this->dbConnect = $this->AR->connect();

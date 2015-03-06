@@ -10,7 +10,7 @@
 
 namespace Toknot\View;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 
 class ViewCache extends Object {
 

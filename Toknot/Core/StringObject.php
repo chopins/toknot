@@ -43,7 +43,6 @@ class StringObject extends Object implements ArrayAccess {
         10 => 'strnatcasecmp',
         11 => 'strspn',
         12 => 'strcspn',
-        13 => 'strtok',
         14 => 'strtoupper',
         15 => 'strtolower',
         16 => 'strpos',
@@ -104,9 +103,6 @@ class StringObject extends Object implements ArrayAccess {
 
     public function __init($string = '') {
         $this->interatorArray = (string) $string;
-        if (empty(self::$supportStringMethodList)) {
-            self::$supportStringMethodList = self::supportStringMethod();
-        }
     }
 
     /**
@@ -147,7 +143,7 @@ class StringObject extends Object implements ArrayAccess {
         return $supprot;
     }
 
-    public static function __callStatic($stringFunction, $arguments) {
+    public function __callMethod($stringFunction, $arguments) {
         if (!in_array($stringFunction, self::$supportStringMethodList))
             throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
 

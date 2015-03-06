@@ -44,7 +44,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
      * {@see array_merge_recursive}, but if the value is array or ArrayObject ,the
      * value be merge recursively
      * 
-     * @param \Toknot\Di\ArrayObject $arrayObj
+     * @param \Toknot\Core\ArrayObject $arrayObj
      * @throws InvalidArgumentException
      */
     public function replace_recursive(ArrayObject $arrayObj) {

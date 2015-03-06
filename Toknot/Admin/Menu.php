@@ -12,7 +12,7 @@ namespace Toknot\Admin;
 
 use Toknot\Admin\AdminBase;
 use Toknot\Config\ConfigLoader;
-use Toknot\Di\FileObject;
+use Toknot\Core\FileObject;
 use Toknot\Control\FMAI;
 
 class Menu extends AdminBase {

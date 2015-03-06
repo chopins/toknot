@@ -59,7 +59,7 @@ class DataCacheControl {
      */
     public function __construct($cacheHandle, $modifyTime = 0, $cacheType = self::CACHE_FILE) {
         if($cacheType == self::CACHE_SERVER && !$cacheHandle instanceof DataCacheServerInterface) {
-            throw new \RuntimeException('Cache Handle instance need implement Toknot\Di\DataCacheServerInterface');
+            throw new \RuntimeException('Cache Handle instance need implement Toknot\Core\DataCacheServerInterface');
         }
         $this->cacheHandle = $cacheHandle;
         $this->dataModifyTime = $modifyTime;

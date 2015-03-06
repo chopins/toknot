@@ -17,8 +17,8 @@ use \InvalidArgumentException;
 use Toknot\Db\Connect;
 use Toknot\Db\ActiveQuery;
 use Toknot\Db\Exception\DatabaseException;
-use Toknot\Di\DataCacheControl;
-use Toknot\Di\StringObject;
+use Toknot\Core\DataCacheControl;
+use Toknot\Core\StringObject;
 
 final class DatabaseObject extends DbCRUD {
 

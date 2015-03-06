@@ -37,7 +37,7 @@ final class ConfigLoader extends Object {
     /**
      * Get app configure data
      * 
-     * @return Toknot\Di\ArrayObject
+     * @return Toknot\Core\ArrayObject
      */
     public static function CFG() {
         return self::$_CFG;

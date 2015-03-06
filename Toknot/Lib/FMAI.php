@@ -10,11 +10,11 @@
 
 namespace Toknot\Control;
 
-use Toknot\Di\Object;
-use Toknot\Di\DataCacheControl;
-use Toknot\Di\ArrayObject;
-use Toknot\Di\Log;
-use Toknot\Di\FileObject;
+use Toknot\Core\Object;
+use Toknot\Core\DataCacheControl;
+use Toknot\Core\ArrayObject;
+use Toknot\Core\Log;
+use Toknot\Core\FileObject;
 use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
 use Toknot\View\ViewCache;
@@ -28,7 +28,7 @@ use Toknot\User\Root;
 use Toknot\User\Exception\NoPermissionExecption;
 use Toknot\Control\Exception\ForbiddenException;
 use Toknot\Control\Router;
-use Toknot\Di\TKFunction as TK;
+use Toknot\Core\TKFunction as TK;
 
 /**
  * Framework Module Access Interfaces
@@ -323,7 +323,7 @@ final class FMAI extends Object {
     /**
      * Get current Configure option list
      * 
-     * @return Toknot\Di\ArrayObject
+     * @return Toknot\Core\ArrayObject
      */
     public function getCFG() {
         return ConfigLoader::CFG();

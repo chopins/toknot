@@ -141,7 +141,7 @@ EOF;
 
     public function versionInfo() {
         Toknot\Core\Log::colorMessage('Toknot Framework Application Create Script');
-        Toknot\Core\Log::colorMessage('Toknot ' . \Toknot\Di\Version::VERSION . '-' . \Toknot\Di\Version::STATUS . ';PHP ' . PHP_VERSION);
+        Toknot\Core\Log::colorMessage('Toknot ' . \Toknot\Core\Version::VERSION . '-' . \Toknot\Core\Version::STATUS . ';PHP ' . PHP_VERSION);
         Toknot\Core\Log::colorMessage('Copyright (c) 2010-2013 Szopen Xiao');
         Toknot\Core\Log::colorMessage('New BSD Licenses <http://toknot.com/LICENSE.txt>');
         Toknot\Core\Log::colorMessage('');
