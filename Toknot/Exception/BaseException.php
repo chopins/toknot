@@ -116,6 +116,7 @@ class BaseException extends ErrorException {
         if (PHP_SAPI == 'cli') {
             $str .= 'Process ID:' . getmypid() . "\n";
         }
+
         if (empty($this->traceArr)) {
             $traceArr = $this->getTrace();
             //array_shift($traceArr);

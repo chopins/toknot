@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Control;
+namespace Toknot\Core;
 
 include_once __DIR__ . '/Autoloader.php';
 
@@ -19,7 +19,6 @@ use Toknot\Config\ConfigLoader;
 use Toknot\Exception\BaseException;
 use Toknot\Exception\BadNamespaceException;
 use Toknot\Exception\BadClassCallException;
-
 
 /**
  * Toknot main class and run framework
@@ -108,36 +107,39 @@ final class Application {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
-        if (empty(ini_get('date.timezone'))) {
-            date_default_timezone_set('UTC');
-        }
+        Autoloader::importToknotModule('Core', 'Object');
+        $this->registerAutoLoader();
+        $this->initAppRootPath();
+        $this->importConfig();
+        
+        date_default_timezone_set(self::timezoneString(ConfigLoader::CFG()->App->timeZone));
+
         $this->scriptStartTime = microtime(true);
         //define Application status, DEVELOPMENT is true will show Exeption
         if (!defined('DEVELOPMENT')) {
             define('DEVELOPMENT', true);
         }
 
-        Autoloader::importToknotModule('Di', 'Object');
-        Autoloader::importToknotClass('Exception\StandardException');
+
+        Autoloader::importToknotClass('Exception\BaseException');
 
         $this->iniEnv($argv, $argc);
-        $this->registerAutoLoader();
 
-        if (PHP_SAPI == 'cli' && basename($argv[0]) == 'Toknot.php') {
+
+        if (PHP_SAPI == 'cli' && basename($_SERVER['argv'][0]) == 'Toknot.php') {
             $this->runCLI();
         }
     }
 
-    private function importConfig($appRoot) {
-        StandardAutoloader::importToknotClass('Config\ConfigLoader');
-        ConfigLoader::$cacheDir = FileObject::getRealPath($this->appRoot, 'Data/Config');
+    private function importConfig() {
+        Autoloader::importToknotClass('Config\ConfigLoader');
+        ConfigLoader::$cacheDir = FileObject::getRealPath(self::$appRoot, 'Data/Config');
         ConfigLoader::singleton();
 
-        if (file_exists($appRoot . '/Config/config.ini')) {
-            $this->loadConfigure($appRoot . '/Config/config.ini');
+        if (file_exists(self::$appRoot . '/Config/config.ini')) {
+            ConfigLoader::importCfg(self::$appRoot . '/Config/config.ini');
         }
     }
-
 
     private function runCLI() {
         if (isset($_SERVER['argv'][1])) {
@@ -178,7 +180,7 @@ final class Application {
             }
         }
 
-        Autoloader::importToknotClass('Exception\StandardException');
+        Autoloader::importToknotClass('Exception\BaseException');
         set_exception_handler(array($this, 'uncaughtExceptionHandler'));
         set_error_handler(array($this, 'errorReportHandler'));
 
@@ -194,6 +196,10 @@ final class Application {
             declare (ticks = 1);
             register_tick_function(array($this, 'tickTraceHandler'));
         }
+    }
+
+    private function initAppRootPath() {
+        self::$appRoot = dirname(dirname(realpath($_SERVER['SCRIPT_FILENAME'])));
     }
 
     /**
@@ -313,22 +319,22 @@ final class Application {
      * @throws BadClassCallException
      * @throws BaseException
      */
-    public function run($appNameSpace, $appPath, $defaultInvoke = '\Index') {
-        $this->importConfig($appPath);
-        $root = substr($appNameSpace, 0, 1);
-        $appNameSpace = rtrim($appNameSpace, Autoloader::NS_SEPARATOR);
-        $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
+    public function run() {
         try {
+            $appPath = self::$appRoot;
+            $appNameSpace = ConfigLoader::CFG()->App->rootNamespace;
+            $defaultInvoke = ConfigLoader::CFG()->App->defaultInvokeController;
+            $root = substr($appNameSpace, 0, 1);
+            $appNameSpace = rtrim($appNameSpace, Autoloader::NS_SEPARATOR);
+            $appPath = rtrim($appPath, DIRECTORY_SEPARATOR);
+
             if ($root != Autoloader::NS_SEPARATOR) {
                 throw new BadNamespaceException($appNameSpace);
             }
 
-            Autoloader::importToknotClass('Toknot\Core\Router');
-
             $this->addAppPath($appPath);
             self::$appRoot = $appPath;
 
-            $routerName = $this->routerName;
             $router = new Router();
             $router->routerSpace($appNameSpace);
             $router->routerPath($appPath);
@@ -350,7 +356,7 @@ final class Application {
                 return;
             }
             if (DEVELOPMENT) {
-                echo $e;
+                echo $e->__toString();
             } else {
                 header('500 Internal Server Error');
                 echo ('500 Internal Server Error');
@@ -401,7 +407,7 @@ final class Application {
     }
 
     /**
-     * transform php error to Exceptoion, all error will use {@link StandardException}
+     * transform php error to Exceptoion, all error will use {@link BaseException}
      * 
      * @access private
      */
@@ -436,6 +442,9 @@ final class Application {
         if (empty($err))
             return;
         if (in_array($err['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING))) {
+            if($err['message'] == 'Cannot override final method Toknot\Core\Object::__construct()') {
+                $err['message'] .= ', __init() is alternative to __construct';
+            }
             try {
                 throw new BaseException($err['message'], $err['type'], $err['file'], $err['line']);
             } catch (BaseException $e) {
@@ -508,6 +517,26 @@ final class Application {
 
     public static function newInstance() {
         return new static;
+    }
+
+    public static function timezoneString($timezone) {
+        if ($timezone[0] == '+') {
+            $timedirection = '-';
+        } elseif ($timezone[0] == '-') {
+            $timedirection = '+';
+        } elseif (is_numeric($timezone)) {
+            $timedirection = '-';
+            $offset = $timezone;
+        } else {
+            return $timezone;
+        }
+        if (empty($offset)) {
+            $offset = substr($timezone, 1, 2);
+            if (strlen($offset) == 2 && $offset[0] == '0') {
+                $offset = substr($offset, 1);
+            }
+        }
+        return "Etc/GMT{$timedirection}{$offset}";
     }
 
 }

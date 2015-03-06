@@ -1,11 +1,9 @@
 <?php
 namespace Shop;
 use Toknot\User\ClassAccessControl;
-use Toknot\Control\ControllerInterface as CI;
 use Toknot\User\Nobody;
-use Toknot\Control\FMAI;
 
-abstract class ShopBase extends ClassAccessControl implements CI\GET {
+abstract class ShopBase extends ClassAccessControl {
     protected static $FMAI;
     protected static $CFG;
     protected $AppPath;
@@ -13,8 +11,8 @@ abstract class ShopBase extends ClassAccessControl implements CI\GET {
     protected $view;
     protected $permissions;
     protected $classGroup;
-    public function __construct(FMAI $FMAI) {
-        self::$FMAI = $FMAI;
+    public function __init() {
+        //self::$FMAI = $FMAI;
         //self::$CFG = self::$FMAI->loadConfigure(self::$FMAI->appRoot . '/Config/config.ini');
         
         //$this->AR = self::$FMAI->getActiveRecord();

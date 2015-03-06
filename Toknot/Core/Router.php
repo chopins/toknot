@@ -129,7 +129,7 @@ class Router extends Object {
             if (!empty($key[1]) || substr($key[0], 0, 1) !== '/') {
                 $this->spacePath = $this->defaultClass;
             } else {
-                $this->spacePath = strtr($key[0], '/', StandardAutoloader::NS_SEPARATOR);
+                $this->spacePath = strtr($key[0], '/', Autoloader::NS_SEPARATOR);
             }
         } elseif ($this->routerMode == self::ROUTER_MAP_TABLE) {
             $maplist = $this->loadRouterMapTable();
@@ -155,19 +155,19 @@ class Router extends Object {
             } else {
                 $urlPath = $_SERVER['REQUEST_URI'];
             }
-            $spacePath = strtr($urlPath, '/', StandardAutoloader::NS_SEPARATOR);
-            $spacePath = $spacePath == StandardAutoloader::NS_SEPARATOR ? $this->defaultClass : $spacePath;
+            $spacePath = strtr($urlPath, '/', Autoloader::NS_SEPARATOR);
+            $spacePath = $spacePath == Autoloader::NS_SEPARATOR ? $this->defaultClass : $spacePath;
             if ($this->routerDepth > 0) {
-                $name = strtok($spacePath, StandardAutoloader::NS_SEPARATOR);
+                $name = strtok($spacePath, Autoloader::NS_SEPARATOR);
                 $this->spacePath = '';
                 $depth = 0;
                 while ($name) {
                     if ($depth <= $this->routerDepth) {
-                        $this->spacePath .= StandardAutoloader::NS_SEPARATOR . ucfirst($name);
+                        $this->spacePath .= Autoloader::NS_SEPARATOR . ucfirst($name);
                     } else {
                         $this->suffixPart[] = $name;
                     }
-                    $name = strtok(StandardAutoloader::NS_SEPARATOR);
+                    $name = strtok(Autoloader::NS_SEPARATOR);
                     $depth++;
                 }
             } else {
@@ -214,7 +214,7 @@ class Router extends Object {
         if (strpos($invokeClass, self::$routerNameSpace . "\Controller") !== 0) {
             $invokeClass = self::$routerNameSpace . "\Controller{$invokeClass}";
         }
-        $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
+        $classFile = Autoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
         if (is_file($classFile)) {
             include_once $classFile;
         }
@@ -246,7 +246,7 @@ class Router extends Object {
         $method = $this->getRequestMethod();
         $this->method = $method;
         $invokeClass = self::controllerNameTrans($this->spacePath);
-        $classFile = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
+        $classFile = Autoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
         $classExist = false;
 
         //not case sensitive check file whether exist
@@ -256,12 +256,12 @@ class Router extends Object {
             //if not set routerDepth, controller is first finded class, suffix of url
             //will be ignored and push to paramers
             $classPath = self::$routerNameSpace . "\Controller";
-            $classPart = explode(StandardAutoloader::NS_SEPARATOR, $this->spacePath);
+            $classPart = explode(Autoloader::NS_SEPARATOR, $this->spacePath);
             foreach ($classPart as $key => $part) {
                 if (empty($part))
                     continue;
                 $classPath .= DIRECTORY_SEPARATOR . $part;
-                $classFile = StandardAutoloader::transformClassNameToFilename($classPath, self::$routerPath);
+                $classFile = Autoloader::transformClassNameToFilename($classPath, self::$routerPath);
                 $caseClassFile = FileObject::fileExistCase($classFile);
                 if ($caseClassFile) {
                     $this->suffixPart = array_slice($classPart, $key + 1);
@@ -272,7 +272,7 @@ class Router extends Object {
         if ($caseClassFile) {
             include_once $caseClassFile;
             $invokeClass = str_replace(self::$routerPath, '', $caseClassFile);
-            $invokeClass = strtr($invokeClass, DIRECTORY_SEPARATOR, StandardAutoloader::NS_SEPARATOR);
+            $invokeClass = strtr($invokeClass, DIRECTORY_SEPARATOR, Autoloader::NS_SEPARATOR);
             $invokeClass = self::$routerNameSpace . strtok($invokeClass, '.');
             $classExist = class_exists($invokeClass, false);
         }
@@ -282,7 +282,7 @@ class Router extends Object {
             //The url mapping to a namespace but not a controller class, will invoke 
             //the namespace of under default controller class, it like index.html for
             //web server
-            $dir = StandardAutoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
+            $dir = Autoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
             if (is_dir($dir) && $this->defaultClass != null) {
                 $invokeClass = self::controllerNameTrans("{$this->spacePath}\\{$this->defaultClass}");
 

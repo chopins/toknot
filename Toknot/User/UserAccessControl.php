@@ -10,7 +10,7 @@
 
 namespace Toknot\User;
 
-use Toknot\Di\Object;
+use Toknot\Core\Object;
 use Toknot\User\Exception\NoPermissionExecption;
 use Toknot\Exception\BaseException;
 

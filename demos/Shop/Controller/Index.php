@@ -10,4 +10,5 @@ class Index extends ShopBase{
         print "hello world";        
         //self::$FMAI->display('index');
     }
+    
  }
