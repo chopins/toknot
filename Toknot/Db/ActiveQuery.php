@@ -100,8 +100,15 @@ class ActiveQuery {
         if (empty($params)) {
             return $sql;
         }
+        if(self::$dbDriverType == self::DRIVER_MYSQL) {
+            $fn = 'mysql_real_escape_string';
+        } elseif(self::$dbDriverType == self::DRIVER_SQLITE) {
+            $fn = 'sqlite_escape_string';
+        } else {
+            $fn = 'addslashes';
+        }
         foreach ($params as &$v) {
-            $v = "'" . addslashes(stripslashes($v)) . "'";
+            $v = "'" . $fn($v) . "'";
         }
         return str_replace('?', $params, $sql);
     }

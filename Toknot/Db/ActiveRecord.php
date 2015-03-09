@@ -23,6 +23,7 @@ class ActiveRecord extends Object {
     protected function __init() {
         $this->dbObject = DatabaseObject::singleton();
     }
+    
     public static function singleton() {
        return parent::__singleton();
     }
