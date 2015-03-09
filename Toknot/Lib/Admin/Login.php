@@ -8,9 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Admin;
+namespace Toknot\Lib\Admin;
 
-use Toknot\Admin\AdminBase;
+use Toknot\Lib\Admin\AdminBase;
 use Toknot\Lib\User\UserClass;
 
 class Login extends AdminBase{

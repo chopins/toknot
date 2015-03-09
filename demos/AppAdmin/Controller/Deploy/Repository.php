@@ -2,7 +2,7 @@
 
 namespace AppAdmin\Controller\Deploy;
 
-use Toknot\Admin\AdminBase;
+use Toknot\Lib\Admin\AdminBase;
 
 class Repository extends AdminBase{
     public function GET() {

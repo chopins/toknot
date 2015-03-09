@@ -1,7 +1,7 @@
 <?php
 namespace  AppAdmin\Controller;
             
-use Toknot\Admin\AdminBase;
+use Toknot\Lib\Admin\AdminBase;
 
 class Index extends AdminBase{    
 	public $perms = 0770;
@@ -11,7 +11,7 @@ class Index extends AdminBase{
 
     public function GET() {
         //$database = $this->AR->connect();
-		$menu = new \Toknot\Admin\Menu(\Toknot\Lib\FMAI::__singleton());
+		$menu = new \Toknot\Lib\Admin\Menu(\Toknot\Lib\FMAI::__singleton());
         $this->D->tableNav = array(
             array('type'=>'checkbox','name'=>''),
             array('name'=>'User Name','type'=>'string')

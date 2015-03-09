@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Admin;
+namespace Toknot\Lib\Admin;
 
 use Toknot\Lib\User\ClassAccessControl;
 use Toknot\Lib\User\Nobody;

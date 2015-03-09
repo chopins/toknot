@@ -172,7 +172,7 @@ EOF;
 <?php
 namespace {$this->appName}\Controller\User;
 
-use Toknot\Admin\Login as AdminLogin;
+use Toknot\Lib\Admin\Login as AdminLogin;
 
 class Login extends AdminLogin {
 }
@@ -181,7 +181,7 @@ EOS;
         $phpCode = <<<EOS
 <?php
 namespace {$this->appName}\Controller\User;
-use Toknot\Admin\Logout;
+use Toknot\Lib\Admin\Logout;
 class Logout extends Logout {
 }
 EOS;
@@ -239,7 +239,7 @@ EOS;
     }
 
     public function writeIndexController($path) {
-        $use = $this->isAdmin ? 'Toknot\Admin\Admin' : "{$this->appName}\\{$this->appName}";
+        $use = $this->isAdmin ? 'Toknot\Lib\Admin\Admin' : "{$this->appName}\\{$this->appName}";
         $base = $this->isAdmin ? 'AdminBase' : "{$this->appName}Base";
         $phpCode = <<<EOS
 <?php
@@ -249,7 +249,7 @@ use {$use}Base;
 
 EOS;
         if ($this->isAdmin) {
-            $phpCode .= 'use Toknot\Admin\Menu;';
+            $phpCode .= 'use Toknot\Lib\Admin\Menu;';
         }
         $phpCode .= <<<EOS
 class Index extends {$base}{

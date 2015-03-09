@@ -1,6 +1,6 @@
 <?php
 namespace AppAdmin\Controller\User;
-use Toknot\Admin\Login;
+use Toknot\Lib\Admin\Login;
 class Logout extends Login {
 	public function GET() {
 		parent::logout();	

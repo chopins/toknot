@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Admin;
+namespace Toknot\Lib\Admin;
 
 class AdminOpreatePage {
     public function createForm() {

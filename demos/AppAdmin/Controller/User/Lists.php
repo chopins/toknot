@@ -2,7 +2,7 @@
 
 namespace AppAdmin\Controller\User;
 
-use Toknot\Admin\AdminBase;
+use Toknot\Lib\Admin\AdminBase;
 
 class Lists extends AdminBase{
 
