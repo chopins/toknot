@@ -1,0 +1,3 @@
+[submodule "resources/toknot.js"]
+	path = resources/toknot.js
+	url = git@github.com:chopins/toknot.js.git
