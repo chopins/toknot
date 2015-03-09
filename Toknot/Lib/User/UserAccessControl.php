@@ -8,10 +8,10 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\User;
+namespace Toknot\Lib\User;
 
 use Toknot\Core\Object;
-use Toknot\User\Exception\NoPermissionExecption;
+use Toknot\Lib\User\Exception\NoPermissionExecption;
 use Toknot\Exception\BaseException;
 
 abstract class UserAccessControl extends Object{

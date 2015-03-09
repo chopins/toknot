@@ -8,12 +8,11 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Process\Eception;
+namespace Toknot\Lib\User\Exception;
 
-use Toknot\Exception\BaseException;
+use Toknot\Exception\CustomHttpStatusExecption;
 
-class PipException extends BaseException {
-    protected $exceptionMessage = 'Socket Opreate Exception';
+class NoPermissionExecption extends CustomHttpStatusExecption {
+    protected $httpStatus = 'Status: 401 Unauthorized';
 }
 
-?>

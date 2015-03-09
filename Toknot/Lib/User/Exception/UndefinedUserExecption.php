@@ -8,12 +8,11 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Http\TransportsException;
+namespace Toknot\Lib\User\Exception;
 
 use Toknot\Exception\BaseException;
-
-class TransportsException extends BaseException{
-       protected $exceptionMessage = 'Socket Transports Un-support'; 
+class UndefinedUserExecption extends BaseException {
+    protected $message = 'Undefined User';
 }
 
 ?>

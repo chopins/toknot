@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Http;
+namespace Toknot\Lib\Http;
 
 use Toknot\Core\FileObject;
 

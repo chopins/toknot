@@ -40,8 +40,8 @@ class CreateApp {
             \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserAccessControl');
             Toknot\Core\Log::colorMessage('Generate hash salt');
             $salt = substr(str_shuffle('1234567890qwertyuiopasdfghjklzxcvbnm'), 0, 8);
-            $algo = Toknot\User\Root::bestHashAlgos();
-            $password = Toknot\User\Root::getTextHashCleanSalt($password, $algo, $salt);
+            $algo = Toknot\Lib\User\Root::bestHashAlgos();
+            $password = Toknot\Lib\User\Root::getTextHashCleanSalt($password, $algo, $salt);
             Toknot\Core\Log::colorMessage('Generate Root password hash string');
         }
 
@@ -290,8 +290,8 @@ EOS;
         $phpCode = <<<EOS
 <?php
 namespace {$this->appName};
-use Toknot\User\ClassAccessControl;
-use Toknot\User\Nobody;
+use Toknot\Lib\User\ClassAccessControl;
+use Toknot\Lib\User\Nobody;
 class {$this->appName}Base extends ClassAccessControl {
 EOS;
         $phpCode .= <<<'EOS'

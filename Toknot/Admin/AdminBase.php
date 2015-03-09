@@ -10,11 +10,11 @@
 
 namespace Toknot\Admin;
 
-use Toknot\User\ClassAccessControl;
-use Toknot\User\Nobody;
-use Toknot\User\UserClass;
+use Toknot\Lib\User\ClassAccessControl;
+use Toknot\Lib\User\Nobody;
+use Toknot\Lib\User\UserClass;
 use Toknot\Core\Version;
-use Toknot\User\UserAccessControl;
+use Toknot\Lib\User\UserAccessControl;
 use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
 
@@ -66,9 +66,9 @@ abstract class AdminBase extends ClassAccessControl{
     protected $dbConnect = null;
 
     /**
-     * {@see Toknot\User\Session} instance
+     * {@see Toknot\Lib\User\Session} instance
      *
-     * @var Toknot\User\Session
+     * @var Toknot\Lib\User\Session
      */
     protected $SESSION = null;
     protected $currentUser = null;
@@ -123,7 +123,7 @@ abstract class AdminBase extends ClassAccessControl{
     /**
      * Check current visiter whether logined
      * 
-     * @return \Toknot\User\Nobody
+     * @return \Toknot\Lib\User\Nobody
      */
     public function checkUserLogin() {
         if (isset($_SESSION['adminUser']) && isset($_SESSION['Flag'])) {
@@ -143,7 +143,7 @@ abstract class AdminBase extends ClassAccessControl{
     /**
      * Set user login
      * 
-     * @param \Toknot\User\UserAccessControl $user
+     * @param \Toknot\Lib\User\UserAccessControl $user
      */
     protected function setAdminLogin(UserAccessControl $user) {
         $_SESSION['Flag'] = $user->generateUserFlag();

@@ -8,16 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Process\Exception;
+namespace Toknot\Lib\Process\Eception;
 
 use Toknot\Exception\BaseException;
 
-class ProcessException extends BaseException {
-
-    public function __construct() {
-        parent::__construct('Process Opreate Exception');
-    }
-
+class PipException extends BaseException {
+    protected $exceptionMessage = 'Socket Opreate Exception';
 }
 
 ?>

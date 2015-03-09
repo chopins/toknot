@@ -8,11 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\User\Exception;
+namespace Toknot\Lib\Http\TransportsException;
 
-use Toknot\Exception\CustomHttpStatusExecption;
+use Toknot\Exception\BaseException;
 
-class NoPermissionExecption extends CustomHttpStatusExecption {
-    protected $httpStatus = 'Status: 401 Unauthorized';
+class TransportsException extends BaseException{
+       protected $exceptionMessage = 'Socket Transports Un-support'; 
 }
 
+?>

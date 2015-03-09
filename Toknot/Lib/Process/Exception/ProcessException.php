@@ -8,11 +8,16 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\User\Exception;
+namespace Toknot\Lib\Process\Exception;
 
 use Toknot\Exception\BaseException;
-class UndefinedUserExecption extends BaseException {
-    protected $message = 'Undefined User';
+
+class ProcessException extends BaseException {
+
+    public function __construct() {
+        parent::__construct('Process Opreate Exception');
+    }
+
 }
 
 ?>

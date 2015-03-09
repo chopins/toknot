@@ -15,6 +15,7 @@ include_once __DIR__ . '/Autoloader.php';
 use Toknot\Core\Autoloader;
 use Toknot\Core\Exception\PHPVersionException;
 use Toknot\Core\Router;
+use Toknot\Core\DataCacheControl;
 use Toknot\Config\ConfigLoader;
 use Toknot\Exception\BaseException;
 use Toknot\Exception\BadNamespaceException;
@@ -200,6 +201,7 @@ final class Application {
 
     private function initAppRootPath() {
         self::$appRoot = dirname(dirname(realpath($_SERVER['SCRIPT_FILENAME'])));
+        DataCacheControl::$appRoot = self::$appRoot;
     }
 
     /**

@@ -8,12 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Process;
+namespace Toknot\Lib\Process;
 
 use Toknot\Exception\BaseException;
 use Toknot\Exception\DependExtensionException;
-use Toknot\Process\Exception\ProcessException;
-use Toknot\Process\Exception\PipException;
+use Toknot\Lib\Process\Exception\ProcessException;
+use Toknot\Lib\Process\Exception\PipException;
 use Toknot\Exception\FileIOException;
 use \RuntimeException;
 

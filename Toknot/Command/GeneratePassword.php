@@ -55,7 +55,7 @@ class GeneratePassword {
         }
   
          \Toknot\Control\StandardAutoloader::importToknotModule('User', 'UserAccessControl');
-        $password = Toknot\User\Root::getTextHashCleanSalt($password, $cfg->User->userPasswordEncriyptionAlgorithms, $cfg->User->userPasswordEncriyptionSalt);
+        $password = Toknot\Lib\User\Root::getTextHashCleanSalt($password, $cfg->User->userPasswordEncriyptionAlgorithms, $cfg->User->userPasswordEncriyptionSalt);
         Toknot\Core\Log::colorMessage('Set Root Password is below string in config.ini','green');
         Toknot\Core\Log::colorMessage($password,'green');
     }

@@ -11,7 +11,7 @@
 namespace Toknot\Admin;
 
 use Toknot\Admin\AdminBase;
-use Toknot\User\UserClass;
+use Toknot\Lib\User\UserClass;
 
 class Login extends AdminBase{
 

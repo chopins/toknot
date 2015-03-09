@@ -12,7 +12,7 @@ class Lists extends AdminBase{
     const LISTS = 'M:0700,G:0,U:0';
 
     public function GET() {
-        //self::$FMAI->setCurrentUser(new \Toknot\User\Nobody);
+        //self::$FMAI->setCurrentUser(new \Toknot\Lib\User\Nobody);
         $this->invokeSubAction($this);
     }
     const INDEX = 'M:0400,P:r,G:0,U:0';

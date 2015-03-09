@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\User;
+namespace Toknot\Lib\User;
 
 use Toknot\Core\ArrayObject;
 use Toknot\Core\DataCacheControl;
@@ -87,7 +87,7 @@ class Session extends ArrayObject {
     private function checkAPC() {
         if (extension_loaded('apc') && version_compare(phpversion('apc'),'4.0.0') <0) {
             if (DEVELOPMENT) {
-                echo '<b style="color:red;border:1px solid blue;">Warning : APC version less 4.0.0, it conflict with PHP Session handler,so Toknot\User\Session will clear apc system cache, recommend upgrade</b>';
+                echo '<b style="color:red;border:1px solid blue;">Warning : APC version less 4.0.0, it conflict with PHP Session handler,so Toknot\Lib\User\Session will clear apc system cache, recommend upgrade</b>';
             }
             apc_clear_cache();
         }

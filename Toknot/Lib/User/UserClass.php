@@ -8,10 +8,10 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\User;
+namespace Toknot\Lib\User;
 
-use Toknot\User\UserAccessControl;
-use Toknot\User\Root;
+use Toknot\Lib\User\UserAccessControl;
+use Toknot\Lib\User\Root;
 use Toknot\Exception\BaseException;
 use Toknot\Config\ConfigLoader;
 
@@ -160,7 +160,7 @@ class UserClass extends UserAccessControl {
 	/**
 	 * create a user instance
 	 * <code>
-	 * use Toknot\User\CurrentUser;
+	 * use Toknot\Lib\User\CurrentUser;
 	 * class UserInfo {
 	 *     public function __construct($FMAI) {
 	 *         CurrentUser::$tableName = 'userTable';
@@ -248,7 +248,7 @@ class UserClass extends UserAccessControl {
 	 * @access public
 	 * @param string $userName  The account of user
 	 * @param string $password    The account of password
-	 * @return boolean|Toknot\User\UserClass
+	 * @return boolean|Toknot\Lib\User\UserClass
 	 */
 	public static function login($userName, $password) {
 		if ($userName == 'root' || $userName === 0) {
@@ -272,7 +272,7 @@ class UserClass extends UserAccessControl {
 	 * change current user to root user and have super permissions
 	 * 
 	 * @param string $password  The Root user password
-	 * @return boolean|Toknot\User\Root
+	 * @return boolean|Toknot\Lib\User\Root
 	 * @access public
 	 */
 	public function suRoot($password = null) {
@@ -432,7 +432,7 @@ class UserClass extends UserAccessControl {
 	 * of column name
 	 * 
 	 * @param array $data
-	 * @return Toknot\User\UserClass|boolean
+	 * @return Toknot\Lib\User\UserClass|boolean
 	 * @access public
 	 * @static
 	 */
@@ -513,7 +513,7 @@ class UserClass extends UserAccessControl {
 	 * Get a CurrentUser object by uid, recommended ser serialize() the user object
 	 * 
 	 * @param integer $uid
-	 * @return Toknot\User\UserClass
+	 * @return Toknot\Lib\User\UserClass
 	 * @static
 	 */
 	public static function getInstanceByUid($uid) {

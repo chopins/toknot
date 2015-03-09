@@ -8,10 +8,10 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Process;
+namespace Toknot\Lib\Process;
 
-use Toknot\Process\Process;
-use Toknot\Process\Exception\PipException;
+use Toknot\Lib\Process\Process;
+use Toknot\Lib\Process\Exception\PipException;
 use Toknot\Exception\FileIOException;
 
 class MessageQueue {

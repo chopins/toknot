@@ -1,7 +1,7 @@
 <?php
 namespace Shop;
-use Toknot\User\ClassAccessControl;
-use Toknot\User\Nobody;
+use Toknot\Lib\User\ClassAccessControl;
+use Toknot\Lib\User\Nobody;
 
 abstract class ShopBase extends ClassAccessControl {
     protected static $FMAI;

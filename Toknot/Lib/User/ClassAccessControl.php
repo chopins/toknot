@@ -8,13 +8,13 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\User;
+namespace Toknot\Lib\User;
 
-use Toknot\User\UserAccessControl;
-use Toknot\User\Root;
-use Toknot\User\Nobody;
-use Toknot\User\Exception\NoPermissionExecption;
-use Toknot\User\Exception\UndefinedUserExecption;
+use Toknot\Lib\User\UserAccessControl;
+use Toknot\Lib\User\Root;
+use Toknot\Lib\User\Nobody;
+use Toknot\Lib\User\Exception\NoPermissionExecption;
+use Toknot\Lib\User\Exception\UndefinedUserExecption;
 
 abstract class ClassAccessControl extends UserAccessControl {
 
@@ -113,7 +113,7 @@ abstract class ClassAccessControl extends UserAccessControl {
     /**
      * Use Root user change class of permission with is temp
      * 
-     * @param \Toknot\User\Root $user
+     * @param \Toknot\Lib\User\Root $user
      * @param integer $perms
      */
     final public function changeClassPermissions(UserAccessControl $user, $perms) {
@@ -127,7 +127,7 @@ abstract class ClassAccessControl extends UserAccessControl {
     /**
      * Use Root user change class of group with is temp
      * 
-     * @param \Toknot\User\Root $user
+     * @param \Toknot\Lib\User\Root $user
      * @param string $group
      */
     final public function changeClassGroup(UserAccessControl $user, $group) {
@@ -190,7 +190,7 @@ abstract class ClassAccessControl extends UserAccessControl {
     /**
      * Check current use whether can access the GET method of invoke class
      * 
-     * @param \Toknot\User\UserClass $user
+     * @param \Toknot\Lib\User\UserClass $user
      * @return boolean
      */
     final public function checkRead($user) {
@@ -200,7 +200,7 @@ abstract class ClassAccessControl extends UserAccessControl {
     /**
      * Check current use whether can access the POST method of invoke class
      * 
-     * @param \Toknot\User\UserClass $user
+     * @param \Toknot\Lib\User\UserClass $user
      * @return boolean
      */
     final public function checkWrite($user) {
@@ -210,7 +210,7 @@ abstract class ClassAccessControl extends UserAccessControl {
     /**
      * Check current use whether change current class data
      *  
-     * @param \Toknot\User\UserClass $user
+     * @param \Toknot\Lib\User\UserClass $user
      * @return boolean
      */
     final public function checkChange($user) {

@@ -20,12 +20,12 @@ use Toknot\Db\ActiveRecord;
 use Toknot\View\ViewCache;
 use Toknot\View\Renderer;
 use Toknot\View\ViewData;
-use Toknot\User\ClassAccessControl;
-use Toknot\User\UserAccessControl;
-use Toknot\User\Nobody;
-use Toknot\User\Session;
-use Toknot\User\Root;
-use Toknot\User\Exception\NoPermissionExecption;
+use Toknot\Lib\User\ClassAccessControl;
+use Toknot\Lib\User\UserAccessControl;
+use Toknot\Lib\User\Nobody;
+use Toknot\Lib\User\Session;
+use Toknot\Lib\User\Root;
+use Toknot\Lib\User\Exception\NoPermissionExecption;
 use Toknot\Control\Exception\ForbiddenException;
 use Toknot\Control\Router;
 use Toknot\Core\TKFunction as TK;
@@ -120,7 +120,7 @@ final class FMAI extends Object {
     /**
      * Current access user of object
      *
-     * @var Toknot\User\Root|Toknot\User\UserClass|Toknot\User\Nobody
+     * @var Toknot\Lib\User\Root|Toknot\Lib\User\UserClass|Toknot\Lib\User\Nobody
      * @access readonly
      */
     private $currentUser = null;
@@ -254,7 +254,7 @@ final class FMAI extends Object {
     /**
      * the method be invoked before which method of controller was invoked by router 
      * 
-     * @param \Toknot\User\ClassAccessControl $controller
+     * @param \Toknot\Lib\User\ClassAccessControl $controller
      * @return boolean  if false, do not invoked method of controller
      */
     public function invokeBefore(&$controller) {
@@ -519,7 +519,7 @@ final class FMAI extends Object {
     /**
      * Get current user access status and default the controller is current accessed
      * 
-     * @param \Toknot\User\ClassAccessControl $clsObj check current user whether access $clsObj 
+     * @param \Toknot\Lib\User\ClassAccessControl $clsObj check current user whether access $clsObj 
      * @return boolean if allow access return true otherise false
      */
     public function getAccessStatus($clsObj) {
@@ -575,7 +575,7 @@ final class FMAI extends Object {
     /**
      * Redirect to Denided contriller
      * 
-     * @param \Toknot\User\ClassAccessControl $class
+     * @param \Toknot\Lib\User\ClassAccessControl $class
      * @return boolean
      */
     public function throwForbidden() {
@@ -631,7 +631,7 @@ final class FMAI extends Object {
     /**
      * Check a user object whether can access class object be passed
      * 
-     * @param \Toknot\User\ClassAccessControl $clsObj $clsObj check current user whether access $clsObj 
+     * @param \Toknot\Lib\User\ClassAccessControl $clsObj $clsObj check current user whether access $clsObj 
      */
     public function checkAccess(ClassAccessControl $clsObj) {
         $this->accessControlStatus = $clsObj->checkClassAccess();
@@ -671,7 +671,7 @@ final class FMAI extends Object {
      * invoke Sub Action for custom method of Controller
      * the method will check User Access permissions
      * 
-     * @param \Toknot\User\ClassAccessControl $clsObj
+     * @param \Toknot\Lib\User\ClassAccessControl $clsObj
      * @return null
      */
     public function invokeSubAction(ClassAccessControl &$clsObj) {
@@ -692,7 +692,7 @@ final class FMAI extends Object {
     /**
      * Set current user object
      * 
-     * @param Tokont\User\UserClass|Toknot\User\Root $user
+     * @param Tokont\User\UserClass|Toknot\Lib\User\Root $user
      */
     public function setCurrentUser($user = null) {
         if ($user instanceof UserAccessControl || $user instanceof Root) {
@@ -707,7 +707,7 @@ final class FMAI extends Object {
     /**
      * Get current user instance
      * 
-     * @return Toknot\User\UserAccessControl
+     * @return Toknot\Lib\User\UserAccessControl
      */
     public function getCurrentUser() {
         return $this->currentUser;
@@ -717,7 +717,7 @@ final class FMAI extends Object {
      * Start toknot session object
      * 
      * @param type $name
-     * @return \Toknot\User\Session
+     * @return \Toknot\Lib\User\Session
      */
     public function &startSession($name = null) {
         $name = $name ? $name : ConfigLoader::CFG()->Session->sessionName;
