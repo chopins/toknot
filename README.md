@@ -16,13 +16,13 @@ see (http://toknot.com/toknot/)
 
 ####Directory Structure
     Toknot/             framework sources code
-          Config/       default ini file and load config of class **Availabled**
-          Db/           Database opreate, **Availabled**
-          Core/         framework of object **Availabled**
-          Command/      Command line tool **Availabled**
-          View/         view layer **Availabled**
-          Exception/    Framework Exception class  **Availabled**
-          Lib/          The lib is options **Develop**
+          Config/       default ini file and load config of class [Availabled]
+          Db/           Database opreate, [Availabled]
+          Core/         framework of object [Availabled]
+          Command/      Command line tool [Availabled]
+          View/         view layer [Availabled]
+          Exception/    Framework Exception class  [Availabled]
+          Lib/          The lib is options [Develop]
           Lib/Http         Http opreate
           Lib/Process/      Process manage
           Lib/User/         User Control model that is like unix file access permissions
