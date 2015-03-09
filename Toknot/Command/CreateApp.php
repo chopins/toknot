@@ -267,18 +267,9 @@ EOS;
         if ($this->isAdmin) {
             $phpCode .= <<<'EOS'
         $menu = new Menu;
-        //self::$FMAI->D->navList = $menu->getAllMenu();
-        $this->D->navList = $menu->getAllMenu();
-        
-        //self::$FMAI->D->act = 'list';
-        $this->D->act = 'list';
-
-        //self::$FMAI->display('index');
-        $this->display('index');
 EOS;
         }
         $phpCode .= <<<'EOS'
-        //self::$FMAI->display('index');
     }
  }
 EOS;
@@ -296,28 +287,12 @@ class {$this->appName}Base extends ClassAccessControl {
 EOS;
         $phpCode .= <<<'EOS'
 
-    //protected static $FMAI;
-    protected static $CFG;
-    protected $AppPath;
-    protected $AR;
-    protected $view;
     protected $permissions = 0777;
     protected $operateType = 'r';
     protected $gid =0;
     protected $uid =0;
-    public function __init($FMAI) {
+    public function __init() {
        
-        //$this->AR = self::$FMAI->getActiveRecord(); 
-        $this->AR = $this->getActiveRecord();
-
-        //$this->AR->config(self::$CFG->Database);
-        
-        //self::$FMAI->enableHTMLCache(self::$CFG->View);
-        
-        //$this->view = self::$FMAI->newTemplateView(self::$CFG->View);
-        
-        //$this->checkAccess($this, new Nobody());
-        $FMAI->checkAccess($this, new Nobody());
     }
 
     public function CLI() {
@@ -332,35 +307,14 @@ EOS;
 
     public function writeIndex($path) {
         $toknot = dirname(__DIR__) . '/Toknot.php';
-        $namespace = '\\' . $this->appName;
-        $phpCode = '<?php
-use Toknot\Control\Application;
-//use Toknot\Control\Router;
-
+        $phpCode = "<?php
 //If developement set true, product set false
-define(\'DEVELOPMENT\', true);
-require_once "' . $toknot . '";
-
-$app = new Application;
-
-/**
-the first paramter of function what is router mode that value maybe is below:
-Router::ROUTER_PATH         is default, the path similar class full name with namespace
-                            the URI un-match-part use FMAI::getParam() which pass
-                            index of order
-Router::ROUTER_GET_QUERY    is router use $_GET[\'r\']
-Router::ROUTER_MAP_TABLE    is use Config/router_map.ini, the file is ini configure
-                            key is pattern, value is class full name with namespace
-                            use FMAI::getParam() get match sub
-NOTE: if you set value here and different config.ini will use config.ini set value
-*/
-//$app->setRouterArgs(Router::ROUTER_PATH, 2);
-$app->run("' . $namespace . '",dirname(__DIR__));';
+define('DEVELOPMENT', true);
+require_once '$toknot';
+main();";
 
         Toknot\Core\Log::colorMessage("Create $path/index.php");
         file_put_contents($path . '/index.php', $phpCode);
     }
 
 }
-
-?>

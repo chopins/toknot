@@ -17,7 +17,6 @@ class GeneratePassword {
         $this->toknotDir = dirname(__DIR__);
         $this->workDir = getcwd();
         define('DEVELOPMENT', true);
-        new Toknot\Control\Application;
         $config = false;
         
         if(!empty($argv[1]) && $argv[1] != 'GeneratePassword') {
@@ -90,5 +89,3 @@ class GeneratePassword {
     }
 
 }
-
-return new GeneratePassword($argv);

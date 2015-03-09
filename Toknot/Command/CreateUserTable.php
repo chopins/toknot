@@ -14,7 +14,6 @@ class CreateUserTable {
         $this->workDir = getcwd();
 
         define('DEVELOPMENT', true);
-        new Toknot\Control\Application;
         
         $appPath = false;
         if (!empty($argv[1]) && $argv[1] != 'CreateUserTable') {
@@ -35,9 +34,8 @@ class CreateUserTable {
                 }
             }
         }
-        Toknot\Control\FMAI::singleton(basename($appPath), $appPath);
-        Toknot\Config\ConfigLoader::singleton();
-        $cfg = Toknot\Config\ConfigLoader::importCfg($appPath.'/Config/config.ini');
+        
+        $cfg = Toknot\Config\ConfigLoader::CFG();
         $db = $this->activeRecord($cfg);
         $this->createUserTable($db, $cfg);
     }
@@ -66,7 +64,7 @@ class CreateUserTable {
     }
 
     public function activeRecord($cfg) {
-        Toknot\Control\StandardAutoloader::importToknotModule('Db', 'DbCRUD');
+        Toknot\Core\Autoloader::importToknotModule('Db', 'DbCRUD');
         $ar = Toknot\Db\ActiveRecord::singleton();
         $ar->config($cfg->Database);
         return $ar->connect();
@@ -74,4 +72,3 @@ class CreateUserTable {
 
 }
 
-new CreateUserTable($argv);
