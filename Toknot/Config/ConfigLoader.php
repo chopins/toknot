@@ -65,7 +65,7 @@ final class ConfigLoader extends Object {
         if (file_exists($file)) {
  
             if (self::$cacheDir) {
-                $cacheFile = self::$cacheDir . DIRECTORY_SEPARATOR . basename($file) . '.php';
+                $cacheFile = self::$cacheDir . DIRECTORY_SEPARATOR . basename($file);
                 $cacheControl = new DataCacheControl($cacheFile, filemtime($file));
                 $cache = $cacheControl->get();
             } else {

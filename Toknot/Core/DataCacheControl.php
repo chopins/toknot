@@ -124,7 +124,7 @@ class DataCacheControl {
         }
 
         $dataString = '<?php return '.var_export($data, true) .';';
-        $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}");
+        $file = FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");
         $fileObject = FileObject::saveContent($file, $dataString);
         
         if($fileObject === false) {

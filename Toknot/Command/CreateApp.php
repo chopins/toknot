@@ -281,7 +281,9 @@ EOS;
 <?php
 namespace {$this->appName};
 
-class {$this->appName}Base {
+use Toknot\Core\Object;
+
+class {$this->appName}Base extends Object {
 EOS;
         $phpCode .= <<<'EOS'
 

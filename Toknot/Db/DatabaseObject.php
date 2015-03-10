@@ -28,6 +28,7 @@ final class DatabaseObject extends DbCRUD {
     private $tableList = array();
     protected $driverOptions = array();
     protected $tablePrefix = '';
+
     /**
      *
      * @var array
@@ -36,6 +37,9 @@ final class DatabaseObject extends DbCRUD {
     protected $tableValueList = array();
     protected $databaseStructInfoCache = '';
     protected $databaseCacheExpire = 100;
+    public $databaseTableStructCache = '';
+    public $databaseTableStructCacheExpire = 100;
+
     protected function __init() {
         
     }
@@ -47,15 +51,23 @@ final class DatabaseObject extends DbCRUD {
     public static function singleton() {
         return parent::__singleton();
     }
+
     public function setConfig($config) {
         if (isset($config->tablePrefix)) {
             $this->tablePrefix = $config->tablePrefix;
         }
-        if(isset($config->databaseStructInfoCache)) {
+        if (isset($config->databaseStructInfoCache)) {
             $this->databaseStructInfoCache = $config->databaseStructInfoCache;
         }
-        if(isset($config->databaseStructInfoCacheExpire)) {
+        if (isset($config->databaseStructInfoCacheExpire)) {
             $this->databaseCacheExpire = $config->databaseStructInfoCacheExpire;
+        }
+
+        if (isset($config->databaseTableStructCache)) {
+            $this->databaseTableStructCache = $config->databaseTableStructCache;
+        }
+        if (isset($config->databaseTableStructCacheExpire)) {
+            $this->databaseTableStructCacheExpire = $config->databaseTableStructCacheExpire;
         }
     }
 
@@ -72,14 +84,14 @@ final class DatabaseObject extends DbCRUD {
     }
 
     public function setDriverOptions($driverOptions) {
-        if($driverOptions instanceof StringObject) {
+        if ($driverOptions instanceof StringObject) {
             $this->driverOptions[] = $driverOptions->__toString();
             return;
         }
-        foreach($driverOptions as $key => $v) {
-            if(!is_numeric($key)) {
+        foreach ($driverOptions as $key => $v) {
+            if (!is_numeric($key)) {
                 $key = constant($key);
-            } 
+            }
             $this->driverOptions[$key] = $v;
         }
     }
@@ -98,7 +110,7 @@ final class DatabaseObject extends DbCRUD {
         $cache = new DataCacheControl($this->databaseStructInfoCache);
         $cache->useExpire($this->databaseCacheExpire * 60);
         $cacheTable = $cache->get();
-        if($cacheTable === false) {
+        if ($cacheTable === false) {
             $sql = ActiveQuery::showTableList();
             $result = $this->readALL($sql);
             $tableList = array();
@@ -106,14 +118,14 @@ final class DatabaseObject extends DbCRUD {
                 $tableList[] = array_shift($tableInfo);
             }
             $cache->save($tableList);
+            return $tableList;
         } else {
             return $cacheTable;
         }
-        return $tableList;
     }
 
     protected function setPropertie($name, $value = null) {
-        $this->tableValueList[$this->tablePrefix.$name] = $value;
+        $this->tableValueList[$this->tablePrefix . $name] = $value;
         //throw new DatabaseException("undefined property $class::$name", 0);
     }
 
@@ -122,13 +134,13 @@ final class DatabaseObject extends DbCRUD {
             return $this->$propertie;
         } elseif (in_array($this->tablePrefix . $propertie, $this->tableList)) {
             if (!isset($this->interatorArray[$propertie])) {
-                $this->interatorArray[$propertie] = new DbTableObject($this->tablePrefix.$propertie, $this);
+                $this->interatorArray[$propertie] = new DbTableObject($this->tablePrefix . $propertie, $this);
             }
             return $this->interatorArray[$propertie];
         } elseif (isset($this->tableValueList[$propertie])) {
             return $this->tableValueList[$propertie];
         } else {
-            $this->tableValueList[$propertie] = new DbTableObject($this->tablePrefix.$propertie, $this, true);
+            $this->tableValueList[$propertie] = new DbTableObject($this->tablePrefix . $propertie, $this, true);
             return $this->tableValueList[$propertie];
         }
     }
@@ -158,7 +170,7 @@ final class DatabaseObject extends DbCRUD {
     }
 
     public function createTable() {
-        if(ActiveQuery::getDbDriverType() != ActiveQuery::DRIVER_SQLITE) {
+        if (ActiveQuery::getDbDriverType() != ActiveQuery::DRIVER_SQLITE) {
             throw new DatabaseException('ToKnot only provide create table on SQLite');
         }
         foreach ($this->tableValueList as $tableName => $table) {

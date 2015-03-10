@@ -17,7 +17,6 @@ use \InvalidArgumentException;
 use Toknot\Db\Exception\DatabaseException;
 use Toknot\Db\DbTableColumn;
 
-
 final class DbTableObject extends DbCRUD {
 
     private $tableName;
@@ -28,6 +27,8 @@ final class DbTableObject extends DbCRUD {
     private $columnValueList = array();
     public $where = 1;
     public $logical = ActiveQuery::LOGICAL_AND;
+    protected $databaseTableStructCache = '';
+    protected $databaseTableStructCacheExpire = 100;
 
     public function __init($tableName, DatabaseObject &$databaseObject, $newTable = false) {
         $this->tableName = $tableName;
@@ -39,6 +40,8 @@ final class DbTableObject extends DbCRUD {
         }
         $this->order = ActiveQuery::ORDER_DESC;
         $this->orderBy = $this->primaryName;
+        $this->databaseTableStructCache = $databaseObject->databaseTableStructCache;
+        $this->databaseTableStructCacheExpire = $databaseObject->databaseTableStructCacheExpire;
     }
 
     public function setPropertie($name, $value) {
@@ -80,22 +83,30 @@ final class DbTableObject extends DbCRUD {
      * Get table column list and set DbTableObject::$columnList
      */
     public function showColumnList() {
-        $sql = ActiveQuery::showColumnList($this->tableName);
-        $list = $this->readAll($sql);
-        if (empty($list)) {
-            return false;
-        }
-        if (ActiveQuery::getDbDriverType() == ActiveQuery::DRIVER_SQLITE) {
-            $this->columnList = ActiveQuery::parseSQLiteColumn($list[0]['sql']);
-            return $this->columnList;
-        }
-        foreach ($list as $field) {
-            if (isset($field['Key']) && strtolower($field['Key']) == 'pri') {
-                $this->primaryName = $field['Field'];
+        $cache = new DataCacheControl($this->databaseTableStructCache,".{$this->tableName}");
+        $cache->useExpire($this->databaseTableStructCacheExpire * 60);
+        $cacheTable = $cache->get();
+        if ($cacheTable == false) {
+            $sql = ActiveQuery::showColumnList($this->tableName);
+            $list = $this->readAll($sql);
+            if (empty($list)) {
+                return false;
             }
-            $this->columnList[] = $field['Field'];
+            if (ActiveQuery::getDbDriverType() == ActiveQuery::DRIVER_SQLITE) {
+                $this->columnList = ActiveQuery::parseSQLiteColumn($list[0]['sql']);
+                return $this->columnList;
+            }
+            foreach ($list as $field) {
+                if (isset($field['Key']) && strtolower($field['Key']) == 'pri') {
+                    $this->primaryName = $field['Field'];
+                }
+                $this->columnList[] = $field['Field'];
+            }
+            $cache->save($this->columnList);
+            return $this->columnList;
+        } else {
+            return $cacheTable;
         }
-        return $this->columnList;
     }
 
     /**
@@ -355,7 +366,7 @@ final class DbTableObject extends DbCRUD {
         $sql .= ActiveQuery::limit($start, $limit);
         return $this->readAll($sql);
     }
-    
+
     /**
      * Get record count number, the use $this->where set
      * 
@@ -364,7 +375,7 @@ final class DbTableObject extends DbCRUD {
      */
     public function countRecord(array $params = array()) {
         $sql = ActiveQuery::select($this->tableName, 'COUNT(*)');
-        if($this->where !== 1) {
+        if ($this->where !== 1) {
             $sql .= ActiveQuery::where($this->where);
         }
         $this->where = 1;
@@ -372,7 +383,7 @@ final class DbTableObject extends DbCRUD {
         list($cnt) = $this->readOne($sql, $params);
         return $cnt;
     }
-    
+
     /**
      * Get all record by select, if not set $sql, the function will return all 
      * record that not large 500 lines
@@ -381,11 +392,12 @@ final class DbTableObject extends DbCRUD {
      * @param array $params
      * @return array
      */
-    public function readAll($sql = null,$params = array()) {
-        if($sql == null) {
+    public function readAll($sql = null, $params = array()) {
+        if ($sql == null) {
             $sql = ActiveQuery::select($this->tableName, '*');
             $sql .= ActiveQuery::limit(500);
         }
-        return parent::readAll($sql,$params);
+        return parent::readAll($sql, $params);
     }
+
 }
