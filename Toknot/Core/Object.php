@@ -128,6 +128,10 @@ abstract class Object implements Iterator, Countable {
         return self::$singletonInstanceStorage[$className];
     }
 
+    public static function singleton() {
+        return self::__singleton();
+    }
+    
     /**
      * get singletion instance
      * 

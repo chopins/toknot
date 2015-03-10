@@ -24,10 +24,6 @@ class ActiveRecord extends Object {
         $this->dbObject = DatabaseObject::singleton();
     }
     
-    public static function singleton() {
-       return parent::__singleton();
-    }
-    
     /**
      * Get new connect instance of databases
      * 
