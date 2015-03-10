@@ -17,8 +17,9 @@ class BadNamespaceException extends BaseException {
     protected $exceptionMessage = 'Bad Namespace Declaration (%s)';
 
     public function __construct($namespace) {
-        $message = sprintf($this->exceptionMessage, $namespace);
-        parent::__construct($message);
+        $namespace = empty($namespace) ? 'Namespace is null' : $namespace;
+        $this->exceptionMessage = sprintf($this->exceptionMessage, $namespace);
+        parent::__construct($this->exceptionMessage);
     }
 
 }
