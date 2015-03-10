@@ -11,7 +11,7 @@
 namespace Toknot\Exception;
 
 use \ErrorException;
-use Toknot\Core\Log;
+use Toknot\Boot\Log;
 
 /**
  * Toknot Statndrad Exception

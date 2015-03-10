@@ -8,13 +8,13 @@
  * @link       https://github.com/chopins/toknot
  */
 
-use Toknot\Boot\Application;
+namespace Toknot\Boot;
 
-include_once __DIR__ . '/Boot/Application.php';
-
-function main() {
-    $app = new Application;
-    $app->run();
-    return $app;
+/**
+ * Toknot Framework Version message
+ */
+final class Version {
+    const VERSION = '3.0';
+    const STATUS = 'devel';
+    const REQUIRE_PHP_VERSION = '5.3';
 }
-$app = main();

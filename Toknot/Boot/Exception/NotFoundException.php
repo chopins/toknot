@@ -8,13 +8,11 @@
  * @link       https://github.com/chopins/toknot
  */
 
-use Toknot\Boot\Application;
+namespace Toknot\Boot\Exception;
 
-include_once __DIR__ . '/Boot/Application.php';
-
-function main() {
-    $app = new Application;
-    $app->run();
-    return $app;
+use Toknot\Exception\CustomHttpStatusExecption;
+class NotFoundException extends CustomHttpStatusExecption{
+    protected $httpStatus = 'Status:404 Not Found';
 }
-$app = main();
+
+?>

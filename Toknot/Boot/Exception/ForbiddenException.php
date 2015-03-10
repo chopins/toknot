@@ -8,13 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-use Toknot\Boot\Application;
+namespace Toknot\Boot\Exception;
 
-include_once __DIR__ . '/Boot/Application.php';
+use Toknot\Exception\CustomHttpStatusExecption;
 
-function main() {
-    $app = new Application;
-    $app->run();
-    return $app;
+class ForbiddenException extends CustomHttpStatusExecption {
+
+    protected $httpStatus = 'Status:403 Forbidden';
+
 }
-$app = main();

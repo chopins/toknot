@@ -1,7 +1,7 @@
 <?php
 namespace Shop;
 
-use Toknot\Core\Object;
+use Toknot\Boot\Object;
 use Toknot\Db\ActiveRecord;
 use Toknot\Config\ConfigLoader;
 

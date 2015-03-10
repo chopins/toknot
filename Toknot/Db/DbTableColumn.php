@@ -11,7 +11,7 @@
 namespace Toknot\Db;
 
 use Toknot\Db\DbTableObject;
-use Toknot\Core\StringObject;
+use Toknot\Boot\StringObject;
 use Toknot\Exception\BaseException;
 
 class DbTableColumn extends StringObject{

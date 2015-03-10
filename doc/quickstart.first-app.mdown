@@ -45,11 +45,11 @@ WebRoot                 HTTP Web 根目录
 5.进入`/home/MyApp/Controller`文件夹，修改Index.php
 用户控制器的构造函数将会接收到了一个FMAI类的实例，这个类提供框架各个组件的标准访问方法，该类所拥有的方法可以建框架类参考http://toknot.com/toknot/class-Toknot.Control.FMAI.html
 
-框架规定所有控制器必须至少实现 Toknot\Control\ControllerInterface\ControllerInterface 接口 
-或者根据你的应用实现 Toknot\Control\ControllerInterface 命名空间下的其他接口 
-通常情况下，提供WEB服务，你必须至少实现 Toknot\Control\ControllerInterface\GET 和 
-Toknot\Control\ControllerInterface\POST 
-对于命令行必须实现 Toknot\Control\ControllerInterface\CLI 接口
+框架规定所有控制器必须至少实现 Toknot\Boot\ControllerInterface\ControllerInterface 接口 
+或者根据你的应用实现 Toknot\Boot\ControllerInterface 命名空间下的其他接口 
+通常情况下，提供WEB服务，你必须至少实现 Toknot\Boot\ControllerInterface\GET 和 
+Toknot\Boot\ControllerInterface\POST 
+对于命令行必须实现 Toknot\Boot\ControllerInterface\CLI 接口
 
 如果web服务器已经配置，你可以通过访问`http://localhost/`看到打印了 'hello world' 的页面
 
@@ -77,8 +77,8 @@ Web服务器普通配置情况下，可以通过类似下面的方式访问控�
    `http://localhost/index.php?c=User`
 但是在入口文件的代码应当是下面这样:
 ```php
-use Toknot\Control\Application;
-use Toknot\Control\Router;
+use Toknot\Boot\Application;
+use Toknot\Boot\Router;
 require_once '/home/Toknot/Toknot.php';
 $app = new Application;
 $app->run('\MyApp',dirname(__DIR__),'\Index',Router::ROUTER_GET_QUERY);
@@ -118,7 +118,7 @@ server {
     http://localhost/Index 将被映射到 `/home/MyApp/Controller/Index.php` 的 `Index` 控制器上，当GET方法请求时调用`Index::GET()`,POST方法请求时调用`Index::POST()`
 ```php
 namespace MyApp\Controller;
-use Toknot\Control\ControllerInterface as CI;
+use Toknot\Boot\ControllerInterface as CI;
 use MyApp\MyAppBase;
 class Index extends  MyAppBase implements CI\GET,CI\POST,CI\PUT,CI\CLI{
 
@@ -156,8 +156,8 @@ class Index extends  MyAppBase implements CI\GET,CI\POST,CI\PUT,CI\CLI{
    现在在`/home/MyApp/`下面创建`MyAppBase.php`文件，输入如下代码：
 ```php
 namespace MyApp\MyAppBase;
-use Toknot\Control\FMAI;
-use Toknot\Control\ControllerInterface as CI;
+use Toknot\Boot\FMAI;
+use Toknot\Boot\ControllerInterface as CI;
 class MyAppBase implements CI\ControllerInterface {
       public $FMAI = null;
       public $AR = null;

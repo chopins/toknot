@@ -12,7 +12,7 @@ namespace Toknot\Db;
 
 use Toknot\Db\Exception\DatabaseException;
 use \PDOException;
-use Toknot\Core\Object;
+use Toknot\Boot\Object;
 use Toknot\Db\Driver\MySQL;
 use Toknot\Db\Driver\SQLite;
 use \PDO;

@@ -10,9 +10,9 @@
 
 namespace Toknot\Config;
 
-use Toknot\Core\Object;
-use Toknot\Core\ArrayObject;
-use Toknot\Core\DataCacheControl;
+use Toknot\Boot\Object;
+use Toknot\Boot\ArrayObject;
+use Toknot\Boot\DataCacheControl;
 
 final class ConfigLoader extends Object {
 
@@ -37,7 +37,7 @@ final class ConfigLoader extends Object {
     /**
      * Get app configure data
      * 
-     * @return Toknot\Core\ArrayObject
+     * @return Toknot\Boot\ArrayObject
      */
     public static function CFG() {
         return self::$_CFG;

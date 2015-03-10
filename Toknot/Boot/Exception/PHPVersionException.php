@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Toknot (http://toknot.com)
  *
@@ -8,13 +7,10 @@
  * @link       https://github.com/chopins/toknot
  */
 
-use Toknot\Boot\Application;
+namespace Toknot\Boot\Exception;
 
-include_once __DIR__ . '/Boot/Application.php';
-
-function main() {
-    $app = new Application;
-    $app->run();
-    return $app;
+use Toknot\Exception\BaseException;
+class PHPVersionException extends BaseException {
+    protected $exceptionMessage = 'only support php version or 5.3 or lastest';
 }
-$app = main();
+

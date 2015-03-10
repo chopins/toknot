@@ -10,7 +10,7 @@
 
 namespace Toknot\Db;
 
-use Toknot\Core\ArrayObject;
+use Toknot\Boot\ArrayObject;
 
 class ActiveQuery {
 
