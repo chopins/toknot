@@ -30,7 +30,7 @@ use Toknot\Exception\BadClassCallException;
  * define('DEVELOPMENT', true); 
  * 
  * use Toknot\Boot\Application;
- * require_once '/path/Toknot/Core/Application.php';
+ * require_once '/path/Toknot/Boot/Application.php';
  * $app = new Application;
  * $app->run('\AppTopNamespace', '/path/AppPath');
  * </code>
@@ -84,7 +84,7 @@ final class Application {
      * <code>
      * use Toknot\Boot\Application;
      * 
-     * require_once '/path/Toknot/Core/Application.php';
+     * require_once '/path/Toknot/Boot/Application.php';
      * 
      * $app = new Application;
      * </code>
@@ -108,7 +108,7 @@ final class Application {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
-        Autoloader::importToknotModule('Core', 'Object');
+        Autoloader::importToknotModule('Boot', 'Object');
         $this->registerAutoLoader();
         $this->initAppRootPath();
         $this->importConfig();
