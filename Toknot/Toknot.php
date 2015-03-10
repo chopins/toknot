@@ -8,12 +8,12 @@
  * @link       https://github.com/chopins/toknot
  */
 
-use Toknot\Boot\Application;
+use Toknot\Boot\Kernel;
 
-include_once __DIR__ . '/Boot/Application.php';
+include_once __DIR__ . '/Boot/Kernel.php';
 
 function main() {
-    $app = new Application;
+    $app = new Kernel;
     $app->run();
     return $app;
 }

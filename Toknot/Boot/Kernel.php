@@ -36,7 +36,7 @@ use Toknot\Exception\BadClassCallException;
  * </code>
  * 
  */
-final class Application {
+final class Kernel {
 
     /**
      * This save toknot of standard autoloader ({@see Toknot\Boot\Autoloader}) instance
