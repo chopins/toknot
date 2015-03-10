@@ -46,7 +46,7 @@ see (http://toknot.com/toknot/)
 
 6. use HTML template, create template file under `/your-app-path/View`
 
-7. change `/your-app-path/Config/config.ini`
+7. change `/your-app-path/config/config.ini`
 
 8. if your PHP verision higher than 5.4.0, In command line execute below code:
     $ cd /your-app-path/WebRoot
