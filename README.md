@@ -18,15 +18,18 @@ see (http://toknot.com/toknot/)
     Toknot/             framework sources code
           Config/       default ini file and load config of class [Availabled]
           Db/           Database opreate, [Availabled]
-          Core/         framework of object [Availabled]
+          Boot/         boot app [Availabled]
           Command/      Command line tool [Availabled]
-          View/         view layer [Availabled]
+          Renderer/     view layer renderer [Availabled]
           Exception/    Framework Exception class  [Availabled]
-          Lib/          The lib is options [Develop]
-          Lib/Http         Http opreate
-          Lib/Process/      Process manage
-          Lib/User/         User Control model that is like unix file access permissions
-          Lib/Admin/        Admin model
+
+          Share/          The share lib is options [Develop]
+          Share/Http         Http opreate
+          Share/Process/      Process manage
+          Share/User/         User Control model that is like unix file access permissions
+          Share/Admin/        Admin model
+          
+          Toknot.php     the main function
      demos/
 
 ####Usage and Configure
@@ -49,6 +52,3 @@ see (http://toknot.com/toknot/)
     $ cd /your-app-path/WebRoot
     $ php -S localhost:8000 index.php -t static/
 
-
-####Previous Versions
-The ToKnot Freamwork v1 visit https://github.com/chopins/toknot/tree/V1
