@@ -13,8 +13,6 @@ class CreateUserTable {
         $this->toknotDir = dirname(__DIR__);
         $this->workDir = getcwd();
 
-        define('DEVELOPMENT', true);
-        
         $appPath = false;
         if (!empty($argv[1]) && $argv[1] != 'CreateUserTable') {
             $appPath = $this->checkAppPath($argv[1]);

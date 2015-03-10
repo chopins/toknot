@@ -1,4 +1,3 @@
-#!/bin/env php
 <?php
 /**
  * Toknot (http://toknot.com)
@@ -23,7 +22,6 @@ class CreateApp {
     public function __construct() {
         $this->toknotDir = dirname(__DIR__);
         $this->workDir = getcwd();
-        define('DEVELOPMENT', false);
         $this->versionInfo();
 
         Toknot\Core\Log::colorMessage("Whether create to current path yes/no(default:no):", null, false);
@@ -281,16 +279,11 @@ EOS;
         $phpCode = <<<EOS
 <?php
 namespace {$this->appName};
-use Toknot\Lib\User\ClassAccessControl;
-use Toknot\Lib\User\Nobody;
-class {$this->appName}Base extends ClassAccessControl {
+
+class {$this->appName}Base {
 EOS;
         $phpCode .= <<<'EOS'
 
-    protected $permissions = 0777;
-    protected $operateType = 'r';
-    protected $gid =0;
-    protected $uid =0;
     public function __init() {
        
     }
@@ -310,8 +303,7 @@ EOS;
         $phpCode = "<?php
 //If developement set true, product set false
 define('DEVELOPMENT', true);
-require_once '$toknot';
-main();";
+require_once '$toknot';";
 
         Toknot\Core\Log::colorMessage("Create $path/index.php");
         file_put_contents($path . '/index.php', $phpCode);

@@ -112,7 +112,7 @@ final class Application {
         $this->registerAutoLoader();
         $this->initAppRootPath();
         $this->importConfig();
-        
+
         date_default_timezone_set(self::timezoneString(ConfigLoader::CFG()->App->timeZone));
 
         $this->scriptStartTime = microtime(true);
@@ -126,7 +126,6 @@ final class Application {
 
         $this->iniEnv($argv, $argc);
 
-
         if (PHP_SAPI == 'cli' && basename($_SERVER['argv'][0]) == 'Toknot.php') {
             $this->runCLI();
         }
@@ -134,27 +133,29 @@ final class Application {
 
     private function importConfig() {
         Autoloader::importToknotClass('Config\ConfigLoader');
-        ConfigLoader::$cacheDir = FileObject::getRealPath(self::$appRoot, 'Data/Config');
         ConfigLoader::singleton();
 
         if (file_exists(self::$appRoot . '/Config/config.ini')) {
+            ConfigLoader::$cacheDir = FileObject::getRealPath(self::$appRoot, 'Data/Config');
             ConfigLoader::importCfg(self::$appRoot . '/Config/config.ini');
         }
     }
 
     private function runCLI() {
         if (isset($_SERVER['argv'][1])) {
-            $filename = __DIR__ . "/Command/{$_SERVER['argv'][1]}.php";
+            $filename = dirname(__DIR__) . "/Command/{$_SERVER['argv'][1]}.php";
             if (file_exists($filename)) {
                 include_once $filename;
                 return new $_SERVER['argv'][1]($_SERVER['argv'], $_SERVER['argc']);
             }
+            echo "Undefined {$_SERVER['argv'][1]}";
         }
-        echo "Undefined {$_SERVER['argv'][1]}";
+
         echo 'Usage: php Toknot.php command
             command :
                 CreateApp           Create a application follow one by one
                 GeneratePassword    Use current configure encrypt text
+                CreateUserTable     Create User table
 ';
 
         exit;
@@ -378,7 +379,7 @@ final class Application {
         if (empty($err))
             return;
         if (in_array($err['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR, E_COMPILE_WARNING))) {
-            if($err['message'] == 'Cannot override final method Toknot\Core\Object::__construct()') {
+            if ($err['message'] == 'Cannot override final method Toknot\Core\Object::__construct()') {
                 $err['message'] .= ', __init() is alternative to __construct';
             }
             try {

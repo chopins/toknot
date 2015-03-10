@@ -1,4 +1,3 @@
-#!/bin/env php
 <?php
 /**
  * Toknot (http://toknot.com)
@@ -16,7 +15,6 @@ class GeneratePassword {
     public function __construct($argv) {
         $this->toknotDir = dirname(__DIR__);
         $this->workDir = getcwd();
-        define('DEVELOPMENT', true);
         $config = false;
         
         if(!empty($argv[1]) && $argv[1] != 'GeneratePassword') {

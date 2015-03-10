@@ -17,3 +17,4 @@ function main() {
     $app->run();
     return $app;
 }
+$app = main();
