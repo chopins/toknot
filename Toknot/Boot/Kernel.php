@@ -128,6 +128,7 @@ final class Kernel {
 
         if (PHP_SAPI == 'cli' && basename($_SERVER['argv'][0]) == 'Toknot.php') {
             $this->runCLI();
+            exit;
         }
     }
 
@@ -135,9 +136,9 @@ final class Kernel {
         Autoloader::importToknotClass('Config\ConfigLoader');
         ConfigLoader::singleton();
 
-        if (file_exists(self::$appRoot . '/Config/config.ini')) {
-            ConfigLoader::$cacheDir = FileObject::getRealPath(self::$appRoot, 'Data/Config');
-            ConfigLoader::importCfg(self::$appRoot . '/Config/config.ini');
+        if (file_exists(self::$appRoot . '/config/config.ini')) {
+            ConfigLoader::$cacheDir = FileObject::getRealPath(self::$appRoot, 'var/config');
+            ConfigLoader::importCfg(self::$appRoot . '/config/config.ini');
         }
     }
 
@@ -158,7 +159,6 @@ final class Kernel {
                 CreateUserTable     Create User table
 ';
 
-        exit;
     }
 
     /**
