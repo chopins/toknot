@@ -27,8 +27,9 @@ class CreateApp {
         Toknot\Boot\Log::colorMessage("Whether create to current path yes/no(default:no):", null, false);
         $isCurrent = trim(fgets(STDIN));
         $dir = $this->createAppRootDir($isCurrent);
-        Toknot\Boot\Log::colorMessage('Whether admin of applicaton yes/no(default:no):', null, false);
-        $admin = trim(fgets(STDIN));
+        //Toknot\Boot\Log::colorMessage('Whether admin of applicaton yes/no(default:no):', null, false);
+        //$admin = trim(fgets(STDIN));
+        $admin = 'no';
         if ($admin == 'yes') {
             $this->isAdmin = true;
             while (($password = $this->enterRootPass()) === false) {
@@ -283,7 +284,7 @@ namespace {$this->appName};
 
 use Toknot\Boot\Object;
 
-class {$this->appName}Base extends Object {
+class Header extends Object {
 EOS;
         $phpCode .= <<<'EOS'
 
@@ -297,8 +298,8 @@ EOS;
 
 }
 EOS;
-        Toknot\Boot\Log::colorMessage("Create $path/{$this->appName}Base.php");
-        file_put_contents("$path/{$this->appName}Base.php", $phpCode);
+        Toknot\Boot\Log::colorMessage("Create $path/Header.php");
+        file_put_contents("$path/Header.php", $phpCode);
     }
 
     public function writeIndex($path) {

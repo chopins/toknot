@@ -5,7 +5,7 @@ use Toknot\Boot\Object;
 use Toknot\Db\ActiveRecord;
 use Toknot\Config\ConfigLoader;
 
-abstract class ShopBase extends Object  {
+abstract class Header extends Object  {
     
     protected $db;
 

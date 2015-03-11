@@ -1,9 +1,9 @@
 <?php
 namespace  Shop\Controller;
             
-use Shop\ShopBase;
+use Shop\Header;
 
-class Index extends ShopBase{     
+class Index extends Header{     
     
     public function GET() {
         //$database = $this->AR->connect();
