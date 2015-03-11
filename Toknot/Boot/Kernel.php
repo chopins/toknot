@@ -16,6 +16,7 @@ use Toknot\Boot\Autoloader;
 use Toknot\Boot\Exception\PHPVersionException;
 use Toknot\Boot\Router;
 use Toknot\Boot\DataCacheControl;
+use Toknot\Boot\Log;
 use Toknot\Config\ConfigLoader;
 use Toknot\Exception\BaseException;
 use Toknot\Exception\BadNamespaceException;
@@ -112,9 +113,11 @@ final class Kernel {
         $this->registerAutoLoader();
         $this->initAppRootPath();
         $this->importConfig();
-
+        
         date_default_timezone_set(self::timezoneString(ConfigLoader::CFG()->App->timeZone));
-
+        
+        $this->initLog();
+        
         $this->scriptStartTime = microtime(true);
         //define Application status, DEVELOPMENT is true will show Exeption
         if (!defined('DEVELOPMENT')) {
@@ -130,6 +133,12 @@ final class Kernel {
             $this->runCLI();
             exit;
         }
+    }
+    
+    private function initLog() {
+        $CFG = ConfigLoader::CFG();
+        Log::$enableSaveLog = $CFG->Log->enableLog;
+        Log::$savePath = FileObject::getRealPath(self::$appRoot, $CFG->Log->logSavePath);
     }
 
     private function importConfig() {
@@ -215,7 +224,10 @@ final class Kernel {
      */
     private function checkSuperglobals() {
         $variables_order = strtoupper(ini_get('variables_order'));
-
+        if(PHP_SAPI == 'cli' && empty($_SERVER['REMOTE_ADDR'])) {
+            $_SERVER['REMOTE_ADDR'] = 'localhost CLI';
+        }
+        
         if (strpos($variables_order, 'S') === false) {
             $_SERVER['_'] = getenv('_');
             $_SERVER['REQUEST_URI'] = getenv('REQUEST_URI');
@@ -240,6 +252,7 @@ final class Kernel {
         }
         $_SERVER['HEADERS_LIST'] = array();
         $_SERVER['COOKIES_LIST'] = array();
+        
         if (empty($_SERVER['TK_SERVER'])) {
             $_SERVER['TK_SERVER'] = false;
         }
@@ -288,27 +301,16 @@ final class Kernel {
 
             $router->invoke();
         } catch (BaseException $e) {
-            if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
-                $e->save();
-                return;
-            }
-            if (DEVELOPMENT) {
-                echo $e->__toString();
-            } else {
-                header('500 Internal Server Error');
-                echo ('500 Internal Server Error');
-                return;
-            }
+            echo $e;
         } catch (Exception $e) {
             if (PHP_SAPI == 'cli' && !is_resource(STDOUT)) {
-                $e->save();
                 return;
             }
             if (DEVELOPMENT) {
                 echo $e;
             } else {
-                header('500 Internal Server Error');
-                echo('500 Internal Server Error');
+                header('Status: 500 Internal Server Error');
+                echo('HTTP 500 Internal Server Error');
                 return;
             }
         }
@@ -336,8 +338,7 @@ final class Kernel {
                 $se->traceArr = $e->getTrace();
                 echo $se;
             } else {
-                header('500 Internal Server Error');
-                echo '500 Internal Server Error';
+                echo $se;
                 return;
             }
         }
@@ -395,8 +396,7 @@ final class Kernel {
                     echo $e;
                     $this->pageRunInfo();
                 } else {
-                    header('500 Internal Server Error');
-                    echo '500 Internal Server Error';
+                    echo $e;
                     return;
                 }
             }

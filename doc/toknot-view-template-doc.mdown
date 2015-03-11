@@ -63,7 +63,7 @@ class index {
     * 开始标记`{if expression}`，表达式expression与PHP if结构一样,例如：`{if $a=$b}`,`{if is_nan($a)}`
     * 控制结构`{elseif expression}` 或者 `{else}`
     * 结束标记`{/if}`
-* `inc` 包含一个模板，参数与[Toknot\Boot\FMAI::display()](http://toknot.com/toknot/source-class-Toknot.Control.FMAI.html#319-329)方法一样,不包含扩展名
+* `inc` 包含一个模板，参数与[Toknot\Share\FMAI::display()](http://toknot.com/toknot/source-class-Toknot.Control.FMAI.html#319-329)方法一样,不包含扩展名
     * 单一标记`{inc filename}`, `{inc dir/filename}`
 
 * `func` 调用一个函数，这个函数必须是已经定义了的PHP函数，函数的参数必须是已经定义了的模板变量，函数结果会被输出(echo)

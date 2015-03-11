@@ -42,7 +42,7 @@ class Log {
     public static function message($info) {
         $day = date('Y-m-d');
         $time = date('Y-m-d H:i:s T');
-        $message = "[$time] $info\r\n";
+        $message = "[$time] $info" . PHP_EOL;
         if(self::$enableSaveLog && !empty(self::$savePath)) {
             FileObject::saveContent(self::$savePath . DIRECTORY_SEPARATOR . $day, $message, FILE_APPEND);
         } else {
@@ -80,7 +80,7 @@ class Log {
         }
         echo "$str";
         if ($newLine) {
-            echo "\r\n";
+            echo PHP_EOL;
         }
         if ($number) {
             echo "\033[0m";
@@ -97,9 +97,9 @@ class Log {
         }
         $day = date('Y-m-d');
         $time = date('Y-m-d H:i:s T');
-        $message = "$time [{$_SERVER['REMOTE_ADDR']}]:{$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']}";
-        $traceInfo = $message . strip_tags($traceInfo);
-        $traceInfo = "\r\n";
+        $message = '';
+        $message = "$time [{$_SERVER['REMOTE_ADDR']}]:{$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']}" . PHP_EOL;
+        $traceInfo = $message . strip_tags($traceInfo) . PHP_EOL;
         FileObject::saveContent(self::$savePath . DIRECTORY_SEPARATOR . $day, $traceInfo, FILE_APPEND);
     }
 
@@ -139,7 +139,7 @@ class Log {
                 }
             }
             $str .= isset($value['function']) ? ")" : '';
-            $str .= "</li>\n";
+            $str .= '</li>' . PHP_EOL;
         }
         return $str;
     }
@@ -150,6 +150,9 @@ class Log {
      * @return string
      */
     public static function traceCss() {
+        if(!DEVELOPMENT) {
+            return '';
+        }
         return '<style type="text/css">
 .ToKnotDebugArea {border:1px #CCCCCC solid;background-color:#EEEFFF;padding:0;font-family:Helvetica,arial,freesans,clean,sans-serif;}
 .ToKnotDebugArea ul {margin-top:0;}

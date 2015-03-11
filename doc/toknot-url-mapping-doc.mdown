@@ -63,7 +63,7 @@ Toknot默认路由器参数如下：
 
 4. `$methodNotAllowed` 类似于`$notFound`，这个参数是设置405状态是调用的类，就是当控制器不存在一个HTTP请求方法对应的方法时，这个类的同名方法会被调用， __开发模式下（唯一常量`DEVELOPMENT`为`true`），不会调用此控制器__ 
 
-上面提到了HTTP请求的URL路径中，没有被用的到的部分会被忽略，但是在应用内还是能够被访问到，只不过是按`/`分割成了参数，你可以通过[Toknot\Boot\FMAI::getParam($index)](http://toknot.com/toknot/class-Toknot.Control.FMAI.html)来获取，该方法的参数只有一个：$index 参数在分割URL后的索引位置，当然是不包括已经作为映射控制器的部分，例如：
+上面提到了HTTP请求的URL路径中，没有被用的到的部分会被忽略，但是在应用内还是能够被访问到，只不过是按`/`分割成了参数，你可以通过[Toknot\Share\FMAI::getParam($index)](http://toknot.com/toknot/class-Toknot.Control.FMAI.html)来获取，该方法的参数只有一个：$index 参数在分割URL后的索引位置，当然是不包括已经作为映射控制器的部分，例如：
 
 	http://localhost/User/Home/oneuser/note
 

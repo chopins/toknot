@@ -156,7 +156,7 @@ class Index extends  MyAppBase implements CI\GET,CI\POST,CI\PUT,CI\CLI{
    现在在`/home/MyApp/`下面创建`MyAppBase.php`文件，输入如下代码：
 ```php
 namespace MyApp\MyAppBase;
-use Toknot\Boot\FMAI;
+use Toknot\Share\FMAI;
 use Toknot\Boot\ControllerInterface as CI;
 class MyAppBase implements CI\ControllerInterface {
       public $FMAI = null;

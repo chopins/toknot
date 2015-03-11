@@ -154,7 +154,7 @@ final class FMAI extends Object {
      * 
      * @param string $appNamespace  Namespace of user app
      * @param string $appRoot       directory root path of user app
-     * @return Toknot\Boot\FMAI
+     * @return Toknot\Share\FMAI
      */
     public static function singleton($appNamespace, $appRoot) {
         return parent::__singleton($appNamespace, $appRoot);
@@ -366,7 +366,7 @@ final class FMAI extends Object {
     /**
      * set cache file be use when View class output cache, if use {@see Toknot\Renderer\Renderer}
      * accomplish View layer page renderer class and will here is set template file name like use 
-     * {@see Toknot\Boot\FMAI::display()}
+     * {@see Toknot\Share\FMAI::display()}
      * 
      * @param string $file
      * @param mixed $flag  Cache flag, value is {@see Toknot\Renderer\Renderer::CACHE_FLAG_HTML} and

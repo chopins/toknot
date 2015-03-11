@@ -10,7 +10,7 @@
 
 namespace Toknot\Renderer;
 
-use Toknot\Boot\FMAI;
+use Toknot\Share\FMAI;
 
 class Table {
 

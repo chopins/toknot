@@ -73,7 +73,7 @@ class ViewCache extends Object {
     }
 
 	/**
-	 * dispaly page, the common be auto invoke in {@see Toknot\Boot\FMAI}
+	 * dispaly page, the common be auto invoke in {@see Toknot\Share\FMAI}
 	 * 
 	 * @access public
 	 * @static

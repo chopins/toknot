@@ -13,7 +13,7 @@ namespace Toknot\Share\Admin;
 use Toknot\Share\Admin\AdminBase;
 use Toknot\Config\ConfigLoader;
 use Toknot\Boot\FileObject;
-use Toknot\Boot\FMAI;
+use Toknot\Share\FMAI;
 
 class Menu extends AdminBase {
 

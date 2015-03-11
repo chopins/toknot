@@ -105,16 +105,16 @@ class BaseException extends ErrorException {
         if (PHP_SAPI != 'cli' || !empty($_SERVER['TK_SERVER_WEB'])) {
             $str .= Log::traceCss();
         } else {
-            $str .= str_repeat('=', 20) . "\n";
+            $str .= str_repeat('=', 20) . PHP_EOL;
         }
         $str .='<div class="ToknotDebugArea">';
         if (PHP_SAPI == 'cli' && !empty($_SERVER['COLORTERM'])) {
             $this->message = "\e[1;31m{$this->message}\e[0m";
         }
-        $str .="<p class='ToknotMessage'>{$this->message}</p>\n";
-        $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div><ul class='ToKnotTraceItem'>\n";
+        $str .="<p class='ToknotMessage'>{$this->message}</p>" . PHP_EOL;
+        $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div><ul class='ToKnotTraceItem'>".PHP_EOL;
         if (PHP_SAPI == 'cli') {
-            $str .= 'Process ID:' . getmypid() . "\n";
+            $str .= 'Process ID:' . getmypid() . PHP_EOL;
         }
 
         if (empty($this->traceArr)) {
@@ -140,7 +140,7 @@ class BaseException extends ErrorException {
             $str .= '</ul>';
         }
         if (PHP_SAPI == 'cli' && empty($_SERVER['TK_SERVER_WEB'])) {
-            $str .= str_repeat('=', 20) . "\n";
+            $str .= str_repeat('=', 20) . PHP_EOL;
             return strip_tags($str);
         } else {
             return $str;
@@ -149,15 +149,15 @@ class BaseException extends ErrorException {
 
     public function __toString() {
         if (PHP_SAPI !== 'cli') {
-            header('Status:500 Internal Server Error');
+            header('Status: 500 Internal Server Error');
         }
+        
         $traceInfo = $this->getDebugTraceAsString();
         if (DEVELOPMENT) {
             return $traceInfo;
         } else {
-
             Log::save($traceInfo);
-            return 'Status:500 Internal Server Error';
+            return 'HTTP 500 Internal Server Error';
         }
     }
 

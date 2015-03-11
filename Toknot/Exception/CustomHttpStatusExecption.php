@@ -12,8 +12,7 @@ namespace Toknot\Exception;
 class CustomHttpStatusExecption extends BaseException {
    public static $displayController = null;
     public static $method = 'GET';
-    public static $FMAI;
-    protected $httpStatus = '500 Internal Server Error';
+    protected $httpStatus = 'Status: 500 Internal Server Error';
     private $html;
 
     public function __construct($message) {
@@ -23,7 +22,7 @@ class CustomHttpStatusExecption extends BaseException {
         }
         ob_start();
         $clsName = self::$displayController;
-        $ins = new $clsName(self::$FMAI);
+        $ins = new $clsName();
         $ins->message = $message;
         $method = self::$method;
         $ins->$method();

@@ -32,9 +32,9 @@ abstract class AdminBase extends ClassAccessControl{
     protected $permissions = 0770;
 
     /**
-     * {@see Toknot\Boot\FMAI} instance
+     * {@see Toknot\Share\FMAI} instance
      *
-     * @var Toknot\Boot\FMAI
+     * @var Toknot\Share\FMAI
      * @access protected
      * @static
      */
