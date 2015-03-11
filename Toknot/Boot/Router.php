@@ -193,7 +193,7 @@ class Router extends Object {
 
     private function queryMode() {
         $key = each($_GET);
-        if (!empty($key[1]) || substr($key[0], 0, 1) !== '/') {
+        if (!empty($key[1]) || strpos($key[0], '/') !== 0) {
             $this->spacePath = $this->defaultClass;
         } else {
             $this->spacePath = strtr($key[0], '/', Autoloader::NS_SEPARATOR);
