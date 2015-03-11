@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\Http;
+namespace Toknot\Share\Http;
 
 use Toknot\Boot\FileObject;
 

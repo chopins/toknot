@@ -8,9 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\Admin;
+namespace Toknot\Share\Admin;
 
-use Toknot\Lib\Admin\AdminBase;
+use Toknot\Share\Admin\AdminBase;
 use Toknot\Config\ConfigLoader;
 use Toknot\Boot\FileObject;
 use Toknot\Boot\FMAI;

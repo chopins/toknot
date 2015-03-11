@@ -11,7 +11,7 @@
  *
  */
 
-namespace Toknot\Lib;
+namespace Toknot\Share;
 
 use Toknot\Boot\Object;
 

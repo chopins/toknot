@@ -7,9 +7,9 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
-namespace Toknot\Lib\User;
+namespace Toknot\Share\User;
 
-use Toknot\Lib\User\UserAccessControl;
+use Toknot\Share\User\UserAccessControl;
 
 /**
  * The Nobody class

@@ -39,8 +39,8 @@ class CreateApp {
             \Toknot\Boot\StandardAutoloader::importToknotModule('User', 'UserAccessControl');
             Toknot\Boot\Log::colorMessage('Generate hash salt');
             $salt = substr(str_shuffle('1234567890qwertyuiopasdfghjklzxcvbnm'), 0, 8);
-            $algo = Toknot\Lib\User\Root::bestHashAlgos();
-            $password = Toknot\Lib\User\Root::getTextHashCleanSalt($password, $algo, $salt);
+            $algo = Toknot\Share\User\Root::bestHashAlgos();
+            $password = Toknot\Share\User\Root::getTextHashCleanSalt($password, $algo, $salt);
             Toknot\Boot\Log::colorMessage('Generate Root password hash string');
         }
 
@@ -142,7 +142,7 @@ EOF;
     public function versionInfo() {
         Toknot\Boot\Log::colorMessage('Toknot Framework Application Create Script');
         Toknot\Boot\Log::colorMessage('Toknot ' . \Toknot\Boot\Version::VERSION . '-' . \Toknot\Boot\Version::STATUS . ';PHP ' . PHP_VERSION);
-        Toknot\Boot\Log::colorMessage('Copyright (c) 2010-2013 Szopen Xiao');
+        Toknot\Boot\Log::colorMessage('Copyright (c) 2010-2015 Szopen Xiao');
         Toknot\Boot\Log::colorMessage('New BSD Licenses <http://toknot.com/LICENSE.txt>');
         Toknot\Boot\Log::colorMessage('');
     }
@@ -172,7 +172,7 @@ EOF;
 <?php
 namespace {$this->appName}\Controller\User;
 
-use Toknot\Lib\Admin\Login as AdminLogin;
+use Toknot\Share\Admin\Login as AdminLogin;
 
 class Login extends AdminLogin {
 }
@@ -181,7 +181,7 @@ EOS;
         $phpCode = <<<EOS
 <?php
 namespace {$this->appName}\Controller\User;
-use Toknot\Lib\Admin\Logout;
+use Toknot\Share\Admin\Logout;
 class Logout extends Logout {
 }
 EOS;
@@ -239,17 +239,17 @@ EOS;
     }
 
     public function writeIndexController($path) {
-        $use = $this->isAdmin ? 'Toknot\Lib\Admin\Admin' : "{$this->appName}\\{$this->appName}";
-        $base = $this->isAdmin ? 'AdminBase' : "{$this->appName}Base";
+        $use = $this->isAdmin ? 'Toknot\Share\Admin\AdminBase' : "{$this->appName}\\Header";
+        $base = $this->isAdmin ? 'AdminBase' : "Header";
         $phpCode = <<<EOS
 <?php
 namespace  {$this->appName}\Controller;
             
-use {$use}Base;
+use {$use};
 
 EOS;
         if ($this->isAdmin) {
-            $phpCode .= 'use Toknot\Lib\Admin\Menu;';
+            $phpCode .= 'use Toknot\Share\Admin\Menu;';
         }
         $phpCode .= <<<EOS
 class Index extends {$base}{

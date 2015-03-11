@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib;
+namespace Toknot\Share;
 
 class SSH2 {
     private $host = 0;

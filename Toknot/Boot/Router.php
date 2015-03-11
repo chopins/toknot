@@ -126,6 +126,8 @@ class Router extends Object {
      * 
      */
     public function routerRule() {
+        $this->checkCLIRequest();
+        
         if ($this->routerMode == self::ROUTER_GET_QUERY) {
             $this->queryMode();
         } elseif ($this->routerMode == self::ROUTER_MAP_TABLE) {
@@ -135,8 +137,19 @@ class Router extends Object {
         }
     }
 
+    private function checkCLIRequest() {
+        if (empty($_SERVER['REQUEST_METHOD']) && PHP_SAPI == 'cli') {
+            if (isset($_SERVER['argv'][1])) {
+                $_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
+            } else {
+                $_SERVER['REQUEST_URI'] = '/';
+            }
+        }
+    }
+
     private function mapMode() {
         $maplist = $this->loadRouterMapTable();
+        
         $matches = array();
         foreach ($maplist as $map) {
             $map['pattern'] = str_replace('/', '\/', $map['pattern']);
@@ -146,16 +159,12 @@ class Router extends Object {
                 break;
             }
         }
+        if($this->spacePath == Autoloader::NS_SEPARATOR) {
+            $this->spacePath = $this->defaultClass;
+        }
     }
 
     private function defaultMode() {
-        if (empty($_SERVER['REQUEST_METHOD']) && PHP_SAPI == 'cli') {
-            if (isset($_SERVER['argv'][1])) {
-                $_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
-            } else {
-                $_SERVER['REQUEST_URI'] = '/';
-            }
-        }
         $requestUri = new StringObject($_SERVER['REQUEST_URI']);
         if (($pos = $requestUri->strpos('?')) !== false) {
             $urlPath = $requestUri->substr(0, $pos);
@@ -192,7 +201,7 @@ class Router extends Object {
     }
 
     private function loadRouterMapTable() {
-        $filePath = self::$routerPath . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'router_map.ini';
+        $filePath = self::$routerPath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'router_map.ini';
         return ConfigLoader::loadCfg($filePath);
     }
 
@@ -349,7 +358,7 @@ class Router extends Object {
             $invokeObject = new $invokeClass();
             $invokeObject->$method();
         }
-        
+
         $this->invokeAfter($method);
     }
 

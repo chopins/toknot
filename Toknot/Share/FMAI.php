@@ -20,12 +20,12 @@ use Toknot\Db\ActiveRecord;
 use Toknot\Renderer\ViewCache;
 use Toknot\Renderer\Renderer;
 use Toknot\Renderer\ViewData;
-use Toknot\Lib\User\ClassAccessControl;
-use Toknot\Lib\User\UserAccessControl;
-use Toknot\Lib\User\Nobody;
-use Toknot\Lib\User\Session;
-use Toknot\Lib\User\Root;
-use Toknot\Lib\User\Exception\NoPermissionExecption;
+use Toknot\Share\User\ClassAccessControl;
+use Toknot\Share\User\UserAccessControl;
+use Toknot\Share\User\Nobody;
+use Toknot\Share\User\Session;
+use Toknot\Share\User\Root;
+use Toknot\Share\User\Exception\NoPermissionExecption;
 use Toknot\Boot\Exception\ForbiddenException;
 use Toknot\Boot\Router;
 use Toknot\Boot\TKFunction as TK;
@@ -120,7 +120,7 @@ final class FMAI extends Object {
     /**
      * Current access user of object
      *
-     * @var Toknot\Lib\User\Root|Toknot\Lib\User\UserClass|Toknot\Lib\User\Nobody
+     * @var Toknot\Share\User\Root|Toknot\Share\User\UserClass|Toknot\Share\User\Nobody
      * @access readonly
      */
     private $currentUser = null;
@@ -254,7 +254,7 @@ final class FMAI extends Object {
     /**
      * the method be invoked before which method of controller was invoked by router 
      * 
-     * @param \Toknot\Lib\User\ClassAccessControl $controller
+     * @param \Toknot\Share\User\ClassAccessControl $controller
      * @return boolean  if false, do not invoked method of controller
      */
     public function invokeBefore(&$controller) {
@@ -519,7 +519,7 @@ final class FMAI extends Object {
     /**
      * Get current user access status and default the controller is current accessed
      * 
-     * @param \Toknot\Lib\User\ClassAccessControl $clsObj check current user whether access $clsObj 
+     * @param \Toknot\Share\User\ClassAccessControl $clsObj check current user whether access $clsObj 
      * @return boolean if allow access return true otherise false
      */
     public function getAccessStatus($clsObj) {
@@ -575,7 +575,7 @@ final class FMAI extends Object {
     /**
      * Redirect to Denided contriller
      * 
-     * @param \Toknot\Lib\User\ClassAccessControl $class
+     * @param \Toknot\Share\User\ClassAccessControl $class
      * @return boolean
      */
     public function throwForbidden() {
@@ -631,7 +631,7 @@ final class FMAI extends Object {
     /**
      * Check a user object whether can access class object be passed
      * 
-     * @param \Toknot\Lib\User\ClassAccessControl $clsObj $clsObj check current user whether access $clsObj 
+     * @param \Toknot\Share\User\ClassAccessControl $clsObj $clsObj check current user whether access $clsObj 
      */
     public function checkAccess(ClassAccessControl $clsObj) {
         $this->accessControlStatus = $clsObj->checkClassAccess();
@@ -671,7 +671,7 @@ final class FMAI extends Object {
      * invoke Sub Action for custom method of Controller
      * the method will check User Access permissions
      * 
-     * @param \Toknot\Lib\User\ClassAccessControl $clsObj
+     * @param \Toknot\Share\User\ClassAccessControl $clsObj
      * @return null
      */
     public function invokeSubAction(ClassAccessControl &$clsObj) {
@@ -692,7 +692,7 @@ final class FMAI extends Object {
     /**
      * Set current user object
      * 
-     * @param Tokont\User\UserClass|Toknot\Lib\User\Root $user
+     * @param Tokont\User\UserClass|Toknot\Share\User\Root $user
      */
     public function setCurrentUser($user = null) {
         if ($user instanceof UserAccessControl || $user instanceof Root) {
@@ -707,7 +707,7 @@ final class FMAI extends Object {
     /**
      * Get current user instance
      * 
-     * @return Toknot\Lib\User\UserAccessControl
+     * @return Toknot\Share\User\UserAccessControl
      */
     public function getCurrentUser() {
         return $this->currentUser;
@@ -717,7 +717,7 @@ final class FMAI extends Object {
      * Start toknot session object
      * 
      * @param type $name
-     * @return \Toknot\Lib\User\Session
+     * @return \Toknot\Share\User\Session
      */
     public function &startSession($name = null) {
         $name = $name ? $name : ConfigLoader::CFG()->Session->sessionName;

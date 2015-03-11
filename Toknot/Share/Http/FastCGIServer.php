@@ -8,10 +8,10 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\Http;
+namespace Toknot\Share\Http;
 
-use Toknot\Lib\Http\HttpResponse;
-use Toknot\Lib\Process\Process;
+use Toknot\Share\Http\HttpResponse;
+use Toknot\Share\Process\Process;
 use Toknot\Exception\BaseException;
 use Toknot\Exception\HeaderLocationException;
 use Toknot\Boot\TKFunction as TK;
@@ -303,7 +303,7 @@ final class FastCGIServer extends HttpResponse {
         $this->bindLocalListenPort();
         $this->process->enableProcessLock();
         $this->process->registerChlidProcessSignalHandler();
-        $this->process->createChildProcess($this->startWorkNum, array('\Toknot\Lib\Http\FastCGIServer',
+        $this->process->createChildProcess($this->startWorkNum, array('\Toknot\Share\Http\FastCGIServer',
             'CGIWorkProcessCallbackProxy'));
         $this->currentProcessNum = $this->startWorkNum;
         $this->CGIMasterProcess();

@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\Process\Exception;
+namespace Toknot\Share\Process\Exception;
 
 use Toknot\Exception\BaseException;
 

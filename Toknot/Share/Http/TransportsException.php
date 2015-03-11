@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\Http\TransportsException;
+namespace Toknot\Share\Http\TransportsException;
 
 use Toknot\Exception\BaseException;
 

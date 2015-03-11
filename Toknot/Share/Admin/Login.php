@@ -8,10 +8,10 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\Admin;
+namespace Toknot\Share\Admin;
 
-use Toknot\Lib\Admin\AdminBase;
-use Toknot\Lib\User\UserClass;
+use Toknot\Share\Admin\AdminBase;
+use Toknot\Share\User\UserClass;
 
 class Login extends AdminBase{
 

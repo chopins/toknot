@@ -8,9 +8,9 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\User;
+namespace Toknot\Share\User;
 
-use Toknot\Lib\User\UserClass;
+use Toknot\Share\User\UserClass;
 use Toknot\Config\ConfigLoader;
 use Toknot\Exception\BadPropertyGetException;
 
@@ -77,9 +77,9 @@ final class Root extends UserAccessControl {
     /**
      * Change current user to root 
      * 
-     * @param \Toknot\Lib\User\UserClass $user
+     * @param \Toknot\Share\User\UserClass $user
      * @param string $password
-     * @return boolean|\Toknot\Lib\User\Root
+     * @return boolean|\Toknot\Share\User\Root
      */
     public static function su(UserClass $user, $password) {
         self::loadConfigure();
@@ -97,7 +97,7 @@ final class Root extends UserAccessControl {
     /**
      * Delete Root object, if su to root, will return su from user object
      * 
-     * @return Toknot\Lib\User\UserClass
+     * @return Toknot\Share\User\UserClass
      */
     public function logout() {
         if($this->suUser instanceof UserClass) {
@@ -112,7 +112,7 @@ final class Root extends UserAccessControl {
      * Login root user, if root not configure password will not allow login
      * 
      * @param string $password
-     * @return boolean|\Toknot\Lib\User\Root
+     * @return boolean|\Toknot\Share\User\Root
      */
     public static function login($password) {
         self::loadConfigure();

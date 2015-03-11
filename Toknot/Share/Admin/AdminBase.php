@@ -8,13 +8,13 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\Admin;
+namespace Toknot\Share\Admin;
 
-use Toknot\Lib\User\ClassAccessControl;
-use Toknot\Lib\User\Nobody;
-use Toknot\Lib\User\UserClass;
+use Toknot\Share\User\ClassAccessControl;
+use Toknot\Share\User\Nobody;
+use Toknot\Share\User\UserClass;
 use Toknot\Boot\Version;
-use Toknot\Lib\User\UserAccessControl;
+use Toknot\Share\User\UserAccessControl;
 use Toknot\Config\ConfigLoader;
 use Toknot\Db\ActiveRecord;
 
@@ -66,9 +66,9 @@ abstract class AdminBase extends ClassAccessControl{
     protected $dbConnect = null;
 
     /**
-     * {@see Toknot\Lib\User\Session} instance
+     * {@see Toknot\Share\User\Session} instance
      *
-     * @var Toknot\Lib\User\Session
+     * @var Toknot\Share\User\Session
      */
     protected $SESSION = null;
     protected $currentUser = null;
@@ -123,7 +123,7 @@ abstract class AdminBase extends ClassAccessControl{
     /**
      * Check current visiter whether logined
      * 
-     * @return \Toknot\Lib\User\Nobody
+     * @return \Toknot\Share\User\Nobody
      */
     public function checkUserLogin() {
         if (isset($_SESSION['adminUser']) && isset($_SESSION['Flag'])) {
@@ -143,7 +143,7 @@ abstract class AdminBase extends ClassAccessControl{
     /**
      * Set user login
      * 
-     * @param \Toknot\Lib\User\UserAccessControl $user
+     * @param \Toknot\Share\User\UserAccessControl $user
      */
     protected function setAdminLogin(UserAccessControl $user) {
         $_SESSION['Flag'] = $user->generateUserFlag();

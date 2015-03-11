@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Lib\User\Exception;
+namespace Toknot\Share\User\Exception;
 
 use Toknot\Exception\CustomHttpStatusExecption;
 
