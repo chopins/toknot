@@ -46,7 +46,7 @@ final class Kernel {
      * @var mixed
      * @access private 
      */
-    private $standardAutoLoader = null;
+    private $autoLoader = null;
 
     /**
      * App root path
@@ -363,15 +363,15 @@ final class Kernel {
      * @access private
      */
     private function addAppPath($path) {
-        $this->standardAutoLoader->addPath($path);
+        $this->autoLoader->addPath($path);
     }
 
     /**
      * Register Autoloader Class
      */
     private function registerAutoLoader() {
-        $this->standardAutoLoader = new Autoloader();
-        $this->standardAutoLoader->register();
+        $this->autoLoader = new Autoloader();
+        $this->autoLoader->register();
     }
 
     public function errorExitReportHandler() {
