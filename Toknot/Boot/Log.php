@@ -35,7 +35,6 @@ class Log {
      */
     public static function printTrace() {
         $trace = debug_backtrace();
-        print self::traceCss();
         print self::formatTrace($trace);
     }
 
@@ -43,13 +42,14 @@ class Log {
         $day = date('Y-m-d');
         $time = date('Y-m-d H:i:s T');
         $message = "[$time] $info" . PHP_EOL;
-        if(self::$enableSaveLog && !empty(self::$savePath)) {
+        if (self::$enableSaveLog && !empty(self::$savePath)) {
             FileObject::saveContent(self::$savePath . DIRECTORY_SEPARATOR . $day, $message, FILE_APPEND);
         } else {
             echo $message;
         }
         return;
     }
+
     public static function colorMessage($str, $color = null, $newLine = true) {
         $number = FALSE;
         switch ($color) {
@@ -86,6 +86,7 @@ class Log {
             echo "\033[0m";
         }
     }
+
     /**
      * save trace info to log file
      *
@@ -112,7 +113,15 @@ class Log {
     public static function formatTrace($traceArr) {
         $str = '';
         foreach ($traceArr as $key => $value) {
-            $str .= "<li>#{$key} ";
+            if($value['function'] == 'main') {
+                $style = 'style="color:#AAA;"';
+            } else if(isset($value['class']) && strpos($value['class'],'Toknot\\') === 0) {
+                $style = 'style="color:#AAA;"';
+            } else {
+                $style = '';
+            }
+            
+            $str .= "<li {$style}>#{$key} ";
             $str .= isset($value['file']) ? $value['file'] : '';
             $str .= isset($value['line']) ? "({$value['line']}): " : '';
             $str .= isset($value['class']) ? $value['class'] : '';
@@ -123,19 +132,21 @@ class Log {
             $str .= isset($value['function']) ? "{$value['function']}(" : '';
             if (isset($value['args'])) {
                 foreach ($value['args'] as $arg) {
+                    $str .= '<span style="display:inline-block;margin:5px;">';
                     if (is_string($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs' title='String(" . strlen($arg) . ") " . $arg . "'><b>String(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
+                        $str .= "<small title='String(" . strlen($arg) . ") " . $arg . "'><b>String(</b><i>" . substr($arg, 0, 100) . "</i><b>)</b></small>";
                     } elseif (is_int($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs'><b>Integer(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
+                        $str .= "<small><b>Integer(</b><i>" . substr($arg, 0, 100) . "</i><b>)</b></small>";
                     } elseif (is_float($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs'><b>Float(</b>" . substr($arg, 0, 100) . "<b>)</b></span>";
+                        $str .= "<small><b>Float(</b><i>" . substr($arg, 0, 100) . "</i><b>)</b></small>";
                     } elseif (is_array($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs' title='" . print_r($arg, true) . "'><b>Array()</b></span>";
+                        $str .= "<small title='" . print_r($arg, true) . "'><b>Array()</b></small>";
                     } elseif (is_object($arg)) {
-                        $str .= "<span class='ToKnotDebugArgs' title='" . print_r($arg, true) . "'><b>Object(</b> " . get_class($arg) . " <b>)</b></span>";
+                        $str .= "<small title='" . print_r($arg, true) . "'><b>Object(</b> <i>" . get_class($arg) . "</i><b>)</b></small>";
                     } elseif (is_resource($arg)) {
-                        $str .= "<span calss='ToKnotDebugArgs'" > print_r($arg, true) . '</span>';
+                        $str .= "<small><i>" . print_r($arg, true) . '</i></small>';
                     }
+                    $str .= '</span>';
                 }
             }
             $str .= isset($value['function']) ? ")" : '';
@@ -144,30 +155,4 @@ class Log {
         return $str;
     }
 
-    /**
-     * Toknot trace web page style
-     *
-     * @return string
-     */
-    public static function traceCss() {
-        if(!DEVELOPMENT) {
-            return '';
-        }
-        return '<style type="text/css">
-.ToKnotDebugArea {border:1px #CCCCCC solid;background-color:#EEEFFF;padding:0;font-family:Helvetica,arial,freesans,clean,sans-serif;}
-.ToKnotDebugArea ul {margin-top:0;}
-.ToKnotMessage {color:#666666;font-size:18px;font-weight:bold;padding:10px;margin:0px;background-color:#D6E685;border-bottom:1px solid #94DA3A;}
-.ToKnotCallFile {color:#6A8295;}
-.ToKnotAccess {color:#336258;}
-.ToKnotTraceItem{list-style-type:none;padding:10px;color:#0F4C9E;font-size:15px;}
-.ToKnotTraceItem li {padding:5px;}
-.ToKnotDebugArgs{text-decoration:underline;font-size:12px;margin:0 3px;}
-.ToKnotDebugArgs b {font-size:15;margin:0 3px;}
-.ToKnotDebugFunc{color:#176B4E;font-weight:normal;}
-.ToKnotDebugThrow{color:#D14836;font-weight:bold;background-color:#FFECCC;padding:8px;}
-.ToKnotDebugProcess {color:#333;font-size:12px;}
-</style>';
-    }
-
 }
-

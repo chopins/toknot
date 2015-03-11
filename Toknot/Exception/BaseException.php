@@ -100,19 +100,16 @@ class BaseException extends ErrorException {
     }
 
     public function getDebugTraceAsString() {
-
-        $str = '<meta content="text/html; charset=utf-8" http-equiv="Content-Type">';
-        if (PHP_SAPI != 'cli' || !empty($_SERVER['TK_SERVER_WEB'])) {
-            $str .= Log::traceCss();
-        } else {
+        $str = '';
+        if (PHP_SAPI == 'cli' && empty($_SERVER['TK_SERVER_WEB'])) {
             $str .= str_repeat('=', 20) . PHP_EOL;
         }
-        $str .='<div class="ToknotDebugArea">';
+        $str .='<div>';
         if (PHP_SAPI == 'cli' && !empty($_SERVER['COLORTERM'])) {
             $this->message = "\e[1;31m{$this->message}\e[0m";
         }
-        $str .="<p class='ToknotMessage'>{$this->message}</p>" . PHP_EOL;
-        $str .="<div class='ToknotDebugThrow'>Throw Exception in file {$this->errfile} line {$this->errline}</div><ul class='ToKnotTraceItem'>".PHP_EOL;
+        $str .="<p>{$this->message}</p>" . PHP_EOL;
+        $str .="<div><b>Throw Exception in file {$this->errfile} line {$this->errline}</b></div><ul>" . PHP_EOL;
         if (PHP_SAPI == 'cli') {
             $str .= 'Process ID:' . getmypid() . PHP_EOL;
         }
@@ -128,12 +125,12 @@ class BaseException extends ErrorException {
         }
         $str .='</ul></div>';
         if (isset($this->sqls) && is_array($this->sqls)) {
-            $str .= '<ul class="ToKnotTraceItem">';
+            $str .= '<ul>';
             foreach ($this->sqls as $i => $sql) {
                 if (is_string($this->params[$i])) {
                     $str .= "<li>{$sql} <--- [Params:({$this->params[$i]})]</li>";
                 } else {
-                    $paramsVar = var_export($this->params[$i],true);
+                    $paramsVar = var_export($this->params[$i], true);
                     $str .= "<li>{$sql} <--- [Params:({$paramsVar})]</li>";
                 }
             }
@@ -151,12 +148,13 @@ class BaseException extends ErrorException {
         if (PHP_SAPI !== 'cli') {
             header('Status: 500 Internal Server Error');
         }
-        
+
         $traceInfo = $this->getDebugTraceAsString();
+        Log::save($traceInfo);
+
         if (DEVELOPMENT) {
             return $traceInfo;
         } else {
-            Log::save($traceInfo);
             return 'HTTP 500 Internal Server Error';
         }
     }
