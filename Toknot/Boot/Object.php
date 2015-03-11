@@ -150,6 +150,7 @@ abstract class Object implements Iterator, Countable {
     }
 
     /**
+     * Get recent instance of current class 
      * 
      * @static
      * @access public

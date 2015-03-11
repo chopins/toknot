@@ -226,7 +226,18 @@ class Router extends Object {
     public function getRouterMode() {
         return $this->routerMode;
     }
-
+    /**
+     * Get params in URI path
+     * 
+     * @param int $index
+     * @return string
+     */
+    public function getParams(int $index = null) {
+        if($index === null) {
+            return $this->suffixPart;
+        }
+        return $this->suffixPart[$index];
+    }
     /**
      * transfrom relative class name to full class name
      * 
