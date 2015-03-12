@@ -25,17 +25,6 @@ use Toknot\Exception\BadClassCallException;
 /**
  * Toknot main class and run framework
  * 
- * <code>
- * //if development, define the constant set true, otherwise set false
- * //Note the constant default set true
- * define('DEVELOPMENT', true); 
- * 
- * use Toknot\Boot\Application;
- * require_once '/path/Toknot/Boot/Application.php';
- * $app = new Application;
- * $app->run('\AppTopNamespace', '/path/AppPath');
- * </code>
- * 
  */
 final class Kernel {
 
