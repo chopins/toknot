@@ -7,7 +7,7 @@
 	<title>Class Toknot\Boot\Kernel | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1490177688"></script>
-	<script type="text/javascript" src="elementlist.js?915597533"></script>
+	<script type="text/javascript" src="elementlist.js?141187399"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -50,11 +50,6 @@
 							</ul></li>
 				<li><a href="namespace-Toknot.Exception.html">Exception</a>
 						</li>
-				<li><a href="namespace-Toknot.Object.html">Object<span></span></a>
-						<ul>
-				<li><a href="namespace-Toknot.Object.TKFunction.html">TKFunction</a>
-						</li>
-							</ul></li>
 				<li><a href="namespace-Toknot.Renderer.html">Renderer</a>
 						</li>
 				<li><a href="namespace-Toknot.Share.html">Share<span></span></a>
@@ -73,6 +68,8 @@
 				<li><a href="namespace-Toknot.Share.Process.Exception.html">Exception</a>
 						</li>
 							</ul></li>
+				<li><a href="namespace-Toknot.Share.TKFunction.html">TKFunction</a>
+						</li>
 				<li><a href="namespace-Toknot.Share.User.html">User<span></span></a>
 						<ul>
 				<li><a href="namespace-Toknot.Share.User.Exception.html">Exception</a>
@@ -91,7 +88,6 @@
 				<li><a href="class-Toknot.Boot.Autoloader.html">Autoloader</a></li>
 				<li><a href="class-Toknot.Boot.DataCacheControl.html">DataCacheControl</a></li>
 				<li><a href="class-Toknot.Boot.FileObject.html">FileObject</a></li>
-				<li><a href="class-Toknot.Boot.FMAI.html">FMAI</a></li>
 				<li class="active"><a href="class-Toknot.Boot.Kernel.html">Kernel</a></li>
 				<li><a href="class-Toknot.Boot.Log.html">Log</a></li>
 				<li><a href="class-Toknot.Boot.Object.html">Object</a></li>
@@ -151,30 +147,6 @@
 	
 <p>Toknot main class and run framework</p>
 
-<pre>
-<span
-class="php-comment">//if development, define the constant set true, otherwise set false</span>
-<span
-class="php-comment">//Note the constant default set true</span>
-<span
-class="php-keyword2">define</span>(<span
-class="php-quote">'DEVELOPMENT'</span>, <span
-class="php-keyword1">true</span>);
-
-<span
-class="php-keyword1">use</span> Toknot\Boot\Application;
-<span
-class="php-keyword1">require_once</span> <span
-class="php-quote">'/path/Toknot/Boot/Application.php'</span>;
-<span
-class="php-var">$app</span> = <span
-class="php-keyword1">new</span> Application;
-<span
-class="php-var">$app</span>-&gt;run(<span
-class="php-quote">'\AppTopNamespace'</span>, <span
-class="php-quote">'/path/AppPath'</span>);
-</pre>
-
 	</div>
 
 
@@ -191,7 +163,7 @@ class="php-quote">'/path/AppPath'</span>);
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Boot.html">Boot</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Boot.Kernel.html#25-479" title="Go to source code">Toknot/Boot/Kernel.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Boot.Kernel.html#25-468" title="Go to source code">Toknot/Boot/Kernel.php</a><br />
 	</div>
 
 
@@ -209,7 +181,7 @@ class="php-quote">'/path/AppPath'</span>);
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#79-136" title="Go to source code">__construct</a>( <span>array <var>$argv</var> = <span class="php-keyword1">array</span>()</span>, <span>integer <var>$argc</var> = <span class="php-num">0</span></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#68-125" title="Go to source code">__construct</a>( <span>array <var>$argv</var> = <span class="php-keyword1">array</span>()</span>, <span>integer <var>$argc</var> = <span class="php-num">0</span></span> )</code>
 
 		<div class="description short">
 			
@@ -299,7 +271,7 @@ class="php-comment">//print number of args</span>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_run">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#261-317" title="Go to source code">run</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#250-306" title="Go to source code">run</a>( )</code>
 
 		<div class="description short">
 			
@@ -348,7 +320,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_tickTraceHandler">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#319-327" title="Go to source code">tickTraceHandler</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#308-316" title="Go to source code">tickTraceHandler</a>( )</code>
 
 		<div class="description short">
 			
@@ -377,7 +349,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_uncaughtExceptionHandler">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#329-345" title="Go to source code">uncaughtExceptionHandler</a>( <span>mixed <var>$e</var></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#318-334" title="Go to source code">uncaughtExceptionHandler</a>( <span>mixed <var>$e</var></span> )</code>
 
 		<div class="description short">
 			
@@ -406,7 +378,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorReportHandler">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#347-358" title="Go to source code">errorReportHandler</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#336-347" title="Go to source code">errorReportHandler</a>( )</code>
 
 		<div class="description short">
 			
@@ -439,7 +411,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_errorExitReportHandler">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#378-404" title="Go to source code">errorExitReportHandler</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#367-393" title="Go to source code">errorExitReportHandler</a>( )</code>
 
 		<div class="description short">
 			
@@ -468,7 +440,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getMemoryUsage">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#406-415" title="Go to source code">getMemoryUsage</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#395-404" title="Go to source code">getMemoryUsage</a>( )</code>
 
 		<div class="description short">
 			
@@ -497,7 +469,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_pageRunInfo">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#417-436" title="Go to source code">pageRunInfo</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#406-425" title="Go to source code">pageRunInfo</a>( )</code>
 
 		<div class="description short">
 			
@@ -526,7 +498,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_checkXDebug">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#438-443" title="Go to source code">checkXDebug</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#427-432" title="Go to source code">checkXDebug</a>( )</code>
 
 		<div class="description short">
 			
@@ -555,7 +527,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#___destruct">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#445-449" title="Go to source code">__destruct</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#434-438" title="Go to source code">__destruct</a>( )</code>
 
 		<div class="description short">
 			
@@ -584,7 +556,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_getAppRoot">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#451-453" title="Go to source code">getAppRoot</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#440-442" title="Go to source code">getAppRoot</a>( )</code>
 
 		<div class="description short">
 			
@@ -613,7 +585,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_newInstance">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#455-457" title="Go to source code">newInstance</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#444-446" title="Go to source code">newInstance</a>( )</code>
 
 		<div class="description short">
 			
@@ -642,7 +614,7 @@ class construct</p>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_timezoneString">#</a>
-		<code><a href="source-class-Toknot.Boot.Kernel.html#459-477" title="Go to source code">timezoneString</a>( <span>mixed <var>$timezone</var></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#448-466" title="Go to source code">timezoneString</a>( <span>mixed <var>$timezone</var></span> )</code>
 
 		<div class="description short">
 			
