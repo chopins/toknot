@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="ApiGen 2.8.0" />
+
+	<title>Class Toknot\Boot\Kernel | toknot</title>
+
+	<script type="text/javascript" src="resources/combined.js?1490177688"></script>
+	<script type="text/javascript" src="elementlist.js?915597533"></script>
+	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
+
+</head>
+
+<body>
+<div id="left">
+	<div id="menu">
+		<a href="index.html" title="Overview"><span>Overview</span></a>
+
+
+		<div id="groups">
+			<h3>Namespaces</h3>
+			<ul>
+				<li><a href="namespace-None.html">None</a>
+						</li>
+				<li><a href="namespace-PHP.html">PHP</a>
+						</li>
+				<li><a href="namespace-Shop.html">Shop<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.html">Controller<span></span></a>
+						<ul>
+				<li><a href="namespace-Shop.Controller.User.html">User</a>
+						</li>
+							</ul></li></ul></li>
+				<li class="active"><a href="namespace-Toknot.html">Toknot<span></span></a>
+						<ul>
+				<li class="active"><a href="namespace-Toknot.Boot.html">Boot<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Boot.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Config.html">Config</a>
+						</li>
+				<li><a href="namespace-Toknot.Db.html">Db<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Db.Driver.html">Driver</a>
+						</li>
+				<li><a href="namespace-Toknot.Db.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Exception.html">Exception</a>
+						</li>
+				<li><a href="namespace-Toknot.Object.html">Object<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Object.TKFunction.html">TKFunction</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Renderer.html">Renderer</a>
+						</li>
+				<li><a href="namespace-Toknot.Share.html">Share<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Share.Admin.html">Admin</a>
+						</li>
+				<li><a href="namespace-Toknot.Share.Http.html">Http<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Share.Http.TransportsException.html">TransportsException</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Share.Process.html">Process<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Share.Process.Eception.html">Eception</a>
+						</li>
+				<li><a href="namespace-Toknot.Share.Process.Exception.html">Exception</a>
+						</li>
+							</ul></li>
+				<li><a href="namespace-Toknot.Share.User.html">User<span></span></a>
+						<ul>
+				<li><a href="namespace-Toknot.Share.User.Exception.html">Exception</a>
+						</li>
+							</ul></li></ul></li></ul></li>
+			</ul>
+		</div>
+
+		<hr />
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-Toknot.Boot.ArrayObject.html">ArrayObject</a></li>
+				<li><a href="class-Toknot.Boot.Autoloader.html">Autoloader</a></li>
+				<li><a href="class-Toknot.Boot.DataCacheControl.html">DataCacheControl</a></li>
+				<li><a href="class-Toknot.Boot.FileObject.html">FileObject</a></li>
+				<li><a href="class-Toknot.Boot.FMAI.html">FMAI</a></li>
+				<li class="active"><a href="class-Toknot.Boot.Kernel.html">Kernel</a></li>
+				<li><a href="class-Toknot.Boot.Log.html">Log</a></li>
+				<li><a href="class-Toknot.Boot.Object.html">Object</a></li>
+				<li><a href="class-Toknot.Boot.Router.html">Router</a></li>
+				<li><a href="class-Toknot.Boot.StringObject.html">StringObject</a></li>
+				<li><a href="class-Toknot.Boot.Version.html">Version</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li><a href="class-Toknot.Boot.DataCacheServerInterface.html">DataCacheServerInterface</a></li>
+			</ul>
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+<div id="rightInner">
+	<form id="search">
+		<input type="hidden" name="cx" value="" />
+		<input type="hidden" name="ie" value="UTF-8" />
+		<input type="text" name="q" class="text" />
+		<input type="submit" value="Search" />
+	</form>
+
+	<div id="navigation">
+		<ul>
+			<li>
+				<a href="index.html" title="Overview"><span>Overview</span></a>
+			</li>
+			<li>
+				<a href="namespace-Toknot.Boot.html" title="Summary of Toknot\Boot"><span>Namespace</span></a>
+			</li>
+			<li class="active">
+<span>Class</span>			</li>
+		</ul>
+		<ul>
+			<li>
+				<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+			</li>
+		</ul>
+		<ul>
+		</ul>
+	</div>
+
+<div id="content" class="class">
+	<h1>Class Kernel</h1>
+
+
+	<div class="description">
+	
+<p>Toknot main class and run framework</p>
+
+<pre>
+<span
+class="php-comment">//if development, define the constant set true, otherwise set false</span>
+<span
+class="php-comment">//Note the constant default set true</span>
+<span
+class="php-keyword2">define</span>(<span
+class="php-quote">'DEVELOPMENT'</span>, <span
+class="php-keyword1">true</span>);
+
+<span
+class="php-keyword1">use</span> Toknot\Boot\Application;
+<span
+class="php-keyword1">require_once</span> <span
+class="php-quote">'/path/Toknot/Boot/Application.php'</span>;
+<span
+class="php-var">$app</span> = <span
+class="php-keyword1">new</span> Application;
+<span
+class="php-var">$app</span>-&gt;run(<span
+class="php-quote">'\AppTopNamespace'</span>, <span
+class="php-quote">'/path/AppPath'</span>);
+</pre>
+
+	</div>
+
+
+
+
+
+
+
+
+
+	<div class="info">
+		<b>Final</b><br />
+		
+		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Boot.html">Boot</a><br />
+		
+
+		<b>Located at</b> <a href="source-class-Toknot.Boot.Kernel.html#25-479" title="Go to source code">Toknot/Boot/Kernel.php</a><br />
+	</div>
+
+
+
+	<table class="summary" id="methods">
+	<caption>Methods summary</caption>
+	<tr data-order="__construct" id="___construct">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___construct">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#79-136" title="Go to source code">__construct</a>( <span>array <var>$argv</var> = <span class="php-keyword1">array</span>()</span>, <span>integer <var>$argc</var> = <span class="php-num">0</span></span> )</code>
+
+		<div class="description short">
+			
+<p>The construct parameters only receive PHP in CLI mode passed argv and argc
+parameters and save there to $_SERVER via iniEnv method, the method has define
+one constant of name DEVELOPMENT which is set true (default value) will
+show Exception message, is false only return 500 Internal Server Error status
+code</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>The construct parameters only receive PHP in CLI mode passed argv and argc
+parameters and save there to $_SERVER via iniEnv method, the method has define
+one constant of name DEVELOPMENT which is set true (default value) will
+show Exception message, is false only return 500 Internal Server Error status
+code</p>
+
+<pre>
+<span class="php-keyword1">use</span> Toknot\Boot\Application;
+
+<span
+class="php-keyword1">require_once</span> <span
+class="php-quote">'/path/Toknot/Boot/Application.php'</span>;
+
+<span
+class="php-var">$app</span> = <span
+class="php-keyword1">new</span> Application;
+</pre>
+
+<p>if PHP on CLI mode, and use below code on command line:</p>
+
+<pre>
+php App.php option1 option2
+</pre>
+
+<p>in php script like below:</p>
+
+<pre>
+<span class="php-var">$app</span> = <span
+class="php-keyword1">new</span> Application(<span
+class="php-var">$argv</span>, <span class="php-var">$argc</span>);
+
+<span
+class="php-keyword1">function</span> printArg() {
+     <span
+class="php-keyword2">var_dump</span>(<span class="php-var">$_SERVER</span>[<span
+class="php-quote">'argc'</span>][<span class="php-num">0</span>]); <span
+class="php-comment">// print option1</span>
+     <span
+class="php-keyword2">var_dump</span>(<span class="php-var">$_SERVER</span>[<span
+class="php-quote">'argc'</span>][<span class="php-num">1</span>]); <span
+class="php-comment">// print option2</span>
+     <span
+class="php-keyword2">var_dump</span>(<span class="php-var">$_SERVER</span>[<span
+class="php-quote">'argc'</span>]); <span
+class="php-comment">//print number of args</span>
+}
+</pre>
+
+
+
+				<h4>Parameters</h4>
+				<div class="list"><dl>
+					<dt><var>$argv</var></dt>
+					<dd><code>array</code><br>$argv Array of arguments passed to script</dd>
+					<dt><var>$argc</var></dt>
+					<dd><code>integer</code><br>$argc The number of passed to script</dd>
+				</dl></div>
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="run" id="_run">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_run">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#261-317" title="Go to source code">run</a>( )</code>
+
+		<div class="description short">
+			
+<p>Run application, the method will invoke router with implements interface of
+Toknot\Boot\RouterInterface of all method, Toknot Freamework default
+invoke class under application of Controller Dicetory, scan file path is under
+$appPath parameter set path(like: /path/appPath/Controller). The class be invoke
+by toknot of router invoke method, you can receive the object of instance when
+class construct</p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>Run application, the method will invoke router with implements interface of
+Toknot\Boot\RouterInterface of all method, Toknot Freamework default
+invoke class under application of Controller Dicetory, scan file path is under
+$appPath parameter set path(like: /path/appPath/Controller). The class be invoke
+by toknot of router invoke method, you can receive the object of instance when
+class construct</p>
+
+
+
+
+
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Exception.BadNamespaceException.html">Toknot\Exception\BadNamespaceException</a></code></code><br />
+					<code><code><a href="class-Toknot.Exception.BadClassCallException.html">Toknot\Exception\BadClassCallException</a></code></code><br />
+					<code><code><a href="class-Toknot.Exception.BaseException.html">Toknot\Exception\BaseException</a></code></code><br />
+				</div>
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="tickTraceHandler" id="_tickTraceHandler">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_tickTraceHandler">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#319-327" title="Go to source code">tickTraceHandler</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="uncaughtExceptionHandler" id="_uncaughtExceptionHandler">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_uncaughtExceptionHandler">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#329-345" title="Go to source code">uncaughtExceptionHandler</a>( <span>mixed <var>$e</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="errorReportHandler" id="_errorReportHandler">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_errorReportHandler">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#347-358" title="Go to source code">errorReportHandler</a>( )</code>
+
+		<div class="description short">
+			
+<p>transform php error to Exceptoion, all error will use <code><a href="class-Toknot.Exception.BaseException.html">Toknot\Exception\BaseException</a></code></p>
+
+		</div>
+
+		<div class="description detailed hidden">
+			
+<p>transform php error to Exceptoion, all error will use <code><a href="class-Toknot.Exception.BaseException.html">Toknot\Exception\BaseException</a></code></p>
+
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="errorExitReportHandler" id="_errorExitReportHandler">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_errorExitReportHandler">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#378-404" title="Go to source code">errorExitReportHandler</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getMemoryUsage" id="_getMemoryUsage">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getMemoryUsage">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#406-415" title="Go to source code">getMemoryUsage</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="pageRunInfo" id="_pageRunInfo">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_pageRunInfo">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#417-436" title="Go to source code">pageRunInfo</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="checkXDebug" id="_checkXDebug">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_checkXDebug">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#438-443" title="Go to source code">checkXDebug</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="__destruct" id="___destruct">
+
+		<td class="attributes"><code>
+			 public 
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#___destruct">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#445-449" title="Go to source code">__destruct</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="getAppRoot" id="_getAppRoot">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_getAppRoot">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#451-453" title="Go to source code">getAppRoot</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="newInstance" id="_newInstance">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_newInstance">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#455-457" title="Go to source code">newInstance</a>( )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	<tr data-order="timezoneString" id="_timezoneString">
+
+		<td class="attributes"><code>
+			 public static
+			
+			
+			</code>
+		</td>
+
+		<td class="name"><div>
+		<a class="anchor" href="#_timezoneString">#</a>
+		<code><a href="source-class-Toknot.Boot.Kernel.html#459-477" title="Go to source code">timezoneString</a>( <span>mixed <var>$timezone</var></span> )</code>
+
+		<div class="description short">
+			
+		</div>
+
+		<div class="description detailed hidden">
+			
+
+
+
+
+
+
+
+		</div>
+		</div></td>
+	</tr>
+	</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+	<div id="footer">
+		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>
+	</div>
+</div>
+</div>
+</body>
+</html>
