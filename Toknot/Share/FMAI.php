@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Boot;
+namespace Toknot\Share;
 
 use Toknot\Boot\Object;
 use Toknot\Boot\DataCacheControl;
