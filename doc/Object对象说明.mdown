@@ -17,15 +17,15 @@ Toknot 框架内的大部分对象都会继承`Object`类,本类提供一些对�
 5. 使子对象支持迭代与count功能
 
 6. 子对象实例化行为变更
-    如果实例化时，传入的参数中含有对象，那么在该实例内可以访问传入对象的public，protected方法与属性，
+    如果实例化时，传入的参数中含有对象，那么在该实例内可以通过`$this`访问传入对象的public，protected方法与属性，
     注意默认情况下类属性不允许进行设置操作
 
 7. 单例实现
     在子类中通过使用`SubClass::singleton()`来创建一个实例，并且每次都返回相同实例
-    通过`SubClass::getInstance()`返回单例对象，此方法不会创建一个实例
+    通过`SubClass::getInstance()`返回单例对象，此方法不会创建一个实例,如果不存在单例，将返回`null`
 
 8. 获取类实例
-    通过`SubClass::getClassInstance()`获取类的最新实例(该类在调用前已经被实例化了)
+    通过`SubClass::getClassInstance()`获取类的最新实例，该类在调用前已经被实例化了，否则将返回`null`，本方法不会进行实例化操作
 
 9. 获取类的新实例（PHP中的Late Static Bindings）
     通过`SubClass::getNewInstance()`
