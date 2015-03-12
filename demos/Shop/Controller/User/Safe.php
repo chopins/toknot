@@ -11,7 +11,7 @@ class Safe {
     public function GET() {
         //$database = $this->AR->connect();
         $router = Router::getClassInstance();
-        var_dump($router->getParams(1));
+        var_dump($router->getParams(0));
         print "hello world safe";    
         
     }

@@ -44,13 +44,14 @@ abstract class Object implements Iterator, Countable {
      * @access private 
      */
     private static $singletonInstanceStorage = array();
-    private static $thisInstance = null;
+    private static $thisInstance = array();
     private $counter = 0;
     private $countNumber = 0;
     private $extendsClass = null;
 
     final public function __construct() {
-        self::$thisInstance = $this;
+        $class = get_called_class();
+        self::$thisInstance[$class] = $this;
         $this->extendsClass = new SplObjectStorage();
         $args = func_get_args();
         if (count($args) > 0) {
@@ -158,7 +159,8 @@ abstract class Object implements Iterator, Countable {
      * @return object|null
      */
     final public static function getClassInstance() {
-        return self::$thisInstance;
+        $className = get_called_class();
+        return self::$thisInstance[$className];
     }
 
     /**
