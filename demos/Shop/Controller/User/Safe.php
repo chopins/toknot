@@ -1,7 +1,7 @@
 <?php
 
 namespace Shop\Controller\User;
-
+use Toknot\Boot\Router;
 /**
  * Description of Safe
  *
@@ -10,6 +10,8 @@ namespace Shop\Controller\User;
 class Safe {
     public function GET() {
         //$database = $this->AR->connect();
+        $router = Router::getClassInstance();
+        var_dump($router->getParams(1));
         print "hello world safe";    
         
     }

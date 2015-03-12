@@ -232,7 +232,7 @@ class Router extends Object {
      * @param int $index
      * @return string
      */
-    public function getParams(int $index = null) {
+    public function getParams($index = null) {
         if($index === null) {
             return $this->suffixPart;
         }

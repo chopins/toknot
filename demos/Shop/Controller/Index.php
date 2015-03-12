@@ -9,7 +9,7 @@ class Index extends Header{
     protected $operateType = 'r';
     public function GET() {
         //$database = $this->AR->connect();
-        echo $a;
+        
         print "hello world";    
         
     }
