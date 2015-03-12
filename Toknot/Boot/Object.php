@@ -132,7 +132,7 @@ abstract class Object implements Iterator, Countable {
     public static function singleton() {
         return self::__singleton();
     }
-    
+
     /**
      * get singletion instance
      * 
@@ -160,7 +160,10 @@ abstract class Object implements Iterator, Countable {
      */
     final public static function getClassInstance() {
         $className = get_called_class();
-        return self::$thisInstance[$className];
+        if (isset(self::$thisInstance[$className])) {
+            return self::$thisInstance[$className];
+        }
+        return null;
     }
 
     /**
@@ -289,9 +292,6 @@ abstract class Object implements Iterator, Countable {
         $this->setPropertie($propertie, $value);
     }
 
-    final public static function bindToClass($className, $args) {
-        return $className::constructArgs($args);
-    }
 
     /**
      * 
