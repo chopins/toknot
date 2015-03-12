@@ -13,8 +13,7 @@ The demos is under GNU GPL version 3 or later <http://opensource.org/licenses/gp
 
 ####[中文教程](http://toknot.com/category/tutorials/)
 
-####API and Class Reference
-see (http://toknot.com/toknot/)
+####[API and Class Reference](http://toknot.com/toknot/)
 
 ####Directory Structure
     Toknot/             framework sources code
