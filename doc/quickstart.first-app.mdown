@@ -92,7 +92,13 @@ server {
 `http://localhost/User/Login`
 `http://localhost/User`
 
-对于其他服务器，可以使用rewrite方式，将访问重写到`index.php`上
+对于其他服务器，可以使用rewrite方式，将访问重写到`index.php`上,比如apache,在配置好php后，添加如下规则：
+```conf
+<Directory "/your-app-path/webroot">
+RewriteRule .*  index.php
+RewriteEngine On
+</Directory>
+```
 路由器对于路由路径并不区分大小写
 
 ---------------
