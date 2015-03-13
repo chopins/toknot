@@ -32,6 +32,8 @@ use Toknot\Boot\TKFunction as TK;
 
 /**
  * Framework Module Access Interfaces
+ * 
+ * @deprecated since version 3.0
  */
 final class FMAI extends Object {
 
@@ -155,6 +157,7 @@ final class FMAI extends Object {
      * @param string $appNamespace  Namespace of user app
      * @param string $appRoot       directory root path of user app
      * @return Toknot\Share\FMAI
+     * @deprecated since version 3.0
      */
     public static function singleton($appNamespace, $appRoot) {
         return parent::__singleton($appNamespace, $appRoot);
