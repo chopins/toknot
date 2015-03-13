@@ -1,8 +1,5 @@
-##Toknot 3.0-devel
-**master is develop**
-
 ####About
-ToKnot is php develop framework
+ToKnot is a web framework for php
 
 ####License
 The PHP framework is under New BSD License (http://toknot.com/LICENSE.txt)
@@ -41,15 +38,6 @@ The demos is under GNU GPL version 3 or later <http://opensource.org/licenses/gp
 
 3. edit /your-app-path/Config/config.ini
 
-4. if be created general application, your should change /your-app-path/{APP-NAME}Base.php for your application
+4. into /your-app-path/Controller change Index.php or create other controller file of php
 
-5. into /your-app-path/Controller change Index.php or create other controller file of php
-
-6. use HTML template, create template file under `/your-app-path/View`
-
-7. change `/your-app-path/config/config.ini`
-
-8. if your PHP verision higher than 5.4.0, In command line execute below code:
-    $ cd /your-app-path/WebRoot
-    $ php -S localhost:8000 index.php -t static/
-
+5. setup your web server all request rewrite to /your-app-path/webroot/index.php
