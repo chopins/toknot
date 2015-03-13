@@ -66,8 +66,8 @@ class CreateApp {
         mkdir($dir . '/Controller');
         $this->writeIndexController($dir . '/Controller');
 
-        Log::colorMessage("Create $dir/WebRoot");
-        mkdir($dir . '/WebRoot');
+        Log::colorMessage("Create $dir/webroot");
+        mkdir($dir . '/webroot');
 
         Log::colorMessage("Create $dir/config");
         mkdir($dir . '/config');
@@ -85,7 +85,7 @@ class CreateApp {
         }
         file_put_contents($dir . '/config/config.ini', $configure);
 
-        $this->writeIndex($dir . '/WebRoot');
+        $this->writeIndex($dir . '/webroot');
         if (!$this->isAdmin) {
             $this->writeAppBaseClass($dir);
         }
@@ -96,7 +96,7 @@ class CreateApp {
             Log::colorMessage("Create $dir/Controller/User");
             $this->writeAdminAppUserController($dir . '/Controller/User');
             $this->copyDir($this->toknotDir . '/Admin/View', $dir . '/View');
-            $this->copyDir($this->toknotDir . '/Admin/Static', $dir . '/WebRoot/static');
+            $this->copyDir($this->toknotDir . '/Admin/Static', $dir . '/webroot/static');
             $this->writeManageListConfig($dir);
         }
         Log::colorMessage("Create $dir/var/view");
@@ -107,7 +107,7 @@ class CreateApp {
 
         Log::colorMessage('Create Success', 'green');
         Log::colorMessage('You should configure ' . $dir . '/config/config.ini');
-        Log::colorMessage("Configure your web root to $dir/WebRoot and visit your Application on browser");
+        Log::colorMessage("Configure your web root to $dir/webroot and visit your Application on browser");
     }
 
     public function writeManageListConfig($dir) {
