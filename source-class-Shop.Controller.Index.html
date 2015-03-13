@@ -8,7 +8,7 @@
 	<title>File demos/Shop/Controller/Index.php | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1490177688"></script>
-	<script type="text/javascript" src="elementlist.js?141187399"></script>
+	<script type="text/javascript" src="elementlist.js?2947879117"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -40,6 +40,8 @@
 				<li><a href="namespace-Toknot.Boot.Exception.html">Exception</a>
 						</li>
 							</ul></li>
+				<li><a href="namespace-Toknot.Command.html">Command</a>
+						</li>
 				<li><a href="namespace-Toknot.Config.html">Config</a>
 						</li>
 				<li><a href="namespace-Toknot.Db.html">Db<span></span></a>
@@ -129,21 +131,28 @@
 	</div>
 
 <pre><code><span id="1" class="l"><a class="l" href="#1"> 1: </a><span class="xlang">&lt;?php</span>
-</span><span id="2" class="l"><a class="l" href="#2"> 2: </a><span class="php-keyword1">namespace</span>  Shop\Controller;
-</span><span id="3" class="l"><a class="l" href="#3"> 3: </a>            
-</span><span id="4" class="l"><a class="l" href="#4"> 4: </a><span class="php-keyword1">use</span> Shop\<span class="php-keyword2">Header</span>;
-</span><span id="5" class="l"><a class="l" href="#5"> 5: </a><span class="php-keyword1">class</span> <a id="Index" href="#Index">Index</a> <span class="php-keyword1">extends</span> <span class="php-keyword2">Header</span>{     
-</span><span id="6" class="l"><a class="l" href="#6"> 6: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$permissions" href="#$permissions">$permissions</a></span> = <span class="php-num">0770</span>;
-</span><span id="7" class="l"><a class="l" href="#7"> 7: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$gid" href="#$gid">$gid</a></span> = <span class="php-num">0</span>;
-</span><span id="8" class="l"><a class="l" href="#8"> 8: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$uid" href="#$uid">$uid</a></span> = <span class="php-num">0</span>;
-</span><span id="9" class="l"><a class="l" href="#9"> 9: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$operateType" href="#$operateType">$operateType</a></span> = <span class="php-quote">'r'</span>;
-</span><span id="10" class="l"><a class="l" href="#10">10: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_GET" href="#_GET">GET</a>() {
-</span><span id="11" class="l"><a class="l" href="#11">11: </a>        <span class="php-comment">//$database = $this-&gt;AR-&gt;connect();</span>
-</span><span id="12" class="l"><a class="l" href="#12">12: </a>        
-</span><span id="13" class="l"><a class="l" href="#13">13: </a>        <span class="php-keyword1">print</span> <span class="php-quote">&quot;hello world&quot;</span>;    
-</span><span id="14" class="l"><a class="l" href="#14">14: </a>        
-</span><span id="15" class="l"><a class="l" href="#15">15: </a>    }
-</span><span id="16" class="l"><a class="l" href="#16">16: </a></span> }</code></pre>
+</span><span id="2" class="l"><a class="l" href="#2"> 2: </a>
+</span><span id="3" class="l"><a class="l" href="#3"> 3: </a><span class="php-keyword1">namespace</span> Shop\Controller;
+</span><span id="4" class="l"><a class="l" href="#4"> 4: </a>
+</span><span id="5" class="l"><a class="l" href="#5"> 5: </a><span class="php-keyword1">use</span> Shop\<span class="php-keyword2">Header</span>;
+</span><span id="6" class="l"><a class="l" href="#6"> 6: </a>
+</span><span id="7" class="l"><a class="l" href="#7"> 7: </a><span class="php-keyword1">class</span> <a id="Index" href="#Index">Index</a> <span class="php-keyword1">extends</span> <span class="php-keyword2">Header</span> {
+</span><span id="8" class="l"><a class="l" href="#8"> 8: </a>
+</span><span id="9" class="l"><a class="l" href="#9"> 9: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$permissions" href="#$permissions">$permissions</a></span> = <span class="php-num">0770</span>;
+</span><span id="10" class="l"><a class="l" href="#10">10: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$gid" href="#$gid">$gid</a></span> = <span class="php-num">0</span>;
+</span><span id="11" class="l"><a class="l" href="#11">11: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$uid" href="#$uid">$uid</a></span> = <span class="php-num">0</span>;
+</span><span id="12" class="l"><a class="l" href="#12">12: </a>    <span class="php-keyword1">protected</span> <span class="php-var"><a id="$operateType" href="#$operateType">$operateType</a></span> = <span class="php-quote">'r'</span>;
+</span><span id="13" class="l"><a class="l" href="#13">13: </a>
+</span><span id="14" class="l"><a class="l" href="#14">14: </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <a id="_GET" href="#_GET">GET</a>() {
+</span><span id="15" class="l"><a class="l" href="#15">15: </a>        <span class="php-comment">//$database = $this-&gt;AR-&gt;connect();</span>
+</span><span id="16" class="l"><a class="l" href="#16">16: </a>        <span class="php-var">$router</span> = \Toknot\Boot\Router::getClassInstance();
+</span><span id="17" class="l"><a class="l" href="#17">17: </a>        <span class="php-keyword1">print</span> <span class="php-var">$router</span>-&gt;getResourceType();
+</span><span id="18" class="l"><a class="l" href="#18">18: </a>
+</span><span id="19" class="l"><a class="l" href="#19">19: </a>        <span class="php-keyword1">print</span> <span class="php-quote">&quot;hello world&quot;</span>;
+</span><span id="20" class="l"><a class="l" href="#20">20: </a>    }
+</span><span id="21" class="l"><a class="l" href="#21">21: </a>
+</span><span id="22" class="l"><a class="l" href="#22">22: </a>}
+</span><span id="23" class="l"><a class="l" href="#23">23: </a></span></code></pre>
 
 	<div id="footer">
 		toknot API documentation generated by <a href="http://apigen.org">ApiGen 2.8.0</a>

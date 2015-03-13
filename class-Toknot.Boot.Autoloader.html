@@ -7,7 +7,7 @@
 	<title>Class Toknot\Boot\Autoloader | toknot</title>
 
 	<script type="text/javascript" src="resources/combined.js?1490177688"></script>
-	<script type="text/javascript" src="elementlist.js?141187399"></script>
+	<script type="text/javascript" src="elementlist.js?2947879117"></script>
 	<link rel="stylesheet" type="text/css" media="all" href="resources/style.css?3505392360" />
 
 </head>
@@ -39,6 +39,8 @@
 				<li><a href="namespace-Toknot.Boot.Exception.html">Exception</a>
 						</li>
 							</ul></li>
+				<li><a href="namespace-Toknot.Command.html">Command</a>
+						</li>
 				<li><a href="namespace-Toknot.Config.html">Config</a>
 						</li>
 				<li><a href="namespace-Toknot.Db.html">Db<span></span></a>
@@ -158,7 +160,7 @@
 		<b>Namespace:</b> <a href="namespace-Toknot.html">Toknot</a>\<a href="namespace-Toknot.Boot.html">Boot</a><br />
 		
 
-		<b>Located at</b> <a href="source-class-Toknot.Boot.Autoloader.html#13-123" title="Go to source code">Toknot/Boot/Autoloader.php</a><br />
+		<b>Located at</b> <a href="source-class-Toknot.Boot.Autoloader.html#15-122" title="Go to source code">Toknot/Boot/Autoloader.php</a><br />
 	</div>
 
 
@@ -176,7 +178,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#___construct">#</a>
-		<code><a href="source-class-Toknot.Boot.Autoloader.html#20-25" title="Go to source code">__construct</a>( <span>mixed <var>$path</var> = <span class="php-quote">''</span></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Autoloader.html#22-27" title="Go to source code">__construct</a>( <span>mixed <var>$path</var> = <span class="php-quote">''</span></span> )</code>
 
 		<div class="description short">
 			
@@ -205,7 +207,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_addPath">#</a>
-		<code><a href="source-class-Toknot.Boot.Autoloader.html#27-36" title="Go to source code">addPath</a>( <span>string <var>$path</var></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Autoloader.html#29-38" title="Go to source code">addPath</a>( <span>string <var>$path</var></span> )</code>
 
 		<div class="description short">
 			
@@ -243,7 +245,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_transformClassNameToFilename">#</a>
-		<code><a href="source-class-Toknot.Boot.Autoloader.html#38-56" title="Go to source code">transformClassNameToFilename</a>( <span>string <var>$class</var></span>, <span>string <var>$dir</var></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Autoloader.html#40-54" title="Go to source code">transformClassNameToFilename</a>( <span>string <var>$class</var></span>, <span>string <var>$dir</var></span> )</code>
 
 		<div class="description short">
 			
@@ -287,7 +289,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_transformNamespaceToPath">#</a>
-		<code><a href="source-class-Toknot.Boot.Autoloader.html#58-60" title="Go to source code">transformNamespaceToPath</a>( <span>mixed <var>$class</var></span>, <span>mixed <var>$dir</var></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Autoloader.html#56-58" title="Go to source code">transformNamespaceToPath</a>( <span>mixed <var>$class</var></span>, <span>mixed <var>$dir</var></span> )</code>
 
 		<div class="description short">
 			
@@ -309,14 +311,14 @@
 
 		<td class="attributes"><code>
 			 public 
-			boolean
+			null
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_autoload">#</a>
-		<code><a href="source-class-Toknot.Boot.Autoloader.html#62-76" title="Go to source code">autoload</a>( <span>string <var>$class</var></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Autoloader.html#60-75" title="Go to source code">autoload</a>( <span>string <var>$class</var></span> )</code>
 
 		<div class="description short">
 			
@@ -338,9 +340,13 @@
 
 				<h4>Returns</h4>
 				<div class="list">
-					<code>boolean</code><br />
+					<code>null</code><br />
 				</div>
 
+				<h4>Throws</h4>
+				<div class="list">
+					<code><code><a href="class-Toknot.Exception.BadClassCallException.html">Toknot\Exception\BadClassCallException</a></code></code><br />
+				</div>
 
 
 
@@ -351,14 +357,14 @@
 
 		<td class="attributes"><code>
 			 public static
-			boolean
+			
 			
 			</code>
 		</td>
 
 		<td class="name"><div>
 		<a class="anchor" href="#_importToknotClass">#</a>
-		<code><a href="source-class-Toknot.Boot.Autoloader.html#78-90" title="Go to source code">importToknotClass</a>( <span>string <var>$class</var></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Autoloader.html#77-88" title="Go to source code">importToknotClass</a>( <span>string <var>$class</var></span> )</code>
 
 		<div class="description short">
 			
@@ -378,10 +384,6 @@
 					<dd><code>string</code><br>$class</dd>
 				</dl></div>
 
-				<h4>Returns</h4>
-				<div class="list">
-					<code>boolean</code><br />
-				</div>
 
 
 
@@ -400,7 +402,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_importToknotModule">#</a>
-		<code><a href="source-class-Toknot.Boot.Autoloader.html#93-114" title="Go to source code">importToknotModule</a>( <span>string <var>$module</var></span>, <span>string <var>$first</var> = <span class="php-keyword1">null</span></span> )</code>
+		<code><a href="source-class-Toknot.Boot.Autoloader.html#91-113" title="Go to source code">importToknotModule</a>( <span>string <var>$module</var></span>, <span>string <var>$first</var> = <span class="php-keyword1">null</span></span> )</code>
 
 		<div class="description short">
 			
@@ -440,7 +442,7 @@
 
 		<td class="name"><div>
 		<a class="anchor" href="#_register">#</a>
-		<code><a href="source-class-Toknot.Boot.Autoloader.html#116-121" title="Go to source code">register</a>( )</code>
+		<code><a href="source-class-Toknot.Boot.Autoloader.html#115-120" title="Go to source code">register</a>( )</code>
 
 		<div class="description short">
 			
@@ -477,7 +479,7 @@
 
 		<td class="attributes"><code>string</code></td>
 		<td class="name"><code>
-				<a href="source-class-Toknot.Boot.Autoloader.html#15" title="Go to source code"><b>NS_SEPARATOR</b></a>
+				<a href="source-class-Toknot.Boot.Autoloader.html#17" title="Go to source code"><b>NS_SEPARATOR</b></a>
 		</code></td>
 		<td class="value"><code><span class="php-quote">'\\'</span></code></td>
 		<td class="description"><div>
@@ -507,7 +509,7 @@
 		</code></td>
 
 		<td class="name">
-				<a href="source-class-Toknot.Boot.Autoloader.html#17" title="Go to source code"><var>$fileSuffix</var></a>
+				<a href="source-class-Toknot.Boot.Autoloader.html#19" title="Go to source code"><var>$fileSuffix</var></a>
 		</td>
 		<td class="value"><code><span class="php-quote">'.php'</span></code></td>
 		<td class="description"><div>
