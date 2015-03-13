@@ -1,3 +1,4 @@
+###[框架配置文件说明](https://github.com/chopins/toknot/blob/master/doc/%E6%A1%86%E6%9E%B6%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E%28%E9%92%88%E5%AF%B93.0%29.md)
 ###ToKnot Type Object
 ToKnot 增加了三种类型， 字符串对象，数组对象和文件对象
 
