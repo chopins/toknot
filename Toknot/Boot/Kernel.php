@@ -118,10 +118,6 @@ final class Kernel {
 
         $this->iniEnv($argv, $argc);
 
-        if (PHP_SAPI == 'cli' && basename($_SERVER['argv'][0]) == 'Toknot.php') {
-            $this->runCLI();
-            exit;
-        }
     }
     
     private function initLog() {
@@ -140,7 +136,7 @@ final class Kernel {
         }
     }
 
-    private function runCLI() {
+    public function runCLI() {
         if (isset($_SERVER['argv'][1])) {
             $filename = dirname(__DIR__) . "/Command/{$_SERVER['argv'][1]}.php";
             if (file_exists($filename)) {

@@ -1,5 +1,5 @@
 ##Toknot javascript 库文档 
-本文档为 Toknot/Admin/Static/js/toknot.js 的类参考
+本文档为[toknot.js](https://github.com/chopins/toknot.js)参考
 
 ###1.扩展的 String 对象的函数
 

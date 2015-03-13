@@ -1,7 +1,7 @@
-#本文档只在2.0版本时有效，3.0可能不兼容
-
 ###ToKnot Type Object
 ToKnot 增加了三种类型， 字符串对象，数组对象和文件对象
+
+#####[Object对象说明](https://github.com/chopins/toknot/blob/master/doc/Object%E5%AF%B9%E8%B1%A1%E8%AF%B4%E6%98%8E.mdown)
 
 #####字符串对象：[Toknot\Di\StringObject](http://toknot.com/toknot/class-Toknot.Di.StringObject.html)
 
@@ -24,14 +24,32 @@ ToKnot 增加了三种类型， 字符串对象，数组对象和文件对象
     支持数组访问
     支持count函数
 
+####路由器接口
+    在使用ROUTER_PATH模式时，路由器提供了两个比较有用的方法用来获取URI包含资源参数和指向资源类型，使用方法如下:
 
-###ToKnot English Tutorials
- so far no
+首先获取路由器当前实例:
+
+```php
+$router = $router = \Toknot\Boot\Router::getClassInstance();
+```
+下面是获取资源类型的用法:
+
+```php
+$router->getResourceType(); 
+```
+比如`http://domain/Yourpath/resourcename.json`,下面的方法将返回`json`  
+由于使用多个后缀对于路由匹配没有意义，所以对于`http://domain/Yourpath/resourcename.ext.json` 将会返回`ext.json`    
+
+下面是获取URI path中的参数用法，所谓参数是指路径字符串匹配控制器后剩余的部分，下面是用法:
+
+```
+$router->getParams(); //返回全部参数
+$router->getParams(0); //返回第一个参数
+```
+比如`http://domain/user/info/1221/update` 匹配`YourApp\User\Info`时，全部参数为 array('1221','update')，而获取其中的参数时，传入的索引从0开始，注意本方法会返回原始数据而步进行过滤处理
 
 ###[ToKnot中文教程](http://toknot.com/category/tutorials/)
 
-###Run Process
-![Process](https://raw.github.com/chopins/toknot/master/doc/toknot-run-flow-chart.png "process")
 
 ###connact at weibo
 http://www.weibo.com/colors

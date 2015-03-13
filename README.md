@@ -6,7 +6,7 @@ The PHP framework is under New BSD License (http://toknot.com/LICENSE.txt)
 
 The demos is under GNU GPL version 3 or later <http://opensource.org/licenses/gpl-3.0.html>
 
-####[3.0 配置文件中文说明](https://github.com/chopins/toknot/blob/master/doc/框架配置文件说明(针对3.0).md)
+####[简略文档](https://github.com/chopins/toknot/blob/master/doc)
 
 ####[中文教程](http://toknot.com/category/tutorials/)
 

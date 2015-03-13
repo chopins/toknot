@@ -14,7 +14,7 @@ ToKnot目前数据库操作相关的类主要包含如下几个:
  ```php
 $AR = ActiveRecord::singleton();
 
-//在应用中使用FMAI实例来进行访问
+//在应用中使用FMAI实例来进行访问,已不推荐
 $AR = $FMAI->getActiveRecord();
 ```
 --------------------

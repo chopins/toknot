@@ -1,21 +1,21 @@
 ###Toknot 模板语法文档
 
-####配置文件, 默认的[Toknot\View\Renderer](http://toknot.com/toknot/class-Toknot.View.Renderer.html)需要如下配置
+####配置文件, 默认的[Toknot\Renderer\Renderer](http://toknot.com/toknot/class-Toknot.Renderer.Renderer.html)需要如下配置
 ```ini
 ;模板文件夹路径，相对路径是相对于应用的根目录
 templateFileScanPath = View
 
 ;编译后的文件保存文件夹，相对路径是相对于应用的根目录
-templateCompileFileSavePath = Data/View/Compile
+templateCompileFileSavePath = var/view/compile
 
 ;模板文件扩展名
 templateFileExtensionName = html
 
 ;开启HTML静态缓存时文件保存目录，相对路径是相对于应用的根目录
-htmlStaticCachePath = Data/View/HTML
+htmlStaticCachePath = var/view/HTML
 
 ;开启数据缓存时数据保存目录，相对路径是相对于应用的根目录
-dataCachePath = Data/View/Data
+dataCachePath = var/view/data
 
 ;缓存有效时间，单位秒
 defaultPrintCacheThreshold = 2
@@ -26,9 +26,8 @@ defaultPrintCacheThreshold = 2
 class index {
    protected static $FMAI = null;
 
-    //控制器在被调用时会接收到 FMAI 对象实例
-   public function __construct(FMAI $FMAI) {
-      self::$FMAI = $FMAI;
+   public function __construct() {
+      self::$FMAI = FMAI::singleton();
     }
 
    public function GET() {

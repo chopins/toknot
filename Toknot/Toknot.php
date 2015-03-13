@@ -7,14 +7,18 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
-
 use Toknot\Boot\Kernel;
 
 include_once __DIR__ . '/Boot/Kernel.php';
 
-function main() {
-    $app = new Kernel;
-    $app->run();
+function main($argv = array(), $argc = 0) {
+    $app = new Kernel($argv, $argc);
+    if (PHP_SAPI == 'cli' && basename($_SERVER['argv'][0]) == 'Toknot.php') {
+        $app->runCLI();
+    } else {
+        $app->run();
+    }
     return $app;
 }
-$app = main();
+
+$app = main($argv, $argc);
