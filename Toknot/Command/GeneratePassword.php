@@ -7,6 +7,13 @@
  * @link       https://github.com/chopins/toknot
  */
 
+namespace Toknot\Command;
+
+use Toknot\Boot\Log;
+use Toknot\Boot\Autoloader;
+use Toknot\Share\User\Root;
+use Toknot\Config\ConfigLoader;
+
 /**
  * Generate password of encriyption string
  */
@@ -25,7 +32,7 @@ class GeneratePassword {
         }
         if (!$config) {
             while (true) {
-                Toknot\Boot\Log::colorMessage('Enter path of config file:', null, false);
+                Log::colorMessage('Enter path of config file:', null, false);
                 $config = trim(fgets(STDIN));
                 if (!empty($config)) {
                     $config = $this->checkIni($config);
@@ -37,24 +44,24 @@ class GeneratePassword {
         }
 
         while (($password = $this->enterPass()) === false) {
-            Toknot\Boot\Log::colorMessage('Twice password not same, enter again:', 'red');
+            Log::colorMessage('Twice password not same, enter again:', 'red');
         }
-        Toknot\Config\ConfigLoader::singleton();
-        $cfg = Toknot\Config\ConfigLoader::importCfg($config);
+        ConfigLoader::singleton();
+        $cfg = ConfigLoader::importCfg($config);
 
         if (empty($cfg->User->userPasswordEncriyptionAlgorithms)) {
-            Toknot\Boot\Log::colorMessage('config of Algorithm is empty, must set in config.ini', 'red');
+            Log::colorMessage('config of Algorithm is empty, must set in config.ini', 'red');
             return;
         }
         if (empty($cfg->User->userPasswordEncriyptionSalt)) {
-            Toknot\Boot\Log::colorMessage('config of salt is empty,must set in config.ini', 'red');
+            Log::colorMessage('config of salt is empty,must set in config.ini', 'red');
             return;
         }
   
-         \Toknot\Boot\StandardAutoloader::importToknotModule('User', 'UserAccessControl');
-        $password = Toknot\Share\User\Root::getTextHashCleanSalt($password, $cfg->User->userPasswordEncriyptionAlgorithms, $cfg->User->userPasswordEncriyptionSalt);
-        Toknot\Boot\Log::colorMessage('Set Root Password is below string in config.ini','green');
-        Toknot\Boot\Log::colorMessage($password,'green');
+        Autoloader::importToknotModule('Share\User', 'UserAccessControl');
+        $password = Root::getTextHashCleanSalt($password, $cfg->User->userPasswordEncriyptionAlgorithms, $cfg->User->userPasswordEncriyptionSalt);
+        Log::colorMessage('Set Root Password is below string in config.ini','green');
+        Log::colorMessage($password,'green');
     }
 
     public function checkIni($file) {
@@ -62,21 +69,21 @@ class GeneratePassword {
         if ($config) {
             return $config;
         }
-        Toknot\Boot\Log::colorMessage("$file not exits", 'red');
+        Log::colorMessage("$file not exits", 'red');
         return false;
     }
 
     public function enterPass() {
-        Toknot\Boot\Log::colorMessage('Enter password:', null, false);
+        Log::colorMessage('Enter password:', null, false);
         $password = trim(fgets(STDIN));
         while (strlen($password) < 6) {
-            Toknot\Boot\Log::colorMessage('password too short,enter again:', 'red', false);
+            Log::colorMessage('password too short,enter again:', 'red', false);
             $password = trim(fgets(STDIN));
         }
-        Toknot\Boot\Log::colorMessage('Enter password again:', null, false);
+        Log::colorMessage('Enter password again:', null, false);
         $repassword = trim(fgets(STDIN));
         while (empty($password)) {
-            Toknot\Boot\Log::colorMessage('must enter password again:', 'red', false);
+            Log::colorMessage('must enter password again:', 'red', false);
             $repassword = trim(fgets(STDIN));
         }
         if ($repassword != $password) {

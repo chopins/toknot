@@ -97,6 +97,7 @@ class Autoloader {
      * @static
      */
     public static function importToknotModule($module, $first = null) {
+        $module = strtr($module,  self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         $toknotRoot = dirname(__DIR__);
         $path = $toknotRoot . DIRECTORY_SEPARATOR . $module;
         if ($first) {

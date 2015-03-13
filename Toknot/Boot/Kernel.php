@@ -145,7 +145,8 @@ final class Kernel {
             $filename = dirname(__DIR__) . "/Command/{$_SERVER['argv'][1]}.php";
             if (file_exists($filename)) {
                 include_once $filename;
-                return new $_SERVER['argv'][1]($_SERVER['argv'], $_SERVER['argc']);
+                $className = "Toknot\Command\\{$_SERVER['argv'][1]}";
+                return new $className($_SERVER['argv'], $_SERVER['argc']);
             }
             echo "Undefined {$_SERVER['argv'][1]}";
         }

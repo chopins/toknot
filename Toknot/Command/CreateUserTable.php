@@ -7,6 +7,15 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
+
+namespace Toknot\Command;
+
+use Toknot\Boot\Log;
+use Toknot\Config\ConfigLoader;
+use Toknot\Db\ActiveQuery;
+use Toknot\Boot\Autoloader;
+use Toknot\Db\ActiveRecord;
+
 class CreateUserTable {
 
     public function __construct($argv) {
@@ -22,7 +31,7 @@ class CreateUserTable {
         }
         if (!$appPath) {
             while (true) {
-                Toknot\Boot\Log::colorMessage('Enter path of app path:', null, false);
+                Log::colorMessage('Enter path of app path:', null, false);
                 $appPath = trim(fgets(STDIN));
                 if (!empty($appPath)) {
                     $appPath = $this->checkAppPath($appPath);
@@ -33,13 +42,13 @@ class CreateUserTable {
             }
         }
         
-        $cfg = Toknot\Config\ConfigLoader::CFG();
+        $cfg = ConfigLoader::CFG();
         $db = $this->activeRecord($cfg);
         $this->createUserTable($db, $cfg);
     }
 
     public function createUserTable($db, $cfg) {
-        $sql = Toknot\Db\ActiveQuery::createTable($db->tablePrefix.$cfg->User->userTableName);
+        $sql = ActiveQuery::createTable($db->tablePrefix.$cfg->User->userTableName);
         $sql .= "(`{$cfg->User->userIdColumnName}` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,";
         $sql .= "`{$cfg->User->userNameColumnName}` VARCHAR(200) NOT NULL,";
         $sql .= "`{$cfg->User->userGroupIdColumnName}` VARCHAR(225) NOT NULL,";
@@ -49,7 +58,7 @@ class CreateUserTable {
         $sql .= "KEY `{$cfg->User->userGroupIdColumnName}` (`{$cfg->User->userGroupIdColumnName}`)";
         $sql .= ") ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
         $db->create($sql);
-        Toknot\Boot\Log::colorMessage('create user table success', 'green');
+        Log::colorMessage('create user table success', 'green');
     }
 
     public function checkAppPath($file) {
@@ -57,13 +66,13 @@ class CreateUserTable {
         if ($config) {
             return $config;
         }
-        Toknot\Boot\Log::colorMessage("$file not exits", 'red');
+        Log::colorMessage("$file not exits", 'red');
         return false;
     }
 
     public function activeRecord($cfg) {
-        Toknot\Boot\Autoloader::importToknotModule('Db', 'DbCRUD');
-        $ar = Toknot\Db\ActiveRecord::singleton();
+        Autoloader::importToknotModule('Db', 'DbCRUD');
+        $ar = ActiveRecord::singleton();
         $ar->config($cfg->Database);
         return $ar->connect();
     }
