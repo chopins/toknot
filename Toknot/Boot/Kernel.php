@@ -271,8 +271,7 @@ final class Kernel {
                 throw new BadNamespaceException($appNameSpace);
             }
 
-            $this->addAppPath($appPath);
-            self::$appRoot = $appPath;
+            $this->addLoadPath($appPath);
 
             $router = new Router();
             $router->routerSpace($appNameSpace);
@@ -352,7 +351,7 @@ final class Kernel {
      * @param string $path  Full path of directory
      * @access private
      */
-    private function addAppPath($path) {
+    private function addLoadPath($path) {
         $this->autoLoader->addPath($path);
     }
 

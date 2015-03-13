@@ -15,6 +15,6 @@ namespace Toknot\Boot;
  */
 final class Version {
     const VERSION = '3.0';
-    const STATUS = 'beta1';
+    const STATUS = 'beta2';
     const REQUIRE_PHP_VERSION = '5.3';
 }

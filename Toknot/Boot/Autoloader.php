@@ -10,6 +10,8 @@
 
 namespace Toknot\Boot;
 
+use \Toknot\Exception\BadClassCallException;
+
 class Autoloader {
 
     const NS_SEPARATOR = '\\';
@@ -45,10 +47,6 @@ class Autoloader {
      * @access public
      */
     public static function transformClassNameToFilename($class, $dir) {
-//        $topNamespace = strtok($class, self::NS_SEPARATOR);
-//        $lastPath = basename($dir);
-//        if ($topNamespace != $lastPath)
-//            return false;
         $dir = dirname($dir);
         $nsPath = strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         $nsPath = ltrim($nsPath, DIRECTORY_SEPARATOR);
@@ -63,7 +61,8 @@ class Autoloader {
      * load a class, the method is PHP autoload handler function
      * 
      * @param string $class
-     * @return boolean
+     * @return null
+     * @throws \Toknot\Exception\BadClassCallException
      */
     public function autoload($class) {
         foreach (self::$directory as $dir) {
@@ -72,21 +71,20 @@ class Autoloader {
                 return require $filename;
             }
         }
-        throw new \Toknot\Exception\BadClassCallException($class);
+        throw new BadClassCallException($class);
     }
 
     /**
      * manually import one class of toknot instead autoload
      * 
      * @param string $class
-     * @return boolean
      * @access public
      * @static
      */
     public static function importToknotClass($class) {
         $toknotRoot = dirname(__DIR__);
         $path = $toknotRoot . DIRECTORY_SEPARATOR . strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
-        return require_once $path . self::$fileSuffix;
+        require_once $path . self::$fileSuffix;
     }
 
 
