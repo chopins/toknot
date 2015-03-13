@@ -85,6 +85,7 @@ class Router extends Object {
      * @var array 
      */
     private $suffixPart = array();
+    private $resourceType = '';
 
     /**
      * the class be invoked when the request controller not found, the class
@@ -127,7 +128,7 @@ class Router extends Object {
      */
     public function routerRule() {
         $this->checkCLIRequest();
-        
+
         if ($this->routerMode == self::ROUTER_GET_QUERY) {
             $this->queryMode();
         } elseif ($this->routerMode == self::ROUTER_MAP_TABLE) {
@@ -149,28 +150,36 @@ class Router extends Object {
 
     private function mapMode() {
         $maplist = $this->loadRouterMapTable();
-        
+        $urlPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
         $matches = array();
         foreach ($maplist as $map) {
             $map['pattern'] = str_replace('/', '\/', $map['pattern']);
-            if (preg_match("/{$map['pattern']}/i", $_SERVER['REQUEST_URI'], $matches)) {
+            if (preg_match("/{$map['pattern']}/i", $urlPath, $matches)) {
                 $this->spacePath = $map['action'];
                 $this->suffixPart = $matches;
                 break;
             }
         }
-        if($this->spacePath == Autoloader::NS_SEPARATOR) {
+        if ($this->spacePath == Autoloader::NS_SEPARATOR) {
             $this->spacePath = $this->defaultClass;
         }
     }
 
     private function defaultMode() {
-        $requestUri = new StringObject($_SERVER['REQUEST_URI']);
-        if (($pos = $requestUri->strpos('?')) !== false) {
-            $urlPath = $requestUri->substr(0, $pos);
-        } else {
-            $urlPath = new StringObject($_SERVER['REQUEST_URI']);
+        $urlPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $urlPath = new StringObject($urlPath);
+
+        if (($pos = $urlPath->strpos('?')) !== false) {
+            $urlPath = $urlPath->substr(0, $pos);
         }
+
+        if (($pos = $urlPath->strpos('.')) !== false) {
+            $this->resourceType = $urlPath->substr($pos+1);
+            $urlPath = $urlPath->substr(0, $pos);
+        }
+        //if($pos = $urlPath->strpos('.'))
+
         $spacePath = $urlPath->strtr('/', Autoloader::NS_SEPARATOR);
         $spacePath = $spacePath == Autoloader::NS_SEPARATOR ? $this->defaultClass : $spacePath;
         if ($this->routerDepth > 0) {
@@ -226,6 +235,7 @@ class Router extends Object {
     public function getRouterMode() {
         return $this->routerMode;
     }
+
     /**
      * Get params in URI path
      * 
@@ -233,11 +243,16 @@ class Router extends Object {
      * @return string
      */
     public function getParams($index = null) {
-        if($index === null) {
+        if ($index === null) {
             return $this->suffixPart;
         }
         return $this->suffixPart[$index];
     }
+
+    public function getResourceType() {
+        return $this->resourceType;
+    }
+
     /**
      * transfrom relative class name to full class name
      * 
