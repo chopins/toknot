@@ -198,8 +198,12 @@ EOS;
         if ($isCurrent == 'yes') {
             $topnamespace = '';
             while (empty($topnamespace)) {
-                Log::colorMessage("Enter application root namespace name:", null, false);
+                Log::colorMessage("Enter application root Namespace name:", null, false);
                 $topnamespace = trim(fgets(STDIN));
+                if(!preg_match('/^[a-z]+$/i', $topnamespace)) {
+                    $topnamespace = '';
+                    Log::colorMessage('Namespace only contain letter of the alphabet', 'red');
+                }
             }
             $dir = $this->workDir . '/' . $topnamespace;
         } else {
