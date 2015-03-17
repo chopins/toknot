@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit bootstrap="./unit/bootstrap.php"
+colors="true"
+convertErrorsToExceptions="true"
+convertNoticesToExceptions="true"
+convertWarningsToExceptions="true"
+stopOnFailure="false">
+<testsuites>
+<testsuite name="Yii Test Suite">
+<directory>./unit</directory>
+</testsuite>
+</testsuites>
+<filter>
+<blacklist>
+<file>OjectTest.php</file>
+</blacklist>
+</filter>
+</phpunit>
