@@ -90,9 +90,9 @@ class ObjectTest extends TestCase {
         $this->assertInstanceOf('\Toknot\Boot\FileObject', $f);
         $this->assertEquals(__DIR__ .'/test-dir',(string)$f);
         
-        $this->assertNotTrue(\Toknot\Boot\FileObject::isDirCase(strtoupper(__DIR__)));
+        $this->assertNotFalse(\Toknot\Boot\FileObject::isDirCase(strtoupper(__DIR__)));
         
-        $this->assertNotTrue(\Toknot\Boot\FileObject::fileExistCase(strtoupper(__FILE__)));
+        $this->assertNotFalse(\Toknot\Boot\FileObject::fileExistCase(strtoupper(__FILE__)));
         
         $new_test_file_path = __DIR__ .'/test-dir/test2/testfile';
         $new_test_file_data = 'this is test data';

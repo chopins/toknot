@@ -68,8 +68,8 @@ class DataCacheTest extends TestCase {
         $this->assertEquals($saveData, $testData);
         sleep(2);
         $expireData = $cache->get($key);
-        $this->assertNotTrue($expireData);
-        $this->assertNotTrue($cache->exists($key));
+        $this->assertFalse($expireData);
+        $this->assertFalse($cache->exists($key));
         $this->assertTrue($cache->del($key));
     }
 
