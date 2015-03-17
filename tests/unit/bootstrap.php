@@ -1,7 +1,8 @@
 <?php
 namespace ToknotUnit;
 
-set_include_path('../../Toknot/Boot:../../Toknot/Db');
+set_include_path(__DIR__.'/../../Toknot/Boot:'.__DIR__.'/../../Toknot/Db');
+
 require_once 'Autoloader.php';
 
 \Toknot\Boot\Autoloader::importToknotModule('Exception','BaseException');

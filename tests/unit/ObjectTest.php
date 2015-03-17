@@ -85,21 +85,24 @@ class ObjectTest extends TestCase {
     }
     
     public function testFileObject() {
+        
         $f = \Toknot\Boot\FileObject::mkdir(__DIR__ .'/test-dir');
         $this->assertInstanceOf('\Toknot\Boot\FileObject', $f);
         $this->assertEquals(__DIR__ .'/test-dir',(string)$f);
         
-        $this->assertEquals(\Toknot\Boot\FileObject::isDirCase(__DIR__), strtoupper(__DIR__));
+        $this->assertNotTrue(\Toknot\Boot\FileObject::isDirCase(strtoupper(__DIR__)));
         
-        $this->assertEquals(\Toknot\Boot\FileObject::fileExistCase(__FILE__), strtoupper(__FILE__));
+        $this->assertNotTrue(\Toknot\Boot\FileObject::fileExistCase(strtoupper(__FILE__)));
         
         $new_test_file_path = __DIR__ .'/test-dir/test2/testfile';
         $new_test_file_data = 'this is test data';
         $file = \Toknot\Boot\FileObject::saveContent($new_test_file_path, $new_test_file_data);
         
         $this->assertInstanceOf('\Toknot\Boot\FileObject', $file);
-        $this->assertEquals($new_test_file_path,(string)$f);
+        $this->assertEquals($new_test_file_path,(string)$file);
         $data = file_get_contents($new_test_file_path);
         $this->assertEquals($new_test_file_data, $data);
+        
+        $f->rm(true);
     }
 }
