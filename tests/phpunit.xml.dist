@@ -13,6 +13,7 @@ stopOnFailure="false">
 <filter>
 <blacklist>
 <file>OjectTest.php</file>
+<file>DataCacheTest.php</file>
 </blacklist>
 </filter>
 </phpunit>

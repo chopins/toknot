@@ -122,10 +122,6 @@ class DataCacheControl {
             return false;
         }
         
-        if ($this->expire == 0 && ($this->cacheTime($key) >= $this->dataModifyTime)) {
-            return true;
-        }
-
         $dataString = '<?php return '.var_export($data, true) .';';
         $file = $this->getFileName($key);
         $fileObject = FileObject::saveContent($file, $dataString);
@@ -149,7 +145,7 @@ class DataCacheControl {
         }
         if ($this->expire > 0 && ($this->cacheTime($key) + $this->expire) < time()) {
             return false;
-        } elseif ($this->expire == 0 && $this->cacheTime($key) <= $this->dataModifyTime) {
+        } elseif ($this->expire == 0 && $this->cacheTime($key) < $this->dataModifyTime) {
             return false;
         }
 
@@ -185,7 +181,7 @@ class DataCacheControl {
         $file = $this->getFileName($key);
         if ($this->expire > 0 && ($this->cacheTime($key) + $this->expire) < time()) {
             return false;
-        } elseif ($this->expire == 0 && $this->cacheTime($key) <= $this->dataModifyTime) {
+        } elseif ($this->expire == 0 && $this->cacheTime($key) < $this->dataModifyTime) {
             return false;
         }
         return file_exists($file);
