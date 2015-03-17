@@ -29,6 +29,28 @@ class FileObject extends Object {
         }
     }
 
+    public function rm($res = false) {
+        if ($this->isDir()) {
+            if ($res) {
+                $subDir = scandir($this->path);
+                foreach ($subDir as $subDirName) {
+                    if ($subDirName == '.' || $subDirName == '..') {
+                        continue;
+                    }
+                    $filePath = "{$this->path}/$subDirName";
+                    if (is_dir($filePath)) {
+                        $f = new FileObject($filePath);
+                        $f->rm(true);
+                    } else {
+                        unlink($filePath);
+                    }
+                }
+            }
+            return rmdir($this->path);
+        }
+        unlink($this->path);
+    }
+
     /**
      * current path whether is directory
      * 
@@ -36,6 +58,26 @@ class FileObject extends Object {
      */
     public function isDir() {
         return is_dir($this->path);
+    }
+
+    public function isFile() {
+        return is_file($this->path);
+    }
+
+    public function isLink() {
+        return is_link($this->path);
+    }
+
+    public function isExecutable() {
+        return is_executable($this->path);
+    }
+
+    public function isReadable() {
+        return is_readable($this->path);
+    }
+
+    public function isWriteable() {
+        return is_writable($this->path);
     }
 
     /**
@@ -74,8 +116,8 @@ class FileObject extends Object {
      * @param string $path
      * @return \Toknot\Boot\FileObject|boolean
      */
-    public static function mkdir($path) {
-        if (mkdir($path)) {
+    public static function mkdir($path, $mode = 0777, $res = false) {
+        if (mkdir($path, $mode, $res)) {
             return new static($path);
         }
         return false;
@@ -255,7 +297,7 @@ class FileObject extends Object {
             $dirList = scandir($caseDir);
             foreach ($dirList as $sub) {
                 if (strcasecmp($filename, $sub) === 0) {
-                    return $caseDir.DIRECTORY_SEPARATOR.$sub;
+                    return $caseDir . DIRECTORY_SEPARATOR . $sub;
                 }
             }
         }
@@ -294,7 +336,7 @@ class FileObject extends Object {
         if (self::$PHP_OS === null) {
             self::$PHP_OS = (strpos(strtoupper(PHP_OS), 'WIN') === 0);
         }
-        return self::$PHP_OS;
+        return false;
     }
 
     public static function fileMime($file) {

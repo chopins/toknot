@@ -249,7 +249,7 @@ abstract class Object implements Iterator, Countable {
      * @final
      * @return mix
      */
-    final public function invokeMethod($methodName, array $args) {
+    final public function invokeMethod($methodName, array $args = array()) {
         $argc = count($args);
         if ($argc === 0) {
             return $this->$methodName();
