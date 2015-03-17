@@ -406,8 +406,7 @@ class Router extends Object {
     }
 
     /**
-     * implements {@see Toknot\Boot\RouterInterface} of method, the method set Application
-     * of top namespace 
+     * Application of top namespace 
      * 
      * @param string $appspace
      */
