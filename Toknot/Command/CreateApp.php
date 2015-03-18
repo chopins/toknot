@@ -298,7 +298,7 @@ class Header extends Object {
 EOS;
         $phpCode .= <<<'EOS'
 
-    public function __init() {
+    protected function __init() {
        
     }
 

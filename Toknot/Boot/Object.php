@@ -80,7 +80,7 @@ abstract class Object implements Iterator, Countable {
         
     }
 
-    public function __callMethod($name) {
+    public function __callMethod($name, $arguments) {
         $class = get_called_class();
         throw new BadMethodCallException("Call undefined Method $name in object $class");
     }

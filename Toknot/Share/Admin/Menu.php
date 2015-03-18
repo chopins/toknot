@@ -20,7 +20,7 @@ class Menu extends AdminBase {
     public $control = null;
     public $subNav = array();
     public static $FMAI;
-    public function __init(FMAI $FMAI) {
+    protected function __init(FMAI $FMAI) {
         self::$FMAI = $FMAI;
         $this->loadAdminConfig();
         $this->initDatabase();

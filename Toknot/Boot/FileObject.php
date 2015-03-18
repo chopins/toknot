@@ -22,7 +22,7 @@ class FileObject extends Object {
     private $key = 0;
     private static $PHP_OS = null;
 
-    public function __init($path) {
+    protected function __init($path) {
         $this->path = $path;
         if (!file_exists($this->path)) {
             throw new FileIOException("$path not exists");

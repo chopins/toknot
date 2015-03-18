@@ -22,7 +22,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
      * 
      * @param array $value Option
      */
-    public function __init(array $value = array()) {
+    protected function __init(array $value = array()) {
         $this->importPropertie($value);
     }
 

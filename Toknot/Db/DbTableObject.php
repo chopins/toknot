@@ -30,7 +30,7 @@ final class DbTableObject extends DbCRUD {
     protected $databaseTableStructCache = '';
     protected $databaseTableStructCacheExpire = 100;
 
-    public function __init($tableName, DatabaseObject &$databaseObject, $newTable = false) {
+    protected function __init($tableName, DatabaseObject &$databaseObject, $newTable = false) {
         $this->tableName = $tableName;
         $this->dbObject = $databaseObject;
         $this->connectInstance = $databaseObject->connectInstance;

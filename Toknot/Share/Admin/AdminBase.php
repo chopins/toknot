@@ -73,7 +73,7 @@ abstract class AdminBase extends ClassAccessControl{
     protected $SESSION = null;
     protected $currentUser = null;
 
-    public function __init() {
+    protected function __init() {
         //self::$FMAI = $FMAI;
         self::$CFG = ConfigLoader::CFG();
         $this->initDatabase();        

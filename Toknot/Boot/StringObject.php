@@ -101,7 +101,7 @@ class StringObject extends Object implements ArrayAccess {
          'str_rot13',
     );
 
-    public function __init($string = '') {
+    protected function __init($string = '') {
         $this->interatorArray = (string) $string;
     }
 

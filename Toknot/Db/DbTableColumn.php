@@ -23,7 +23,7 @@ class DbTableColumn extends StringObject{
     public $isPK = false;
     public $autoIncrement = false;
     public $value = '';
-    public function __init($columnName) {
+    protected function __init($columnName) {
         $this->columnName = $columnName;
         parent::__construct($columnName);
     }

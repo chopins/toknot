@@ -186,9 +186,8 @@ final class Kernel {
         }
 
         clearstatcache();
-
+        error_reporting(0);
         if (DEVELOPMENT && self::checkXDebug() == false && function_exists('register_tick_function')) {
-            error_reporting(0);
             register_shutdown_function(array($this, 'errorExitReportHandler'));
             declare (ticks = 1);
             register_tick_function(array($this, 'tickTraceHandler'));
