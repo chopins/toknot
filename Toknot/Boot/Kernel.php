@@ -98,6 +98,7 @@ final class Kernel {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
+        error_reporting(0);
         Autoloader::importToknotModule('Boot', 'Object');
         $this->registerAutoLoader();
         $this->initAppRootPath();
@@ -186,7 +187,7 @@ final class Kernel {
         }
 
         clearstatcache();
-        error_reporting(0);
+        
         if (DEVELOPMENT && self::checkXDebug() == false && function_exists('register_tick_function')) {
             register_shutdown_function(array($this, 'errorExitReportHandler'));
             declare (ticks = 1);
