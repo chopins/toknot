@@ -1,13 +1,13 @@
 {
     "name" : "toknot/toknot",
-    "description": "A PHP MVC Framework",
-    "keywords" : ["framework"],
+    "description": "A php framework that is suitable for RESTful style develop",
+    "keywords" : ["framework","RESTful"],
     "homepage" : "http://toknot.com",
     "license": "New BSD License",
     "authors": [
         {
          "name" : "Szopen Xiao", 
-         "email" : "chopins.xiao@gmail.com",
+         "email" : "xiao@toknot.com",
          "homepage": "http://toknot.com",
          "role" : "Developer"
          }
