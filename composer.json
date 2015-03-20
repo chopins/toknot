@@ -24,7 +24,7 @@
         "ext-pdo_mysql": "required by Toknot MySQL Driver",
         "ext-pdo_sqlite" : "required by Toknot SQLite Driver"
     },
-    "conflicts" : {
+    "conflict" : {
         "autoload" : "conflicts other autolaod"
     }
 }
