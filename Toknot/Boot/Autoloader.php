@@ -21,7 +21,7 @@ class Autoloader {
 
     public function __construct($path = '') {
         if ($path == '') {
-            $path = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR;
+            $path = dirname(__DIR__) . DIRECTORY_SEPARATOR;
         }
         self::$directory[] = $path;
     }

@@ -336,7 +336,7 @@ final class Kernel {
      */
     public function errorReportHandler() {
         $argv = func_get_args();
-        if ($argv[0] == 2048 && strpos($argv[1], 'Declaration') === 0) {
+        if ($argv[0] == E_STRICT && strpos($argv[1], 'Declaration') === 0) {
             return;
         }
         BaseException::errorReportHandler($argv);
