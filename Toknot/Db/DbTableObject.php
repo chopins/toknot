@@ -22,19 +22,21 @@ final class DbTableObject extends DbCRUD {
     private $tableName;
     private $primaryName = null;
     private $dbObject = null;
-    public $alias = null;
+    private $alias = null;
     private $columnList = array();
     private $columnValueList = array();
-    public $where = 1;
-    public $logical = ActiveQuery::LOGICAL_AND;
+    private $where = 1;
+    private $logical = ActiveQuery::LOGICAL_AND;
     protected $databaseTableStructCache = '';
     protected $databaseTableStructCacheExpire = 100;
+    protected $dbname = '';
 
     protected function __init($tableName, DatabaseObject &$databaseObject, $newTable = false) {
         $this->tableName = $tableName;
         $this->dbObject = $databaseObject;
         $this->connectInstance = $databaseObject->connectInstance;
         $this->dbINSType = $databaseObject->dbINSType;
+        $this->dbname = $databaseObject->getDbName();
         if (!$newTable) {
             $this->showColumnList();
         }
@@ -44,29 +46,52 @@ final class DbTableObject extends DbCRUD {
         $this->databaseTableStructCacheExpire = $databaseObject->databaseTableStructCacheExpire;
     }
 
+    public function __toString() {
+        echo $this->tableName;
+    }
+
+    public function primary() {
+        echo $this->primaryName;
+    }
+
+    public function name() {
+        return $this->tableName;
+    }
+
+    public function alias($alias = null) {
+        if (empty($alias)) {
+            return $this->alias;
+        }
+        $this->alias = $alias;
+    }
+
+    public function logical($logical = null) {
+        if (empty($this->logical)) {
+            return $this->logical;
+        }
+        $this->logical = $logical;
+    }
+
+    public function where($where) {
+        $this->where = $where;
+    }
+
     public function setPropertie($name, $value) {
-        if (in_array($name, $this->columnList)) {
-            $this->columnValueList[$name] = new DbTableColumn($name, $this);
-            $this->columnValueList[$name]->value = $value;
+        if (isset($this->columnList[$name])) {
+            $this->columnValueList[$name] = $value;
         } else {
-            throw new DatabaseException("Table $this->tableName not exists Column {$name}");
+            throw new DatabaseInvalidTableColumnException($name . $this->tableName, $this->dbname);
         }
     }
 
     public function getPropertie($name) {
-        if (isset($this->$name)) {
-            return $this->$name;
-        }
-        if (in_array($name, $this->columnList)) {
+        if (isset($this->columnList[$name])) {
             if (!isset($this->interatorArray[$name])) {
-                $this->interatorArray[$name] = new DbTableColumn($name, $this);
+                $this->interatorArray[$name] = new DbTableColumn($this->columnList[$name]);
             }
             return $this->interatorArray[$name];
         }
-        if (!isset($this->columnValueList[$name])) {
-            $this->columnValueList[$name] = new DbTableColumn($name, $this);
-        }
-        return $this->columnValueList[$name];
+        throw new DatabaseInvalidTableColumnException($name, $this->tableName, $this->dbname);
     }
 
     public function importColumnValue($array) {
@@ -83,11 +108,12 @@ final class DbTableObject extends DbCRUD {
      * Get table column list and set DbTableObject::$columnList
      */
     public function showColumnList() {
-        $cache = new DataCacheControl($this->databaseTableStructCache,".{$this->tableName}");
+        $cache = new DataCacheControl($this->databaseTableStructCache, ".{$this->tableName}");
         $cache->useExpire($this->databaseTableStructCacheExpire * 60);
         $cacheTable = $cache->get();
         if ($cacheTable == false) {
             $sql = ActiveQuery::showColumnList($this->tableName);
+            $this->fetchStyle = ActiveQuery::FETCH_ASSOC;
             $list = $this->readAll($sql);
             if (empty($list)) {
                 return false;
@@ -100,7 +126,7 @@ final class DbTableObject extends DbCRUD {
                 if (isset($field['Key']) && strtolower($field['Key']) == 'pri') {
                     $this->primaryName = $field['Field'];
                 }
-                $this->columnList[] = $field['Field'];
+                $this->columnList[$field['Field']] = $field;
             }
             $cache->save($this->columnList);
             return $this->columnList;

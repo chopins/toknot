@@ -21,7 +21,7 @@ abstract class DbCRUD extends Object {
     public $where = 1;
     public $order = null;
     public $orderBy = null;
-    public $fetchStyle = ActiveQuery::FETCH_ASSOC;
+    public $fetchStyle = ActiveQuery::FETCH_OBJ;
     protected $dbDriverType = 0;
     protected $dbINSType = 0;
     protected $queryResult = null;

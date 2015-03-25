@@ -28,7 +28,7 @@ final class DatabaseObject extends DbCRUD {
     private $tableList = array();
     protected $driverOptions = array();
     protected $tablePrefix = '';
-
+    protected $dbname = '';
     /**
      *
      * @var array
@@ -72,6 +72,8 @@ final class DatabaseObject extends DbCRUD {
     }
 
     public function setDSN($dsn) {
+        $dsnObject = ActiveQuery::transformDsn($dsn);
+        $this->dbname = $dsnObject->dbname;
         $this->dsn = $dsn;
     }
 
@@ -147,6 +149,9 @@ final class DatabaseObject extends DbCRUD {
 
     public function getDSN() {
         return $this->dsn;
+    }
+    public function getDbName() {
+        return $this->dbname;
     }
 
     /**
