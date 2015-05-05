@@ -11,7 +11,8 @@ use Toknot\Boot\Kernel;
 
 include_once __DIR__ . '/Boot/Kernel.php';
 
-function main($argv = array(), $argc = 0) {
+function main() {
+    global $argv,$argc;
     $app = new Kernel($argv, $argc);
     if (PHP_SAPI == 'cli' && basename($_SERVER['argv'][0]) == 'Toknot.php') {
         $app->runCLI();
@@ -21,4 +22,4 @@ function main($argv = array(), $argc = 0) {
     return $app;
 }
 
-$app = main($argv, $argc);
+$app = main();
