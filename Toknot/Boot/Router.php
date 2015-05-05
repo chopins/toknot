@@ -175,7 +175,7 @@ class Router extends Object {
         }
 
         if (($pos = $urlPath->strpos('.')) !== false) {
-            $this->resourceType = $urlPath->substr($pos+1);
+            $this->resourceType = $urlPath->substr($pos + 1);
             $urlPath = $urlPath->substr(0, $pos);
         }
         //if($pos = $urlPath->strpos('.'))
@@ -187,7 +187,7 @@ class Router extends Object {
             $this->spacePath = '';
             $depth = 0;
             while ($name) {
-                if ($depth <= $this->routerDepth) {
+                if ($depth < $this->routerDepth) {
                     $this->spacePath .= Autoloader::NS_SEPARATOR . ucfirst($name);
                 } else {
                     $this->suffixPart[] = $name;
@@ -246,7 +246,10 @@ class Router extends Object {
         if ($index === null) {
             return $this->suffixPart;
         }
-        return $this->suffixPart[$index];
+        if (isset($this->suffixPart[$index])) {
+            return $this->suffixPart[$index];
+        }
+        return '';
     }
 
     public function getResourceType() {
@@ -298,7 +301,6 @@ class Router extends Object {
         $invokeClass = self::controllerNameTrans($this->spacePath);
         $classFile = Autoloader::transformClassNameToFilename($invokeClass, self::$routerPath);
         $classExist = false;
-
         //not case sensitive check file whether exist
         if ($this->routerDepth > 0) {
             $caseClassFile = FileObject::fileExistCase($classFile);
@@ -319,6 +321,7 @@ class Router extends Object {
                 }
             }
         }
+        
         if ($caseClassFile) {
             include_once $caseClassFile;
             $invokeClass = str_replace(self::$routerPath, '', $caseClassFile);
