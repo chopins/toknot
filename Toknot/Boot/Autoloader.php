@@ -18,48 +18,59 @@ class Autoloader {
 
     public static $fileSuffix = '.php';
     private static $directory = array();
+    private static $toknotRoot = null;
 
     public function __construct($path = '') {
+        self::$toknotRoot = dirname(__DIR__);
         if ($path == '') {
             $path = dirname(__DIR__) . DIRECTORY_SEPARATOR;
         }
         self::$directory[] = $path;
     }
-
+    public static function __callStatic($name, $params) {
+        if(self::$toknotRoot == null) {
+            self::$toknotRoot = dirname(__DIR__);
+        }
+        self::$name();
+    }
+    private static function hasInclude($path) {
+        $files = get_included_files();
+        return in_array($path, $files);
+    }
     /**
      * add autoload scan directory
-     * 
+     *
      * @param string $path
      * @access public
      * @static
      */
-    public static function addPath($path) {
+    private static function addPath($path) {
         self::$directory[] = $path;
     }
 
     /**
      * trans form class name to file name that relative a specified directory
-     * 
+     *
      * @param string $class
      * @param string $dir
      * @return string
      * @static
      * @access public
      */
-    public static function transformClassNameToFilename($class, $dir) {
+    private static function transformClassNameToFilename($class, $dir) {
         $dir = dirname($dir);
         $nsPath = strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         $nsPath = ltrim($nsPath, DIRECTORY_SEPARATOR);
         return $dir . DIRECTORY_SEPARATOR . $nsPath . self::$fileSuffix;
     }
 
-    public static function transformNamespaceToPath($class, $dir) {
+    private static function transformNamespaceToPath($class, $dir) {
         return rtrim(self::transformClassNameToFilename($class, $dir), self::$fileSuffix);
     }
 
     /**
      * load a class, the method is PHP autoload handler function
-     * 
+     *
      * @param string $class
      * @return null
      * @throws \Toknot\Exception\BadClassCallException
@@ -73,39 +84,56 @@ class Autoloader {
         }
         throw new BadClassCallException($class);
     }
+    private static function import($class) {
+        try {
+            self::importToknotClass($class);
+        } catch(\Error $e) {
+            try {
+                self::importToknotModule($class);
+            } catch(\Error $e) {
+                throw new BadClassCallException($class);
+            }
+        }
+    }
 
     /**
      * manually import one class of toknot instead autoload
-     * 
+     *
      * @param string $class
      * @access public
      * @static
      */
-    public static function importToknotClass($class) {
+    private static function importToknotClass($class) {
         $toknotRoot = dirname(__DIR__);
         $path = $toknotRoot . DIRECTORY_SEPARATOR . strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
+        if(self::hasInclude($path)) {
+            return;
+        }
         require_once $path . self::$fileSuffix;
     }
 
 
     /**
      * import under namespace all class of toknot
-     * 
+     *
      * @param string $module
      * @param string $first
      * @access public
      * @static
      */
-    public static function importToknotModule($module, $first = null) {
+    private static function importToknotModule($module, $first = null) {
         $module = strtr($module,  self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         $toknotRoot = dirname(__DIR__);
         $path = $toknotRoot . DIRECTORY_SEPARATOR . $module;
         if ($first) {
-            include_once $path . DIRECTORY_SEPARATOR . $first . self::$fileSuffix;
+            $fistFile = $path . DIRECTORY_SEPARATOR . $first . self::$fileSuffix;
+            if(!$this->hasInclude($fistFile)) {
+                include_once $fistFile;
+            }
         }
         $fileList = glob($path . DIRECTORY_SEPARATOR . '*' . self::$fileSuffix);
         foreach ($fileList as $file) {
-            if ($file == $path . DIRECTORY_SEPARATOR . $first . self::$fileSuffix) {
+            if ($fist && $file == $fistFile) {
                 continue;
             }
             include_once $file;
