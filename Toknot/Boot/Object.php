@@ -19,6 +19,7 @@ use \SplObjectStorage;
 use \BadMethodCallException;
 use \Toknot\Exception\BadPropertyGetException;
 use \Toknot\Exception\BadClassCallException;
+use \Closure;
 
 abstract class Object implements Iterator, Countable {
 
@@ -86,6 +87,10 @@ abstract class Object implements Iterator, Countable {
     final public function __call(string $name, array $arguments = []) {
         if ($this->extendsClass->count()) {
             foreach ($this->extendsClass as $obj) {
+                if ($obj instanceof Closure) {
+                    $fn = $obj->bindTo($this);
+                    return self::invokeFunction($fn, $arguments);
+                }
                 if (method_exists($obj, $name)) {
                     return $obj->invokeMethod($name, $arguments);
                 }
@@ -95,7 +100,7 @@ abstract class Object implements Iterator, Countable {
     }
 
     protected function __init() {
-
+        
     }
 
     protected function __callMethod(string $name, array $arguments = []) {
@@ -179,7 +184,6 @@ abstract class Object implements Iterator, Countable {
             return self::$thisInstance[$className];
         }
         throw new BadClassCallException($className);
-
     }
 
     /**
@@ -187,7 +191,7 @@ abstract class Object implements Iterator, Countable {
      *
      * @return object
      */
-    public static function newInstanceWithoutConstruct():object {
+    public static function newInstanceWithoutConstruct() {
         $className = get_called_class();
         $ser = sprintf('O:%d:"%s":0:{}', strlen($className), $className);
         return unserialize($ser);
@@ -266,6 +270,34 @@ abstract class Object implements Iterator, Countable {
             throw new \BadMethodCallException("Call to undefined method $className::$name()");
         }
         return self::invokeStaticMethod($name, $arguments);
+    }
+
+    final public static function invokeFunction(callable $func, array $args = []) {
+        $argc = count($args);
+        if ($argc === 0) {
+            return $func();
+        } elseif ($argc === 1) {
+            return $func($args[0]);
+        } elseif ($argc === 2) {
+            return $func($args[0], $args[1]);
+        } elseif ($argc === 3) {
+            return $func($args[0], $args[1], $args[2]);
+        } elseif ($argc === 4) {
+            return $func($args[0], $args[1], $args[2], $args[3]);
+        } elseif ($argc === 5) {
+            return $func($args[0], $args[1], $args[2], $args[3], $args[4]);
+        } elseif ($argc === 5) {
+            return $func($args[0], $args[1], $args[2], $args[3], $args[4], $args[5]);
+        } else {
+            $argStr = '';
+            foreach ($args as $k => $v) {
+                $argStr .= "\$args[$k],";
+            }
+            $argStr = rtrim($argStr, ',');
+            $ret = null;
+            eval("\$ret = {$func}($argStr);");
+            return $ret;
+        }
     }
 
     /**

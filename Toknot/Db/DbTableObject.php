@@ -18,18 +18,50 @@ use Toknot\Db\Exception\DatabaseException;
 use Toknot\Db\DbTableColumn;
 
 final class DbTableObject extends DbCRUD {
-
+    
+    /**
+     * The table name
+     *
+     * @var string
+     */
     private $tableName;
+    
+    /**
+     * the table primary key name
+     *
+     * @var string
+     */
     private $primaryName = null;
+    
+    /**
+     * the database object instance
+     *
+     * @var DatabaseObject
+     */
     private $dbObject = null;
+    
+    /**
+     * The database table alias name
+     *
+     * @var string
+     */
     private $alias = null;
-    private $columnList = array();
-    private $columnValueList = array();
+    /**
+     * The database table column list
+     *
+     * @var array
+     */
+    private $columnList = [];
+    private $columnValueList = [];
     private $where = 1;
     private $logical = ActiveQuery::LOGICAL_AND;
     protected $databaseTableStructCache = '';
     protected $databaseTableStructCacheExpire = 100;
     protected $dbname = '';
+    protected $tableEngine = 'InnoDB';
+    protected $defaultCharset;
+    protected $collate;
+    private $alterSQL = null;
 
     protected function __init($tableName, DatabaseObject &$databaseObject, $newTable = false) {
         $this->tableName = $tableName;
@@ -49,31 +81,71 @@ final class DbTableObject extends DbCRUD {
     public function __toString() {
         echo $this->tableName;
     }
-
+    public function reset() {
+        $this->where = 1;
+        $this->alterSQL = null;
+        return $this;
+    }
+    public function execAlter() {
+        if(is_null($this->alterSQL)) {
+            throw new DatabaseException(" Alter SQL is undefined");
+        }
+        $this->exec($this->alterSQL);
+        $this->reset();
+        return $this;
+    }
     public function primary() {
         echo $this->primaryName;
     }
-
+    
+    public function setEngine($engine) {
+        $this->tableEngine = $engine;
+        $this->alterSQL = "ALTER TABLE `{$this->tableName}` ENGINE= $engine";
+        return $this;
+    }
+    
+    public function getEngine() {
+       return $this->tableEngine;
+    }
+    public function setDefautlCharset($charset) {
+        $this->defaultCharset = $charset;
+        $this->alterSQL = "ALTER TABLE `{$this->tableName}` DEFAULT CHARSET SET={$charset}";
+        return $this;
+    }
+    
+    public function getDefaultCharset() {
+        return $this->defaultCharset;
+    }
+    public function setCollate($collation_name) {
+        $this->collate = $collation_name;
+        list($charset) = explode('_', $collation_name,2);
+        $this->alterSQL = "ALTER TABLE `{$this->tableName}` CONVERT TO CHARACTER SET $charset  COLLATE {$charset}";
+        return $this;
+    }
+    public function getCollate() {
+        return $this->collate;
+    }
     public function name() {
         return $this->tableName;
     }
-
-    public function alias($alias = null) {
-        if (empty($alias)) {
-            return $this->alias;
-        }
-        $this->alias = $alias;
+    public function getAlias() {
+        return $this->alias;
     }
-
-    public function logical($logical = null) {
-        if (empty($this->logical)) {
-            return $this->logical;
-        }
+    public function alias($alias) {
+        $this->alias = $alias;
+        return $this;
+    }
+    public function getLogical() {
+        return $this->logical;
+    }
+    public function setlogical($logical = null) {
         $this->logical = $logical;
+        return $this;
     }
 
     public function where($where) {
         $this->where = $where;
+        return $this;
     }
 
     public function setPropertie($name, $value) {

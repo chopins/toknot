@@ -176,7 +176,7 @@ final class DatabaseObject extends DbCRUD {
 
     public function createTable() {
         if (ActiveQuery::getDbDriverType() != ActiveQuery::DRIVER_SQLITE) {
-            throw new DatabaseException('ToKnot only provide create table on SQLite');
+            return $this->createANSITable();
         }
         foreach ($this->tableValueList as $tableName => $table) {
             $sql = ActiveQuery::createTable($tableName);
@@ -184,5 +184,12 @@ final class DatabaseObject extends DbCRUD {
             $this->create($sql);
         }
     }
-
+    protected function createANSITable() {
+        foreach ($this->tableValueList as $tableName => $table) {
+            $sql = ActiveQuery::createTable($tableName);
+            $sql .= ActiveQuery::createANSISQLColumn($table);
+            $sql .= ActiveQuery::setTableInfo($table);
+            $this->create($sql);
+        }
+    }
 }

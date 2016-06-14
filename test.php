@@ -1,17 +1,16 @@
 <?php
+
 class A {
-    private static function who() {
-        echo __CLASS__;
-    }
-
-    private static function test() {
-        self::who();
+    public function __construct() {
+        echo 'a';
     }
 }
-class B extends A {
-    public static function who() : int {
-        echo __CLASS__;
-    }
-}
-
-B::who();
+$a = new A;
+$b = function() {
+    var_dump($this);
+    echo 'b';
+};
+var_dump($b);
+var_dump(is_object($b));
+$bf = $b->bindTo($a);
+$b->call($a);

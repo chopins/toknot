@@ -40,7 +40,7 @@ class ActiveQuery {
 
     private static $dbDriverType = self::DRIVER_MYSQL;
 
-    public static function setDbDriverType($type) {
+    public static function setDbDriverType(string $type) {
         self::$dbDriverType = $type;
     }
 
@@ -48,7 +48,7 @@ class ActiveQuery {
         return self::$dbDriverType;
     }
 
-    public static function parseSQLiteColumn($sql) {
+    public static function parseSQLiteColumn(string $sql) {
         strtok($sql, '(');
         $feildInfo = strtok(')');
         $columnList = array();
@@ -65,7 +65,7 @@ class ActiveQuery {
         return $columnList;
     }
 
-    public static function createTable($tableName) {
+    public static function createTable(string $tableName) {
         $tableName = self::backtick($tableName);
         if (self::$dbDriverType == self::DRIVER_MYSQL) {
             return "CREATE TABLE IF NOT EXISTS $tableName";
@@ -73,7 +73,87 @@ class ActiveQuery {
         return "CREATE TABLE $tableName";
     }
 
-    public static function setColumn(&$table) {
+    public static function createANSISQLColumn(DbTableObject &$table) {
+        $columnList = $table->showSetColumnList();
+        $primarySQL = '';
+        $tableStruct = $uniqueSQL = $indexSQL = $indexType = [];
+        foreach ($columnList as $columnName => $column) {
+            $colSQL = [];
+            $colname = self::backtick($columnName);
+            $colSQL[] = $colname;
+            $colSQL[] = "{$column->type}" . (isset($this->length) && $this->length > 0 ? "({$column->length})":'');
+            if($column->unsigned) {
+                $colSQL[] = 'unsigned';
+            }
+            if($column->notnull) {
+                $colSQL[] = 'NOT NULL';
+            } else {
+                $colSQL[] = 'NULL';
+            }
+            if($column->autoincrement) {
+                $colSQL[] = 'AUTO_INCREMENT';
+            }
+            if($column->comment) {
+                $colSQL[] = 'COMMENT '.self::addSQuote($column->comment);
+            }
+            if($column->charset) {
+                $colSQL[] = "COLLATE {$column->charset}";
+            }
+            
+            if($column->default) {
+                $defval = is_null($column->default) ? 'NULL' : self::addSQuote($column->default);
+                $colSQL[] = "DEFAULT {$defval}";
+            }
+            if($column->isPK) {
+                $primarySQL = "PRIMARY KEY ($colname)";   
+            }
+            if($column->unique) {
+                if(is_string($column->unique)) {
+                    $keyName = self::backtick($column->unique);
+                } else {
+                    $keyName = self::backtick("idx_{$columnName}");
+                }
+                $uniqueSQL[$keyName][] = "$colname";
+            }
+            if($column->index) {
+                if(is_string($column->index)) {
+                    $indexName = self::backtick($column->index);
+                } else {
+                    $indexName = self::backtick("idx_{$columnName}");
+                }
+                $indexSQL[$indexName][] = "$colname";
+                if($column->indexType && is_string($column->indexType)) {
+                    $indexType[$indexName] = $column->indexType;
+                } else {
+                    $indexType[$indexName] = 'BTREE';
+                }
+            }
+            $tableStruct[] = join(' ',$colSQL);
+        }
+        $tableSQL = join(',', $tableStruct);
+        $tableSQL .= $primarySQL;
+        $uniSQLArr = $keySQLArr = [];
+        foreach($uniqueSQL as $uniKey=>$uniSQL) {
+            $uniSQLArr[] = "UNIQUE KEY $uniKey ".  join(',', $uniSQL);
+        }
+        $tableSQL .= join(',', $uniSQLArr);
+        foreach($indexSQL as $idxKey=>$idxSQL) {
+            $keySQLArr[] = "KEY $idxKey ". join(',', $idxSQL).' USING '.$indexType[$idxKey];
+        }
+        $tableSQL .= join(',', $keySQLArr);
+        return "($tableSQL)";
+    }
+    public static function setTableInfo(DbTableObject &$table) {
+       $engine = $table->getEngine();
+       $sql = "ENGINE={$engine} ";
+       $charset = $table->getDefaultCharset();
+       $sql .= "DEFAULT CHARSET= {$charset} ";
+       $collate = $table->getCollate();
+       $sql .="COLLATE={$collate}";
+       return $sql;
+    }
+
+    public static function setColumn(DbTableObject &$table) {
         $columnList = $table->showSetColumnList();
         $sqlList = array();
         foreach ($columnList as $columnName => $column) {
@@ -91,7 +171,7 @@ class ActiveQuery {
         return '(' . implode(',', $sqlList) . ')';
     }
 
-    public static function select($tableName, $field = '*') {
+    public static function select(string $tableName, string $field = '*') {
         $tableName = self::backtick($tableName);
         return "SELECT $field FROM $tableName";
     }
@@ -100,15 +180,15 @@ class ActiveQuery {
         if (empty($params)) {
             return $sql;
         }
-        if(self::$dbDriverType == self::DRIVER_MYSQL) {
+        if (self::$dbDriverType == self::DRIVER_MYSQL) {
             $fn = 'mysql_real_escape_string';
-        } elseif(self::$dbDriverType == self::DRIVER_SQLITE) {
+        } elseif (self::$dbDriverType == self::DRIVER_SQLITE) {
             $fn = 'sqlite_escape_string';
         } else {
             $fn = 'addslashes';
         }
         foreach ($params as &$v) {
-            $v = "'" . $fn($v) . "'";
+            $v = self::addSQuote($fn($v));
         }
         return str_replace('?', $params, $sql);
     }
@@ -125,8 +205,8 @@ class ActiveQuery {
     public static function set($field) {
         $setList = array();
         foreach ($field as $key => $val) {
-            $key = self::backtick($key);;
-            $setList = "$key='" . $val . "'";
+            $key = self::backtick($key);
+            $setList = "{$key}=".self::addSQuote($val);
         }
         return ' ' . implode(',', $setList);
     }
@@ -137,12 +217,14 @@ class ActiveQuery {
     }
 
     public static function leftJoin($tableName, $alias) {
-        $tableName = self::backtick($tableName);;
+        $tableName = self::backtick($tableName);
+        ;
         return " LEFT JOIN $tableName AS $alias";
     }
 
     public static function on($key1, $key2) {
-        $key1 = self::backtick($key1);;
+        $key1 = self::backtick($key1);
+        ;
         $key2 = self::backtick($key2);
         return " ON $key1=$key2";
     }
@@ -219,7 +301,7 @@ class ActiveQuery {
     }
 
     public static function bindTableAlias($alias, $columnList) {
-        return ' ' . $alias . '.`' . implode("`, $alias.`", $columnList).'`';
+        return ' ' . $alias . '.`' . implode("`, $alias.`", $columnList) . '`';
     }
 
     public static function insert($tableName, $field) {
@@ -245,4 +327,8 @@ class ActiveQuery {
         return '`' . str_replace('.', '`.`', $field) . '`';
     }
 
+    public static function addSQuote($value) {
+        $value = addslashes($value);
+        return "'$value'";
+    }
 }
