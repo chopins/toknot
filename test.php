@@ -1,16 +1,29 @@
 <?php
-
-class A {
-    public function __construct() {
-        echo 'a';
-    }
+//the server response time
+list($mcsec, $sec) = explode(' ', microtime());
+$msec = $sec . substr($mcsec, 2,3);
+?>
+<script>
+functiin gTime() {
+    return (new Date()).getTime();
 }
-$a = new A;
-$b = function() {
-    var_dump($this);
-    echo 'b';
-};
-var_dump($b);
-var_dump(is_object($b));
-$bf = $b->bindTo($a);
-$b->call($a);
+document.body.onload = function() {
+    var loadtime = gTime();
+}
+window.onmousedown = function() {
+    downtime = gTime();
+}
+window.onmouseup = function() {
+    downtime = gTime();
+}
+window.onkeydown = function() {
+    downtime = gTime();
+}
+window.onkeyup = function() {
+    downtime = gTime();
+}
+//the request time
+TK.Ajax.get(function() {
+    restime = gTime();
+});
+</script>
