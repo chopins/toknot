@@ -21,12 +21,17 @@ class FileObject extends Object {
     private $dir;
     private $key = 0;
     private static $PHP_OS = null;
+    private $fp;
+    private $isDir = false;
+    private $isFile = false;
 
-    protected function __init($path) {
+    protected function __init(string $path) {
         $this->path = $path;
         if (!file_exists($this->path)) {
             throw new FileIOException("$path not exists");
         }
+        $sfo = new SplFileObject($path);
+        $this->addExtendObject($sfo);
     }
 
     public function rm($res = false) {
@@ -49,35 +54,6 @@ class FileObject extends Object {
             return rmdir($this->path);
         }
         unlink($this->path);
-    }
-
-    /**
-     * current path whether is directory
-     * 
-     * @return boolean
-     */
-    public function isDir() {
-        return is_dir($this->path);
-    }
-
-    public function isFile() {
-        return is_file($this->path);
-    }
-
-    public function isLink() {
-        return is_link($this->path);
-    }
-
-    public function isExecutable() {
-        return is_executable($this->path);
-    }
-
-    public function isReadable() {
-        return is_readable($this->path);
-    }
-
-    public function isWriteable() {
-        return is_writable($this->path);
     }
 
     /**
@@ -142,21 +118,7 @@ class FileObject extends Object {
         }
         parent::getPropertie($name);
     }
-
-    /**
-     * The mode invoke SplFileObject
-     * 
-     * @param string $mode
-     * @return \SplFileObject
-     * @throws FileIOException
-     */
-    public function open($mode) {
-        if ($this->isDir()) {
-            throw new FileIOException($this->path . ' is not file');
-        }
-        return new SplFileObject($this->path, $mode);
-    }
-
+    
     /**
      * The paramaters see PHP {@see file_put_contents()}, the difference is that the method 
      * will do creation of nested directories

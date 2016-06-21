@@ -12,13 +12,17 @@ use Toknot\Boot\Autoloader;
 use Toknot\Boot\Kernel;
 
 (function ($argv,$argc) {
-    include_once __DIR__ . '/Boot/Autoloader.php';
-    $import = new Autoloader(__DIR__);
-    $import->register();
-    $app = new Kernel($argv, $argc);
-    if (PHP_SAPI == 'cli' &&  __FILE__ ==  realpath($argv[0])) {
-        $app->bootCLI();
-    } else {
-        $app->boot();
+    try {
+        include_once __DIR__ . '/Boot/Autoloader.php';
+        $import = new Autoloader(__DIR__);
+        $import->register();
+        $app = new Kernel($argv, $argc);
+        if (PHP_SAPI == 'cli' &&  __FILE__ ==  realpath($argv[0])) {
+            $app->bootCLI();
+        } else {
+            $app->boot();
+        }
+    } catch (Error $e) {
+        echo $e;
     }
 })($argv,$argc);

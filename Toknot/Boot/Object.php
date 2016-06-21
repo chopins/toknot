@@ -10,13 +10,17 @@
 
 namespace Toknot\Boot;
 
+use \Reflection;
 use \ReflectionObject;
 use \ReflectionMethod;
 use \ReflectionProperty;
+
 use \Iterator;
 use \Countable;
 use \SplObjectStorage;
+
 use \BadMethodCallException;
+use \Toknot\Exception\BaseException;
 use \Toknot\Exception\BadPropertyGetException;
 use \Toknot\Exception\BadClassCallException;
 use \Closure;
@@ -81,6 +85,20 @@ abstract class Object implements Iterator, Countable {
     }
 
     /**
+     * late add parent class to current class
+     * 
+     * @param object $param
+     * @throws \InvalidArgumentException
+     */
+    final protected function addExtendObject($param) {
+        if (is_object($param)) {
+            $this->extendsClass->attach($param);
+        } else {
+            throw \InvalidArgumentException('add extend object must is object instance');
+        }
+    }
+
+    /**
      * __call be invoked when self class is not public function and outer call
      * so fist call parent class of method, if self class call not exists method
      */
@@ -127,6 +145,28 @@ abstract class Object implements Iterator, Countable {
     }
 
     /**
+     * check is propertie whether is read only
+     * 
+     * @param string $pn
+     * @param string $scope
+     * @return boolean
+     */
+    final public function checkReadonlyPropertie(string $pn, string &$scope = 'public') {
+        $p = new ReflectionProperty($this, $pn);
+        $doc = $p->getDocComment();
+        $scope = Reflection::getModifierNames($p->getModifiers());
+        if ($doc) {
+            $doc = explode("\n", $p->getDocComment());
+            foreach ($doc as $line) {
+                if (preg_match('/@access\s+readonly/i', $line)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * provide singleton pattern for Object child class
      *
      * @param mixed $_ options,  instance of  for construct parameters
@@ -149,12 +189,20 @@ abstract class Object implements Iterator, Countable {
         return self::$singletonInstanceStorage[$className];
     }
 
+    /**
+     * get current class instance of singleton
+     * 
+     * @param mixed ...$argv params list
+     * @access public
+     * @static
+     * @object
+     */
     public static function singleton(...$argv) {
         return static::invokeStaticMethod('__singleton', $argv);
     }
 
     /**
-     * get singletion instance
+     * get singletion instance of exists
      *
      * @static
      * @access public
@@ -381,6 +429,9 @@ abstract class Object implements Iterator, Countable {
      */
     final public function __set($propertie, $value) {
         $this->propertieChange = true;
+        if($this->checkReadonlyPropertie($propertie, $scope)) {
+            throw new BadPropertyGetException("the $propertie is read only on out $scope");
+        }
         $this->setPropertie($propertie, $value);
     }
 
@@ -388,11 +439,11 @@ abstract class Object implements Iterator, Countable {
      *
      * @param string $propertie
      * @param mixed $value
-     * @access protected
+     * @access public
      * @return void
      */
-    protected function setPropertie($propertie, $value) {
-        //$this->$propertie = $value;
+    public function setPropertie($propertie, $value) {
+        throw new BadPropertyGetException('Do\'t dynamics set public propertie of class');
     }
 
     /**
@@ -452,7 +503,7 @@ abstract class Object implements Iterator, Countable {
      * @return string current called class name
      */
     public function __toString() {
-        return get_called_class();
+        return $this->currentCallClass;
     }
 
     public function rewind() {

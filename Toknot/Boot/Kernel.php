@@ -10,8 +10,6 @@
 
 namespace Toknot\Boot;
 
-include_once __DIR__ . '/Autoloader.php';
-
 use Toknot\Boot\Autoloader;
 use Toknot\Boot\Exception\PHPVersionException;
 use Toknot\Boot\Router;
@@ -98,7 +96,6 @@ final class Kernel {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
-        error_reporting(0);
         Autoloader::importToknotModule('Boot', 'Object');
         $this->registerAutoLoader();
         $this->initAppRootPath();
@@ -113,8 +110,7 @@ final class Kernel {
         if (!defined('DEVELOPMENT')) {
             define('DEVELOPMENT', true);
         }
-
-
+        
         Autoloader::importToknotClass('Exception\BaseException');
 
         $this->iniEnv($argv, $argc);
@@ -137,7 +133,7 @@ final class Kernel {
         }
     }
 
-    public function runCLI() {
+    public function bootCLI() {
         if (isset($_SERVER['argv'][1])) {
             $filename = dirname(__DIR__) . "/Command/{$_SERVER['argv'][1]}.php";
             if (file_exists($filename)) {
@@ -255,7 +251,7 @@ final class Kernel {
      * @throws BadClassCallException
      * @throws BaseException
      */
-    public function run() {
+    public function boot() {
         try {
             $appPath = self::$appRoot;
             $appNameSpace = ConfigLoader::CFG()->App->rootNamespace;
@@ -350,14 +346,6 @@ final class Kernel {
      */
     private function addLoadPath($path) {
         $this->autoLoader->addPath($path);
-    }
-
-    /**
-     * Register Autoloader Class
-     */
-    private function registerAutoLoader() {
-        $this->autoLoader = new Autoloader();
-        $this->autoLoader->register();
     }
 
     public function errorExitReportHandler() {

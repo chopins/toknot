@@ -27,12 +27,7 @@ class Autoloader {
         }
         self::$directory[] = $path;
     }
-    public static function __callStatic($name, $params) {
-        if(self::$toknotRoot == null) {
-            self::$toknotRoot = dirname(__DIR__);
-        }
-        self::$name();
-    }
+   
     private static function hasInclude($path) {
         $files = get_included_files();
         return in_array($path, $files);
