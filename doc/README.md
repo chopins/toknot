@@ -74,4 +74,4 @@ $router->getParams(0); //返回第一个参数
 ```
 比如`http://domain/user/info/1221/update` 匹配`YourApp\User\Info`时，全部参数为 array('1221','update')，而获取其中的参数时，传入的索引从0开始，注意本方法会返回原始数据而步进行过滤处理
 
-##[ToKnot中文教程](http://toknot.com/category/tutorials/)
+##[ToKnot中文教程](http://toknot.com/category/tutorials.html)
