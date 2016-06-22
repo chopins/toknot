@@ -9,4 +9,4 @@
  */
 
 include_once __DIR__.'/boot.php';
-main($argv,$argc);
+main();

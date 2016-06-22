@@ -1,3 +1,22 @@
 <?php 
+namespace k;
+trait a {
+    protected function b() {
+        echo 'a:';
+        var_dump($this);
+    }
+}
 
-var_dump(preg_match('/[a-z0-9\-]+/i', 'y'));
+class c {
+    use a;
+    public function b() {
+        echo 'c:';
+        var_dump($this);
+    }
+    public function e() {
+        $this->b();
+    }
+}
+
+$d = new c;
+$d->e();

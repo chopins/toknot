@@ -12,7 +12,8 @@ use Toknot\Boot\Kernel;
 use Toknot\Boot\Log;
 use Toknot\Boot\Version;
 
-function main($argv, $argc) {
+function main() {
+    global $argc,$argv;
     try {
         include_once __DIR__.'/Boot/Version.php';
         Version::checkPHPVersion();

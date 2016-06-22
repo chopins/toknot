@@ -106,14 +106,14 @@ class Router extends Object {
     private $method = 'GET';
     private $beforeInvoke = null;
     private $afterInvoke = null;
-    
+
     /**
      *
      * @var string
      * @access private
      */
     private $defaultInvokeController;
-    
+
     /**
      * use URI of path controller invoke application controller of class
      */
@@ -217,8 +217,21 @@ class Router extends Object {
     }
 
     private function loadRouterMapTable() {
-        $filePath = self::$routerPath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'router_map.ini';
-        return ConfigLoader::loadCfg($filePath);
+        $filePath = self::$routerPath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'router.ini';
+        $arr = file($filePath);
+        $maplist = [];
+        foreach ($arr as $ln => $l) {
+            if (strpos($l, ';') === 0) {
+                continue;
+            }
+            $split = explode('=', $l, 2);
+            if (count($split) == 2) {
+                $action = str_replace('.', Autoloader::NS_SEPARATOR, $split[0]);
+                $uri = $split[1];
+                $maplist[$action] = $uri;
+            }
+        }
+        return $maplist;
     }
 
     /**
@@ -328,7 +341,7 @@ class Router extends Object {
                 }
             }
         }
-        
+
         if ($caseClassFile) {
             include_once $caseClassFile;
             $invokeClass = str_replace(self::$routerPath, '', $caseClassFile);

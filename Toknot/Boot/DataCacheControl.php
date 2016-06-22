@@ -13,7 +13,7 @@ namespace Toknot\Boot;
 use Toknot\Boot\FileObject;
 use Toknot\Boot\DataCacheServerInterface;
 
-class DataCacheControl {
+class DataCacheControl extends Object{
 
     /**
      * Data cache file name, without extension name, if use server , must set one 
@@ -51,21 +51,57 @@ class DataCacheControl {
 
     const CACHE_FILE = '1001';
     const CACHE_SERVER = '1002';
-
     /**
+     * <code>
+     * //file
+     * $config = 'var/cache.php';
+     * $config = 'file:/var/cache.php';
+     * $config = 'file:var/cache.php';
+     * $config = 'file:/var/cache.php;3600';
      * 
-     * @param string $cacheFile 
-     * @param integer $modifyTime option, if use expire time, pass it
+     * //class instance
+     * //Toknot\Db\Memcache class
+     * $config = 'Toknot\Db\Memcache:host=127.0.0.1;port=112211;dataModifyTime=3600';
+     * $config = 'var/cache.php;3600';
+     *
+     * </code>
+     * 
+     * @param string $config
+     * @throws \RuntimeException
      */
-    public function __construct($cacheHandle, $modifyTime = 0, $cacheType = self::CACHE_FILE) {
-        if($cacheType == self::CACHE_SERVER && !$cacheHandle instanceof DataCacheServerInterface) {
-            throw new \RuntimeException('Cache Handle instance need implement Toknot\Boot\DataCacheServerInterface');
+    public function __init(string $config) {
+        if(strpos($config, ':') === false) {
+            $this->cacheType = self::CACHE_FILE;
+            $split = explode(',', $config);
+            $this->cacheHandle = $split[0];
+            if(isset($split[1])) {
+                $this->dataModifyTime = $split[1];
+            }
+        } elseif(strpos($config, 'file:')) {
+            $this->cacheType = self::CACHE_FILE;
+            $split = explode(';',explode(':', $config,2)[1]);
+            $this->cacheHandle = $split[0];
+            if(isset($split[1])) {
+                $this->dataModifyTime = $split[1];
+            }
+        } else {
+            $this->cacheType = self::CACHE_SERVER;
+            list($class,$argc) = explode(':', $config,2);
+            $params = explode(';', $argc);
+            
+            $server = new $class;
+            if(!$server instanceof DataCacheServerInterface) {
+                throw new \RuntimeException('Cache Handle instance need implement Toknot\Boot\DataCacheServerInterface');
+            }
+            foreach($params as $p) {
+                list($pn, $pv) = explode('=', $p,2);
+                $server->$pn = $pv;
+            }
+            $server->connect();
+            $this->cacheHandle = $server;
         }
-        $this->cacheHandle = $cacheHandle;
-        $this->dataModifyTime = $modifyTime;
-        $this->cacheType = $cacheType;
-        
     }
+
 
     private function getFileName($key = '') {
         return FileObject::getRealPath(self::$appRoot, "{$this->cacheHandle}{$key}.php");

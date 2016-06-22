@@ -392,15 +392,15 @@ final class Kernel {
         } else {
             $this->traceTime .= ' seconds';
         }
-        $str = PHP_EOL."<br /><b style=\"color:red;\">Trace Time:{$this->traceTime}</b>;";
-        $str .= "<br />Memory Usage:$mem;";
+        $str = PHP_EOL."<div>Trace Time : {$this->traceTime} ; ";
+        $str .= "Memory Usage : $mem ; ";
         $et = microtime(true) - $this->scriptStartTime;
         if ($et < 1) {
             $et = round($et * 1000, 2) . ' msec';
         } else {
             $et = $et . ' seconds';
         }
-        $str .= '<br />All Execure Time: ' . $et . PHP_EOL;
+        $str .= 'All Execure Time : ' . $et .'</div>'. PHP_EOL;
 
         echo PHP_SAPI == 'cli' && is_resource(STDOUT) ? strip_tags($str) : $str;
     }

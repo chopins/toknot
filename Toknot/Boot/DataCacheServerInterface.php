@@ -15,6 +15,8 @@ namespace Toknot\Boot;
  */
 interface DataCacheServerInterface {
     
+    public function connect();
+
     /**
      * Set key value and set the key expired time
      * 
