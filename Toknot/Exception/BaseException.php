@@ -50,6 +50,11 @@ class BaseException extends ErrorException {
     }
 
     static public function errorReportHandler($argv) {
+        if($argv[0] == E_WARNING) {
+            if(strpos($argv[1], 'should be compatible with Toknot\Boot\Object') !== false) {
+                return;
+            }
+        }
         throw new BaseException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 

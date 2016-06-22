@@ -25,7 +25,7 @@ class FileObject extends Object {
     private $isDir = false;
     private $isFile = false;
 
-    protected function __init(string $path) {
+    public function __init(string $path) {
         $this->path = $path;
         if (!file_exists($this->path)) {
             throw new FileIOException("$path not exists");

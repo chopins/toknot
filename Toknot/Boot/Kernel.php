@@ -31,7 +31,7 @@ final class Kernel {
      * current do not use user's autoloader class, so will call toknot standard
      * autoloader class when application instantiate 
      *
-     * @var mixed
+     * @var Toknot\Boot\Autoloader
      * @access private 
      */
     private $autoLoader = null;
@@ -96,26 +96,25 @@ final class Kernel {
      * @param integer $argc The number of  passed to script
      */
     public function __construct($argv = array(), $argc = 0) {
-        Autoloader::importToknotModule('Boot', 'Object');
-        $this->registerAutoLoader();
-        $this->initAppRootPath();
-        $this->importConfig();
-        
-        date_default_timezone_set(self::timezoneString(ConfigLoader::CFG()->App->timeZone));
-        
-        $this->initLog();
-        
         $this->scriptStartTime = microtime(true);
-        //define Application status, DEVELOPMENT is true will show Exeption
         if (!defined('DEVELOPMENT')) {
             define('DEVELOPMENT', true);
         }
-        
-        Autoloader::importToknotClass('Exception\BaseException');
-
+        if (!defined('TK_SERVER')) {
+            define('TK_SERVER', false);
+        }
         $this->iniEnv($argv, $argc);
+        Autoloader::importToknotModule('Boot', 'Object');
+        $this->initAppRootPath();
+        $this->importConfig();
 
+        date_default_timezone_set(self::timezoneString(ConfigLoader::CFG()->App->timeZone));
+
+        $this->initLog();
+
+        Autoloader::importToknotClass('Exception\BaseException');
     }
+
     
     private function initLog() {
         $CFG = ConfigLoader::CFG();
@@ -131,6 +130,10 @@ final class Kernel {
             ConfigLoader::$cacheDir = FileObject::getRealPath(self::$appRoot, 'var/config');
             ConfigLoader::importCfg(self::$appRoot . '/config/config.ini');
         }
+    }
+    
+    public function registerLoadInstance(Autoloader $load) {
+        $this->autoLoader = $load;
     }
 
     public function bootCLI() {
@@ -150,7 +153,6 @@ final class Kernel {
                 GeneratePassword    Use current configure encrypt text
                 CreateUserTable     Create User table
 ';
-
     }
 
     /**
@@ -183,9 +185,9 @@ final class Kernel {
         }
 
         clearstatcache();
-        
+
         if (DEVELOPMENT && self::checkXDebug() == false && function_exists('register_tick_function')) {
-            register_shutdown_function(array($this, 'errorExitReportHandler'));
+            //register_shutdown_function(array($this, 'errorExitReportHandler'));
             declare (ticks = 1);
             register_tick_function(array($this, 'tickTraceHandler'));
         }
@@ -206,10 +208,10 @@ final class Kernel {
      */
     private function checkSuperglobals() {
         $variables_order = strtoupper(ini_get('variables_order'));
-        if(PHP_SAPI == 'cli' && empty($_SERVER['REMOTE_ADDR'])) {
+        if (PHP_SAPI == 'cli' && empty($_SERVER['REMOTE_ADDR'])) {
             $_SERVER['REMOTE_ADDR'] = 'localhost CLI';
         }
-        
+
         if (strpos($variables_order, 'S') === false) {
             $_SERVER['_'] = getenv('_');
             $_SERVER['REQUEST_URI'] = getenv('REQUEST_URI');
@@ -234,10 +236,6 @@ final class Kernel {
         }
         $_SERVER['HEADERS_LIST'] = array();
         $_SERVER['COOKIES_LIST'] = array();
-        
-        if (empty($_SERVER['TK_SERVER'])) {
-            $_SERVER['TK_SERVER'] = false;
-        }
     }
 
     /**
@@ -390,22 +388,21 @@ final class Kernel {
     public function pageRunInfo() {
         $mem = self::getMemoryUsage();
         if ($this->traceTime < 1) {
-            $this->traceTime = round($this->traceTime * 1000, 2) . ' ms';
+            $this->traceTime = round($this->traceTime * 1000, 2) . ' msec';
         } else {
             $this->traceTime .= ' seconds';
         }
-        $str = '<br /><b style="color:red;">The trace time: ' . $this->traceTime . "</b>\n";
-        $str .= '<br />Memory Usage: ' . $mem . "\n";
+        $str = PHP_EOL."<br /><b style=\"color:red;\">Trace Time:{$this->traceTime}</b>;";
+        $str .= "<br />Memory Usage:$mem;";
         $et = microtime(true) - $this->scriptStartTime;
         if ($et < 1) {
-            $et = round($et * 1000, 2) . ' ms';
+            $et = round($et * 1000, 2) . ' msec';
         } else {
             $et = $et . ' seconds';
         }
-        $str .= '<br />PHP Script Execure Time: ' . $et . "\n";
-        if (empty($_SERVER['TK_DISABLE_OUTRUNINFO'])) {
-            echo PHP_SAPI == 'cli' && is_resource(STDOUT) ? strip_tags($str) : $str;
-        }
+        $str .= '<br />All Execure Time: ' . $et . PHP_EOL;
+
+        echo PHP_SAPI == 'cli' && is_resource(STDOUT) ? strip_tags($str) : $str;
     }
 
     public static function checkXDebug() {

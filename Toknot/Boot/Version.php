@@ -14,7 +14,19 @@ namespace Toknot\Boot;
  * Toknot Framework Version message
  */
 final class Version {
-    const VERSION = '3.0';
-    const STATUS = 'release';
-    const REQUIRE_PHP_VERSION = '5.3';
+
+    const VERSION = '4.0';
+    const MAJOR_VERSION = '4';
+    const MINOR_VERSION = '0';
+    const RELEASE_VERSION = '0';
+    const STATUS = 'dev';
+    const REQUIRE_PHP_VERSION = '7';
+
+    public static function checkPHPVersion() {
+        if (version_compare(PHP_VERSION, self::REQUIRE_PHP_VERSION, '<')) {
+            echo 'Error : PHP Interpreter version must >= '.self::REQUIRE_PHP_VERSION . PHP_EOL;
+            exit(255);
+        }
+    }
+
 }

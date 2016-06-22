@@ -19,6 +19,7 @@ class Autoloader {
     public static $fileSuffix = '.php';
     private static $directory = array();
     private static $toknotRoot = null;
+    private static $includeList = [];
 
     public function __construct($path = '') {
         self::$toknotRoot = dirname(__DIR__);
@@ -28,9 +29,12 @@ class Autoloader {
         self::$directory[] = $path;
     }
    
-    private static function hasInclude($path) {
-        $files = get_included_files();
-        return in_array($path, $files);
+    public static function hasInclude($path) {
+        if(self::$includeList && in_array($path, self::$includeList)) {
+            return true;
+        }
+        self::$includeList = get_included_files();
+        return in_array($path, self::$includeList);
     }
     /**
      * add autoload scan directory
@@ -39,7 +43,7 @@ class Autoloader {
      * @access public
      * @static
      */
-    private static function addPath($path) {
+    public static function addPath($path) {
         self::$directory[] = $path;
     }
 
@@ -52,14 +56,14 @@ class Autoloader {
      * @static
      * @access public
      */
-    private static function transformClassNameToFilename($class, $dir) {
+    public static function transformClassNameToFilename($class, $dir) {
         $dir = dirname($dir);
         $nsPath = strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         $nsPath = ltrim($nsPath, DIRECTORY_SEPARATOR);
         return $dir . DIRECTORY_SEPARATOR . $nsPath . self::$fileSuffix;
     }
 
-    private static function transformNamespaceToPath($class, $dir) {
+    public static function transformNamespaceToPath($class, $dir) {
         return rtrim(self::transformClassNameToFilename($class, $dir), self::$fileSuffix);
     }
 
@@ -74,12 +78,13 @@ class Autoloader {
         foreach (self::$directory as $dir) {
             $filename = self::transformClassNameToFilename($class, $dir);
             if (file_exists($filename)) {
+                self::$includeList[] = $filename;
                 return require $filename;
             }
         }
         throw new BadClassCallException($class);
     }
-    private static function import($class) {
+    public static function import($class) {
         try {
             self::importToknotClass($class);
         } catch(\Error $e) {
@@ -98,13 +103,15 @@ class Autoloader {
      * @access public
      * @static
      */
-    private static function importToknotClass($class) {
+    public static function importToknotClass($class) {
         $toknotRoot = dirname(__DIR__);
         $path = $toknotRoot . DIRECTORY_SEPARATOR . strtr($class, self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         if(self::hasInclude($path)) {
             return;
         }
-        require_once $path . self::$fileSuffix;
+        $includeFile =  $path . self::$fileSuffix;
+        self::$includeList[] = $includeFile;
+        require_once $includeFile;
     }
 
 
@@ -116,21 +123,23 @@ class Autoloader {
      * @access public
      * @static
      */
-    private static function importToknotModule($module, $first = null) {
+    public static function importToknotModule($module, $first = null) {
         $module = strtr($module,  self::NS_SEPARATOR, DIRECTORY_SEPARATOR);
         $toknotRoot = dirname(__DIR__);
         $path = $toknotRoot . DIRECTORY_SEPARATOR . $module;
         if ($first) {
             $fistFile = $path . DIRECTORY_SEPARATOR . $first . self::$fileSuffix;
-            if(!$this->hasInclude($fistFile)) {
+            if(!self::hasInclude($fistFile)) {
+                self::$includeList[] = $fistFile;
                 include_once $fistFile;
             }
         }
         $fileList = glob($path . DIRECTORY_SEPARATOR . '*' . self::$fileSuffix);
         foreach ($fileList as $file) {
-            if ($fist && $file == $fistFile) {
+            if ($first && $file == $fistFile) {
                 continue;
             }
+            self::$includeList[] = $file;
             include_once $file;
         }
     }

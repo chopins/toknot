@@ -49,7 +49,7 @@ class Log {
         }
         return;
     }
-
+    
     public static function colorMessage($str, $color = null, $newLine = true) {
         $number = FALSE;
         switch ($color) {
@@ -75,16 +75,18 @@ class Log {
                 $number = 35;
                 break;
         }
+        $return = '';
         if ($number) {
-            echo "\033[1;{$number}m";
+            $return .= "\033[1;{$number}m";
         }
-        echo "$str";
+        $return .= "$str";
         if ($newLine) {
-            echo PHP_EOL;
+            $return .= PHP_EOL;
         }
         if ($number) {
-            echo "\033[0m";
+            $return .= "\033[0m";
         }
+        echo $return;
     }
 
     /**
@@ -99,7 +101,6 @@ class Log {
         $day = date('Y-m-d');
         $time = date('Y-m-d H:i:s T');
         $message = '';
-        $message = "$time [{$_SERVER['REMOTE_ADDR']}]:{$_SERVER['REQUEST_METHOD']} {$_SERVER['REQUEST_URI']}" . PHP_EOL;
         $traceInfo = $message . strip_tags($traceInfo) . PHP_EOL;
         FileObject::saveContent(self::$savePath . DIRECTORY_SEPARATOR . $day, $traceInfo, FILE_APPEND);
     }

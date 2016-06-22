@@ -22,7 +22,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
      * 
      * @param array $value Option
      */
-    protected function __init(array $value = array()) {
+    public function __init(array $value = array()) {
         $this->importPropertie($value);
     }
 
@@ -75,7 +75,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         }
     }
 
-    public function setPropertie($propertie, $value) {
+    public function setPropertie(string $propertie, $value) {
         $className = get_called_class();
         if (is_array($value)) {
             $this->interatorArray[$propertie] = new $className($value);
@@ -86,7 +86,7 @@ class ArrayObject extends Object implements ArrayAccess, Serializable {
         }
     }
 
-    public function getPropertie($propertie) {
+    public function getPropertie(string $propertie) {
         if (isset($this->interatorArray[$propertie])) {
             return $this->interatorArray[$propertie];
         }

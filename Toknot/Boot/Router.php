@@ -106,7 +106,14 @@ class Router extends Object {
     private $method = 'GET';
     private $beforeInvoke = null;
     private $afterInvoke = null;
-
+    
+    /**
+     *
+     * @var string
+     * @access private
+     */
+    private $defaultInvokeController;
+    
     /**
      * use URI of path controller invoke application controller of class
      */

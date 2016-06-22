@@ -313,7 +313,7 @@ EOS;
     }
 
     public function writeIndex($path) {
-        $toknot = dirname(__DIR__) . '/Toknot.php';
+        $toknot = dirname(__DIR__) . '/toknot.php';
         $phpCode = "<?php
 //If developement set true, product set false
 define('DEVELOPMENT', true);

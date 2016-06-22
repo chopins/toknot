@@ -14,13 +14,11 @@ use \Reflection;
 use \ReflectionObject;
 use \ReflectionMethod;
 use \ReflectionProperty;
-
+use \ReflectionException;
 use \Iterator;
 use \Countable;
 use \SplObjectStorage;
-
 use \BadMethodCallException;
-use \Toknot\Exception\BaseException;
 use \Toknot\Exception\BadPropertyGetException;
 use \Toknot\Exception\BadClassCallException;
 use \Closure;
@@ -54,7 +52,7 @@ abstract class Object implements Iterator, Countable {
     private $counter = 0;
     private $countNumber = 0;
     private $extendsClass = null;
-    private static $currentCallClass = 'Object';
+    private $currentCallClass = 'Object';
 
     /**
      *  late extends method of parent class
@@ -72,7 +70,7 @@ abstract class Object implements Iterator, Countable {
      */
     final public function __construct(...$argv) {
         $this->currentCallClass = get_called_class();
-        self::$thisInstance[self::$currentCallClass] = $this;
+        self::$thisInstance[$this->currentCallClass] = $this;
         $this->extendsClass = new SplObjectStorage();
         if (count($argv) > 0) {
             foreach ($argv as $param) {
@@ -82,6 +80,51 @@ abstract class Object implements Iterator, Countable {
             }
         }
         $this->invokeMethod('__init', $argv);
+    }
+
+    /**
+     * Constructor of class instead @__construct()
+     * 
+     * @param mixed $argc 
+     */
+    protected function __init() {
+        
+    }
+
+    /**
+     * the function utilized for reading data from inaccessible properties. 
+     * instead __get()
+     * 
+     * @param string $name
+     * @throws BadPropertyGetException
+     */
+    protected function getPropertie(string $name) {
+        throw new BadPropertyGetException($this->currentCallClass, $name);
+    }
+
+    /**
+     * the method is triggered when invoking inaccessible methods in an object context. 
+     * instead __call()
+     * 
+     * @param string $name
+     * @param array $arguments
+     * @throws BadMethodCallException
+     */
+    protected function __callMethod(string $name, array $arguments = []) {
+        throw new BadMethodCallException("Call undefined Method $name in object {$this->currentCallClass}");
+    }
+
+    /**
+     * the function run when writing data to inaccessible properties. 
+     * instead __set()
+     *
+     * @param string $propertie
+     * @param mixed $value
+     * @access public
+     * @return void
+     */
+    protected function setPropertie($propertie, $value) {
+        throw new BadPropertyGetException("{$this->currentCallClass}::setPropertie() not defined,so dynamic set {$this->currentCallClass}", "$propertie is inhibit");
     }
 
     /**
@@ -114,15 +157,8 @@ abstract class Object implements Iterator, Countable {
                 }
             }
         }
+
         return $this->__callMethod($name, $arguments);
-    }
-
-    protected function __init() {
-        
-    }
-
-    protected function __callMethod(string $name, array $arguments = []) {
-        throw new BadMethodCallException("Call undefined Method $name in object {self::$currentCallClass}");
     }
 
     final public function __get($name) {
@@ -140,10 +176,6 @@ abstract class Object implements Iterator, Countable {
         }
     }
 
-    public function getPropertie($name) {
-        throw new BadPropertyGetException(self::$currentCallClass, $name);
-    }
-
     /**
      * check is propertie whether is read only
      * 
@@ -151,8 +183,12 @@ abstract class Object implements Iterator, Countable {
      * @param string $scope
      * @return boolean
      */
-    final public function checkReadonlyPropertie(string $pn, string &$scope = 'public') {
-        $p = new ReflectionProperty($this, $pn);
+    final public function checkReadonlyPropertie(string $pn, &$scope = 'public') {
+        try {
+            $p = new ReflectionProperty($this, $pn);
+        } catch (ReflectionException $e) {
+            return false;
+        }
         $doc = $p->getDocComment();
         $scope = Reflection::getModifierNames($p->getModifiers());
         if ($doc) {
@@ -429,21 +465,10 @@ abstract class Object implements Iterator, Countable {
      */
     final public function __set($propertie, $value) {
         $this->propertieChange = true;
-        if($this->checkReadonlyPropertie($propertie, $scope)) {
+        if ($this->checkReadonlyPropertie($propertie, $scope)) {
             throw new BadPropertyGetException("the $propertie is read only on out $scope");
         }
         $this->setPropertie($propertie, $value);
-    }
-
-    /**
-     *
-     * @param string $propertie
-     * @param mixed $value
-     * @access public
-     * @return void
-     */
-    public function setPropertie($propertie, $value) {
-        throw new BadPropertyGetException('Do\'t dynamics set public propertie of class');
     }
 
     /**

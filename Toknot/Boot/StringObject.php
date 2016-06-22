@@ -147,10 +147,10 @@ class StringObject extends Object implements ArrayAccess {
         return $supprot;
     }
 
-    public function __callMethod($stringFunction, $arguments) {
-        if (!in_array($stringFunction, self::$supportStringMethodList))
+    protected function __callMethod(string $stringFunction, array $arguments = []) {
+        if (!in_array($stringFunction, self::$supportStringMethodList)) {
             throw new BadMethodCallException("$stringFunction Method undefined in StringObject");
-
+        }
         array_unshift($arguments, $this->interatorArray);
         $str = call_user_func_array($stringFunction, $arguments);
         if (is_string($str)) {

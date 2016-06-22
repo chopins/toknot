@@ -24,16 +24,7 @@ final class ConfigLoader extends Object {
         self::$_CFG = new ArrayObject;
         self::importCfg($file);
     }
-
-    /**
-     * Get ConfigLoader instance
-     * 
-     * @return Toknot\Config\ConfigLoader
-     */
-    public static function singleton() {
-        return parent::__singleton();
-    }
-
+    
     /**
      * Get app configure data
      * 
