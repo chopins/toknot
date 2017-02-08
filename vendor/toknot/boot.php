@@ -19,7 +19,7 @@ use Toknot\Boot\Kernel;
 function main($appdir) {
     global $argc, $argv;
     if (!is_dir($appdir)) {
-        echo 'directory appdir is not exist';
+        echo 'appdir of path is not exist'.PHP_EOL;
         return 1;
     }
     define('APPDIR', realpath($appdir));
