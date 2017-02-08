@@ -1,0 +1,28 @@
+{
+    "name": "toknot/toknot",
+    "description": "A php framework",
+    "keywords": ["framework", "php","toknot"],
+    "homepage": "http://toknot.com",
+    "license": "New BSD License",
+    "authors": [
+        {
+            "name": "Szopen Xiao",
+            "email": "xiao@toknot.com",
+            "homepage": "http://toknot.com",
+            "role": "Founder"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/chopins/toknot/issues?state=open",
+        "source": "https://github.com/chopins/toknot"
+    },
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "suggest": {
+        "ext-pdo": "required by Toknot DB object",
+        "ext-pdo_mysql": "required by Toknot MySQL Driver",
+        "ext-pdo_sqlite" : "required by Toknot SQLite Driver"
+    }
+    
+}
