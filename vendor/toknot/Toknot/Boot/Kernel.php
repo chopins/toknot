@@ -50,27 +50,33 @@ final class Kernel extends Object {
         $this->initImport();
 
         $this->phpIniSet();
-
+        if (PHP_SAPI == 'cli') {
+            $this->isCLI = true;
+            $this->console();
+        }
         try {
             $this->setResponse(self::PASS_STATE);
 
             set_error_handler(array($this, 'errorReportHandler'));
             set_exception_handler(array($this, 'uncaughtExceptionHandler'));
             register_shutdown_function(array($this, '__destruct'));
-            $this->initRuntime();
-
-            $this->cfg = $this->loadConfig();
-
-            if ($this->cfg->app->short_except_path) {
-                Logs::$shortPath = strlen(dirname(dirname(TKROOT)));
-            }
-            $this->importVendor();
-            $this->initRouter();
         } catch (\Exception $e) {
             $this->echoException($e);
             $this->response();
             exit();
         }
+    }
+
+    private function setRuntimeEnv() {
+        $this->initRuntime();
+
+        $this->cfg = $this->loadConfig();
+
+        if ($this->cfg->app->short_except_path) {
+            Logs::$shortPath = strlen(dirname(dirname(TKROOT)));
+        }
+        $this->importVendor();
+        $this->initRouter();
     }
 
     private function phpIniSet() {
@@ -79,10 +85,8 @@ final class Kernel extends Object {
     }
 
     public function run() {
-        if (PHP_SAPI == 'cli') {
-            $this->isCLI = true;
-            $this->console();
-        }
+        $this->setRuntimeEnv();
+
         try {
             $this->router();
         } catch (\Exception $e) {

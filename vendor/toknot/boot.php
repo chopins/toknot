@@ -16,7 +16,7 @@ use Toknot\Boot\Kernel;
  * @param string $appdir the APP root dir
  * @return \Toknot\Boot\Kernel|int
  */
-function main($appdir) {
+function main($appdir = '') {
     global $argc, $argv;
     if (!is_dir($appdir)) {
         echo 'appdir of path is not exist'.PHP_EOL;

@@ -390,4 +390,22 @@ class Tookit {
         return $res;
     }
 
+    public static function getRealPath($path, $cwd = '') {
+        $isRoot = false;
+        if (strtolower(substr(PHP_OS, 0, 3)) == 'WIN') {
+            if (preg_match('/^[A-Z]:\//i', $path)) {
+                $isRoot = true;
+            }
+        } elseif (strpos($path, DIRECTORY_SEPARATOR) === 0) {
+            $isRoot = true;
+        }
+        if($isRoot) {
+            return $path;
+        }
+        if(!$cwd) {
+            $cwd = getcwd();
+        }
+        return "{$cwd}/{$path}";
+    }
+
 }
