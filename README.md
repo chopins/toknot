@@ -9,4 +9,4 @@ The PHP framework is under New BSD License (http://toknot.com/LICENSE.txt)
 The demos is under GNU GPL version 3 or later <http://opensource.org/licenses/gpl-3.0.html>
 
 ####Usage and Configure
-late
+On command line exec:`php toknot/vendor/toknot/initapp.php` App Init Guide build your app
