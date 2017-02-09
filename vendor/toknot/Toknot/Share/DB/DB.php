@@ -39,6 +39,7 @@ class DB extends Object {
     private static $modelNs;
     private static $usedb;
     private $tableConfig;
+    private $extType = [];
 
     const T_OR = '||';
     const T_AND = '&&';
@@ -58,7 +59,7 @@ class DB extends Object {
         } else {
             self::$usedb = $db;
         }
-
+        $this->extType = explode(',', $allcfg->database->ext_type);
         $config = $allcfg->database[self::$usedb];
 
         $this->tableConfig = $config->table_config;
@@ -193,7 +194,7 @@ class DB extends Object {
         $this->initModel($tables, $usedb);
 
         list($query, $dropSql) = $this->createSchema($tables);
-      
+
         $execResult = [];
         foreach ($query as $i => $t) {
             if ($force) {
@@ -267,7 +268,7 @@ class DB extends Object {
     protected function createTable(Schema &$schema, $tables) {
         $tableDefault = self::$cfg->table_default;
         $columnDefault = self::$cfg->column_default;
-        
+
         foreach ($tables as $table => $info) {
             $nt = $schema->createTable($table);
             if (empty($info['column'])) {
@@ -283,6 +284,10 @@ class DB extends Object {
                 }
                 $this->columnTextLength($cinfo);
                 $option = array_merge(iterator_to_array($columnDefault), Tookit::arrayRemove($cinfo, 'type'));
+                if($cinfo['type'] == 'char') {
+                    $option['fixed'] = true;
+                    $cinfo['type'] = 'string';
+                }
 
                 $nt->addColumn($column, $cinfo['type'], $option);
             }
@@ -346,8 +351,7 @@ class DB extends Object {
     }
 
     public function initType() {
-        $extType = ['tinyint'];
-        foreach ($extType as $type) {
+        foreach ($this->extType as $type) {
             $this->addType($type);
         }
     }

@@ -276,7 +276,10 @@ class Tookit {
      * @param boolean $case
      * @return string|boolean
      */
-    public static function arrayPos(array $arr, $need, $case = false) {
+    public static function arrayPos($arr, $need, $case = false) {
+        if(!is_array($arr) && !$arr instanceof \Iterator) {
+            throw new BaseException('Argument 1 must be of array or can be iterator');
+        }
         $func = $case ? 'strpos' : 'stripos';
         foreach ($arr as $v) {
             if ($func($need, $v) !== false) {
@@ -294,7 +297,10 @@ class Tookit {
      * @param mix $def
      * @return mix
      */
-    public static function coalesce(array &$arr, $key, $def = '') {
+    public static function coalesce(&$arr, $key, $def = '') {
+        if(!is_array($arr) && !$arr instanceof \ArrayAccess) {
+            throw new BaseException('Argument 1 must be of array or can be array access');
+        }
         $arr[$key] = empty($arr[$key]) ? $def : $arr[$key];
         return $arr[$key];
     }

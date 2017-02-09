@@ -29,7 +29,7 @@ class TinyintType extends Type {
             $unsigned = (isset($fieldDeclaration['unsigned']) && $fieldDeclaration['unsigned']) ? ' UNSIGNED' : '';
             return 'TINYINT ' . $unsigned;
         }
-        return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getSmallIntTypeDeclarationSQL($fieldDeclaration);
     }
 
     /**
