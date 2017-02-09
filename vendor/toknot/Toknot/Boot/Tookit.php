@@ -399,10 +399,10 @@ class Tookit {
         } elseif (strpos($path, DIRECTORY_SEPARATOR) === 0) {
             $isRoot = true;
         }
-        if($isRoot) {
+        if ($isRoot) {
             return $path;
         }
-        if(!$cwd) {
+        if (!$cwd) {
             $cwd = getcwd();
         }
         return "{$cwd}/{$path}";
