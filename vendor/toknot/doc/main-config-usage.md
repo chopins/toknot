@@ -1,5 +1,6 @@
+#The main config document
 
-## App config in section name of ini file:`[app]`
+### App config in section name of ini file:`[app]`
 * `disable_install = true`
 * app time zone:`timezone = UTC`
 * app charset:`charet = utf8`
@@ -18,12 +19,12 @@
 * session name(option of app):`session.name = sid`
 * session httponly config(option of app):`session.cookie_httponly = 1`
 
-## section of App vendor lib config:`[vendor]`
+### section of App vendor lib config:`[vendor]`
 * `dbal = doctrine/Doctrine`
 * `routing = symfony/Symfony`
 * `phpdoc = zend/Zend`
 
-## section of App databae config:`[database]`
+### section of App databae config:`[database]`
 * Add type of database data:`ext_type = tinyint`
 * host of db1, the key db1 equal above key `default_db_config_key`:`db1.host = localhost`
 * port of db1:`db1.port = 3369`

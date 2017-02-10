@@ -1,4 +1,4 @@
-Table config like below:
+#Table config like below:
 * the section config column list of table,key is table name:`[user.column]`
 * key is column name and type:`uid.type = integer`
 * column length:`uid.length = 11`

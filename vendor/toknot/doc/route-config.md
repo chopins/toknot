@@ -1,4 +1,4 @@
-
+#The route config document
 * name of router is section name:`[console-doc-import-letter]`
 * your path prefix:`prefix.path=doc`
 * your contoller of prefix:`prefix.controller=`
