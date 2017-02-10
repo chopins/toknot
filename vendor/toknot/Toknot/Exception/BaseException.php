@@ -25,6 +25,7 @@ class BaseException extends Exception {
     private $fatalError = false;
     public $traceArr = array();
     public $exceptionInstance = null;
+    private static $errorToException = false;
 
     /**
      * construct StandardException
@@ -35,8 +36,7 @@ class BaseException extends Exception {
      * @param integer $line
      * @param object|null $exceIns
      */
-    public function __construct($message = '', $code = 0, $file = null,
-            $line = null, $exceIns = null) {
+    public function __construct($message = '', $code = 0, $file = null, $line = null, $exceIns = null) {
         if ($this->exceptionMessage) {
             $this->message = $this->exceptionMessage;
         } else {
@@ -50,6 +50,7 @@ class BaseException extends Exception {
     }
 
     static public function errorReportHandler($argv) {
+        self::$errorToException = true;
         return new BaseException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
@@ -137,6 +138,11 @@ class BaseException extends Exception {
     }
 
     public function each($traceArr) {
+        if (self::$errorToException) {
+            array_shift($traceArr);
+            array_shift($traceArr);
+            self::$errorToException = false;
+        }
         return Logs::formatTrace($traceArr);
     }
 

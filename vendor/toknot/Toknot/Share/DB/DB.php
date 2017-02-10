@@ -56,9 +56,10 @@ class DB extends Object {
 
         if (empty($db) && empty(self::$usedb)) {
             self::$usedb = $allcfg->app->default_db_config_key;
-        } else {
+        } elseif(isset ($db)) {
             self::$usedb = $db;
         }
+        
         $this->extType = explode(',', $allcfg->database->ext_type);
         $config = $allcfg->database[self::$usedb];
 
@@ -215,7 +216,7 @@ class DB extends Object {
      * @return \Toknot\Share\Model
      */
     public static function table($table, $dbconfig = '') {
-        $db = self::single($dbconfig);
+        $db = $dbconfig ? self::single($dbconfig) : self::single();
 
         $db->connect();
         $tableClass = Tookit::nsJoin(self::$modelNs, self::table2Class($table));
