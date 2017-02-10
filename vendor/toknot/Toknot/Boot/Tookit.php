@@ -277,7 +277,7 @@ class Tookit {
      * @return string|boolean
      */
     public static function arrayPos($arr, $need, $case = false) {
-        if(!is_array($arr) && !$arr instanceof \Iterator) {
+        if (!is_array($arr) && !$arr instanceof \Iterator) {
             throw new BaseException('Argument 1 must be of array or can be iterator');
         }
         $func = $case ? 'strpos' : 'stripos';
@@ -298,7 +298,7 @@ class Tookit {
      * @return mix
      */
     public static function coalesce(&$arr, $key, $def = '') {
-        if(!is_array($arr) && !$arr instanceof \ArrayAccess) {
+        if (!is_array($arr) && !$arr instanceof \ArrayAccess) {
             throw new BaseException('Argument 1 must be of array or can be array access');
         }
         $arr[$key] = empty($arr[$key]) ? $def : $arr[$key];
@@ -412,6 +412,37 @@ class Tookit {
             $cwd = getcwd();
         }
         return "{$cwd}/{$path}";
+    }
+
+    /**
+     * Get string length
+     * 
+     * @param string $str
+     * @return int
+     */
+    public static function strlen($str) {
+        if (function_exists('mb_strlen')) {
+            return mb_strlen($str);
+        }
+        return strlen($str);
+    }
+
+    /**
+     * Get part of string
+     * 
+     * @param string $str
+     * @param int $start
+     * @param int $length
+     * @param string $encoding
+     * @return string
+     */
+    public static function substr($str, $start, $length = null, $encoding = null) {
+        ($length === null) && ($length = Tookit::strlen($length));
+        if (function_exists('mb_substr')) {
+            ($encoding === null) && ($encoding = mb_internal_encoding());
+            return mb_substr($str, $start, $length, $encoding);
+        }
+        return substr($str, $start, $length);
     }
 
 }

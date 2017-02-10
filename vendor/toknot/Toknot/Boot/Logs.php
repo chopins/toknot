@@ -36,6 +36,9 @@ class Logs {
     }
 
     public static function addColor($str, $color) {
+        if(empty($_SERVER['COLORTERM'])) {
+            return $str;
+        }
         switch ($color) {
             case 'red':
                 $number = 31;
