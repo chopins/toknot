@@ -19,8 +19,7 @@ use Toknot\Boot\Tookit;
  */
 class CommandLine {
 
-    private $progressMsg = 'speed';
-    private $progressColor = 'white';
+    private $progMsgStart = 0;
 
     public function getcols($defaultCols = 150) {
         $cols = trim(shell_exec('tput cols'));
@@ -36,83 +35,54 @@ class CommandLine {
         return $cols;
     }
 
-    public function progress($speed, $message = '', $color = null) {
-        if (!is_numeric($speed)) {
+    /**
+     * 
+     * @param int $percent
+     * @param string $message
+     * @param string $speed
+     * @param string $color
+     * @throws BaseException
+     */
+    public function progress($percent, $message = '', $speed = '', $color = null) {
+        if (!is_numeric($percent)) {
             throw new BaseException('speed must is numeric');
         }
-        $this->progressMsg = $message ? $message : $this->progressMsg;
-        $this->progressColor = $color ? $color : $this->progressColor;
-        ($speed > 100) && ($speed = 100);
-        $step = floor($speed / 10);
-        $msglen = Tookit::strlen($this->progressMsg);
-        $prog = '[' . str_repeat('=', $step) . str_repeat(' ', 10 - $step) . ']' . "$speed%";
-        $proglen = strlen($prog);
+ 
+        ($percent > 100) && ($percent = 100);
+        $cols = $this->getcols();
+        $allMsgLen = Tookit::strlen($message);
+        $msglen = $allMsgLen;
+        $space = $cols - $allMsgLen;
+        $speedlen = Tookit::strlen($speed);
 
-        $space = $this->getcols() - $msglen - $proglen;
-        if ($space < 0) {
-            $this->progressMsg = Tookit::substr($this->progressMsg, 0, $msglen - abs($space));
+        if ($space >= 102 + $speedlen) {
+            $flag = $percent;
+            $flagcnt = 100;
+        } elseif ($space >= 52 + $speedlen) {
+            $flag = floor($percent / 2);
+            $flagcnt = 50;
+        } elseif ($space >= 22 + $speedlen) {
+            $flag = floor($percent / 5);
+            $flagcnt = 20;
+        } else {
+            if ($space < 12 + $speedlen) {
+                $msglen = $allMsgLen - ($space > 0 ? 12 + $speedlen - $space : abs($space) + 12 + $speedlen);
+                $message = Tookit::substr($message, $this->progMsgStart, $msglen);
+                $this->progMsgStart = ($this->progMsgStart + $msglen < $allMsgLen) ?
+                        ($this->progMsgStart + 1) : 0;
+            }
+            $flag = floor($percent / 10);
+            $flagcnt = 10;
         }
-        $msg = $this->progressMsg . str_repeat(' ', $space) . $prog . "\r";
+
+        $prog = '[' . str_repeat('=', $flag) . str_repeat(' ', $flagcnt - $flag) . ']' . $speed;
+        $padSpace = str_repeat(' ', $cols - $msglen - strlen($prog));
+        $msg = $message . $padSpace . $prog . "\r";
         $this->message($msg, $color, false);
     }
 
     public function nl() {
         echo PHP_EOL;
-    }
-
-    public function colsAlign($data, $fixed = null, $color = null) {
-        $ttycols = $this->getcols();
-        $maxlen = [];
-        array_map(function($line) use(&$maxlen) {
-            array_walk(function($part, $k) use(&$maxlen) {
-                $len = Tookit::strlen($part);
-                (isset($maxlen[$k]) && $maxlen[$k] < $len) && ($maxlen[$k] = $len);
-            }, $line);
-        }, $data);
-        $partCnt = count($maxlen);
-        $msglen = array_sum($maxlen);
-        $spacelen = $ttycols - $msglen;
-        if ($spacelen < 0) {
-            if (isset($maxlen[$fixed])) {
-                $avglen = floor(($ttycols - $maxlen[$fixed]) / ($partCnt - 1));
-                $remainder = $ttycols - $maxlen[$fixed] - $avglen * ($partCnt - 1);
-            } else {
-                $avglen = floor($ttycols / $partCnt);
-                $remainder = $ttycols - $avglen * $partCnt;
-            }
-            foreach ($maxlen as $k => $v) {
-                if ($v < $avglen && $fixed != $k) {
-                    $remainder += ($avglen - $v);
-                }
-            }
-            $exceed = true;
-        } else {
-            $remainder = $spacelen;
-            $exceed = false;
-        }
-        reset($maxlen);
-        while ($remainder > 0) {
-            $get = each($maxlen);
-            if (!$get) {
-                reset($maxlen);
-                continue;
-            }
-            list($k, $v) = $get;
-
-            if (($k == $fixed && $v < $avglen) || (!$exceed && $k == $partCnt - 1)) {
-                continue;
-            }
-
-            $maxlen[$k] = $avglen + 1;
-            $remainder--;
-        }
-        array_map(function($line) use($maxlen) {
-            array_walk($line, function($col, $k) use($maxlen) {
-                $msg = Tookit::substr($col, 0, $maxlen[$k]);
-                $this->message(str_pad($msg, $maxlen[$k], ' '), $color, false);
-            });
-            $this->nl();
-        }, $data);
     }
 
     public function flushLine($msg, $color = null) {
