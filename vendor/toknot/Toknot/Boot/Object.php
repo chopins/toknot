@@ -90,6 +90,32 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
         }
     }
 
+    final public static function callFunc($callable, $argv = []) {
+        $argc = count($argv);
+        if (is_array($callable)) {
+            return self::callMethod($argc, $callable[1], $argv, $callable[0]);
+        }
+        switch ($argc) {
+            case 0:
+                return $callable();
+            case 1:
+                return $callable($argv[0]);
+            case 2:
+                return $callable($argv[0], $argv[1]);
+            case 3:
+                return $callable($argv[0], $argv[1], $argv[2]);
+            case 4:
+                return $callable($argv[0], $argv[1], $argv[2], $argv[3]);
+            case 5:
+                return $callable($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
+            default:
+                $argStr = self::argStr($argc);
+                $ins = null;
+                eval("\$ins = $callable($argStr);");
+                return $ins;
+        }
+    }
+
     /**
      * dynamic call a static method of a class and pass any params
      * 
@@ -156,7 +182,7 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
     }
 
     final public static function argStr($argc) {
-        return vsprintf(str_repeat('$args[%d]', $argc), range(0, $argc - 1));
+        return trim(vsprintf(str_repeat('$argv[%d],', $argc), range(0, $argc - 1)),',');
     }
 
     final public function setIteratorProperty($name, array $data = []) {

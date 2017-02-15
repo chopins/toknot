@@ -288,25 +288,26 @@ abstract class Model {
      * @return int
      */
     public function update($values, $where = [], $limit = 500, $start = 0) {
-        $qr = $this->ready(__FUNCTION__);
+        $this->qr = $this->ready(__FUNCTION__);
         $i = 0;
         foreach ($values as $key => $v) {
             if (is_array($v)) {
-                $qr->set($key, $this->compute($v[1], $v[2], $v[0]));
+                $this->qr->set($key, $this->compute($v[1], $v[2], $v[0]));
             } else {
                 $placeholde = ":s$i$key";
-                $qr->set($key, $placeholde);
-                $qr->setParameter($placeholde, $v);
+                $this->qr->set($key, $placeholde);
+                $this->qr->setParameter($placeholde, $v);
                 $i++;
             }
         }
 
-        $qr->where($this->where($where));
-        $qr->setFirstResult($start);
-        $qr->setMaxResults($limit);
-        $this->lastSql = $qr->getSQL();
+        $this->qr->where($this->where($where));
+        $this->qr->setFirstResult($start);
+        $this->qr->setMaxResults($limit);
+        $this->lastSql = $this->qr->getSQL();
+
         try {
-            return $qr->execute();
+            return $this->qr->execute();
         } catch (\PDOException $e) {
             return Kernel::single()->echoException($e);
         }

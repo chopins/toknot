@@ -346,4 +346,50 @@ final class Kernel extends Object {
         Tookit::releaseShutdownHandler();
     }
 
+    private $beginStat = false;
+    private $execQueue = [];
+
+    public function pipe($callable = null, $argv = []) {
+        if($this->beginStat) {
+            throw new BaseException('must call Kernel::end() on previous pipe');
+        }
+        $this->beginStat = true;
+        $this->execQueue = [];
+        if ($callable !== null) {
+            $this->then($callable, $argv);
+        }
+        return $this;
+    }
+
+    public function again($argv = []) {
+        if(!$this->beginStat) {
+            throw new BaseException('must before call Kernel::pipe() method');
+        }
+        $end = end($this->execQueue);
+ 
+        return $this->then($end[0], $argv);
+    }
+
+    public function then($callable, $argv = []) {
+        if(!$this->beginStat) {
+            throw new BaseException('must before call Kernel::pipe() method');
+        }
+        $this->execQueue[] = [$callable, $argv];
+        return $this;
+    }
+
+    public function end() {
+        if(!$this->beginStat) {
+            throw new BaseException('must before call Kernel::pipe() method');
+        }
+
+        foreach ($this->execQueue as $task) {
+            if (!self::callFunc($task[0], $task[1])) {
+                break;
+            }
+        }
+        $this->execQueue = [];
+        $this->beginStat = false;
+    }
+
 }

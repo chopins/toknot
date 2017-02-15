@@ -437,12 +437,14 @@ class Tookit {
      * @return string
      */
     public static function substr($str, $start, $length = null, $encoding = null) {
-        ($length === null) && ($length = Tookit::strlen($length));
+        $func = 'substr';
         if (function_exists('mb_substr')) {
-            ($encoding === null) && ($encoding = mb_internal_encoding());
-            return mb_substr($str, $start, $length, $encoding);
+            $func = 'mb_substr';
+            if ($encoding !== null) {
+                return mb_substr($str, $start, $length, $encoding);
+            }
         }
-        return substr($str, $start, $length);
+        return $length === null ? $func($str, $start) : $func($str, $start, $length);
     }
 
 }

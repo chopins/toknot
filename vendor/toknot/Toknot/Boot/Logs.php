@@ -115,13 +115,15 @@ class Logs {
             }
             $str .= '<span>';
 
-            $title = is_scalar($arg) ? substr($arg, 0, 20) : print_r($arg, true);
+            $title = is_scalar($arg) ? substr($arg, 0, 20) : substr(print_r($arg, true),0,500);
             //$type = self::getType($arg);
             if (is_scalar($arg)) {
                 $pad = strlen($arg) > 20 ? '...' : '';
+                $arg = substr($arg,0,500);
                 $str .= "<small><b title='$arg'>'$title$pad'</b></small>, ";
             } elseif (is_array($arg)) {
-                $str .= "<small title='$title'><b>Array()</b></small>, ";
+                $cnt = count($arg);
+                $str .= "<small title='$title'><b>Array($cnt)</b></small>, ";
             } elseif (is_object($arg)) {
                 $cls = get_class($arg);
                 $str .= "<small><b>Object(</b><i>$cls</i><b>)</b></small>, ";

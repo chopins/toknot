@@ -17,6 +17,7 @@ use Toknot\Share\DB\DBSchema as Schema;
 use Toknot\Exception\BaseException;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Driver\Connection;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Type;
@@ -56,10 +57,10 @@ class DB extends Object {
 
         if (empty($db) && empty(self::$usedb)) {
             self::$usedb = $allcfg->app->default_db_config_key;
-        } elseif(isset ($db)) {
+        } elseif (isset($db)) {
             self::$usedb = $db;
         }
-        
+
         $this->extType = explode(',', $allcfg->database->ext_type);
         $config = $allcfg->database[self::$usedb];
 
@@ -113,8 +114,8 @@ class DB extends Object {
         return Kernel::single()->loadini($cnf);
     }
 
-    public function connect() {
-        if (self::$conn instanceof DriverManager) {
+    public function connect($singleConn = true) {
+        if (self::$conn instanceof Connection && $singleConn) {
             return self::$conn;
         }
         $config = new Configuration;
@@ -123,6 +124,17 @@ class DB extends Object {
         self::$conn = DriverManager::getConnection($connectionParams, $config);
 
         return self::$conn;
+    }
+
+    public function close($conn = null) {
+        if ($conn) {
+            return $conn->close();
+        }
+        return self::$conn->close();
+    }
+
+    public function query($sql) {
+        return self::$conn->executeQuery($sql);
     }
 
     public function getDatabase() {
@@ -215,10 +227,10 @@ class DB extends Object {
      * @param string $dbconfig
      * @return \Toknot\Share\Model
      */
-    public static function table($table, $dbconfig = '') {
+    public static function table($table, $dbconfig = '', $singleConn = true) {
         $db = $dbconfig ? self::single($dbconfig) : self::single();
 
-        $db->connect();
+        $db->connect($singleConn);
         $tableClass = Tookit::nsJoin(self::$modelNs, self::table2Class($table));
         $tableClass = Tookit::dotNS($tableClass);
 
@@ -285,7 +297,7 @@ class DB extends Object {
                 }
                 $this->columnTextLength($cinfo);
                 $option = array_merge(iterator_to_array($columnDefault), Tookit::arrayRemove($cinfo, 'type'));
-                if($cinfo['type'] == 'char') {
+                if ($cinfo['type'] == 'char') {
                     $option['fixed'] = true;
                     $cinfo['type'] = 'string';
                 }
