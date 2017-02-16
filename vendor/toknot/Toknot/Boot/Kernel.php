@@ -26,6 +26,11 @@ final class Kernel extends Object {
     private $import;
     private $isCLI = false;
     private $cmdOption = [];
+    private $pid = 0;
+    private $tid = 0;
+    private $beginStat = false;
+    private $execQueue = [];
+    private $pipkey = '';
 
     const PASS_STATE = 0;
 
@@ -64,6 +69,13 @@ final class Kernel extends Object {
             $this->echoException($e);
             $this->response();
             exit();
+        }
+    }
+
+    public function setPHPProcessInfo() {
+        $this->pid = getmypid();
+        if (function_exists('zend_thread_id')) {
+            $this->tid = zend_thread_id();
         }
     }
 
@@ -235,23 +247,31 @@ final class Kernel extends Object {
             $this->argc = $argc;
             $this->argv = $argv;
         }
-        $this->cmdOption = $this->walkOption();
     }
 
     private function walkOption() {
-        $shortParam = false;
+        $shortParam = $longParam = false;
         $option = [];
         foreach ($this->argv as $idx => $arg) {
             if (strpos($arg, '--') === 0) {
                 $par = explode('=', $arg);
                 $option[$par[0]] = count($par) == 2 ? $par[1] : '';
                 $shortParam = false;
+                $longParam = true;
             } elseif (strpos($arg, '-') === 0) {
                 $shortParam = $arg;
-                $option[$arg] = '';
+                if (strlen($arg) > 2) {
+                    $arg = substr($arg, 1, 1);
+                    $option[$arg] = substr($arg, 2);
+                } else {
+                    $option[$arg] = '';
+                }
             } elseif ($shortParam) {
                 $option[$shortParam] = $arg;
                 $shortParam = false;
+            } elseif ($longParam && !$option[$par[0]]) {
+                $option[$par[0]] = $arg;
+                $longParam = false;
             } else {
                 $option[$idx] = $arg;
             }
@@ -266,6 +286,9 @@ final class Kernel extends Object {
      * @return string
      */
     public function getOption($key = null) {
+        if (empty($this->cmdOption)) {
+            $this->cmdOption = $this->walkOption();
+        }
         if ($key) {
             return Tookit::coalesce($this->cmdOption, $key, '');
         } else {
@@ -280,6 +303,9 @@ final class Kernel extends Object {
      * @return boolean
      */
     public function hasOption($key) {
+        if (empty($this->cmdOption)) {
+            $this->cmdOption = $this->walkOption();
+        }
         return isset($this->cmdOption[$key]);
     }
 
@@ -320,6 +346,10 @@ final class Kernel extends Object {
                 return $this->cfg;
             case 'request':
                 return $this->request;
+            case 'pid':
+                return $this->pid;
+            case 'tid':
+                return $this->tid;
         }
     }
 
@@ -356,10 +386,14 @@ final class Kernel extends Object {
         Tookit::releaseShutdownHandler();
     }
 
-    private $beginStat = false;
-    private $execQueue = [];
-
     public function pipe($callable = null, $argv = []) {
+        $this->setPHPProcessInfo();
+        $curKey = md5($this->pid . $this->tid);
+        if (empty($this->pipkey) || $this->pipkey != $curKey) {
+            $this->pipkey = $curKey;
+        } else {
+            throw new BaseException('previson pipe not call end()');
+        }
         $this->beginStat = true;
         $this->execQueue = [];
         if ($callable !== null) {
@@ -400,7 +434,6 @@ final class Kernel extends Object {
         }
         $this->execQueue = [];
         $this->beginStat = false;
-
     }
 
 }
