@@ -17,7 +17,7 @@ use Toknot\Exception\BaseException;
  * memcache
  *
  */
-class Memcached extends Object {
+class Memcache extends Object {
 
     private $extClass = null;
     private $oop = true;
@@ -26,19 +26,20 @@ class Memcached extends Object {
 
     public function __construct() {
         if (extension_loaded('memcached')) {
-            $this->extClass = new Memcached;
+            $this->extClass = new \Memcached;
         } elseif (extension_loaded('memcache')) {
             $this->memcahed = false;
             if (class_exists('Memcache', false)) {
-                $this->extClass = new Memcache;
+                $this->extClass = new \Memcache;
             } else {
                 $this->oop = false;
             }
+        } else {
+            $this->memcahed = false;
+            $this->oop = false;
+            $this->extClass = false;
+            throw new BaseException('memcache/memcached extension unload');
         }
-        $this->memcahed = false;
-        $this->oop = false;
-        $this->extClass = false;
-        throw new BaseException('memcache/memcached extension unload');
     }
 
     public function close() {
@@ -59,11 +60,14 @@ class Memcached extends Object {
         }
     }
 
-    public function addServer($host, $port) {
+    public function addServer($host, $port = 11211) {
         if ($this->oop) {
-            $this->extClass->addServer($host, $port);
+            return $this->extClass->addServer($host, $port);
         } else {
-            memcache_add_server($this->extClass, $host, $port);
+            if (!$this->extClass) {
+                return $this->connect($host, $port);
+            }
+            return memcache_add_server($this->extClass, $host, $port);
         }
     }
 

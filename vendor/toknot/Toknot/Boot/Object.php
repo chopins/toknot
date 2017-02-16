@@ -90,6 +90,12 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
         }
     }
 
+    /**
+     * 
+     * @param callable $callable
+     * @param array $argv
+     * @return mixed
+     */
     final public static function callFunc($callable, $argv = []) {
         $argc = count($argv);
         if (is_array($callable)) {

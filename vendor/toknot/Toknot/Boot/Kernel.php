@@ -248,7 +248,7 @@ final class Kernel extends Object {
                 $shortParam = false;
             } elseif (strpos($arg, '-') === 0) {
                 $shortParam = $arg;
-                $option[$arg] = null;
+                $option[$arg] = '';
             } elseif ($shortParam) {
                 $option[$shortParam] = $arg;
                 $shortParam = false;
@@ -271,6 +271,16 @@ final class Kernel extends Object {
         } else {
             return $this->cmdOption;
         }
+    }
+
+    /**
+     * Check a key wheter in option of command line 
+     * 
+     * @param string $key
+     * @return boolean
+     */
+    public function hasOption($key) {
+        return isset($this->cmdOption[$key]);
     }
 
     private function initRuntime() {
@@ -350,9 +360,6 @@ final class Kernel extends Object {
     private $execQueue = [];
 
     public function pipe($callable = null, $argv = []) {
-        if($this->beginStat) {
-            throw new BaseException('must call Kernel::end() on previous pipe');
-        }
         $this->beginStat = true;
         $this->execQueue = [];
         if ($callable !== null) {
@@ -362,27 +369,30 @@ final class Kernel extends Object {
     }
 
     public function again($argv = []) {
-        if(!$this->beginStat) {
+        if (!$this->beginStat) {
             throw new BaseException('must before call Kernel::pipe() method');
         }
+        reset($this->execQueue);
         $end = end($this->execQueue);
- 
         return $this->then($end[0], $argv);
     }
 
     public function then($callable, $argv = []) {
-        if(!$this->beginStat) {
+        if (!$this->beginStat) {
             throw new BaseException('must before call Kernel::pipe() method');
+        }
+
+        if (!is_callable($callable)) {
+            throw new BaseException('give 1 paramter must be callable');
         }
         $this->execQueue[] = [$callable, $argv];
         return $this;
     }
 
     public function end() {
-        if(!$this->beginStat) {
+        if (!$this->beginStat) {
             throw new BaseException('must before call Kernel::pipe() method');
         }
-
         foreach ($this->execQueue as $task) {
             if (!self::callFunc($task[0], $task[1])) {
                 break;
@@ -390,6 +400,7 @@ final class Kernel extends Object {
         }
         $this->execQueue = [];
         $this->beginStat = false;
+
     }
 
 }
