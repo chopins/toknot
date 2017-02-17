@@ -26,11 +26,8 @@ final class Kernel extends Object {
     private $import;
     private $isCLI = false;
     private $cmdOption = [];
-    private $pid = 0;
-    private $tid = 0;
-    private $beginStat = false;
-    private $execQueue = [];
-    private $pipkey = '';
+    private $pipeExecCallable = '';
+    private $pipeExecStat = false;
 
     const PASS_STATE = 0;
 
@@ -387,15 +384,8 @@ final class Kernel extends Object {
     }
 
     public function pipe($callable = null, $argv = []) {
-        $this->setPHPProcessInfo();
-        $curKey = md5($this->pid . $this->tid);
-        if (empty($this->pipkey) || $this->pipkey != $curKey) {
-            $this->pipkey = $curKey;
-        } else {
-            throw new BaseException('previson pipe not call end()');
-        }
-        $this->beginStat = true;
-        $this->execQueue = [];
+        $this->pipeExecStat = true;
+        $this->pipeExecCallable = null;
         if ($callable !== null) {
             $this->then($callable, $argv);
         }
@@ -403,37 +393,22 @@ final class Kernel extends Object {
     }
 
     public function again($argv = []) {
-        if (!$this->beginStat) {
-            throw new BaseException('must before call Kernel::pipe() method');
-        }
-        reset($this->execQueue);
-        $end = end($this->execQueue);
-        return $this->then($end[0], $argv);
-    }
-
-    public function then($callable, $argv = []) {
-        if (!$this->beginStat) {
-            throw new BaseException('must before call Kernel::pipe() method');
+        if (!$this->pipeExecCallable) {
+            throw new BaseException('call function not give before call again()');
         }
 
-        if (!is_callable($callable)) {
-            throw new BaseException('give 1 paramter must be callable');
+        if ($this->pipeExecStat) {
+            $this->pipeExecStat = self::callFunc($this->pipeExecCallable, $argv);
         }
-        $this->execQueue[] = [$callable, $argv];
         return $this;
     }
 
-    public function end() {
-        if (!$this->beginStat) {
-            throw new BaseException('must before call Kernel::pipe() method');
+    public function then($callable, $argv = []) {
+        if ($this->pipeExecStat) {
+            $this->pipeExecCallable = $callable;
+            $this->pipeExecStat = self::callFunc($callable, $argv);
         }
-        foreach ($this->execQueue as $task) {
-            if (!self::callFunc($task[0], $task[1])) {
-                break;
-            }
-        }
-        $this->execQueue = [];
-        $this->beginStat = false;
+        return $this;
     }
 
 }
