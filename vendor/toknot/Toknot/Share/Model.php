@@ -13,8 +13,10 @@ namespace Toknot\Share;
 use Toknot\Share\DB\DB;
 use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
+use Toknot\Boot\Object;
+use Doctrine\DBAL\Driver\Statement;
 
-abstract class Model {
+abstract class Model extends Object {
 
     /**
      * The table name
@@ -29,6 +31,9 @@ abstract class Model {
      * @var string
      */
     protected $key;
+    protected $fetchCursorIndex;
+    protected $keyValue;
+    protected $currentResult = [];
 
     /**
      *
@@ -93,7 +98,7 @@ abstract class Model {
     public function cacheSQL($data) {
         
     }
-    
+
     public function correctUnsignedValue($type, $value) {
         if (isset($this->unsigned[$type]) && $value > $this->unsigned[$type]) {
             return $this->unsigned[$type];
@@ -129,8 +134,7 @@ abstract class Model {
      */
     final public function setColumn($column, $alias = '') {
         $glue = $alias == '' ? ', ' : ", $alias.";
-        $this->tmpColumnSql = $alias . is_array($column) ? implode($glue,
-                        $column) : $column;
+        $this->tmpColumnSql = $alias . is_array($column) ? implode($glue, $column) : $column;
     }
 
     /**
@@ -197,7 +201,7 @@ abstract class Model {
      * 
      * @return string
      */
-    public function key() {
+    public function keyName() {
         return $this->key;
     }
 
@@ -222,6 +226,82 @@ abstract class Model {
     }
 
     /**
+     * execute a sql and return result resources
+     * 
+     * @param int $limit
+     * @param int $start
+     * @return \Doctrine\DBAL\Driver\Statement
+     */
+    public function execute($limit = 50, $start = 0) {
+        $this->qr->setFirstResult($start);
+        $this->qr->setMaxResults($limit);
+        $this->lastSql = $this->qr->getSQL();
+        try {
+            return $this->qr->execute();
+        } catch (\PDOException $e) {
+            return Kernel::single()->echoException($e);
+        }
+    }
+
+    public function iterator($where, $limit = 50, $start = 0) {
+        if ($this->iteratorArray) {
+            $this->iteratorArray->closeCursor();
+            $this->currentResult = [];
+        }
+        $this->iteratorArray = $this->select($where)->execute($limit, $start);
+        return $this;
+    }
+
+    /**
+     * get a record from result resources
+     * 
+     * @param Statement $smt
+     * @param int $fetchMode
+     * @return array
+     */
+    public function fetch(Statement $smt, $fetchMode = \PDO::FETCH_ASSOC) {
+        try {
+            return $smt->fetch($fetchMode);
+        } catch (\PDOException $e) {
+            return Kernel::single()->echoException($e);
+        }
+    }
+
+    public function current() {
+
+        if ($this->key) {
+            $this->keyValue = $this->currentResult[$this->key];
+        }
+        return $this->currentResult;
+    }
+
+    public function rewind() {
+        $this->fetchCursorIndex = 0;
+        $this->currentResult = [];
+        sleep(3);
+    }
+
+    public function key() {
+        if ($this->key) {
+            return $this->keyValue;
+        }
+        return $this->fetchCursorIndex;
+    }
+
+    public function valid() {
+        if (!$this->iteratorArray) {
+            return false;
+        }
+        $this->currentResult = $this->fetch($this->iteratorArray, DB::$fechStyle, DB::$cursorOri, $this->fetchCursorIndex);
+        return $this->currentResult;
+    }
+
+    public function next() {
+        ++$this->fetchCursorIndex;
+        return true;
+    }
+
+    /**
      * get result where a key
      * 
      * @param string $keyValue
@@ -230,6 +310,26 @@ abstract class Model {
      */
     public function getKeyValue($keyValue) {
         return $this->select([$this->key, $keyValue, '='])->get(1);
+    }
+
+    /**
+     * get count
+     * 
+     * @param array $where
+     * @param string $key
+     * @return int
+     */
+    public function count($where = [], $key = '') {
+        $this->qr = $this->ready('select');
+        $ck = $key ? $key : ($this->key ? $this->key : '*');
+        $this->qr->select("COUNT($ck) AS cnt")
+                ->where($this->where($where));
+        return $this->get(1)[0]['cnt'];
+    }
+
+    public function query($sql, $where) {
+        $this->qr->select($sql)->where($this->where($where));
+        return $this;
     }
 
     /**
@@ -353,6 +453,7 @@ abstract class Model {
     }
 
     /**
+     * check key wheter is not or at 0 index
      * 
      * @param int $i
      * @param string $type
@@ -387,7 +488,7 @@ abstract class Model {
     }
 
     /**
-     * set where sql
+     * set where sql, like [key,value,composite]
      * 
      * @param array $param = [
      *                          '&&',['||', 
@@ -478,8 +579,7 @@ abstract class Model {
      * @return string
      */
     public function columnAlias(Model $tb) {
-        $tb->setColumn(array_keys($tb->getTableInfo()['column']),
-                $tb->getTableAlias());
+        $tb->setColumn(array_keys($tb->getTableInfo()['column']), $tb->getTableAlias());
         return $tb->selectColumn();
     }
 
@@ -495,8 +595,7 @@ abstract class Model {
         $condition = $this->compKey($on);
         $select = $this->columnAlias($tb);
         $t2 = $tb->tableName();
-        $this->qr->$join($this->getTableAlias(), $t2, $t2->getTableAlias(),
-                $condition);
+        $this->qr->$join($this->getTableAlias(), $t2, $t2->getTableAlias(), $condition);
         return $select;
     }
 
@@ -510,8 +609,7 @@ abstract class Model {
      */
     public function join($tables, $on, $where, $type = 'left') {
         $select = [];
-        $this->qr = $this->builder()->from($this->tableName(),
-                $this->getTableAlias());
+        $this->qr = $this->builder()->from($this->tableName(), $this->getTableAlias());
         $join = $this->getJoinFunc($type);
         $select[] = $this->columnAlias($this);
         if (is_array($tables)) {
@@ -633,8 +731,7 @@ abstract class Model {
         $this->lastSql = $sql;
 
         try {
-            $this->conn->executeUpdate($sql, $this->qr->getParameters(),
-                    $this->qr->getParameterTypes());
+            $this->conn->executeUpdate($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
         } catch (\Exception $e) {
 
             Kernel::single()->echoException($e);

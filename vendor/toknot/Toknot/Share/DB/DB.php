@@ -42,6 +42,9 @@ class DB extends Object {
     private static $usedb;
     private $tableConfig;
     private $extType = [];
+    
+    public static $fechStyle = \PDO::FETCH_ASSOC;
+    public static $cursorOri = \PDO::FETCH_ORI_NEXT;
 
     const T_OR = '||';
     const T_AND = '&&';
@@ -80,7 +83,7 @@ class DB extends Object {
     public static function getUseDBConfig() {
         return self::$usedb;
     }
-
+    
     public function getQuotedName($name) {
         $platform = self::$conn->getDatabasePlatform();
         $keywords = $platform->getReservedKeywordsList();
