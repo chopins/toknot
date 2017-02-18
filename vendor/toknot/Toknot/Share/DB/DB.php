@@ -263,6 +263,75 @@ class DB extends Object {
         Type::addType($string, $className);
     }
 
+    public function createDatabase($dbname) {
+        return self::$conn->getSchemaManager()->createDatabase($dbname);
+    }
+
+    public function getTableStructure($table) {
+        return self::$conn->getSchemaManager()->listTableColumns($table);
+    }
+
+    public function getTableList() {
+        return self::$conn->getSchemaManager()->listTables();
+    }
+
+    public function getDBList() {
+        return self::$conn->getSchemaManager()->listDatabases();
+    }
+
+    public function getTableIndexs($table) {
+        return self::$conn->getSchemaManager()->listTableIndexes($table);
+    }
+
+    public function getAllTableStructureCacheArray() {
+        $tables = $this->getTableList();
+        $cacheArray = [];
+        foreach ($tables as $t) {
+            $talename = $t->getName();
+            $cacheArray[$talename] = [];
+            $cacheArray[$talename]['column'] = [];
+            $columns = $t->getColumns();
+            foreach ($columns as $col) {
+                $columnsArray = [];
+                $name = $col->getName();
+                $columnsArray['type'] = $col->getType()->getName();
+                $columnsArray['length'] = $col->getLength();
+                $columnsArray['unsigned'] = $col->getUnsigned();
+                $columnsArray['fixed'] = $col->getFixed();
+                $columnsArray['default'] = $col->getDefault();
+                $columnsArray['autoincrement'] = $col->getAutoincrement();
+                $columnsArray['comment'] = $col->getComment();
+                $cacheArray[$talename]['column'][$name] = $columnsArray;
+            }
+            $cacheArray[$talename]['option'] = $t->getOptions();
+
+            $indexes = $t->getIndexes();
+            $idxArr = [];
+            foreach ($indexes as $key => $idx) {
+                $this->cacheIndex($idxArr, $idx, $key);
+            }
+            $cacheArray[$talename]['indexes'] = $idxArr;
+        }
+        return $cacheArray;
+    }
+
+    private function cacheIndex(&$idxArr, $idx, $key) {
+        if ($idx->isPrimary()) {
+            $primary = $idx->getColumns();
+            $idxArr[$key] = $primary[0];
+            return;
+        } elseif ($idx->isUnique()) {
+            $idxArr[$key] = ['type' => 'unique'];
+        } else {
+            $idxArr[$key] = ['type' => 'index'];
+        }
+        $idxes = $idx->getColumns();
+
+        foreach ($idxes as $k) {
+            $idxArr[$key][$k] = 'default';
+        }
+    }
+
     /**
      * 
      * @param array $tables The database table struct array
