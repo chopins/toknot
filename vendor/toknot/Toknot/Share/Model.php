@@ -381,8 +381,9 @@ abstract class Model extends Object {
     /**
      * update data
      * 
-     * @param array $values
-     * @param array|string $where
+     * @param array $values         [key => [expre,$leftValue,$rightValue]], [key=>[=,key,1]]
+     *                              [key => value, key2=>value2]
+     * @param array|string $where   [key, value, com] or [&& ,[key,value,com],[key,value,com]
      * @param int $limit
      * @param int $start
      * @return int

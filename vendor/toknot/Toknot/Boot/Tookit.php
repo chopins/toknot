@@ -11,13 +11,14 @@
 namespace Toknot\Boot;
 
 use Toknot\Exception\BaseException;
+use Toknot\Boot\Object;
 
 /**
  * Tookit
  *
  * @author chopin
  */
-class Tookit {
+class Tookit extends Object {
 
     private static $incData = [];
     private static $shutdownFunction = null;
@@ -420,11 +421,12 @@ class Tookit {
      * @param string $str
      * @return int
      */
-    public static function strlen($str) {
-        if (function_exists('mb_strlen')) {
-            return mb_strlen($str);
+    public static function strlen($str, $charset = null) {
+        $func = self::getStrFunc(__FUNCTION__);
+        if ($charset && $func != __FUNCTION__) {
+            return $func($str, $charset);
         }
-        return strlen($str);
+        return $func($str);
     }
 
     /**
@@ -437,14 +439,53 @@ class Tookit {
      * @return string
      */
     public static function substr($str, $start, $length = null, $encoding = null) {
-        $func = 'substr';
-        if (function_exists('mb_substr')) {
-            $func = 'mb_substr';
-            if ($encoding !== null) {
-                return mb_substr($str, $start, $length, $encoding);
-            }
+        $argv = func_get_args();
+        if ($encoding === null) {
+            unset($argv[3]);
         }
-        return $length === null ? $func($str, $start) : $func($str, $start, $length);
+        $func = self::getStrFunc(__FUNCTION__);
+        return self::callFunc($func, $argv);
+    }
+
+    /**
+     * Find position of first occurrence of string in a string
+     * 
+     * @param string $str
+     * @param string $needle
+     * @param int $offset
+     * @param string $encoding
+     * @return int
+     */
+    public static function strpos($str, $needle, $offset = 0, $encoding = null) {
+        $argv = func_get_args();
+        if ($encoding === null) {
+            unset($argv[3]);
+        }
+        $func = self::getStrFunc(__FUNCTION__);
+        return self::callFunc($func, $argv);
+    }
+
+    public function strrpos($str, $needle, $offset = 0, $encoding = null) {
+        $argv = func_get_args();
+        if ($encoding === null) {
+            unset($argv[3]);
+        }
+        $func = self::getStrFunc(__FUNCTION__);
+        if ($func == 'iconv_strpos') {
+            $argv = [$str, $needle, $encoding];
+        }
+
+        return self::callFunc($func, $argv);
+    }
+
+    private static $strFuncPrefix = null;
+
+    public static function getStrFunc($func) {
+        if (self::$strFuncPrefix !== null) {
+            return self::$strFuncPrefix . $func;
+        }
+        self::$strFuncPrefix = (function_exists('mb_substr') ? 'mb_' : (function_exists('iconv') ? 'iconv_' : ''));
+        return self::$strFuncPrefix . $func;
     }
 
 }

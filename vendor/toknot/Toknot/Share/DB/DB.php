@@ -162,7 +162,8 @@ class DB extends Object {
     public function loadModel() {
         $modleFile = self::$modelDir . '/model.' . self::$usedb . '.php';
         if (!file_exists($modleFile)) {
-            throw new BaseException('default model list uninitialized');
+            $tables = $this->loadConfig($this->tableConfig);
+            $this->initModel($tables, self::$usedb);
         }
         include_once self::$modelDir . '/model.' . self::$usedb . '.php';
     }
