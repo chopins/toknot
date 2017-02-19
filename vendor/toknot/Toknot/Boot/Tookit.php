@@ -484,7 +484,7 @@ class Tookit extends Object {
         if (self::$strFuncPrefix !== null) {
             return self::$strFuncPrefix . $func;
         }
-        self::$strFuncPrefix = (function_exists('mb_substr') ? 'mb_' : (function_exists('iconv') ? 'iconv_' : ''));
+        self::$strFuncPrefix = (extension_loaded('mbstring') ? 'mb_' : (extension_loaded('iconv') ? 'iconv_' : ''));
         return self::$strFuncPrefix . $func;
     }
 
