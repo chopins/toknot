@@ -20,6 +20,7 @@ use Toknot\Boot\Tookit;
 class CommandLine {
 
     private $progMsgStart = 0;
+    const CONT = -1;
 
     public function getcols($defaultCols = 150) {
         $cols = trim(shell_exec('tput cols'));
@@ -108,6 +109,13 @@ class CommandLine {
         } while (true);
     }
 
+    /**
+     * 
+     * @param string $msg           show prompt message
+     * @param string $mismatch      if enter mismatch continue loop
+     * @param type $verifyEnter     check enter value function
+     * @return type
+     */
     public function fprompt($msg, $mismatch = '', $verifyEnter = null) {
         do {
             $enter = $this->prompt($msg);

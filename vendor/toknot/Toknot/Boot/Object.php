@@ -121,7 +121,7 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
                 return $ins;
         }
     }
-
+    
     /**
      * dynamic call a static method of a class and pass any params
      * 

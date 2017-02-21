@@ -187,20 +187,21 @@ class Tookit extends Object {
      * ini config file to convert php array file 
      * and create php symlink to the array file
      * 
-     * @param string $ini   ini of config source file
+     * @param string $ini       ini of config source file
      * @param string $php       symlink of php
      * @param callable $call    call function
+     * @param boolean $force    force create cache
      * @return int
      */
-    public static function createCache($ini, $php, $call) {
+    public static function createCache($ini, $php, $call, $force = false) {
         clearstatcache();
-        if (file_exists($php) && filemtime($ini) <= filemtime($php)) {
+        if (!$force && file_exists($php) && filemtime($ini) <= filemtime($php)) {
             return -1;
         }
 
         $phplock = "$php.lock";
 
-        if (!self::lock($phplock)) {
+        if (!$force && !self::lock($phplock)) {
             return 0;
         }
 
