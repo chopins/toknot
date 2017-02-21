@@ -267,6 +267,11 @@ abstract class Model extends Object {
         }
     }
 
+    public function getRow() {
+        $smt = $this->qr->execute();
+        return $smt->fetch();
+    }
+
     public function current() {
 
         if ($this->key) {

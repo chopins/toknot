@@ -21,7 +21,7 @@ class CommandLine {
 
     private $progMsgStart = 0;
 
-    const RE_ENTER = -1;
+    const RE_ENTER = -100;
 
     /**
      * get terminal number of columns

@@ -303,7 +303,7 @@ class Tookit extends Object {
         if (!is_array($arr) && !$arr instanceof \ArrayAccess) {
             throw new BaseException('Argument 1 must be of array or can be array access');
         }
-        $arr[$key] = empty($arr[$key]) ? $def : $arr[$key];
+        $arr[$key] = isset($arr[$key]) ? $arr[$key] : $def;
         return $arr[$key];
     }
 
@@ -320,7 +320,7 @@ class Tookit extends Object {
      * @return array
      */
     public static function splitStr(array &$param, $key, $del = ',', $setDef = []) {
-        $param[$key] = empty($param[$key]) ? $setDef : explode($del, $param[$key]);
+        $param[$key] = isset($param[$key]) ? explode($del, $param[$key]) : $setDef;
         return $param[$key];
     }
 

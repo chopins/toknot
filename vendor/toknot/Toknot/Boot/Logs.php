@@ -9,10 +9,26 @@
  */
 
 namespace Toknot\Boot;
+use Toknot\Boot\Tookit;
 
 class Logs {
 
     public static $shortPath = 0;
+
+    const COLOR_BLACK = 30;
+    const COLOR_RED = 31;
+    const COLOR_GREEN = 32;
+    const COLOR_YELLOW = 33;
+    const COLOR_BLUE = 34;
+    const COLOR_PURPLE = 35;
+    const COLOR_WHITE = 37;
+    const COLOR_B_BLACK = 40;
+    const COLOR_B_RED = 41;
+    const COLOR_B_GREEN = 42;
+    const COLOR_B_YELLOW = 43;
+    const COLOR_B_BLUE = 44;
+    const COLOR_B_PUPPLE = 45;
+    const COLOR_B_WHITE = 47;
 
     /**
      * print debug backtrace
@@ -35,58 +51,60 @@ class Logs {
         file_put_contents($logs, $str . PHP_EOL, FILE_APPEND);
     }
 
-    public static function addColor($str, $color) {
-        if(empty($_SERVER['COLORTERM'])) {
+    private static function checkColorValue($color, $isbg = false) {
+        $bg = $isbg ? 'B_' : '';
+        if (is_numeric($color) && $color >= 30 && $color <= 49) {
+            $number = $color;
+        } elseif (is_string($color)) {
+            $name = strtoupper($color);
+            if (defined("static::COLOR_$bg$name")) {
+                $number = constant("static::COLOR_$bg$name");
+            } else {
+                $number = false;
+            }
+        } else {
+            $number = false;
+        }
+        return $number;
+    }
+
+    public static function addColor($str, $color, $bg = '', $bold = false) {
+        if (empty($_SERVER['COLORTERM'])) {
             return $str;
         }
-        switch ($color) {
-            case 'red':
-                $number = 31;
-                break;
-            case 'green':
-                $number = 32;
-                break;
-            case 'blue':
-                $number = 34;
-                break;
-            case 'yellow':
-                $number = 33;
-                break;
-            case 'black':
-                $number = 30;
-                break;
-            case 'white':
-                $number = 37;
-                break;
-            case 'purple':
-                $number = 35;
-                break;
-            default :
-                $number = false;
-                break;
+        $colorCode = '';
+        if ($bold) {
+            $colorCode .= '1;';
+        }
+        $number = self::checkColorValue($color);
+        if ($number) {
+            $colorCode .= "$number;";
+        }
+
+        if ($bg) {
+            $bgnumber = self::checkColorValue($bg, true);
+            if ($bgnumber) {
+                $colorCode .= "$bgnumber;";
+            }
         }
         $return = '';
-        if ($number) {
-            $return .= "\033[1;{$number}m";
+        if ($colorCode) {
+            $colorCode = trim($colorCode, ';');
+            $return .= "\033[{$colorCode}m";
         }
         $return .= "$str";
-        if ($number) {
+        if ($colorCode) {
             $return .= "\033[0m";
         }
         return $return;
     }
 
-    public static function colorMessage($str, $color = null, $newLine = true) {
-        $return = self::addColor($str, $color);
+    public static function colorMessage($str, $color = null, $newLine = true, $bg = '', $bold = false) {
+        $return = self::addColor($str, $color, $bg, $bold);
         if ($newLine) {
             $return .= PHP_EOL;
         }
         echo $return;
-    }
-
-    public static function coalesce(&$arr, $key, $def = '') {
-        $arr[$key] = isset($arr[$key]) ? $arr[$key] : $def;
-        return $arr[$key];
     }
 
     public static function getType($value) {
@@ -115,11 +133,11 @@ class Logs {
             }
             $str .= '<span>';
 
-            $title = is_scalar($arg) ? substr($arg, 0, 20) : substr(print_r($arg, true),0,500);
+            $title = is_scalar($arg) ? substr($arg, 0, 20) : substr(print_r($arg, true), 0, 500);
             //$type = self::getType($arg);
             if (is_scalar($arg)) {
                 $pad = strlen($arg) > 20 ? '...' : '';
-                $arg = substr($arg,0,500);
+                $arg = substr($arg, 0, 500);
                 $str .= "<small><b title='$arg'>'$title$pad'</b></small>, ";
             } elseif (is_array($arg)) {
                 $cnt = count($arg);
@@ -151,14 +169,14 @@ class Logs {
         $str = PHP_SAPI == 'cli' ? '' : $str;
         foreach ($traceArr as $key => $value) {
             $str .= "<li>#{$key} ";
-            $file = self::coalesce($value, 'file');
+            $file = Tookit::coalesce($value, 'file');
             if (self::$shortPath) {
                 $file = '...' . substr($file, self::$shortPath);
             }
             $str .= $file;
-            $str .= '(' . self::coalesce($value, 'line') . '):';
-            $str .= self::coalesce($value, 'class');
-            $str .= self::coalesce($value, 'type');
+            $str .= '(' . Tookit::coalesce($value, 'line') . '):';
+            $str .= Tookit::coalesce($value, 'class');
+            $str .= Tookit::coalesce($value, 'type');
 
             if ($value['function'] == 'unknown') {
                 $value['function'] = 'main';
