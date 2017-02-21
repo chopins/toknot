@@ -20,8 +20,15 @@ use Toknot\Boot\Tookit;
 class CommandLine {
 
     private $progMsgStart = 0;
-    const CONT = -1;
 
+    const RE_ENTER = -1;
+
+    /**
+     * get terminal number of columns
+     * 
+     * @param int $defaultCols
+     * @return int
+     */
     public function getcols($defaultCols = 150) {
         $cols = trim(shell_exec('tput cols'));
         if (empty($cols)) {
@@ -37,18 +44,19 @@ class CommandLine {
     }
 
     /**
+     * print progress
      * 
-     * @param int $percent
-     * @param string $message
-     * @param string $speed
-     * @param string $color
+     * @param int $percent      current percent
+     * @param string $message   progress message
+     * @param string $speed     progress speed
+     * @param string $color     message color
      * @throws BaseException
      */
     public function progress($percent, $message = '', $speed = '', $color = null) {
         if (!is_numeric($percent)) {
             throw new BaseException('speed must is numeric');
         }
- 
+
         ($percent > 100) && ($percent = 100);
         $cols = $this->getcols();
         $allMsgLen = Tookit::strlen($message);
@@ -82,27 +90,56 @@ class CommandLine {
         $this->message($msg, $color, false);
     }
 
+    /**
+     * print line wrap
+     */
     public function nl() {
         echo PHP_EOL;
     }
 
+    /**
+     * print message on same line
+     * 
+     * @param string $msg       print message
+     * @param string $color     message color
+     */
     public function flushLine($msg, $color = null) {
         $msg = $msg . str_repeat(' ', $this->getcols() - strlen($msg)) . "\r";
         $this->message($msg, $color, false);
     }
 
+    /**
+     * print prompt message and get command line input
+     * 
+     * @param string $msg       command line prompt message
+     * @param string $color     message color
+     * @return string           input string
+     */
     public function prompt($msg, $color = null) {
         $this->message($msg, $color, false);
         return trim(fgets(STDIN));
     }
 
+    /**
+     * print a message
+     * 
+     * @param string $msg
+     * @param string $color
+     * @param boolean $newLine
+     */
     public function message($msg, $color = null, $newLine = true) {
         Logs::colorMessage($msg, $color, $newLine);
     }
 
+    /**
+     * exec interactive shell
+     * 
+     * @param callable $callable    callable after input
+     * @param string $prompt        shell prompt message
+     */
     public function interactive($callable, $prompt = null) {
         $this->message('Toknot interactive shell, ( Ctrl+C exit)');
-        $prompt = $prompt ? $prompt : '>>> ';
+        $prompt = Tookit::coal($prompt, '>>>');
         do {
             $enter = $this->prompt($prompt, 'white');
             $callable($enter);
@@ -110,36 +147,51 @@ class CommandLine {
     }
 
     /**
+     * print prompt message and get command line input until input value to meet the conditions
      * 
-     * @param string $msg           show prompt message
-     * @param string $mismatch      if enter mismatch continue loop
-     * @param type $verifyEnter     check enter value function
-     * @return type
+     * @param string $msg               show prompt message
+     * @param string $mismatch          if enter mismatch continue loop
+     * @param callable $verifyEnter     check enter value function
+     * @return string                   input value
      */
     public function fprompt($msg, $mismatch = '', $verifyEnter = null) {
         do {
             $enter = $this->prompt($msg);
-            $ret = $this->switchOption($verifyEnter, $enter, $mismatch);
-            if ($ret === -1) {
+            $ret = $this->checkInput($verifyEnter, $enter, $mismatch);
+            if ($ret === self::RE_ENTER) {
                 continue;
             }
             return $enter;
         } while (true);
     }
 
-    public function switchOption($callable, $enter, $mismatch) {
+    /**
+     * check input value
+     * 
+     * @param callable $callable    check input value function
+     * @param string $enter         input value
+     * @param string $mismatch      if this value must re-enter
+     * @return string               return re-enter state of input value
+     */
+    public function checkInput($callable, $enter, $mismatch) {
         if ($enter == $mismatch) {
-            return -1;
+            return self::RE_ENTER;
         }
         if (is_callable($callable)) {
             $ret = $callable($enter);
-            if ($ret === -1) {
-                return -1;
+            if ($ret === self::RE_ENTER) {
+                return self::RE_ENTER;
             }
         }
         return $enter;
     }
 
+    /**
+     * print error message and exit script
+     * 
+     * @param string $msg
+     * @param int $status
+     */
     public function error($msg, $status = 255) {
         $this->message($msg, 'red');
         exit($status);
