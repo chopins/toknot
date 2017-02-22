@@ -23,6 +23,10 @@ class Tookit extends Object {
     private static $incData = [];
     private static $shutdownFunction = null;
 
+    const EQ_0 = 0;
+    const LT_0 = -1;
+    const GT_0 = 1;
+
     /**
      * Uppercase the first character of each word in a string
      * 
@@ -177,7 +181,7 @@ class Tookit extends Object {
         if (file_exists($lock)) {
             return false;
         }
-        if (!@fopen($lock, 'x')) {
+        if (!fopen($lock, 'x')) {
             return false;
         }
         return true;
@@ -196,13 +200,13 @@ class Tookit extends Object {
     public static function createCache($ini, $php, $call, $force = false) {
         clearstatcache();
         if (!$force && file_exists($php) && filemtime($ini) <= filemtime($php)) {
-            return -1;
+            return self::LT_0;
         }
 
         $phplock = "$php.lock";
 
-        if (!$force && !self::lock($phplock)) {
-            return 0;
+        if (!self::lock($phplock) && !$force) {
+            return self::EQ_0;
         }
 
         self::attachShutdownFunction(function() use($phplock, $call, $ini, $php) {
@@ -214,7 +218,7 @@ class Tookit extends Object {
 
         $call($ini, $php);
         unlink($phplock);
-        return 1;
+        return self::GT_0;
     }
 
     public static function readCache($ini, $php, $parseFunction) {

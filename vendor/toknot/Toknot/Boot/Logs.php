@@ -59,7 +59,7 @@ class Logs {
      * @param int $color
      * @return int
      */
-    public function colorMask($color) {
+    public static function colorMask($color) {
         if ($color >= 30 && $color <= 39) {
             return ($color << 1) | (1 << 7);
         } elseif ($color >= 40 && $color <= 49) {
@@ -68,7 +68,7 @@ class Logs {
         return 0;
     }
 
-    public function strToColor($color) {
+    public static function strToColor($color) {
         $colors = explode('|', $color);
         $v = 0;
         foreach ($colors as $cs) {
@@ -100,7 +100,7 @@ class Logs {
             return $str;
         }
         if (!is_numeric($color) && is_string($color)) {
-            $color = $this->strToColor($color);
+            $color = self::strToColor($color);
         } elseif (!is_numeric($color)) {
             return $str;
         }
