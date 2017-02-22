@@ -88,7 +88,7 @@ class Logs {
     }
 
     /**
-     * add color for string
+     * add color for string,only support font color,bg color, whether set blod
      * 
      * @param string $str
      * @param int $color
