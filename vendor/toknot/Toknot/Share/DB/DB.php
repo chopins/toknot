@@ -216,8 +216,6 @@ class DB extends Object {
         $execResult = [];
         foreach ($query as $i => $t) {
             if ($force) {
-                Logs::colorMessage('Exec: ', 'purple', false);
-                Logs::colorMessage($dropSql[$i]);
                 self::$conn->executeQuery($dropSql[$i]);
             }
             $execResult[] = $t;
