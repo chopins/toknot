@@ -289,7 +289,7 @@ final class Kernel extends Object {
         if (empty($this->cmdOption)) {
             $this->cmdOption = $this->walkOption();
         }
-        if ($key) {
+        if ($key !== null) {
             return Tookit::coalesce($this->cmdOption, $key, '');
         } else {
             return $this->cmdOption;

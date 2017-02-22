@@ -22,7 +22,7 @@ class Logs {
     const COLOR_YELLOW = 194;
     const COLOR_BLUE = 196;
     const COLOR_PURPLE = 198;
-    const COLOR_WHITE = 197;
+    const COLOR_WHITE = 202;
     const COLOR_B_BLACK = 10240;
     const COLOR_B_RED = 10496;
     const COLOR_B_GREEN = 10752;

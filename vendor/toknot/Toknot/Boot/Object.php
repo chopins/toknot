@@ -21,7 +21,7 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
      * when construct param same anywhere return same instance of the class
      * 
      * @final
-     * @return object
+     * @return $this
      * @access public
      * @static
      * @param mix $_    The class construct params is option and any number
@@ -66,7 +66,7 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
      * @static
      * @access public
      * @final
-     * @return object
+     * @return $this
      */
     final public static function constructArgs($argc, array $args, $className) {
         switch ($argc) {
