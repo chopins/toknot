@@ -53,23 +53,6 @@ class Logs {
         file_put_contents($logs, $str . PHP_EOL, FILE_APPEND);
     }
 
-    private static function checkColorValue($color, $isbg = false) {
-        $bg = $isbg ? 'B_' : '';
-        if (is_numeric($color) && $color >= 30 && $color <= 49) {
-            $number = $color;
-        } elseif (is_string($color)) {
-            $name = strtoupper($color);
-            if (defined("static::COLOR_$bg$name")) {
-                $number = constant("static::COLOR_$bg$name");
-            } else {
-                $number = false;
-            }
-        } else {
-            $number = false;
-        }
-        return $number;
-    }
-
     /**
      * convert color value to mask value
      * 
@@ -118,33 +101,28 @@ class Logs {
         }
         if (!is_numeric($color) && is_string($color)) {
             $color = $this->strToColor($color);
-        } elseif(!is_numeric($color)) {
+        } elseif (!is_numeric($color)) {
             return $str;
         }
         $colorCode = '';
-        if ($color & self::COLOR_BOLD) {
+        if ($color & self::SET_BOLD) {
             $colorCode .= '1;';
         }
         $bg = ($color >> 8);
         if ($bg && $bg >= 40 && $bg <= 49) {
             $colorCode .= "$bg;";
         }
-        $bg && $fcolor = ($color ^ ($bg << 8));
+        $fcolor = $bg ? ($color ^ ($bg << 8)) : $color;
         $fcolor && $fcolor = (($fcolor ^ $mask2) >> 1);
         if ($fcolor && $fcolor >= 30 && $fcolor <= 39) {
             $colorCode .= "$fcolor;";
         }
 
-        $return = '';
         if ($colorCode) {
             $colorCode = trim($colorCode, ';');
-            $return .= "\033[{$colorCode}m";
+            return "\033[{$colorCode}m{$str}\033[0m";
         }
-        $return .= "$str";
-        if ($colorCode) {
-            $return .= "\033[0m";
-        }
-        return $return;
+        return $str;
     }
 
     /**
