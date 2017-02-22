@@ -9,26 +9,28 @@
  */
 
 namespace Toknot\Boot;
+
 use Toknot\Boot\Tookit;
 
 class Logs {
 
     public static $shortPath = 0;
 
-    const COLOR_BLACK = 30;
-    const COLOR_RED = 31;
-    const COLOR_GREEN = 32;
-    const COLOR_YELLOW = 33;
-    const COLOR_BLUE = 34;
-    const COLOR_PURPLE = 35;
-    const COLOR_WHITE = 37;
-    const COLOR_B_BLACK = 40;
-    const COLOR_B_RED = 41;
-    const COLOR_B_GREEN = 42;
-    const COLOR_B_YELLOW = 43;
-    const COLOR_B_BLUE = 44;
-    const COLOR_B_PUPPLE = 45;
-    const COLOR_B_WHITE = 47;
+    const COLOR_BLACK = 188;
+    const COLOR_RED = 190;
+    const COLOR_GREEN = 192;
+    const COLOR_YELLOW = 194;
+    const COLOR_BLUE = 196;
+    const COLOR_PURPLE = 198;
+    const COLOR_WHITE = 197;
+    const COLOR_B_BLACK = 10240;
+    const COLOR_B_RED = 10496;
+    const COLOR_B_GREEN = 10752;
+    const COLOR_B_YELLOW = 11008;
+    const COLOR_B_BLUE = 11264;
+    const COLOR_B_PUPPLE = 11520;
+    const COLOR_B_WHITE = 12032;
+    const SET_BOLD = 1;
 
     /**
      * print debug backtrace
@@ -68,25 +70,71 @@ class Logs {
         return $number;
     }
 
-    public static function addColor($str, $color, $bg = '', $bold = false) {
+    /**
+     * convert color value to mask value
+     * 
+     * @param int $color
+     * @return int
+     */
+    public function colorMask($color) {
+        if ($color >= 30 && $color <= 39) {
+            return ($color << 1) | (1 << 7);
+        } elseif ($color >= 40 && $color <= 49) {
+            return $color << 8;
+        }
+        return 0;
+    }
+
+    public function strToColor($color) {
+        $colors = explode('|', $color);
+        $v = 0;
+        foreach ($colors as $cs) {
+            $str = strtoupper($cs);
+            $fcv = "static::COLOR_{$str}";
+            if (defined($fcv)) {
+                $v = $v | constant($fcv);
+                continue;
+            }
+            $bcv = "static::SET_$str";
+            if (defined($bcv)) {
+                $v = $v | constant($bcv);
+                continue;
+            }
+        }
+        return $v;
+    }
+
+    /**
+     * add color for string
+     * 
+     * @param string $str
+     * @param int $color
+     * @return string
+     */
+    public static function addColor($str, $color) {
+        $mask2 = 1 << 7;
         if (empty($_SERVER['COLORTERM'])) {
             return $str;
         }
+        if (!is_numeric($color) && is_string($color)) {
+            $color = $this->strToColor($color);
+        } elseif(!is_numeric($color)) {
+            return $str;
+        }
         $colorCode = '';
-        if ($bold) {
+        if ($color & self::COLOR_BOLD) {
             $colorCode .= '1;';
         }
-        $number = self::checkColorValue($color);
-        if ($number) {
-            $colorCode .= "$number;";
+        $bg = ($color >> 8);
+        if ($bg && $bg >= 40 && $bg <= 49) {
+            $colorCode .= "$bg;";
+        }
+        $bg && $fcolor = ($color ^ ($bg << 8));
+        $fcolor && $fcolor = (($fcolor ^ $mask2) >> 1);
+        if ($fcolor && $fcolor >= 30 && $fcolor <= 39) {
+            $colorCode .= "$fcolor;";
         }
 
-        if ($bg) {
-            $bgnumber = self::checkColorValue($bg, true);
-            if ($bgnumber) {
-                $colorCode .= "$bgnumber;";
-            }
-        }
         $return = '';
         if ($colorCode) {
             $colorCode = trim($colorCode, ';');
@@ -99,8 +147,14 @@ class Logs {
         return $return;
     }
 
-    public static function colorMessage($str, $color = null, $newLine = true, $bg = '', $bold = false) {
-        $return = self::addColor($str, $color, $bg, $bold);
+    /**
+     * 
+     * @param string $str
+     * @param int $color
+     * @param boolean $newLine
+     */
+    public static function colorMessage($str, $color = null, $newLine = true) {
+        $return = self::addColor($str, $color);
         if ($newLine) {
             $return .= PHP_EOL;
         }

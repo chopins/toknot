@@ -124,7 +124,7 @@ class CommandLine {
      * print a message
      * 
      * @param string $msg
-     * @param string $color
+     * @param int $color
      * @param boolean $newLine
      */
     public function message($msg, $color = null, $newLine = true) {
@@ -154,9 +154,9 @@ class CommandLine {
      * @param callable $verifyEnter     check enter value function
      * @return string                   input value
      */
-    public function fprompt($msg, $mismatch = '', $verifyEnter = null) {
+    public function fprompt($msg, $mismatch = '', $verifyEnter = null, $color = '') {
         do {
-            $enter = $this->prompt($msg);
+            $enter = $this->prompt($msg, $color);
             $ret = $this->checkInput($verifyEnter, $enter, $mismatch);
             if ($ret === self::RE_ENTER) {
                 continue;
