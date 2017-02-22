@@ -486,10 +486,10 @@ class Tookit extends Object {
     private static $strFuncPrefix = null;
 
     public static function getStrFunc($func) {
-        if (self::$strFuncPrefix !== null) {
-            return self::$strFuncPrefix . $func;
+        if (self::$strFuncPrefix === null) {
+            self::$strFuncPrefix = (extension_loaded('mbstring') ? 'mb_' : (extension_loaded('iconv') ? 'iconv_' : ''));
         }
-        self::$strFuncPrefix = (extension_loaded('mbstring') ? 'mb_' : (extension_loaded('iconv') ? 'iconv_' : ''));
+
         return self::$strFuncPrefix . $func;
     }
 

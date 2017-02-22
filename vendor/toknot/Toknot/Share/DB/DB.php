@@ -13,7 +13,6 @@ namespace Toknot\Share\DB;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Object;
 use Toknot\Boot\Tookit;
-use Toknot\Boot\Logs;
 use Toknot\Share\DB\DBSchema as Schema;
 use Toknot\Exception\BaseException;
 use Doctrine\DBAL\Configuration;
