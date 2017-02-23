@@ -23,6 +23,7 @@ class Controller extends Object {
     private $title = '';
     private $layout = null;
     private static $sessionStarted = false;
+    private $header = [];
 
     /**
      * 
@@ -71,8 +72,7 @@ class Controller extends Object {
         $appCfg = $this->config('app');
         $view = Tookit::ucwords($view, '.');
         $view = Tookit::dotNS($view);
-        return Tookit::nsJoin($appCfg['app_ns'], $appCfg['view_ns'],
-                        ucwords($view));
+        return Tookit::nsJoin($appCfg['app_ns'], $appCfg['view_ns'], ucwords($view));
     }
 
     /**
@@ -98,37 +98,55 @@ class Controller extends Object {
         $this->setResponse(200, $html);
     }
 
+    /**
+     * Redirect to specil route, default is 302 redirect
+     * 
+     * @param string $route
+     * @param array $params
+     * @param int $status
+     */
     final public function redirect($route, $params = [], $status = 302) {
         $url = $this->url($route, $params);
-        $this->setResponse($status, $url);
+        $this->response($status, $url);
+    }
+
+    /**
+     * immediately response
+     * 
+     * @param int $statusCode
+     * @param string $responseContent
+     */
+    final public function response($statusCode, $responseContent = '') {
+        $this->setResponse($statusCode, $responseContent);
         $this->kernel()->shutdown();
     }
 
+    final public function header($header) {
+        $this->header[] = $header;
+    }
     /**
      * return the controller response content
      * 
      * @return array
      * @final
      */
-    final public function setResponse($statusCode = Kernel::PASS_STATE,
-            $responseContent = '') {
+    final public function setResponse($statusCode = Kernel::PASS_STATE, $responseContent = '') {
         $httpStatus = Response::$statusTexts;
-        $return = ['option' => ''];
+        $return = ['option' => $this->header];
         if (is_numeric($statusCode) && isset($httpStatus[$statusCode])) {
             $return['code'] = $statusCode;
             $return['message'] = $httpStatus[$statusCode];
 
             if (!empty($responseContent) &&
                     (strpos($statusCode, '3') === 0 || $statusCode == 201)) {
-                $return['option'] = "Location: $responseContent";
+                $return['option'][] = "Location: $responseContent";
             }
         } else {
             $return['code'] = Kernel::PASS_STATE;
             $return['message'] = '';
         }
         $return['content'] = $responseContent;
-        $this->kernel()->setResponse($return['code'], $return['message'],
-                $return['content'], $return['option']);
+        $this->kernel()->setResponse($return['code'], $return['message'], $return['content'], $return['option']);
     }
 
     /**
@@ -165,6 +183,17 @@ class Controller extends Object {
     public function get($key = '') {
         $request = $this->kernel()->request;
         return $request->get($key);
+    }
+
+    /**
+     * check whether has key in request
+     * 
+     * @param string $key
+     * @return boolean
+     */
+    public function has($key) {
+        $v = $this->get($key);
+        return !empty($v);
     }
 
     /**

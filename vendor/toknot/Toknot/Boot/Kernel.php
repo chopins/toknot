@@ -60,6 +60,7 @@ final class Kernel extends Object {
             $this->console();
         }
         try {
+            $this->runResult['option'] = [];
             $this->setResponse(self::PASS_STATE);
 
             set_error_handler(array($this, 'errorReportHandler'));
@@ -117,14 +118,16 @@ final class Kernel extends Object {
         }
         header($this->runResult['message'], true, $this->runResult['code']);
         if (!empty($this->runResult['option'])) {
-            header($this->runResult['option']);
+            foreach ($this->runResult['option'] as $op) {
+                header($op);
+            }
         } else {
             echo $this->runResult['content'];
         }
         return $this->runResult['code'];
     }
 
-    private function shutdown() {
+    public function shutdown() {
         throw new ShutdownException;
     }
 
@@ -135,11 +138,11 @@ final class Kernel extends Object {
      * @param string $content
      * @param string $option
      */
-    public function setResponse($status = self::PASS_STATE, $message = '', $content = '', $option = '') {
+    public function setResponse($status = self::PASS_STATE, $message = '', $content = '', $option = []) {
         $this->runResult['code'] = $status;
         $this->runResult['message'] = $message;
         $this->runResult['content'] = $content;
-        $this->runResult['option'] = $option;
+        empty($option) || ($this->runResult['option'] = $option);
     }
 
     /**
@@ -235,7 +238,7 @@ final class Kernel extends Object {
             $this->runResult['code'] = 500;
             $this->runResult['message'] = $se->getMessage();
             $this->runResult['content'] = $se->getDebugTraceAsString();
-            $this->runResult['option'] = '';
+            //$this->runResult['option'][] = '';
         }
     }
 
