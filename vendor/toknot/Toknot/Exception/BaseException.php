@@ -108,7 +108,7 @@ class BaseException extends Exception {
         }
         $str .= '<div>';
         if (PHP_SAPI == 'cli' && !empty($_SERVER['COLORTERM'])) {
-            $this->message = "\e[1;31m{$this->message}\e[0m";
+            $this->message = Logs::addCLIColor($this->message, Logs::COLOR_RED);
         }
         $str .= "<p>{$this->message}</p>" . PHP_EOL;
         $str .= "<div><b>Throw Exception in file {$this->file} line {$this->line}</b></div>" . PHP_EOL;
