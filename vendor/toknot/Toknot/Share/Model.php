@@ -420,6 +420,20 @@ abstract class Model extends Object {
     }
 
     /**
+     * Compare and update an value on has primary key,(Optimistic lock)
+     * 
+     * @param array $values     new data
+     * @param string $keyValue  key value
+     * @param int $cas          cas value
+     * @param string $casFeild  cas feild name
+     * @return int
+     */
+    public function cas($values, $keyValue, $cas, $casFeild = 'cas') {
+        $values = array_merge($values, [$casFeild => ['+', $casFeild, 1]]);
+        return $this->update($values, [[$this->key, $keyValue], [$casFeild, $cas]]);
+    }
+
+    /**
      * delete data
      * 
      * @param array|string $where
