@@ -68,7 +68,7 @@ abstract class Layout {
         Tag::html($htmlOption, $docType);
         $this->head = Tag::head();
         $this->tpl->setHead($this);
-        $this->head();
+        $this->head($this->head);
 
         $this->setPageTitle();
 
@@ -126,8 +126,10 @@ abstract class Layout {
 
     /**
      * set head tag
+     * 
+     * @param $headTag  Toknot\Share\View\AnyTag
      */
-    abstract public function head();
+    abstract public function head($headTag);
 
     /**
      * set body tag attr

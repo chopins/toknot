@@ -21,3 +21,4 @@ On command line exec: `php app/tool/index.php` show tool app help message
 * [Main config](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/main-config-usage.md)  
 * [router config](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/route-config.md)  
 * [table config](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/table-config.md)  
+* [view](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/view.md) 
