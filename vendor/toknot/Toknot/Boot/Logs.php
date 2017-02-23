@@ -40,9 +40,17 @@ class Logs {
         print self::formatTrace($trace);
     }
 
+    public function nl() {
+        if (PHP_SAPI == 'cli') {
+            return PHP_EOL;
+        } else {
+            return '<br />';
+        }
+    }
+
     public static function message($info) {
         $time = date('Y-m-d H:i:s T');
-        $message = "[$time] $info" . PHP_EOL;
+        $message = "[$time] $info" . $this->nl();
         echo $message;
     }
 
@@ -94,7 +102,7 @@ class Logs {
      * @param int $color
      * @return string
      */
-    public static function addColor($str, $color) {
+    public static function addCLIColor($str, $color) {
         $mask2 = 1 << 7;
         if (empty($_SERVER['COLORTERM'])) {
             return $str;
@@ -125,6 +133,21 @@ class Logs {
         return $str;
     }
 
+    public static function addWebColor($str, $color) {
+        return "<span style=\"color:$color;\">$str</span>";
+    }
+
+    /**
+     * var_dump $value
+     * 
+     * @param mixed $value
+     */
+    public static function dump($value) {
+        echo '<pre>';
+        var_dump($value);
+        echo '</pre>';
+    }
+
     /**
      * 
      * @param string $str
@@ -132,9 +155,13 @@ class Logs {
      * @param boolean $newLine
      */
     public static function colorMessage($str, $color = null, $newLine = true) {
-        $return = self::addColor($str, $color);
+        if (PHP_SAPI == 'cli') {
+            $return = self::addCLIColor($str, $color);
+        } else {
+            $return = self::addWebColor($str, $color);
+        }
         if ($newLine) {
-            $return .= PHP_EOL;
+            $return .= $this->nl();
         }
         echo $return;
     }
