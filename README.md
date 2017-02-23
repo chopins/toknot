@@ -22,3 +22,25 @@ On command line exec: `php app/tool/index.php` show tool app help message
 * [router config](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/route-config.md)  
 * [table config](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/table-config.md)  
 * [view](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/view.md) 
+
+####Server Config
+将所有请求都定向到index.php入口文件，以下是nginx与apache服务器配置方法
+* nginx:
+    ```conf
+    location  / {
+        root $dir/index.php;
+    }
+    ```
+
+* apache:
+    ```conf
+    <Directory "/your-app-path/webroot">
+        RewriteBase /
+        RewriteRule .*  index.php
+        RewriteEngine On
+    </Directory>
+    ```
+* PHP CLI Web Server:
+  ```
+  php -S 127.0.0.1:8000 index.php
+  ```

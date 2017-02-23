@@ -147,7 +147,7 @@ final class Kernel extends Object {
      * @return \Toknot\Boot\Route
      * @throws BaseException
      */
-    private function routerIns() {
+    public function routerIns() {
         $routerClass = $this->cfg->app->router;
         if (is_subclass_of($routerClass, 'Toknot\Boot\Route')) {
             return $routerClass::single();
@@ -177,7 +177,7 @@ final class Kernel extends Object {
 
         if (is_array($parameters[$type])) {
             foreach ($parameters[$type] as $name) {
-                $this->invoke($name, $ns, $parameters);
+                $this->invoke($name, $ns, $requireParams);
             }
         } else {
             $this->invoke($parameters[$type], $ns, $requireParams);
@@ -218,7 +218,6 @@ final class Kernel extends Object {
 
         $this->request = $this->routerIns()->getRequest();
         $requireParams = $this->request->attributes;
-
         $exec = $this->routerIns()->middlewareNamespace($appCfg);
         foreach ($exec as $key => $ns) {
             $this->launch($parameters, $ns, $key, $requireParams);
