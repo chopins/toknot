@@ -29,32 +29,41 @@
 * `getKeyValue($keyValue)`  获取指定主键值所在行
 * `insert($value)`  插入一条数据,`$value` 值类似
 
-    ```
+    ```php
     ['columnName1'=>'columnValue1',
      'columnName2'=>'columnValue2',
      'columnName3'=>'columnValue3'
     ......]
     ```
 
-    生成`INSERT INTO table (columnName1,columnName2,columnName3...) VALUES('columnValue1','columnValue2','columnValue3'...)`
+    生成
+    ```sql
+    INSERT INTO table (columnName1,columnName2,columnName3...) VALUES('columnValue1','columnValue2','columnValue3'...)
+    ```
 
 * `where($param)`  查询where语句，参数可以是字符串和数组,数组格式类似:
 
-    ```
+    ```php
     ['column','value','=']
     ['column','value','>']
     ```
-    生成`WHERE column='value'`和`WHERE column>'vaule'`
-    
+    生成
+    ```sql
+    WHERE column='value'`和`WHERE column>'vaule'
     ```
+    
+    ```php
     ['&&',['column1','value1'],
           ['column2','value2','='],
           ['column3','value3','>']
     ]
     ```
-    生成`WHERE column1 = 'value1' && column2 = 'value2' && column3 > 'value3'` 
-
+    生成
+    ```sql
+    WHERE column1 = 'value1' && column2 = 'value2' && column3 > 'value3'
     ```
+
+    ```php
     ['&&',['&&',['column1','value1'],
                 ['column2','value2','='],
                 ['column3','value3','>']
@@ -64,9 +73,12 @@
           ]
     ]
     ```
-    生成`WHERE (column1 = 'value1' && column2 = 'value2' && column3 > 'value3') && (column4 = 'value4' || column5 >= 'value5')`
-
+    生成
+    ```sql
+    WHERE (column1 = 'value1' && column2 = 'value2' && column3 > 'value3') && (column4 = 'value4' || column5 >= 'value5')
     ```
+
+    ```php
     ['&&',['&&',['column1','value1'],
                 ['column2','value2','='],
           ],
@@ -80,7 +92,10 @@
           ]
     ]
     ```
-    生成`WHERE (column1='value1' && column2=>'value2') && ((column3='value3' && column4= 'value4') && column5 = 'value5') && (column6='value6' || column7 >= 'value7')`
+    生成
+    ```sql
+    WHERE (column1='value1' && column2=>'value2') && ((column3='value3' && column4= 'value4') && column5 = 'value5') && (column6='value6' || column7 >= 'value7')
+    ```
 
 * `update($values, $where = [], $limit = 500, $start = 0)`  更新数据, `$values`值类似:
     ```
@@ -88,7 +103,10 @@
      columnName2 => columnValue2,
     ......]
     ```
-    生成`SET columnName1 = 'columnValue1', columnName2 = 'columnValue2'......`
+    生成
+    ```sql
+    SET columnName1 = 'columnValue1', columnName2 = 'columnValue2'......
+    ```
     或者类似
     ```
     [columnName1=> ['+', columnName1, 1],
@@ -96,7 +114,10 @@
         columnName3=>[SUM, column1, column2]
     ]
     ```
-    生成`SET columnName1 = columnName1 + 1,columnName2 = column2 + column3,columnName3 = SUM(column1,column2)`
+    生成
+    ```sql
+    SET columnName1 = columnName1 + 1,columnName2 = column2 + column3,columnName3 = SUM(column1,column2)
+    ```
 
 * `setColumn($column, $alias = '')`  设置查询返回字段和表别名
 * `select($where = '')` 执行一条查询，默认返回所有字段,通过上一个方法改变
