@@ -15,6 +15,7 @@ class InitApp {
 
     public $cmd;
     public $appPath = '';
+    public $appNS = '';
 
     public function __construct($argc, $argv) {
         define('TKROOT', __DIR__);
@@ -33,7 +34,8 @@ class InitApp {
 
     public function createAppDir() {
         $appName = basename($this->appPath);
-        $app = "{$this->appPath}/" . strtoupper($appName);
+        $this->appNS =ucwords($appName);
+        $app = "{$this->appPath}/" . $this->appNS;
         mkdir($app, 0755);
         mkdir("{$app}/Controller", 0755);
         mkdir("{$app}/Middleware", 0755);
@@ -82,7 +84,7 @@ EOF;
 disable_install = true
 timezone = UTC
 charet = utf8
-app_ns=Event
+app_ns={$this->appNS}
 ctl_ns=Controller
 model_ns=Model
 middleware_ns=Middleware
@@ -118,7 +120,7 @@ EOF;
 
 [test-rooter]
 prefix.path = '/p'
-prefix.controller = UserAuth::checkLogin
+prefix.controller = 
 path = /foo
 controller = MyController::test
 method = GET
