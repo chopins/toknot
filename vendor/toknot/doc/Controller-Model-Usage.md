@@ -38,7 +38,8 @@
 
     生成
     ```sql
-    INSERT INTO table (columnName1,columnName2,columnName3...) VALUES('columnValue1','columnValue2','columnValue3'...)
+    INSERT INTO table (columnName1,columnName2,columnName3...) 
+            VALUES('columnValue1','columnValue2','columnValue3'...)
     ```
 
 * `where($param)`  查询where语句，参数可以是字符串和数组,数组格式类似:
@@ -49,7 +50,9 @@
     ```
     生成
     ```sql
-    WHERE column='value'`和`WHERE column>'vaule'
+    WHERE column='value'
+    和
+    WHERE column>'vaule'
     ```
     
     ```php
@@ -75,7 +78,8 @@
     ```
     生成
     ```sql
-    WHERE (column1 = 'value1' && column2 = 'value2' && column3 > 'value3') && (column4 = 'value4' || column5 >= 'value5')
+    WHERE (column1 = 'value1' && column2 = 'value2' && column3 > 'value3') 
+        && (column4 = 'value4' || column5 >= 'value5')
     ```
 
     ```php
@@ -94,7 +98,10 @@
     ```
     生成
     ```sql
-    WHERE (column1='value1' && column2=>'value2') && ((column3='value3' && column4= 'value4') && column5 = 'value5') && (column6='value6' || column7 >= 'value7')
+    WHERE (column1='value1' && column2=>'value2') 
+            && ((column3='value3' && column4= 'value4') 
+            && column5 = 'value5') 
+            && (column6='value6' || column7 >= 'value7')
     ```
 
 * `update($values, $where = [], $limit = 500, $start = 0)`  更新数据, `$values`值类似:
@@ -116,7 +123,8 @@
     ```
     生成
     ```sql
-    SET columnName1 = columnName1 + 1,columnName2 = column2 + column3,columnName3 = SUM(column1,column2)
+    SET columnName1 = columnName1 + 1,columnName2 = column2 + column3,
+        columnName3 = SUM(column1,column2)
     ```
 
 * `setColumn($column, $alias = '')`  设置查询返回字段和表别名
