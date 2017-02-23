@@ -69,6 +69,7 @@
 * `script($parentTag, $attr = [])` 脚本标签
 * `style($parentTag, $code = '')` 定义样式，`$code`样式内容
 * `select($parentTag, $attr)`   select标签，`$attr`属性数据类似如下：
+
      ```php
         ['name'=>'XXX',
         'option'=>['option1'=>['value'=>'1'],
@@ -77,6 +78,7 @@
                   ]
         ]
     ```
+    一维key是select标签属性，key option 是option标签数据
 
 其他常规标签举例如下：
 `p`标签：`Tag::p($parentTag,$attr)`, `$parentTag`为父标签，`$attr`标签属性数组
