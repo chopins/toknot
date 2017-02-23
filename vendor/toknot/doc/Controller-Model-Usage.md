@@ -97,7 +97,6 @@
     ```
     生成`SET columnName1 = columnName1 + 1,columnName2 = column2 + column3,columnName3 = SUM(column1,column2)`
 
-
 * `setColumn($column, $alias = '')`  设置查询返回字段和表别名
 * `select($where = '')` 执行一条查询，默认返回所有字段,通过上一个方法改变
 * `builder()`  实例一个查询构建实例
