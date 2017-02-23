@@ -1,5 +1,5 @@
 ####About
-ToKnot is a php web framework that is suitable for RESTful style develop
+ToKnot is a php framework
 
 [http://toknot.com](http://toknot.com)
 
