@@ -40,7 +40,7 @@ class Logs {
         print self::formatTrace($trace);
     }
 
-    public function nl() {
+    public static function nl() {
         if (PHP_SAPI == 'cli') {
             return PHP_EOL;
         } else {
@@ -50,7 +50,7 @@ class Logs {
 
     public static function message($info) {
         $time = date('Y-m-d H:i:s T');
-        $message = "[$time] $info" . $this->nl();
+        $message = "[$time] $info" . self::nl();
         echo $message;
     }
 
@@ -161,7 +161,7 @@ class Logs {
             $return = self::addWebColor($str, $color);
         }
         if ($newLine) {
-            $return .= $this->nl();
+            $return .= self::nl();
         }
         echo $return;
     }
