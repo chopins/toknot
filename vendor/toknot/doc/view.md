@@ -69,7 +69,7 @@
 * `script($parentTag, $attr = [])` 脚本标签
 * `style($parentTag, $code = '')` 定义样式，`$code`样式内容
 * `select($parentTag, $attr)`   select标签，`$attr`属性数据类似如下：
-    ```php
+     ```php
         ['name'=>'XXX',
         'option'=>['option1'=>['value'=>'1'],
                    'option2'=>['value=>2,selected=>true],
