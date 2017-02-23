@@ -90,10 +90,11 @@
     ```
     生成`SET columnName1 = 'columnValue1', columnName2 = 'columnValue2'......`
     或者类似
-    ```[columnName1=> ['+', columnName1, 1],
+    ```
+    [columnName1=> ['+', columnName1, 1],
         columnName2=>[+, column2, column3],
         columnName3=>[SUM, column1, column2]
-       ]
+    ]
     ```
     生成`SET columnName1 = columnName1 + 1,columnName2 = column2 + column3,columnName3 = SUM(column1,column2)`
 
