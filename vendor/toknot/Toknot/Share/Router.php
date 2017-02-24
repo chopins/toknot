@@ -11,6 +11,7 @@
 namespace Toknot\Share;
 
 use Toknot\Boot\Tookit;
+use Toknot\Boot\Kernel;
 use Toknot\Boot\Route as TKRoute;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
@@ -35,6 +36,7 @@ class Router extends TKRoute {
     private $routeDeclare = '';
     private $subCollection = [];
     private $subCollectionParams = [];
+    private $confType = 'ini';
 
     /**
      *
@@ -44,6 +46,10 @@ class Router extends TKRoute {
 
     protected function __construct() {
         $this->topRoutes = new RouteCollection();
+        $appcfg = Kernel::single()->cfg->app;
+        if (!empty($appcfg['route_conf_type'])) {
+            $this->confType = $appcfg['route_conf_type'];
+        }
     }
 
     public static function to($n, $param) {
@@ -136,9 +142,12 @@ class Router extends TKRoute {
         $this->routeDeclare .= "Router::to('$name', $params);";
     }
 
-    public function load($php, $ini) {
+    public function load() {
+        $ini = APPDIR . '/config/router.' . $this->confType;
+        $php = APPDIR . '/runtime/config/route.php';
+
         return Tookit::includeCache($ini, $php, function ($ini, $target) {
-                    $routerMap = Tookit::parseIni($ini);
+                    $routerMap = Tookit::parseConf($ini);
                     foreach ($routerMap as $rn => $def) {
                         $this->add($rn, $def);
                     }

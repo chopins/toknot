@@ -37,11 +37,12 @@ class DB extends Object {
      * @var \Doctrine\DBAL\Connection
      */
     private static $conn;
+    private static $nodbconn;
     private static $modelNs;
     private static $usedb;
     private $tableConfig;
     private $extType = [];
-    
+    public static $confType = 'ini';
     public static $fechStyle = \PDO::FETCH_ASSOC;
     public static $cursorOri = \PDO::FETCH_ORI_NEXT;
 
@@ -66,7 +67,9 @@ class DB extends Object {
 
         $this->extType = explode(',', $allcfg->database->ext_type);
         $config = $allcfg->database[self::$usedb];
-
+        if (isset($config['config_type'])) {
+            self::$confType = $config['config_type'];
+        }
         $this->tableConfig = $config->table_config;
 
         self::$cfg = $config;
@@ -82,7 +85,7 @@ class DB extends Object {
     public static function getUseDBConfig() {
         return self::$usedb;
     }
-    
+
     public function getQuotedName($name) {
         $platform = self::$conn->getDatabasePlatform();
         $keywords = $platform->getReservedKeywordsList();
@@ -113,8 +116,8 @@ class DB extends Object {
      * @return array
      */
     public function loadConfig($name) {
-        $cnf = APPDIR . "/config/$name.ini";
-        return Kernel::single()->loadini($cnf);
+        $cnf = APPDIR . "/config/$name." . self::$confType;
+        return Kernel::single()->loadConf($cnf);
     }
 
     public function connect($singleConn = true) {
@@ -127,6 +130,18 @@ class DB extends Object {
         self::$conn = DriverManager::getConnection($connectionParams, $config);
 
         return self::$conn;
+    }
+
+    public function unSelectDBConnect() {
+        if (self::$nodbconn instanceof Connection) {
+            return self::$nodbconn;
+        }
+        $config = new Configuration;
+        $connectionParams = $this->dbconfig()->toArray();
+        unset($connectionParams['dbname']);
+        self::$nodbconn = DriverManager::getConnection($connectionParams, $config);
+
+        return self::$nodbconn;
     }
 
     public function close($conn = null) {
@@ -265,7 +280,8 @@ class DB extends Object {
     }
 
     public function createDatabase($dbname) {
-        return self::$conn->getSchemaManager()->createDatabase($dbname);
+        $this->unSelectDBConnect();
+        return self::$nodbconn->getSchemaManager()->createDatabase($dbname);
     }
 
     public function getTableStructure($table) {
@@ -277,7 +293,8 @@ class DB extends Object {
     }
 
     public function getDBList() {
-        return self::$conn->getSchemaManager()->listDatabases();
+        $this->unSelectDBConnect();
+        return self::$nodbconn->getSchemaManager()->listDatabases();
     }
 
     public function getTableIndexs($table) {

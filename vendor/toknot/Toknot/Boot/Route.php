@@ -25,12 +25,10 @@ abstract class Route extends Object {
 
     /**
      * Load route map of config
-     * 
-     * @param string $php       The file is route map config
-     * @param string $params    load map file need params   
+     *  
      * @return array            array of the route map
      */
-    abstract public function load($php, $params);
+    abstract public function load();
 
     /**
      * Generate url of a route

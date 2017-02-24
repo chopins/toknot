@@ -29,6 +29,7 @@ final class Kernel extends Object {
     private $pipeRet = null;
     private $promiseExecCallable = '';
     private $promiseExecStat = true;
+    private $confgType = 'ini';
 
     const PASS_STATE = 0;
     const PROMISE_PASS = true;
@@ -97,7 +98,8 @@ final class Kernel extends Object {
         ini_set('log_errors', 0);
     }
 
-    public function run() {
+    public function run($configType = 'ini') {
+        $this->confgType = $configType;
         $this->setRuntimeEnv();
 
         try {
@@ -159,10 +161,7 @@ final class Kernel extends Object {
     }
 
     private function initRouter() {
-        $ini = APPDIR . '/config/router.ini';
-        $php = APPDIR . '/runtime/config/route.php';
-
-        $this->routerIns()->load($php, $ini);
+        $this->routerIns()->load();
     }
 
     private function console() {
@@ -356,8 +355,8 @@ final class Kernel extends Object {
     }
 
     private function loadConfig() {
-        $ini = APPDIR . '/config/config.ini';
-        return $this->loadini($ini);
+        $ini = APPDIR . "/config/config.{$this->confgType}";
+        return $this->loadConf($ini);
     }
 
     public function config() {
@@ -365,7 +364,7 @@ final class Kernel extends Object {
         return Configuration::getItem($this->cfg, $keys);
     }
 
-    public function loadini($ini) {
+    public function loadConf($ini) {
         return Configuration::loadConfig($ini);
     }
 
