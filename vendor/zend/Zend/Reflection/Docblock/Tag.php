@@ -37,7 +37,7 @@ class Tag implements Reflector
      */
     protected static $_tagClasses = array(
         'param'  => '\Zend\Reflection\Docblock\Tag\Param',
-        'return' => '\Zend\Reflection\Docblock\Tag\Return',
+        'return' => '\Zend\Reflection\Docblock\Tag\TagReturn',
         );
 
     /**
@@ -67,9 +67,6 @@ class Tag implements Reflector
         $tagName = $matches[1];
         if (array_key_exists($tagName, self::$_tagClasses)) {
             $tagClass = self::$_tagClasses[$tagName];
-            if (!class_exists($tagClass)) {
-                Zend_Loader::loadClass($tagClass);
-            }
             return new $tagClass($tagDocblockLine);
         }
         return new self($tagDocblockLine);

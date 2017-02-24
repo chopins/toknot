@@ -19,8 +19,8 @@
  * @version    $Id$
  */
 
-/** Zend_Reflection_Docblock_Tag */
-require_once 'Zend/Reflection/Docblock/Tag.php';
+namespace Zend\Reflection\Docblock\Tag;
+use Zend\Reflection\Docblock\Tag;
 
 /**
  * @category   Zend
@@ -28,7 +28,7 @@ require_once 'Zend/Reflection/Docblock/Tag.php';
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Reflection_Docblock_Tag_Return extends Zend_Reflection_Docblock_Tag
+class TagReturn extends Tag
 {
     /**
      * @var string

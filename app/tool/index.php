@@ -7,5 +7,5 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
-include '../../vendor/toknot/boot.php';
+include __DIR__.'/../../vendor/toknot/boot.php';
 main(__DIR__);

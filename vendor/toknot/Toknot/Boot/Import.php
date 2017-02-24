@@ -34,7 +34,8 @@ class Import {
     }
 
     /**
-     * add autoload scan directory
+     * add autoload scan directory, the path must contain top namespace of dir
+     * like: add path: your_path/appPath/TopNs
      *
      * @param string $path
      * @access public
