@@ -250,9 +250,13 @@ class Tookit extends Object {
                 break;
             }
 
+
             if ($preIndent !== false && $preIndent >= $indent) {
                 $i--;
                 return '';
+            }
+            if ($selfIndent !== false && $selfIndent < $indent) {
+                throw new BaseException("line $i is not aligned");
             }
             $sub = explode(':', $l, 2);
             //数组
