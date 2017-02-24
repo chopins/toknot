@@ -24,6 +24,11 @@ class Route {
     public $appNs;
 
     /**
+     * generate route ini
+     * 
+     * route your_app_dir_path
+     * route your_app_dir_path -o output_your_route_ini_path.ini
+     * 
      * @console route
      */
     public function __construct() {
