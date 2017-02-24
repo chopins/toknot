@@ -20,7 +20,7 @@ class Configuration extends Object {
 
     public function __get($key) {
         $v = $this->iteratorArray[$key];
-        
+
         if (is_array($v)) {
             return new static($v);
         } else {
@@ -75,4 +75,5 @@ class Configuration extends Object {
     public function toArray() {
         return $this->iteratorArray;
     }
+
 }

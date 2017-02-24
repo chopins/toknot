@@ -22,10 +22,23 @@ class Tookit extends Object {
 
     private static $incData = [];
     private static $shutdownFunction = null;
+    private static $parseConfObject = null;
 
     const EQ_0 = 0;
     const LT_0 = -1;
     const GT_0 = 1;
+
+    public static function setParseConfObject($parseClass) {
+        if ($parseClass) {
+            if (!class_exists($parseClass, false)) {
+                throw new \Exception("class $parseClass is unload");
+            }
+            if (!$parseClass instanceof ParseConfig) {
+                throw new \Exception("$parseClass must instanceof Toknot\Boot\ParseConfig");
+            }
+            self::$parseConfObject = new $parseClass;
+        }
+    }
 
     /**
      * Uppercase the first character of each word in a string
@@ -368,6 +381,8 @@ class Tookit extends Object {
             return self::parseIni($file);
         } elseif ($ext == 'yml') {
             return self::parseSampleYaml($file);
+        } elseif (self::$parseConfObject !== null && self::$parseConfObject->type == $ext) {
+            return self::$parseConfObject->parse($file);
         }
         throw new BaseException('unknown type of config file, current only support ini,yml file');
     }

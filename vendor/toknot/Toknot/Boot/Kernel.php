@@ -53,6 +53,7 @@ final class Kernel extends Object {
     protected function __construct($argc, $argv) {
         define('PHP_NS', '\\');
         $this->setArg($argc, $argv);
+
         $this->initImport();
 
         $this->phpIniSet();
@@ -81,9 +82,9 @@ final class Kernel extends Object {
         }
     }
 
-    private function setRuntimeEnv() {
+    private function setRuntimeEnv($parseClass = null) {
         $this->initRuntime();
-
+        Tookit::setParseConfObject($parseClass);
         $this->cfg = $this->loadConfig();
 
         if ($this->cfg->app->short_except_path) {
@@ -98,9 +99,15 @@ final class Kernel extends Object {
         ini_set('log_errors', 0);
     }
 
-    public function run($configType = 'ini') {
+    /**
+     * 
+     * @param string $configType        use config type
+     * @param Toknot\Boot\ParseConfig $parseObject  set parse config class instance
+     * @return int
+     */
+    public function run($configType, $parseClass = null) {
         $this->confgType = $configType;
-        $this->setRuntimeEnv();
+        $this->setRuntimeEnv($parseClass);
 
         try {
             $this->router();
@@ -365,7 +372,7 @@ final class Kernel extends Object {
     }
 
     public function loadConf($ini) {
-        return Configuration::loadConfig($ini);
+        return Configuration::loadConfig($ini, $this->parseObject);
     }
 
     /**
