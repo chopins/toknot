@@ -166,8 +166,8 @@ class Tookit extends Object {
      * @param string $ini
      * @param string $php
      */
-    public static function ini2php($ini, $php) {
-        $data = self::parseIni($ini);
+    public static function conf2php($ini, $php) {
+        $data = self::parseConf($ini);
         $str = '<?php return ' . var_export($data, true) . ';';
         file_put_contents($php, $str);
     }
@@ -185,6 +185,120 @@ class Tookit extends Object {
             return false;
         }
         return true;
+    }
+
+    public static function type($var) {
+        switch ($var) {
+            case 'false':
+                return false;
+            case 'true':
+                return true;
+            case '~':
+                return null;
+        }
+        if (is_numeric($var)) {
+            return (float) $var;
+        }
+        return $var;
+    }
+
+    public static function yamlBlockLiteral(&$i, $s, $cn, $flags) {
+        $preIndent = false;
+        $block = '';
+        $type = substr($flags, 0, 1);
+        while (true) {
+            if ($cn <= $i) {
+                break;
+            }
+            $l = $s[$i];
+            $indent = strspn($l, ' ');
+            if ($preIndent !== false && $preIndent != $indent) {
+                $i--;
+                break;
+            }
+            $preIndent = $indent;
+            $block .= $l . ($type == '|' ? PHP_EOL : '');
+            $i++;
+        }
+        if (stlen($type) > 1) {
+            $block .= PHP_EOL;
+        }
+        return $block;
+    }
+
+    public static function eachYaml(&$i, $s, $cn, $preIndent = false, &$anchor = []) {
+        $res = [];
+        $selfIndent = false;
+        while (true) {
+            if ($cn <= $i) {
+                break;
+            }
+
+            $l = $s[$i];
+            if (empty(trim($l))) {
+                $i++;
+                continue;
+            }
+            if (strpos(trim($l), '#') === 0) {
+                $i++;
+                continue;
+            }
+
+            $indent = strspn($l, ' ');
+            if ($selfIndent !== false && $indent < $selfIndent) {
+                $i--;
+                break;
+            }
+
+            if ($preIndent !== false && $preIndent >= $indent) {
+                $i--;
+                return '';
+            }
+            $sub = explode(':', $l, 2);
+            //数组
+            $selfIndent = $indent;
+            if (count($sub) == 1) {
+                if (strpos($l, '-') !== 0) {
+                    throw new BaseException("colon of key not found in line $i");
+                }
+                $res[] = self::type(trim(ltrim(trim($l), '-')));
+            } else {
+                $key = trim($sub[0]);
+                $var = trim($sub[1]);
+                $checkAnchor = (strpos($var, '&') === 0);
+                if (empty(trim($sub[1])) || $checkAnchor === true) {
+                    $i++;
+                    $res[$key] = self::eachYaml($i, $s, $cn, $indent, $anchor);
+                    if ($checkAnchor) {
+                        $anchorKey = trim($var, '&');
+                        $anchor[$anchorKey] = &$res[$key];
+                    }
+                } elseif ($key == '<<' && strpos($var, '*') === 0) {
+                    $alias = trim($var, '*');
+                    if (!isset($anchor[$alias])) {
+                        throw new BaseException("anchor $alias not found");
+                    }
+                    $res = array_merge($res, $anchor[$alias]);
+                } else {
+                    if ($var == '|' || $var == '>') {
+                        $res[$key] = self::yamlBlockLiteral($i, $s, $cn, $var);
+                    } else {
+                        $res[$key] = self::type($var);
+                    }
+                }
+            }
+            $i++;
+        }
+        return $res;
+    }
+
+    public static function parseSampleYaml($yaml) {
+        $content = file_get_contents($yaml);
+        $s = explode("\n", $content);
+        $cn = count($s);
+        $i = 0;
+        $anchor = [];
+        return self::eachYaml($i, $s, $cn, false, $anchor);
     }
 
     /**
@@ -225,7 +339,7 @@ class Tookit extends Object {
         $res = self::createCache($ini, $php, $parseFunction);
 
         if ($res === 0) {
-            return self::parseIni($ini);
+            return self::parseConf($ini);
         }
         $key = md5($ini);
         if (!isset(self::$incData[$key]) || $res === 1) {
@@ -244,16 +358,26 @@ class Tookit extends Object {
         return include_once $php;
     }
 
+    public static function parseConf($file) {
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if ($ext == 'ini') {
+            return self::parseIni($file);
+        } elseif ($ext == 'yml') {
+            return self::parseSampleYaml($file);
+        }
+        throw new BaseException('unknown type of config file, current only support ini,yml file');
+    }
+
     /**
-     * read a ini config
+     * read a config
      * 
      * @param string $ini
      * @param string $php
      * @return array
      */
-    public static function readini($ini, $php) {
+    public static function readConf($ini, $php) {
         return self::readCache($ini, $php, function($ini, $target) {
-                    self::ini2php($ini, $target);
+                    self::conf2php($ini, $target);
                 });
     }
 

@@ -52,7 +52,7 @@ class Configuration extends Object {
     public static function loadConfig($ini) {
         $filename = pathinfo($ini, PATHINFO_FILENAME);
         $php = APPDIR . "/runtime/config/$filename.php";
-        $cfg = Tookit::readini($ini, $php);
+        $cfg = Tookit::readConf($ini, $php);
         return new static($cfg);
     }
 
