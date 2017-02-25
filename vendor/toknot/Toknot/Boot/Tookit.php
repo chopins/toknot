@@ -12,6 +12,7 @@ namespace Toknot\Boot;
 
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
+use Toknot\Boot\ParseConfig;
 
 /**
  * Tookit
@@ -381,7 +382,7 @@ class Tookit extends Object {
             return self::parseIni($file);
         } elseif ($ext == 'yml') {
             return self::parseSampleYaml($file);
-        } elseif (self::$parseConfObject !== null && self::$parseConfObject->type == $ext) {
+        } elseif (self::$parseConfObject !== null && self::$parseConfObject->support($ext)) {
             return self::$parseConfObject->parse($file);
         }
         throw new BaseException('unknown type of config file, current only support ini,yml file');
