@@ -95,8 +95,7 @@ class DB {
      */
     public function update() {
         $tablefile = $this->tableOption['table_config'];
-        $confType = isset($this->tableOption['confg_type']) ?
-                $this->tableOption['confg_type'] : 'ini';
+        $confType = Tookit::coalesce($this->tableOption, 'config_type', 'ini');
         $ini = APPDIR . "/config/{$tablefile}.{$confType}";
         $link = APPDIR . "/runtime/config/{$tablefile}.php";
 

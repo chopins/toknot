@@ -209,7 +209,7 @@ class Tag extends TagBulid {
      * @param string $name
      * @param TagBulid $tag The parent tag
      * @param array $attr
-     * @return \Toknot\Share\View\AnyTag
+     * @return Toknot\Share\View\AnyTag
      * @throws BaseException
      */
     public static function __callStatic($name, $tag) {

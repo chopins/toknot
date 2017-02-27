@@ -35,7 +35,7 @@ class Tookit extends Object {
                 throw new \Exception("class $parseClass is unload");
             }
             if (!$parseClass instanceof ParseConfig) {
-                throw new \Exception("$parseClass must instanceof Toknot\Boot\ParseConfig");
+                throw new \Exception("$parseClass must implement Toknot\Boot\ParseConfig");
             }
             self::$parseConfObject = new $parseClass;
         }
