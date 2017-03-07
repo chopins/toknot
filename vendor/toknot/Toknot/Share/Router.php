@@ -13,6 +13,8 @@ namespace Toknot\Share;
 use Toknot\Boot\Tookit;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Route as TKRoute;
+use Toknot\Exception\NotFoundException;
+use Toknot\Exception\MethodNotAllowedException as MethodNotAllowed;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -20,6 +22,9 @@ use Symfony\Component\Routing\Route;
 use Toknot\Share\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+
 
 /**
  * Description of Router
@@ -111,8 +116,13 @@ class Router extends TKRoute {
         $context = new RequestContext();
         $context->fromRequest($this->request);
         $matcher = new UrlMatcher($this->topRoutes, $context);
-        $parameters = $matcher->matchRequest($this->request);
-
+        try {
+            $parameters = $matcher->matchRequest($this->request);
+        } catch (ResourceNotFoundException $e) {
+            throw new NotFoundException($e);
+        } catch(MethodNotAllowedException $e) {
+            throw new MethodNotAllowed($e);
+        }
         $tparams = Tookit::arrayRemove($parameters, 'controller', 'before', 'after', 'group', '_route');
 
         $this->request->attributes = new ParameterBag($tparams);

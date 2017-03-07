@@ -26,6 +26,8 @@ class BaseException extends Exception {
     public $traceArr = array();
     public $exceptionInstance = null;
     private static $errorToException = false;
+    protected $httpStatusCode = 0;
+    protected $httpMessage = '';
 
     /**
      * construct StandardException
@@ -37,12 +39,14 @@ class BaseException extends Exception {
      * @param object|null $exceIns
      */
     public function __construct($message = '', $code = 0, $file = null, $line = null, $exceIns = null) {
+        parent::__construct($message, $code, $exceIns);
         if ($this->exceptionMessage) {
             $this->message = $this->exceptionMessage;
         } else {
             $this->message = $message;
         }
-
+        $this->httpStatusCode = 500;
+        $this->httpMessage = 'Internal Server Error';
         $this->exceptionInstance = $exceIns;
         $this->file = empty($file) ? $this->getFile() : $file;
         $this->line = empty($line) ? $this->getLine() : $line;
@@ -54,6 +58,14 @@ class BaseException extends Exception {
         return new BaseException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
+    public function getHttpCode() {
+        return $this->httpStatusCode;
+    }
+    
+    public function getHttpMessage() {
+        return $this->httpMessage;
+    }
+    
     public function getErrorType($code) {
         switch ($code) {
             case E_USER_ERROR:

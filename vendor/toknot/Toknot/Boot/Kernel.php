@@ -20,8 +20,8 @@ use Toknot\Boot\Logs;
 
 final class Kernel extends Object {
 
-    private $argc;
-    private $argv;
+    private $argc = 0;
+    private $argv = [];
     private $cfg;
     private $import;
     private $isCLI = false;
@@ -121,9 +121,6 @@ final class Kernel extends Object {
         if ($this->isCLI) {
             echo $this->runResult['content'];
             exit($this->runResult['code']);
-        }
-        if ($this->runResult['code'] == 500) {
-            $this->runResult['message'] = 'Internal Server Error';
         }
         header($this->runResult['message'], true, $this->runResult['code']);
         if (!empty($this->runResult['option'])) {
@@ -241,8 +238,8 @@ final class Kernel extends Object {
             throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
         } catch (BaseException $se) {
             $this->runResult = [];
-            $this->runResult['code'] = 500;
-            $this->runResult['message'] = $se->getMessage();
+            $this->runResult['code'] = $e->getHttpCode();
+            $this->runResult['message'] = $se->getHttpMessage();
             $this->runResult['content'] = $se->getDebugTraceAsString();
             //$this->runResult['option'][] = '';
         }
