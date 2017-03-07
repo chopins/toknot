@@ -102,7 +102,7 @@ final class Kernel extends Object {
     /**
      * 
      * @param string $configType        use config type
-     * @param Toknot\Boot\ParseConfig $parseObject  set parse config class instance
+     * @param Toknot\Boot\ParseConfig $parseClass  set parse config class instance
      * @return int
      */
     public function run($configType, $parseClass = null) {
