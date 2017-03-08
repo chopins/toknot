@@ -238,8 +238,8 @@ final class Kernel extends Object {
             throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
         } catch (BaseException $se) {
             $this->runResult = [];
-            $this->runResult['code'] = $e->getHttpCode();
-            $this->runResult['message'] = $se->getHttpMessage();
+            $this->runResult['code'] = $e instanceof BaseException ? $e->getHttpCode() : 500;
+            $this->runResult['message'] = $e instanceof BaseException ? $e->getHttpMessage() : 'Internal Server Error';
             $this->runResult['content'] = $se->getDebugTraceAsString();
             //$this->runResult['option'][] = '';
         }

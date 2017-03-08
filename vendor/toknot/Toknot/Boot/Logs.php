@@ -184,16 +184,17 @@ class Logs {
         }
     }
 
-    public static function opeateArg($value, &$str) {
-        $argc = count($value['args']) - 1;
-        foreach ($value['args'] as $i => $arg) {
+    public static function opeateArg($args, &$str) {
+        $argc = count($args) - 1;
+        
+        foreach ($args as $i => $arg) {
             if (is_null($arg)) {
                 continue;
             }
             $str .= '<span>';
 
             $title = is_scalar($arg) ? substr($arg, 0, 20) : substr(print_r($arg, true), 0, 500);
-            //$type = self::getType($arg);
+            $title = htmlentities($title);
             if (is_scalar($arg)) {
                 $pad = strlen($arg) > 20 ? '...' : '';
                 $arg = substr($arg, 0, 500);
@@ -213,6 +214,7 @@ class Logs {
             }
             $str .= '</span>';
         }
+
     }
 
     /**
@@ -227,6 +229,11 @@ class Logs {
                 . '<ul class="tk-ds-li">';
         $str = PHP_SAPI == 'cli' ? '' : $str;
         foreach ($traceArr as $key => $value) {
+            $function = Tookit::coalesce($value, 'function');
+            if ($value['function'] == 'errorReportHandler') {
+                continue;
+            }
+
             $str .= "<li>#{$key} ";
             $file = Tookit::coalesce($value, 'file');
             if (self::$shortPath) {
@@ -237,12 +244,12 @@ class Logs {
             $str .= Tookit::coalesce($value, 'class');
             $str .= Tookit::coalesce($value, 'type');
 
-            if ($value['function'] == 'unknown') {
-                $value['function'] = 'main';
+            if ($function == 'unknown') {
+                $function = 'main';
             }
-            $str .= isset($value['function']) ? "{$value['function']}(" : '';
-            if (isset($value['args']) && $value['function'] != 'errorReportHandler') {
-                self::opeateArg($value, $str);
+            $str .= empty($function) ? '' : "$function(";
+            if (isset($value['args'])) {
+                self::opeateArg($value['args'], $str);
             }
             $str .= isset($value['function']) ? ")" : '';
             $str .= '</li>' . PHP_EOL;

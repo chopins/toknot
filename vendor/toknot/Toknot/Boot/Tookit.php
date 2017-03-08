@@ -637,4 +637,30 @@ class Tookit extends Object {
         return self::$strFuncPrefix . $func;
     }
 
+    /**
+     * remove a dir, if set recursion will remove sub dir and file
+     * 
+     * @param string $folder
+     * @param boolean $recursion
+     * @return boolean
+     */
+    public static function rmdir($folder, $recursion = false) {
+        if ($recursion === false) {
+            return rmdir($folder);
+        }
+        $d = dir($folder);
+        while (false !== ($f = $d->read())) {
+            if ($f == '.' || $f == '..') {
+                continue;
+            }
+            $path = "$folder/$f";
+            if (is_dir($path)) {
+                self::rmdir($path);
+            } else {
+                unlink($path);
+            }
+        }
+        return rmdir($folder);
+    }
+
 }

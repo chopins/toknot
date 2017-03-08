@@ -10,6 +10,8 @@
 
 namespace Tool\Controller\Console;
 
+use Toknot\Share\SimpleXlsx;
+
 /**
  * Test
  *
@@ -20,8 +22,14 @@ class Test {
      * @console test
      */
     public function __construct() {
-        echo "test message";
+        $xlsx = new SimpleXlsx('/home/chopin/Documents/test.xlsx');
+        $index = $xlsx->newSheet('test');
+        for ($i = 0; $i < 1000; $i++) {
+            $row = range(1, 100);
+            $xlsx->addRow($row, $index);
+        }
+        
+        $xlsx->save();
     }
 
-    
 }

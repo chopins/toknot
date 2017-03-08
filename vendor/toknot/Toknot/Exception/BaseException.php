@@ -25,7 +25,7 @@ class BaseException extends Exception {
     private $fatalError = false;
     public $traceArr = array();
     public $exceptionInstance = null;
-    private static $errorToException = false;
+   
     protected $httpStatusCode = 0;
     protected $httpMessage = '';
 
@@ -54,7 +54,6 @@ class BaseException extends Exception {
     }
 
     static public function errorReportHandler($argv) {
-        self::$errorToException = true;
         return new BaseException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
@@ -139,6 +138,7 @@ class BaseException extends Exception {
         if (PHP_SAPI == 'cli') {
             $str .= str_repeat('=', 20) . PHP_EOL;
             $nohtml = strip_tags($str);
+            $nohtml = html_entity_decode($nohtml);
             return $nohtml;
         } else {
             return $str;
@@ -150,11 +150,6 @@ class BaseException extends Exception {
     }
 
     public function each($traceArr) {
-        if (self::$errorToException) {
-            array_shift($traceArr);
-            array_shift($traceArr);
-            self::$errorToException = false;
-        }
         return Logs::formatTrace($traceArr);
     }
 
