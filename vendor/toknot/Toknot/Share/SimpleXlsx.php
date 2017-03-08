@@ -86,8 +86,10 @@ class SimpleXlsx {
     public function covertAlphabetOrder($number) {
         $number = base_convert($number, 10, 26);
         $ret = '';
-        foreach (str_split($number) as $i) {
-            $index = base_convert($i, 26, 10);
+        $len = strlen($number);
+        for ($i = 0; $i < $len; $i++) {
+            $index = base_convert($number{$i}, 26, 10);
+            ($i < $len -1) && $index--;
             $ret = $ret . $this->alphabet[$index];
         }
         return $ret;

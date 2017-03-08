@@ -23,6 +23,7 @@ class Test {
      */
     public function __construct() {
         $xlsx = new SimpleXlsx('/home/chopin/Documents/test.xlsx');
+        $xlsx->covertAlphabetOrder(26);
         $index = $xlsx->newSheet('test');
         for ($i = 0; $i < 100000; $i++) {
             $row = range(1, 100);
