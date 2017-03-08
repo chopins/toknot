@@ -58,7 +58,7 @@ class SimpleXlsx {
      */
     public function __construct($xmlfile) {
         $this->getTmpDir();
-        $dirname = basename($xmlfile, '.xlsx');
+        $xlsxName = basename($xmlfile, '.xlsx');
         $this->xmlfile = $xmlfile;
         $this->createTime = $this->time();
         $this->alphabetOrder();
