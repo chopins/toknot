@@ -655,7 +655,7 @@ class Tookit extends Object {
             }
             $path = "$folder/$f";
             if (is_dir($path)) {
-                self::rmdir($path);
+                self::rmdir($path, true);
             } else {
                 unlink($path);
             }

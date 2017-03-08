@@ -63,6 +63,12 @@ class SimpleXlsx {
         $this->createTime = $this->time();
         $this->alphabetOrder();
         $this->createDirStruct($xlsxName);
+        $zipdir = $this->zipdir;
+        Tookit::attachShutdownFunction(function() use($zipdir) {
+            if (is_dir($zipdir)) {
+                Tookit::rmdir($zipdir, true);
+            }
+        });
         $this->createRels();
         $this->createAppXml();
         $this->createCoreXml();
@@ -313,4 +319,5 @@ class SimpleXlsx {
     public function __destruct() {
         $this->clean();
     }
+
 }
