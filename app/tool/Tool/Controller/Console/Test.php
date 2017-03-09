@@ -26,7 +26,7 @@ class Test {
         $xlsx->covertAlphabetOrder(26);
         $index = $xlsx->newSheet('test');
         for ($i = 0; $i < 100000; $i++) {
-            $row = range(1, 100);
+            $row = range('A', 'ZZZ');
             $xlsx->addRow($row, $index);
         }
         
