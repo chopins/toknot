@@ -14,6 +14,7 @@ use Toknot\Boot\Object;
 use Toknot\Share\View\Layout;
 use Toknot\Share\View\Tag;
 use Toknot\Boot\Kernel;
+use Toknot\Boot\Tookit;
 use Toknot\Exception\BaseException;
 
 /**
@@ -137,12 +138,45 @@ abstract class View extends Object {
     }
 
     final public function enableCsrf($form) {
-        Tag::input($form,
-                ['type' => 'hidden', 'name' => '_csrf_hash', 'id' => '_csrf_hash', 'value' => $this->param['_csrf_hash']]);
+        Tag::input($form, ['type' => 'hidden', 'name' => '_csrf_hash', 'id' => '_csrf_hash', 'value' => $this->param['_csrf_hash']]);
     }
 
     final public function route($route, $params = []) {
         Kernel::single()->routerIns()->url($route, $params);
+    }
+
+    public function addVersion($url, &$curVersion = 0, $docmentRoot = '', $checkSec = 600) {
+        $urlPart = parse_url($url);
+        Tookit::coalesce($urlPart, 'scheme');
+        $curTime = time();
+        if ($urlPart['path'] == $url && $curTime - $curVersion >= $checkSec) {
+            return "{$url}?v=" . filemtime("{$docmentRoot}{$url}");
+        } elseif ($urlPart['scheme'] == 'http' || $urlPart['scheme'] == 'https') {
+            $offset = Tookit::getTimezoneOffset(1);
+            if ($curTime - $offset - $curVersion <= $checkSec) {
+                return "$url?v=$curVersion";
+            }
+            $header = '';
+            if ($curVersion) {
+                $header = 'If-Modified-Since: ' . date('D, d M Y H:i:s e', $curVersion) . "\r\n";
+            }
+            $option = [$urlPart['scheme'] => ['method' => "HEAD", 'header' => $header]];
+            $wrapper = Tookit::getStreamWrappersData($url, $option);
+            list(, $statusCode) = explode(' ', $wrapper[0], 3);
+            if ($statusCode == '304') {
+                return "$url?v=$curVersion";
+            } elseif ($statusCode != 200) {
+                return $url;
+            }
+            foreach ($wrapper as $header) {
+                if (strpos($header, 'Last-Modified')) {
+                    list(, $time) = explode(':', $header, 2);
+                    $curVersion = strtotime(trim($time));
+                    return "$url?v=$curVersion";
+                }
+            }
+        }
+        return $url;
     }
 
 }

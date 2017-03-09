@@ -25,8 +25,8 @@ class Test {
         $xlsx = new SimpleXlsx('/home/chopin/Documents/test.xlsx');
         $xlsx->covertAlphabetOrder(26);
         $index = $xlsx->newSheet('test');
-        for ($i = 0; $i < 100000; $i++) {
-            $row = range('A', 'ZZZ');
+        for ($i = 0; $i < 1000; $i++) {
+            $row =['如果设定了的话','查询操作系统主机','默认时区'];
             $xlsx->addRow($row, $index);
         }
         

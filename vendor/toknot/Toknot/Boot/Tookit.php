@@ -663,4 +663,22 @@ class Tookit extends Object {
         return rmdir($folder);
     }
 
+    public static function getStreamWrappersData($uri, $opt) {
+        $context = stream_context_create($opt);
+        $fp = fopen($uri, 'r', false, $context);
+        $stat = stream_get_meta_data($fp);
+        if ($stat['wrapper_data']) {
+            return $stat['wrapper_data'];
+        }
+    }
+
+    public static function getTimezoneOffset($sec = 0) {
+        $timezone = new \DateTime(date_default_timezone_get());
+        $offset = $timezone->getOffset();
+        if ($sec) {
+            return $offset * 3600;
+        }
+        return $offset;
+    }
+
 }
