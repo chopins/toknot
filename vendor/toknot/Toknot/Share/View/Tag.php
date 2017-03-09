@@ -158,8 +158,7 @@ class Tag extends TagBulid {
      * @param string $src
      */
     public static function stylesheet(TagBulid $parentTag, $src) {
-        $link = new AnyTag('link',
-                ['href' => $src, 'rel' => 'stylesheet', 'type' => 'text/css']);
+        $link = new AnyTag('link', ['href' => $src, 'rel' => 'stylesheet', 'type' => 'text/css']);
         $parentTag->push($link);
     }
 
