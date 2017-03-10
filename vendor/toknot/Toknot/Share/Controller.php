@@ -11,7 +11,7 @@
 namespace Toknot\Share;
 
 use Toknot\Boot\Object;
-use Toknot\Share\DB\DB;
+use Toknot\Share\DB\DBA;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Tookit;
 use Toknot\Share\Session\Session;
@@ -41,7 +41,7 @@ class Controller extends Object {
      * @return \Toknot\Share\Model
      */
     public function model($tableName, $db = '') {
-        return DB::table($tableName, $db);
+        return DBA::table($tableName, $db);
     }
 
     /**

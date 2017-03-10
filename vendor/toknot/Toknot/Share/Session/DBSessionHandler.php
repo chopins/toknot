@@ -10,7 +10,7 @@
 
 namespace Toknot\Share\Session;
 
-use Toknot\Share\DB\DB;
+use Toknot\Share\DB\DBA;
 use Toknot\Boot\Tookit;
 use Toknot\Boot\Kernel;
 
@@ -59,7 +59,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
      */
     public function open($savePath, $sessionName) {
         try {
-            $this->model = DB::table($this->table);
+            $this->model = DBA::table($this->table);
         } catch (\Exception $e) {
             $this->echoException($e);
             return false;

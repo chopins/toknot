@@ -10,7 +10,7 @@
 
 namespace Tool\Controller\Console;
 
-use Toknot\Share\DB\DB;
+use Toknot\Share\DB\DBA;
 
 /**
  * Test
@@ -23,7 +23,7 @@ class Test {
      */
     public function __construct() {
         //select a, b, c from (select * from table)
-        echo DB::SELECT;
+        echo DBA::SELECT;
        
     }
 

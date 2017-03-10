@@ -10,7 +10,7 @@
 
 namespace Toknot\Share;
 
-use Toknot\Share\DB\DB;
+use Toknot\Share\DB\DBA;
 use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
@@ -80,7 +80,7 @@ abstract class Model extends Object {
     }
 
     final public function useNamespace() {
-        $this->namespace = DB::single()->getDatabase();
+        $this->namespace = DBA::single()->getDatabase();
     }
 
     final public function setAlias($alias) {
@@ -181,7 +181,7 @@ abstract class Model extends Object {
      */
     final public function getColumnType($key) {
         $t = $this->tableInfo['column'][$key]['type'];
-        return DB::getDBType($t);
+        return DBA::getDBType($t);
     }
 
     /**
@@ -298,7 +298,7 @@ abstract class Model extends Object {
         if (!$this->iteratorArray) {
             return false;
         }
-        $this->currentResult = $this->fetch($this->iteratorArray, DB::$fechStyle, DB::$cursorOri, $this->fetchCursorIndex);
+        $this->currentResult = $this->fetch($this->iteratorArray, DBA::$fechStyle, DBA::$cursorOri, $this->fetchCursorIndex);
         return $this->currentResult;
     }
 
@@ -481,7 +481,7 @@ abstract class Model extends Object {
      * @return boolean
      */
     public function notAndOr($i, $type) {
-        $com = ($type == DB::T_OR || $type == DB::T_AND);
+        $com = ($type == DBA::T_OR || $type == DBA::T_AND);
         return $i === 0 && !$com;
     }
 
@@ -536,12 +536,12 @@ abstract class Model extends Object {
                 $this->setQueryArg($hold, $v);
                 return $this->compKey($param);
             } elseif ($k === 0) {
-                $type = DB::getCompType($v);
+                $type = DBA::getCompType($v);
             } else {
                 $where[] = $this->where($v);
             }
         }
-        return DB::composite($type, $where);
+        return DBA::composite($type, $where);
     }
 
     public function setQueryArg($placeholder, $v) {
@@ -649,7 +649,7 @@ abstract class Model extends Object {
     }
 
     public function againSelect($where, $feild = []) {
-        if($this->qr->getType() != DB::SELECT) {
+        if($this->qr->getType() != DBA::SELECT) {
             throw new BaseException('can not found first selct query');
         }
         

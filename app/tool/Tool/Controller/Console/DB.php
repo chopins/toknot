@@ -10,7 +10,7 @@
 
 namespace Tool\Controller\Console;
 
-use Toknot\Share\DB\DB as TKDB;
+use Toknot\Share\DB\DBA;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Tookit;
 use Toknot\Boot\Logs;
@@ -40,7 +40,7 @@ class DB {
         $this->setOption();
         $this->tableOption = $this->dbcfg[$this->usedb];
 
-        $this->tkdb = TKDB::single($this->usedb);
+        $this->tkdb = DBA::single($this->usedb);
         $dbs = $this->tkdb->getDBList();
         $dbname = $this->tableOption['table_config'];
         if (!in_array($dbname, $dbs)) {
