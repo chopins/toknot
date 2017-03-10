@@ -14,7 +14,6 @@ use Toknot\Share\DB\DB;
 use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
-use Doctrine\DBAL\Driver\Statement;
 
 abstract class Model extends Object {
 
@@ -59,6 +58,7 @@ abstract class Model extends Object {
     public $checkBorder = true;
     private $alias = '';
     public $namespace = '';
+    private $statement = null;
 
     /**
      *
@@ -230,14 +230,15 @@ abstract class Model extends Object {
      * 
      * @param int $limit
      * @param int $start
-     * @return \Doctrine\DBAL\Driver\Statement
+     * @return $this
      */
     public function execute($limit = 50, $start = 0) {
         $this->qr->setFirstResult($start);
         $this->qr->setMaxResults($limit);
         $this->lastSql = $this->qr->getSQL();
         try {
-            return $this->qr->execute();
+            $this->statement = $this->qr->execute();
+            return $this;
         } catch (\PDOException $e) {
             return Kernel::single()->echoException($e);
         }
@@ -259,9 +260,9 @@ abstract class Model extends Object {
      * @param int $fetchMode
      * @return array
      */
-    public function fetch(Statement $smt, $fetchMode = \PDO::FETCH_ASSOC) {
+    public function fetch($fetchMode = \PDO::FETCH_ASSOC) {
         try {
-            return $smt->fetch($fetchMode);
+            return $this->statement->fetch($fetchMode);
         } catch (\PDOException $e) {
             return Kernel::single()->echoException($e);
         }
@@ -644,6 +645,18 @@ abstract class Model extends Object {
         $this->qr->select($selectSql);
 
         $this->qr->where($this->where($where));
+        return $this;
+    }
+
+    public function againSelect($where, $feild = []) {
+        if($this->qr->getType() != DB::SELECT) {
+            throw new BaseException('can not found first selct query');
+        }
+        
+        $subSql = '(' . $this->qr->getSQL() . ')';
+        $this->qr = $this->builder()->from($subSql);
+        $column = empty($feild) ? '*' : implode(',', $feild);
+        $this->qr->select($column)->where($this->where($where));
         return $this;
     }
 

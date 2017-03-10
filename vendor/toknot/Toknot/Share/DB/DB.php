@@ -21,6 +21,7 @@ use Doctrine\DBAL\Driver\Connection;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Query\QueryBuilder;
 
 class DB extends Object {
 
@@ -51,6 +52,10 @@ class DB extends Object {
     const TEXT_LEN = 65535;
     const MTEXT_LEN = 16777215;
     const BTEXT_LEN = 4294967295;
+    const SELECT = QueryBuilder::SELECT;
+    const DELETE = QueryBuilder::DELETE;
+    const UPDATE = QueryBuilder::UPDATE;
+    const INSERT = QueryBuilder::INSERT;
 
     /**
      * 
