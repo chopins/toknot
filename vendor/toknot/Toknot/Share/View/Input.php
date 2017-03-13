@@ -23,14 +23,17 @@ class Input extends TagBulid {
         'image', 'hidden', 'file', 'radio', 'reset',
         'submit'];
 
-    public function __construct($attr) {
-        if (self::hasType($attr['type'])) {
-            $this->tagName = 'input';
-            $attr['type'] = $attr['type'];
-            $this->initTag($attr);
-        } else {
-            throw new BaseException("input tag not defined type {$attr['type']}");
+    public function __construct($attr = []) {
+        if (isset($attr['type']) && !self::hasType($attr['type'])) {
+            throw new BaseException("input tag unsupport type {$attr['type']}");
         }
+        if (version_compare(self::$page->getVer(), 4) === 1 &&
+                $attr['type'] == 'button' || $attr['type'] == 'submit') {
+            $this->tagName = 'button';
+        } else {
+            $this->tagName = 'input';
+        }
+        $this->initTag($attr);
     }
 
     public static function hasType($type) {
@@ -39,6 +42,40 @@ class Input extends TagBulid {
 
     public static function addType($type) {
         array_push(self::$inputTag, $type);
+    }
+
+    public function setType($type) {
+        if (!self::hasType($type)) {
+            throw new BaseException("input tag unsupport type $type");
+        }
+
+        $this->addAttr('type', $type);
+        return $this;
+    }
+
+    public function setValue($value = '') {
+        $this->addAttr('value', $value);
+        return $this;
+    }
+
+    public function setHit($value) {
+        $this->addAttr('placeholder', $value);
+        return $this;
+    }
+
+    public function required() {
+        $this->addAttr('required', 'required');
+        return $this;
+    }
+
+    public function readonly() {
+        $this->addAttr('readonly', 'readonly');
+        return $this;
+    }
+    
+    public function disabled() {
+        $this->addAttr('disabled', 'disabled');
+        return $this;
     }
 
 }

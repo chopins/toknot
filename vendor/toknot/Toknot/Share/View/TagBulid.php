@@ -43,6 +43,12 @@ abstract class TagBulid extends Object {
 
     /**
      *
+     * @var \Toknot\Share\View\Html;
+     */
+    protected static $page;
+
+    /**
+     *
      * @var SplObjectStorage
      */
     protected $childStack;
@@ -75,11 +81,11 @@ abstract class TagBulid extends Object {
             return $this->html .= '';
         }
 
-        $this->ChildTag();
+        $this->html .= $this->innerHTML();
         $this->html .= "</{$this->tagName}>";
     }
 
-    public function begin($attr = []) {
+    protected function begin($attr = []) {
         $this->html .= "<{$this->tagName}";
         $this->html .= '';
         foreach ($attr as $k => $v) {
@@ -88,7 +94,7 @@ abstract class TagBulid extends Object {
                     $this->addClass($v);
                     break;
                 case 'style':
-                    $this->parseStyle($v);
+                    $this->cssStyle($v);
                     break;
                 default:
                     $this->addAttr($k, $v);
@@ -97,7 +103,7 @@ abstract class TagBulid extends Object {
         }
     }
 
-    public function parseStyle($style) {
+    public function cssStyle($style) {
         if (is_array($style)) {
             foreach ($style as $sk => $sv) {
                 $this->addStyle($sk, $sv);
@@ -114,14 +120,14 @@ abstract class TagBulid extends Object {
         }
     }
 
-    public function buildClass() {
+    protected function buildClass() {
         if (empty($this->tagClass)) {
             return '';
         }
         $this->html .= ' class="' . implode(' ', $this->tagClass) . '"';
     }
 
-    public function buildStyle() {
+    protected function buildStyle() {
         if (empty($this->tagStyle)) {
             return '';
         }
@@ -134,6 +140,7 @@ abstract class TagBulid extends Object {
 
     public function addStyle($key, $v) {
         $this->tagStyle[$key] = $v;
+        return $this;
     }
 
     public function addClass($class) {
@@ -141,10 +148,12 @@ abstract class TagBulid extends Object {
             return;
         }
         array_push($this->tagClass, $class);
+        return $this;
     }
 
     public function removeStyle($key) {
         unset($this->tagStyle[$key]);
+        return $this;
     }
 
     public function removeClass($class) {
@@ -153,6 +162,7 @@ abstract class TagBulid extends Object {
             return;
         }
         unset($this->tagClass[$idx]);
+        return $this;
     }
 
     /**
@@ -168,16 +178,20 @@ abstract class TagBulid extends Object {
 
     public function push(TagBulid $tag) {
         $this->childStack->attach($tag);
+        return $this;
     }
 
     public function delTag(TagBulid $tag) {
         $this->childStack->detach($tag);
+        return $this;
     }
 
-    public function ChildTag() {
+    public function innerHTML() {
+        $html = '';
         foreach ($this->childStack as $tag) {
-            $this->html .= $tag->getTags();
+            $html .= $tag->getTags();
         }
+        return $html;
     }
 
     public function getTags() {
@@ -191,6 +205,18 @@ abstract class TagBulid extends Object {
         }
         $v = addcslashes($value, '\'\\');
         $this->html .= " $attr=\"$v\"";
+    }
+
+    public function addId($value) {
+        $this->addAttr('id', $value);
+    }
+
+    public function addName($value) {
+        $this->addAttr('name', $value);
+    }
+
+    public function setTitle($title) {
+        $this->addAttr('title', $title);
     }
 
 }

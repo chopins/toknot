@@ -127,7 +127,7 @@ abstract class View extends Object {
      * 
      * @param string $name  The tag name
      * @param array $argv   The tag attributes
-     * @return Toknot\Share\View\Tag
+     * @return Toknot\Share\View\TagBulid
      */
     final public function __call($name, $argv) {
         $argc = count($argv);

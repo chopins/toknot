@@ -30,10 +30,13 @@ class Select extends TagBulid {
         $this->setOption();
     }
 
-    public function setOption() {
+    public function setOption($selected = null) {
         foreach ($this->option as $showText => $option) {
+            if ($selected !== null && isset($option['value']) && $option['value'] == $selected) {
+                $option['selected'] = 'selected';
+            }
             $op = new AnyTag('option', $option);
-            Tag::text($op, $showText);
+            $op->pushText($showText);
             $this->add($op);
         }
     }
@@ -42,6 +45,14 @@ class Select extends TagBulid {
         $op = new AnyTag('option', $option);
         Tag::text($op, $showText);
         $this->add($op);
+    }
+
+    public function isMultiple() {
+        $this->addAttr('multiple', 'multiple');
+    }
+
+    public function size($size) {
+        $this->addAttr('size', $size);
     }
 
 }

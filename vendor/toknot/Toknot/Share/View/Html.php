@@ -20,8 +20,8 @@ use Toknot\Exception\BaseException;
  */
 class Html extends TagBulid {
 
-    public $htmlVer = 5;
-    public $htmlMode = 'strict';
+    private $htmlVer = 5;
+    private $htmlMode = 'strict';
 
     const STR4_01 = '"-//W3C//DTD HTML 4.01//EN" 
             "http://www.w3.org/TR/html4/strict.dtd"';
@@ -48,8 +48,10 @@ class Html extends TagBulid {
     const HTML2 = '"-//IETF//DTD HTML 2.0//EN"';
     const HTML3_2 = '"-//W3C//DTD HTML 3.2 Final//EN"';
 
-    public function __construct($param = '', $docType = []) {
-        $this->setDoctype($docType);
+    public function __construct($param = '', $ver = 5, $mode = 'strict') {
+        $this->htmlVer = $ver;
+        $this->htmlMode = $mode;
+        $this->setDoctype($ver, $mode);
         $this->tagName = 'html';
         $this->initTag($param);
     }
@@ -70,17 +72,15 @@ class Html extends TagBulid {
         return strtoupper(substr($mode, 0, 3));
     }
 
-    public function setDoctype($docType) {
-        Tookit::coalesce($docType, 'version', $this->htmlVer);
-        Tookit::coalesce($docType, 'mode', $this->htmlMode);
+    public function setDoctype($ver, $mode) {
 
         $this->html .= "<!doctype ";
-        $this->html .= $docType['version'] == '4.01' ? 'HTML' : 'html';
+        $this->html .= $ver == '4.01' ? 'HTML' : 'html';
 
-        if (version_compare($docType['version'], 5) == -1) {
+        if (version_compare($ver, 5) == -1) {
             $this->html .= ' PUBLIC ';
 
-            switch ($docType['version']) {
+            switch ($ver) {
                 case '2.0':
                     $this->html .= self::HTML2;
                     break;
@@ -88,8 +88,8 @@ class Html extends TagBulid {
                     $this->html .= self::HTML3_2;
                     break;
                 default :
-                    $ver = $this->convertVersion($docType['version']);
-                    $mode = $this->convertMode($docType['mode']);
+                    $ver = $this->convertVersion($ver);
+                    $mode = $this->convertMode($mode);
                     $this->html .= constant("self::$mode$ver");
                     break;
             }
@@ -103,6 +103,14 @@ class Html extends TagBulid {
 
     public function supportMode() {
         return ['strict', 'basic', 'transitional', 'frameset', 'dtd', 'compound', 'profile'];
+    }
+
+    public function getVer() {
+        return $this->htmlVer;
+    }
+
+    public function getMode() {
+        return $this->htmlMode;
     }
 
 }

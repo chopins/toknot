@@ -36,8 +36,7 @@ class Element {
      */
     public static function postForm(TagBulid $parentNode, $data) {
         $enctype = Tookit::coalesce($data, 'type', 'form');
-        $enctypeArr = ['form' => 'application/x-www-form-urlencoded',
-            'file' => 'multipart/form-data', 'text' => 'text/plain'];
+
         $inputs = [];
         $select = [];
         foreach ($data['input'] as $name => $input) {
@@ -56,8 +55,12 @@ class Element {
             }
             $inputs[$name] = $input;
         }
-        $form = Tag::form($parentNode, ['class' => 'pure-form pure-form-stacked', 'method' => 'post', 'action' => $data['action'], 'enctype' => $enctypeArr[$enctype],
-                    'input' => $inputs]);
+        $form = Tag::form($parentNode)
+                ->addClass('pure-form pure-form-stacked')
+                ->setMethod()
+                ->setAction($data['action'])
+                ->setType($data[$enctype])
+                ->inputs($inputs);
         return $form;
     }
 

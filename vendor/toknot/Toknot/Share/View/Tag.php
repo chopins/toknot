@@ -26,11 +26,6 @@ class Tag extends TagBulid {
      */
     protected static $body;
 
-    /**
-     *
-     * @var \Toknot\Share\View\Html;
-     */
-    private static $page;
 
     /**
      *
@@ -126,28 +121,8 @@ class Tag extends TagBulid {
             unset($attr['input']);
         }
 
-        $form = new AnyTag('form', $attr);
-        foreach ($inputs as $key => $input) {
-            $input['name'] = $key;
-
-            if ($input['type'] == 'select') {
-                $i = self::select($form, $input);
-            } elseif (isset($input['label'])) {
-                $labelAttr = isset($input['id']) ?
-                        ['for' => $input['id']] : [];
-                $label = new AnyTag('label', $labelAttr);
-                $label->pushText($input['label']);
-                unset($input['label']);
-                $i = new Input($input);
-                $label->push($i);
-                $form->push($label);
-                continue;
-            } else {
-                $i = new Input($input);
-            }
-
-            $form->push($i);
-        }
+        $form = new Form($attr);
+        $form->inputs($inputs);
         $parentTag->push($form);
         return $form;
     }
