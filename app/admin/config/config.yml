@@ -1,0 +1,228 @@
+# YAML Template.
+app :
+    disable_install : true
+    timezone : UTC
+    charet : utf8
+    app_ns : Event
+    ctl_ns : Controller
+    model_ns : Model
+    middleware_ns : Middleware
+    service_ns:
+    view_ns : View
+    router : Toknot\Share\Router
+    default_db_config_key : db1
+    short_except_path : true
+    model_dir : runtime/model
+    default_layout : Event\View\Layout\DefaultLayout
+    session :
+        table : session
+        name : sid
+        cookie_httponly : 1
+database :
+    ext_type : tinyint
+    dbdefault: &dbdefault
+        host : 127.0.0.1
+        port : 3306
+        user : root
+        password : 
+        charset : utf8
+        type : mysql
+        table_default:
+            engine : innodb
+            collate : utf8_general_ci
+        column_default:
+            unsigned : true
+            collate : utf8_general_ci
+    db1:
+        dbname : process
+        table_config : database
+        << : *dbdefault
+
+    db2:
+        dbname : word
+        table_config : word 
+        << : *dbdefault
+    db3:
+        dbname : resume
+        table_config : resume
+        << : *dbdefault
+vendor:
+    dbal : doctrine/Doctrine
+    routing : symfony/Symfony
+    phpdoc : zend/Zend
+    
+
+
+
+user :
+    column :
+        uid :
+            type : integer
+            length : 11
+            unsigned : true
+            autoincrement : true
+
+        username :
+            type : string
+            length : 255
+
+        password :
+            type : string
+            lenght : 255
+
+        email :
+            type : string
+            length : 255
+            comment : 邮件
+            
+        realname:
+            type : string
+            length : 255
+            comment : 真实姓名
+
+        nickname:
+            type : string
+            length : 255
+            comment : 昵称
+
+        reg_time:
+            type : integer
+            length : 10
+            comment : 注册时间
+
+        reg_ip:
+            type : string
+            length : 20
+
+        email_verify:
+            type : boolean
+            comment : 邮件验证状态
+
+        mobile:
+            type : string
+            length : 20
+
+        mobile_verify:
+            type : boolean
+            comment : 手机验证状态
+
+        locked:
+            type : boolean
+            default : 0
+            comment : 帐号是否锁定
+
+        locked_expire:
+            type : integer
+            comment : 锁定截止时间
+
+        email_bak:
+            type : string
+            comment : 备用邮箱
+
+        email_bak_verify :
+            type : boolean
+            comment : 备用邮箱是否验证
+    option:
+        comment : 用户表
+    indexes:
+        primary : uid
+        login_name:
+            type : unique
+            username : default
+
+        login_email:
+            type : unique
+            email : default
+
+user_info:
+    column:
+        uid:
+            type : integer
+            length : 10
+            unsigned : true
+
+        tel:
+            type : string
+            length : 20
+            comment : 用户电话
+
+        location:
+            type : text
+            comment : 地区
+
+        birthday:
+            type : string
+            length : 20
+            comment : 生日
+
+        avatar:
+            type : integer
+            length : 10
+            comment : 头像文件ID
+
+        bio:
+            type : text
+            comment : 用户简介
+
+        url:
+            type : string
+            length : 255
+
+        gender:
+            type : boolean
+            length : 1
+
+        recent_login_info:
+            type : text
+            comment : 三组：时间,IP,平台,平台信息,平台ID,地区
+
+        socail:
+            type : text
+            comment : 社交帐号
+
+        job:
+            type : string
+            length : 255
+
+        hobby:
+            type : text
+            comment : 爱好
+
+    option:
+        comment : 用户信息扩展表
+
+    indexes:
+        primary : uid
+
+org:
+    column:
+        
+
+        org_del_user:
+            type : integer
+            comment: 删除用户
+
+
+        org_url:
+            type : string
+
+        org_slogan:
+            type : string
+
+        org_description:
+            type : text
+
+        org_create_time:
+            type : integer
+
+    indexes:
+        primary : oid
+        pid:
+            type : index
+            parent_oid : default
+        tid:
+            type : index
+            top_oid : default
+
+    option:
+        comment : 组织表

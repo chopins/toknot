@@ -21,7 +21,7 @@ use Toknot\Boot\Kernel;
 function main($appdir = '', $confType = 'ini', $parseClass = null) {
     global $argc, $argv;
     if (!is_dir($appdir)) {
-        echo 'appdir of path is not exist' . PHP_EOL;
+        echo "$appdir is not exist" . PHP_EOL;
         return 1;
     }
     define('APPDIR', realpath($appdir));
