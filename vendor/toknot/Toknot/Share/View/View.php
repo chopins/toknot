@@ -16,6 +16,7 @@ use Toknot\Share\View\Tag;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Tookit;
 use Toknot\Exception\BaseException;
+use Toknot\Share\httpTool;
 
 /**
  *  Layout
@@ -28,19 +29,19 @@ abstract class View extends Object {
 
     /**
      *
-     * @var \Toknot\Share\View\Layout
+     * @var Toknot\Share\View\Layout
      */
     private $layoutIns = null;
 
     /**
      *
-     * @var \Toknot\Share\View\AnyTag
+     * @var Toknot\Share\View\AnyTag
      */
     protected $body;
 
     /**
      *
-     * @var \Toknot\Share\View\AnyTag
+     * @var Toknot\Share\View\AnyTag
      */
     protected $head;
     private static $layout = null;
@@ -152,28 +153,28 @@ abstract class View extends Object {
         if ($urlPart['path'] == $url && $curTime - $curVersion >= $checkSec) {
             return "{$url}?v=" . filemtime("{$docmentRoot}{$url}");
         } elseif ($urlPart['scheme'] == 'http' || $urlPart['scheme'] == 'https') {
-            $offset = Tookit::getTimezoneOffset(1);
+            $offset = Tookit::getTimezoneOffset(true);
             if ($curTime - $offset - $curVersion <= $checkSec) {
                 return "$url?v=$curVersion";
             }
             $header = '';
             if ($curVersion) {
-                $header = 'If-Modified-Since: ' . date('D, d M Y H:i:s e', $curVersion) . "\r\n";
+                $header = HttpTool::formatHeader('If-Modified-Since', HttpTool::formatDate($curVersion));
             }
-            $option = [$urlPart['scheme'] => ['method' => "HEAD", 'header' => $header]];
-            $wrapper = Tookit::getStreamWrappersData($url, $option);
-            list(, $statusCode) = explode(' ', $wrapper[0], 3);
+
+            $http = new HttpTool($url, 'HEAD', $header);
+
+            $statusCode = $http->getStatus();
             if ($statusCode == '304') {
                 return "$url?v=$curVersion";
             } elseif ($statusCode != 200) {
                 return $url;
             }
-            foreach ($wrapper as $header) {
-                if (strpos($header, 'Last-Modified')) {
-                    list(, $time) = explode(':', $header, 2);
-                    $curVersion = strtotime(trim($time));
-                    return "$url?v=$curVersion";
-                }
+
+            $m = $http->getHeader('Last-Modified');
+            if ($m) {
+                $curVersion = strtotime(trim($m));
+                return "$url?v=$curVersion";
             }
         }
         return $url;

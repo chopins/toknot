@@ -674,10 +674,10 @@ class Tookit extends Object {
 
     /**
      * 
-     * @param int $returnSec
+     * @param boolean $returnSec
      * @return int
      */
-    public static function getTimezoneOffset($returnSec = 0) {
+    public static function getTimezoneOffset($returnSec = false) {
         if ($returnSec) {
             return date('Z');
         }

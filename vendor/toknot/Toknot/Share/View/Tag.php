@@ -22,20 +22,20 @@ class Tag extends TagBulid {
 
     /**
      *
-     * @var \Toknot\Share\View\AnyTag;
+     * @var Toknot\Share\View\AnyTag;
      */
     protected static $body;
 
 
     /**
      *
-     * @var \Toknot\Share\View\AnyTag;
+     * @var Toknot\Share\View\AnyTag;
      */
     protected static $title = null;
 
     /**
      *
-     * @var \Toknot\Share\View\AnyTag;
+     * @var Toknot\Share\View\AnyTag;
      */
     protected static $head = null;
 
@@ -89,7 +89,7 @@ class Tag extends TagBulid {
     /**
      * add text to Tag
      * 
-     * @param \Toknot\Share\View\TagBulid $parentTag
+     * @param Toknot\Share\View\TagBulid $parentTag
      * @param string $text
      * @param Toknot\Share\View\TagBulid
      */
@@ -99,7 +99,7 @@ class Tag extends TagBulid {
 
     /**
      * 
-     * @param \Toknot\Share\View\TagBulid $parentTag
+     * @param Toknot\Share\View\TagBulid $parentTag
      * @param array $attr
      * @param string $text the textarea default contents string
      */
@@ -111,9 +111,9 @@ class Tag extends TagBulid {
 
     /**
      * 
-     * @param \Toknot\Share\View\TagBulid $parentTag
+     * @param Toknot\Share\View\TagBulid $parentTag
      * @param array $attr form tag attr or sub input tag
-     * @return \Toknot\Share\View\AnyTag
+     * @return Toknot\Share\View\AnyTag
      */
     public static function form(TagBulid $parentTag, $attr = []) {
         if (isset($attr['input']) && is_array($attr['input'])) {
@@ -129,7 +129,7 @@ class Tag extends TagBulid {
 
     /**
      * 
-     * @param \Toknot\Share\View\TagBulid $parentTag
+     * @param Toknot\Share\View\TagBulid $parentTag
      * @param string $src
      */
     public static function stylesheet(TagBulid $parentTag, $src) {
@@ -139,7 +139,7 @@ class Tag extends TagBulid {
 
     /**
      * 
-     * @param \Toknot\Share\View\TagBulid $parentTag
+     * @param Toknot\Share\View\TagBulid $parentTag
      * @param array $attr
      */
     public static function script(TagBulid $parentTag, $attr = []) {
@@ -170,7 +170,7 @@ class Tag extends TagBulid {
      *                                  'option3'=>['value=>3]
      *                                 ]
      *                       ]
-     * @return \Toknot\Share\View\Select
+     * @return Toknot\Share\View\Select
      */
     public static function select(TagBulid $parentTag, $attr) {
         $select = new Select($attr);

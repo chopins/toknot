@@ -43,7 +43,7 @@ abstract class TagBulid extends Object {
 
     /**
      *
-     * @var \Toknot\Share\View\Html;
+     * @var Toknot\Share\View\Html;
      */
     protected static $page;
 
@@ -168,7 +168,7 @@ abstract class TagBulid extends Object {
     /**
      * 
      * @param type $text
-     * @return \Toknot\Share\View\TagBulid
+     * @return Toknot\Share\View\TagBulid
      */
     public function pushText($text) {
         $obj = new Text($text);
