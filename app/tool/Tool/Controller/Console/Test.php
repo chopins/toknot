@@ -22,19 +22,7 @@ class Test {
      * @console test
      */
     public function __construct() {
-        $cnt = 1000;
-        $a = [];
-        for ($i = 0; $i < $cnt; $i++) {
-            $a[] = \Toknot\Boot\Tookit::numberId(14);
-            usleep(100);
-        }
-        $sum = 0;
-        foreach(array_count_values($a) as $n) {
-            if($n > 1) {
-                $sum++;
-            }
-        }
-        var_dump($sum/$cnt);
+        echo 'test';
     }
 
 }

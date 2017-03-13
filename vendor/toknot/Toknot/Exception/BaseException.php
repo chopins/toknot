@@ -125,6 +125,8 @@ class BaseException extends Exception {
         $str .= "<div><b>Throw Exception in file {$this->file} line {$this->line}</b></div>" . PHP_EOL;
         if (PHP_SAPI == 'cli') {
             $str .= 'Process ID:' . getmypid() . PHP_EOL;
+        } else {
+            $str .= 'Server IP:' . getenv('SERVER_ADDR') . PHP_EOL;
         }
 
         if (empty($this->traceArr)) {
