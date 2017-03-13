@@ -672,13 +672,37 @@ class Tookit extends Object {
         }
     }
 
-    public static function getTimezoneOffset($sec = 0) {
-        $timezone = new \DateTime(date_default_timezone_get());
-        $offset = $timezone->getOffset();
-        if ($sec) {
-            return $offset * 3600;
+    /**
+     * 
+     * @param int $returnSec
+     * @return int
+     */
+    public static function getTimezoneOffset($returnSec = 0) {
+        if ($returnSec) {
+            return date('Z');
         }
-        return $offset;
+        $number = date('P');
+        list($hour, $min) = explode(':', $number);
+        $sign = substr($number, 0, 1);
+        $hpad = substr($hour, 1, 1) * 10;
+        $mpad = substr($min, 0, 1) * 10;
+
+        $h = $hpad + substr($number, 2);
+        $m = $mpad + substr($min, 1) / 60;
+        return $sign . ($h + $m);
+    }
+
+    /**
+     * set timezone, support time offset hours
+     * 
+     * @param string $zone
+     */
+    public static function setTimeZone($zone) {
+        if (is_numeric($zone)) {
+            $zone = (int) $zone * -1;
+            $zone = 'ETC/GMT' . ($zone > 0 ? "+$zone" : "$zone");
+        }
+        date_default_timezone_set($zone);
     }
 
 }
