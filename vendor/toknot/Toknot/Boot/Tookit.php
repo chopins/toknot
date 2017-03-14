@@ -24,10 +24,24 @@ class Tookit extends Object {
     private static $incData = [];
     private static $shutdownFunction = null;
     private static $parseConfObject = null;
+    private static $phpfilter = true;
+    private static $phpSupportVar = [];
 
     const EQ_0 = 0;
     const LT_0 = -1;
     const GT_0 = 1;
+    const INPUT_GET = 'GET';
+    const INPUT_POST = 'POST';
+    const INPUT_COOKE = 'COOKE';
+    const INPUT_SERVER = 'SERVER';
+    const INPUT_ENV = 'ENV';
+    const FILTER_DEFAULT = 'FILTER_UNSAFE_RAW';
+    const FILTER_UNSAFE_RAW = 'FILTER_UNSAFE_RAW';
+    const FILTER_VALIDATE_EMAIL = 'FILTER_VALIDATE_EMAIL';
+    const FILTER_VALIDATE_INT = 'FILTER_VALIDATE_INT';
+    const FILTER_VALIDATE_FLOAT = 'FILTER_VALIDATE_FLOAT';
+    const FILTER_VALIDATE_URL = 'FILTER_VALIDATE_URL';
+    const FILTER_VALIDATE_IP = 'FILTER_VALIDATE_IP';
 
     public static function setParseConfObject($parseClass) {
         if ($parseClass) {
@@ -703,6 +717,154 @@ class Tookit extends Object {
             $zone = 'ETC/GMT' . ($zone > 0 ? "+$zone" : "$zone");
         }
         date_default_timezone_set($zone);
+    }
+
+    public static function disablePHPFilter() {
+        if (!self::$phpfilter) {
+            return;
+        }
+        self::$phpfilter = false;
+        self::$phpSupportVar['SERVER'] = $_SERVER;
+        self::$phpSupportVar['GET'] = $_GET;
+        self::$phpSupportVar['POST'] = $_POST;
+        self::$phpSupportVar['COOKIE'] = $_COOKIE;
+    }
+
+    public static function hasVar($type, $key) {
+        if (self::$phpfilter) {
+            $type = constant("INPUT_$type");
+            return filter_has_var($type, $key);
+        }
+        return isset(self::$phpSupportVar[$type][$key]);
+    }
+
+    public static function isEmail($string) {
+        if (strpos($value, '@') < 1) {
+            return false;
+        }
+        return preg_match('/^[a-z0-9]+([\._]?[a-z0-9]+)*@[a-z0-9]+([\.-]?[a-z]+)*$/i', $string);
+    }
+
+    public static function isIp($value) {
+        $ip4 = explode('.', $value);
+        if (count($ip4) == 4) {
+            foreach ($ip4 as $n) {
+                if (!is_numeric($n) || $n < 0 || $n > 255) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        $ip6 = explode(':', $value);
+        $bn = count($ip6);
+        if ($bn < 7 && $bn > 2) {
+            $zero = $iszero = $upzero = 0;
+            foreach ($ip6 as $n) {
+                if (empty($n)) {
+                    $zero ++;
+                    $iszero = 1;
+                } else {
+                    $iszero = 0;
+                }
+                if ($zero > 1 && !$upzero) {
+                    return false;
+                }
+                $upzero = $iszero;
+            }
+            return preg_match('/^[a-f0-9\:]+$/i', $value);
+        }
+        return false;
+    }
+
+    public static function isUrl($value) {
+        $urls = parse_url($value);
+        if(!$urls) {
+            return false;
+        }
+        if(!is_array($urls)) {
+            return false;
+        }
+        if(empty($urls['scheme']) || $urls['scheme'] != 'http' || $urls['scheme'] != 'https' ) {
+            return false;
+        }
+        if(empty($urls['host'])) {
+            return false;
+        }
+        return true;
+    }
+
+    public static function isFloat($value) {
+        if (is_float($value)) {
+            return true;
+        }
+        if (is_numeric($value) && strpos($value, '.') !== false) {
+            return true;
+        }
+        if (is_numeric($value) && $value > PHP_INT_MAX) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function isInt($value) {
+        if (is_int($value)) {
+            return true;
+        }
+        if (is_numeric($value) && strpos($value, '.') === false && $value <= PHP_INT_MAX) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function filter($type, $key, $filter = self::FILTER_DEFAULT) {
+        if (self::$phpfilter) {
+            $type = constant("INPUT_$type");
+            return filter_input($type, $key, constant($filter));
+        }
+        if (!isset(self::$phpSupportVar[$type][$key])) {
+            return null;
+        }
+        $value = self::$phpSupportVar[$type][$key];
+        switch ($filter) {
+
+            case self::FILTER_UNSAFE_RAW :
+                return $value;
+            case self::FILTER_VALIDATE_EMAIL:
+                if (self::isEmail($value)) {
+                    return $value;
+                }
+                return false;
+            case self::FILTER_VALIDATE_FLOAT:
+                if (self::isFloat($value)) {
+                    return (float) $value;
+                }
+                return false;
+            case self::FILTER_VALIDATE_INT:
+                if (self::isInt($value)) {
+                    return (int) $value;
+                }
+                return false;
+            case self::FILTER_VALIDATE_IP:
+                if (self::isIp($value)) {
+                    return $value;
+                }
+                return false;
+            case self::FILTER_VALIDATE_URL:
+                if (self::isUrl($value)) {
+                    return $value;
+                }
+                return false;
+        }
+    }
+
+    public static function env($key) {
+        if (self::hasVar(self::INPUT_SERVER, $key)) {
+            return self::filter(self::INPUT_SERVER, $key);
+        }
+        if (self::hasVar(self::INPUT_ENV, $key)) {
+            return self::filter(self::INPUT_ENV, $key);
+        }
+        return false;
     }
 
 }

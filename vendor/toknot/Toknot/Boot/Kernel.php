@@ -84,10 +84,15 @@ final class Kernel extends Object {
 
     private function setRuntimeEnv($parseClass = null) {
         $this->initRuntime();
+
         Tookit::setParseConfObject($parseClass);
         $this->cfg = $this->loadConfig();
 
-        if ($this->cfg->app->short_except_path) {
+        if (!extension_loaded('filter')) {
+            Tookit::disablePHPFilter();
+        }
+
+        if ($this->cfg->find('app.short_except_path')) {
             Logs::$shortPath = strlen(dirname(dirname(TKROOT)));
         }
         $this->importVendor();

@@ -10,6 +10,8 @@
 
 namespace Toknot\Share;
 
+use Toknot\Boot\Tookit;
+
 /**
  * StreamKit
  *
@@ -46,6 +48,22 @@ class HttpTool {
 
     public static function formatHeader($field, $value) {
         return "$field: $value\r\n";
+    }
+
+    public static function getClientIp($proxyField = null) {
+        if ($proxyField) {
+            $field = 'HTTP_' . strtoupper($proxyField);
+            return Tookit::env($field);
+        }
+
+        if (($ip = Tookit::env('HTTP_X_REAL_IP'))) {
+            return$ip;
+        }
+        if (($ip = Tookit::env('HTTP_X_FORWARDED_FOR'))) {
+            list($ip) = explode(',', $ip);
+            return trim($ip);
+        }
+        return Tookit::env('REMOTE_ADDR');
     }
 
 }

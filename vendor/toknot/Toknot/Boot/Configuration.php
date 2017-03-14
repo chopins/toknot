@@ -56,13 +56,26 @@ class Configuration extends Object {
         return new static($cfg);
     }
 
-    public static function getItem($cfg, array $keyc) {
-        $cur = $cfg;
-        foreach ($keyc as $k) {
-            if (empty($k)) {
-                break;
+
+    /**
+     * not found return null else return the key value
+     * 
+     * <code>
+     * $cfg->find('app.app_ns')
+     * </code>
+     * 
+     * @param string $key
+     * @return mixed
+     */
+    public function find($key) {
+        $ks = explode('.', $key);
+        $cur = $this->iteratorArray;
+        foreach ($ks as $k) {
+            if (isset($cur[$k])) {
+                $cur = $cur[$k];
+            } else {
+                return null;
             }
-            $cur = $cur[$k];
         }
         return $cur;
     }
