@@ -11,7 +11,6 @@
 namespace Toknot\Share\View;
 
 use Toknot\Share\View\Tag;
-use Toknot\Share\View\View;
 use Toknot\Exception\BaseException;
 
 /**

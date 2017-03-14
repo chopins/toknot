@@ -57,15 +57,10 @@ abstract class View extends Object {
         $this->layoutIns->buildHtml();
         $this->head = $this->layoutIns->getHead();
         $this->body = $this->layoutIns->getBody();
+        $this->page();
     }
 
-    final public function setHead(Layout $display) {
-        $this->head = $display->getHead();
-    }
-
-    final public function setBody(Layout $display) {
-        $this->body = $display->getBody();
-    }
+    abstract public function page();
 
     final public static function setTitle($title) {
         self::$title = $title;
