@@ -22,6 +22,10 @@ class ParseView {
     private $nodes;
 
     /**
+     * create view from html file
+     * 
+     * parsehtml -h your_path/view.html -o your_path/view.php
+     * 
      * @console parsehtml
      */
     public function createView() {
@@ -113,7 +117,7 @@ class ParseView {
 
     public function generationView($tagList) {
         $file = Kernel::single()->getOption('-o');
-        $name = basename($file, '.php');
+        $name = $file ? basename($file, '.php') : 'DefaultView';
         $code = <<<EOF
 <?php
 
@@ -125,7 +129,7 @@ class ParseView {
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Admin\View\Lib;
+namespace View;
 
 use Toknot\Share\View\View;
 use Toknot\Share\View\Input;
@@ -141,16 +145,25 @@ $tagList;
     }
 }
 EOF;
-        echo $code;
-        //file_put_contents($file, $code);
+        if ($file) {
+            file_put_contents($file, $code);
+        } else {
+            echo $code;
+        }
     }
 
     /**
+     * generation base layout class
+     * 
+     * layout your_path/layout.php
      * 
      * @console layout
      */
     public function generationLayout() {
         $file = Kernel::single()->getOption(2);
+        if(!$file) {
+            throw new BaseException('must give a file path');
+        }
         $name = basename($file, '.php');
         $code = <<<EOF
 <?php
