@@ -22,20 +22,25 @@ use Zend\Reflection\Docblock;
 class Route {
 
     public $appNs;
+    private $confgType = 'ini';
 
     /**
      * generate route ini based on controller class
      * 
-     * route your_app_dir_path
-     * route your_app_dir_path -o output_your_route_ini_path.ini
+     * route -a your_app_dir_path
+     * route -a your_app_dir_path -o output_your_route_ini_path.ini -t yml|ini
      * 
      * @console route
      */
     public function __construct() {
-        $path = Kernel::single()->getOption(2);
+        $path = Kernel::single()->getOption('-a');
         $output = Kernel::single()->getOption('-o');
+        $confgType = Kernel::single()->getOption('-t');
+        if ($confgType == 'yml') {
+            $this->confgType = 'yml';
+        }
         $cmd = new CommandLine;
-        if (!is_dir($path)) {
+        if (empty($path) || !is_dir($path)) {
             $cmd->error("must give app dir");
         }
         $apppath = realpath($path);
@@ -55,6 +60,22 @@ class Route {
         $path = Import::transformNamespaceToPath($appNs, $dir);
         $d = dir($path);
         $ini = '';
+        if ($this->confgType == 'yml') {
+            $configTpl = <<<EOF
+%s :
+    path : %s
+    controller : %s%s
+    method : %s
+EOF;
+        } else {
+            $configTpl = <<<EOF
+[%s]
+path = %s
+controller = %s%s
+method = %s
+EOF;
+        }
+        $configTpl .= PHP_EOL;
         while (false !== ($f = $d->read())) {
             if ($f == '.' || $f == '..') {
                 continue;
@@ -71,8 +92,9 @@ class Route {
 
             $rf = new \ReflectionClass($class);
             $ms = $rf->getMethods();
+            $method = 'GET';
             foreach ($ms as $m) {
-                $routepath = $this->parseDocComment($m);
+                $routepath = $this->parseDocComment($m, $rm);
                 if ($routepath !== false) {
                     $method = $m->getName();
                     $cls = str_replace($this->appNs, '', $class);
@@ -80,13 +102,7 @@ class Route {
                     $cont = str_replace(PHP_NS, '.', $cls);
                     $routename = strtolower(str_replace(PHP_NS, '-', $cls));
                     $mp = $m->isConstructor() || $m->isDestructor() ? '' : ":$method";
-                    $ini .= <<<EOF
-[$routename]
-path = $routepath
-controller = {$cont}{$mp}
-method = GET
-
-EOF;
+                    $ini .= sprintf($configTpl, $routename, $routepath, $cont, $mp, $rm);
                 }
             }
         }
@@ -101,12 +117,16 @@ EOF;
      * @param int $maxlength
      * @return boolean|string
      */
-    public function parseDocComment($m) {
+    public function parseDocComment($m, &$method = 'GET') {
         $docs = $m->getDocComment();
+        $tagType = ['GET' => 'route', 'CLI' => 'console', 'POST' => 'post', 'GET' => 'get'];
         if ($docs) {
             $docblock = new Docblock($docs);
-            if ($docblock->hasTag('route')) {
-                return $docblock->getTag('route')->getDescription();
+            foreach ($tagType as $rm => $tag) {
+                if ($docblock->hasTag($tag)) {
+                    $method = $rm;
+                    return $docblock->getTag($tag)->getDescription();
+                }
             }
         }
         return false;

@@ -7,25 +7,21 @@
 * `page()` 创建页面内容
 
 方法文档
-* `setHead($layout)` 将布局中的head标签实例保存到`$this->head`属性中
-* `setBody(Layout $display)` 将布局中的body标签实例保存到`$this->body`属性中
-* `static setTitle($title)`  设置页面标题
-* `static setLayout($layout)` 设置页面布局类
-* `layout()` 返回当前页面布局类
+* `__construct(Toknot\Share\View\Layout $layout, $param = [])` 
 * `title()` 返回当前设置的页面标题
 * `getLayoutInstance()` 返回布局类实例
-* `static html($param = [])` 返回页面HTML文档，`$param` 页面参数
+* `static html(Toknot\Share\View\Layout $layout,$param = [])` 返回页面HTML文档，`$param` 页面参数
 * `route($route, $params = [])` 生成路由URL
 * `enableCsrf($form)`   在`$form`表单中激活csrf字段
 
-魔术方法：未定义方法调用将返回同名标签类实例
+魔术方法：未定义方法调用将返回同名标签构建类实例
 
 ####`Toknot\Share\View\Layout`
 需要在布局类中实现以下方法：
 * `head()` 本方法设置页面head头信息
 以下方法为可选实现：
 * `html()` 本方法返回html标签属性
-* `docType` 设置页面doc版本
+* `docType()` 设置页面doc版本
 * `body()` 本方法返回body标签属性
 
 ####`Toknot\Share\View\Tag`
@@ -87,13 +83,29 @@
 
 ####`Toknot\Share\View\TagBulid`
 方法如下：
-`static addSingleTag($tagName)` 添加单边标签，例如`<br />`
-`removeClass($class)` 移出标签的一个CSS样式
-`removeStyle($key)` 移出标签的style样式定义
-`pushText($text)` 向标签添加文本
-`push($tag)` 向标签添加子标签
-`delTag($tag)`删除子标签
-`addAttr($attr, $value)` 给标签添加属性
+* `static $srcDefaultHost` 资源URI默认和host
+* `static addSingleTag($tagName)` 添加单边标签，例如`<br />`
+* `removeClass($class)` 移出标签的一个CSS样式
+* `addClass($class)`  添加样式
+* `addStyle($key, $v)`  添加style属性
+* `cssStyle($style)`  添加文本style属性
+* `innerHTML()`   返回子标签html
+* `getTags()`  返回标签html
+* `removeStyle($key)` 移出标签的style样式定义
+* `pushText($text)` 向标签添加文本
+* `push($tag)` 向标签添加子标签
+* `delTag($tag)`删除子标签
+* `addAttr($attr, $value)` 给标签添加属性
+* `addHost($srcHost = '')` 给资源URI添加host
+* `addVer($ver = false)` 给资源URI添加版本
+* `setTitle($title)` 添加title属性
+* `addName($value)` 添加name属性
+* `addId($value)` 添加ID属性
 
+####创建Layout
+命令行中执行: `php app/tool/index.php layout output_file_path.php` 将生成一个简单的layout类
 
+####将HTML文件转换成 view类
+命令行中执行: `php app/tool/index.php parsehtml -h your_html.html -o your_view_class.php 将会转换html为 view 类代码
 
+####其他详细用法见`app/admin`应用

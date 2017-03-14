@@ -56,6 +56,7 @@ abstract class TagBulid extends Object {
     protected $childStack;
     protected static $singleTagList = ['br', 'meta', 'link', 'input', 'img',
         'base', 'param', 'source', 'track'];
+    public static $srcDefaultHost = '';
 
     protected function initTag($attr = []) {
         if (empty($this->tagName)) {
@@ -70,10 +71,6 @@ abstract class TagBulid extends Object {
 
     public static function addSingleTag($tagName) {
         array_push(self::$singleTagList, strtolower($tagName));
-    }
-
-    final public function autoHost() {
-        $this->disableAutoHost = false;
     }
 
     public function end() {
@@ -239,6 +236,7 @@ abstract class TagBulid extends Object {
             return $this;
         }
         $uri = $this->attr[$this->srckey];
+        $srcHost = $srcHost ? $srcHost : (self::$srcDefaultHost ? self::$srcDefaultHost : false);
         if (!$srcHost) {
             list($pro) = explode('/', getenv('SERVER_PROTOCOL'));
             $this->attr[$this->srckey] = strtolower($pro) . "://" . getenv('SERVER_NAME') . $uri;
@@ -248,7 +246,7 @@ abstract class TagBulid extends Object {
     }
 
     final public function addVer($ver = false) {
-        if ($this->srckey && $ver) {
+        if ($this->srckey && $ver !== false) {
             $this->attr[$this->srckey] = $this->attr[$this->srckey] . '?v=' . $ver;
         }
         return $this;

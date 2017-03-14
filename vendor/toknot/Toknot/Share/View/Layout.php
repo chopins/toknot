@@ -44,8 +44,6 @@ abstract class Layout {
      */
     private $head;
     private $title;
-    private $srcServer = '';
-    private $cssServer = '';
 
     /**
      * 
@@ -54,14 +52,6 @@ abstract class Layout {
      */
     final public function __construct($param = []) {
         $this->param = $param;
-    }
-    
-    final public function setSrcServer($address) {
-        $this->srcServer = $address;
-    }
-    
-    final public function setCssServer($address) {
-        $this->cssServer = $address;
     }
 
     final public function buildHtml() {
@@ -121,9 +111,8 @@ abstract class Layout {
     /**
      * set head tag
      * 
-     * @param $headTag  Toknot\Share\View\AnyTag
      */
-    abstract public function head($headTag);
+    abstract public function head();
 
     /**
      * set body tag attr
