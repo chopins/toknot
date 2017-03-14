@@ -44,18 +44,19 @@ abstract class View extends Object {
      * @var Toknot\Share\View\AnyTag
      */
     protected $head;
-    private static $layout = null;
     private static $title = '';
 
-    final public function __construct($param = []) {
+    final public function __construct(Layout $layout, $param = []) {
         $this->param = $param;
 
-        $layoutClass = $this->layout();
-        if (!is_subclass_of($layoutClass, 'Toknot\Share\View\Layout')) {
+        if (!$layout instanceof Layout) {
+            $layoutClass = get_class($layout);
             throw new BaseException("$layoutClass must is sub of Toknot\Share\View\Layout");
         }
-        $this->layoutIns = new $layoutClass($this, $param);
+        $this->layoutIns = $layout;
         $this->layoutIns->buildHtml();
+        $this->head = $this->layoutIns->getHead();
+        $this->body = $this->layoutIns->getBody();
     }
 
     final public function setHead(Layout $display) {
@@ -66,42 +67,15 @@ abstract class View extends Object {
         $this->body = $display->getBody();
     }
 
-    /**
-     * bulid main content of the html page
-     */
-    abstract public function page();
-
     final public static function setTitle($title) {
         self::$title = $title;
     }
 
-    final public static function setLayout($layout) {
-        self::$layout = $layout;
-    }
-
     /**
-     * 
-     * @return string
-     * @throws BaseException
+     * set title
      */
-    final public function layout() {
-        if (!empty(self::$layout)) {
-            return self::$layout;
-        }
-        $class = get_called_class();
-        throw new BaseException("View $class of layout not set");
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    final public function title() {
-        if (!empty(self::$title)) {
-            return self::$title;
-        }
-        $class = get_called_class();
-        return "View $class of title not set";
+    final public function title($title) {
+        $this->layoutIns->title($title);
     }
 
     /**
@@ -118,8 +92,8 @@ abstract class View extends Object {
      * @param array $param
      * @return string
      */
-    final public static function html($param = []) {
-        $ins = new static($param);
+    final public static function html($layout, $param = []) {
+        $ins = new static($layout, $param);
         return $ins->layoutIns->getHtmlDoc();
     }
 
@@ -159,10 +133,10 @@ abstract class View extends Object {
             }
             $header = '';
             if ($curVersion) {
-                $header = HttpTool::formatHeader('If-Modified-Since', HttpTool::formatDate($curVersion));
+                $header = httpTool::formatHeader('If-Modified-Since', HttpTool::formatDate($curVersion));
             }
 
-            $http = new HttpTool($url, 'HEAD', $header);
+            $http = new httpTool($url, 'HEAD', $header);
 
             $statusCode = $http->getStatus();
             if ($statusCode == '304') {

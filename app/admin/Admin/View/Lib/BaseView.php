@@ -33,7 +33,6 @@ abstract class BaseView extends View {
 
     final public function init() {
         $this->layout = $this->getLayoutInstance();
-        $this->layout->getBody();
     }
 
     final public function page() {

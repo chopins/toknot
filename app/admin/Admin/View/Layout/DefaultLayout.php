@@ -40,8 +40,8 @@ class DefaultLayout extends Layout {
         return ['version'=>'5'];
     }
    
-    public function head($headTag) {
-        $this->headTag = $headTag;
+    public function head() {
+        $this->headTag = $this->getHead();
         Tag::meta($this->headTag, ['charset' => 'utf-8']);
         Tag::meta($this->headTag,
                 ['http-equiv' => 'Content-Language', 'content' => 'zh']);

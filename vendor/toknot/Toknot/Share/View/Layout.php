@@ -44,20 +44,14 @@ abstract class Layout {
      * @var \Toknot\Share\View\AnyTag
      */
     private $head;
-
-    /**
-     *
-     * @var \Event\View\Layout 
-     */
-    private $tpl;
+    private $title;
 
     /**
      * 
      * @param \Event\View\Layout $tpl
      * @param array $param
      */
-    final public function __construct(View $tpl, $param = []) {
-        $this->tpl = $tpl;
+    final public function __construct($param = []) {
         $this->param = $param;
     }
 
@@ -67,15 +61,8 @@ abstract class Layout {
 
         Tag::html($htmlOption, $docType);
         $this->head = Tag::head();
-        $this->tpl->setHead($this);
-        $this->head($this->head);
-
         $this->setPageTitle();
-
         $this->setBodyAttributes();
-
-        $this->tpl->setBody($this);
-        $this->page();
     }
 
     final private function setBodyAttributes() {
@@ -87,14 +74,8 @@ abstract class Layout {
         $this->body = Tag::body($body);
     }
 
-    final private function setPageTitle() {
-        $text = $this->title();
-
-        if (!is_scalar($text)) {
-            $class = get_called_class($this->tpl);
-            throw new BaseException("$class::title() must return title string");
-        }
-        Tag::title($text);
+    final public function setPageTitle() {
+        $this->title = Tag::title('');
     }
 
     /**
@@ -124,6 +105,10 @@ abstract class Layout {
         return $this->head;
     }
 
+    final public function title($text) {
+        $this->title->pushText($text);
+    }
+
     /**
      * set head tag
      * 
@@ -151,19 +136,6 @@ abstract class Layout {
 
     public function docType() {
         return ['version' => 5];
-    }
-
-    final protected function page() {
-        $this->tpl->page();
-    }
-
-    /**
-     * set title string
-     * 
-     * @return string
-     */
-    final protected function title() {
-        return $this->tpl->title();
     }
 
 }

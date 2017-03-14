@@ -24,7 +24,7 @@ class Route {
     public $appNs;
 
     /**
-     * generate route ini
+     * generate route ini based on controller class
      * 
      * route your_app_dir_path
      * route your_app_dir_path -o output_your_route_ini_path.ini

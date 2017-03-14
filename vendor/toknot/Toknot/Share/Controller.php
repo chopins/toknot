@@ -89,8 +89,8 @@ class Controller extends Object {
         if (empty($this->layout)) {
             $this->layout = $appCfg['default_layout'];
         }
-        $viewClass::setLayout($this->layout);
-        $html = $viewClass::html($this->viewParams);
+        $layout = new $this->layout($this->viewParams);
+        $html = $viewClass::html($layout, $this->viewParams);
 
         if ($return) {
             return $html;
@@ -124,6 +124,7 @@ class Controller extends Object {
     final public function header($header) {
         $this->header[] = $header;
     }
+
     /**
      * return the controller response content
      * 
