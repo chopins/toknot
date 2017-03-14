@@ -47,10 +47,10 @@ class DefaultLayout extends Layout {
                 ['http-equiv' => 'Content-Language', 'content' => 'zh']);
         Tag::meta($this->headTag,
                 ['name' => 'viewport', 'content' => 'width=device-width']);
-        Tag::stylesheet($this->headTag, '/static/pure.css');
-        Tag::stylesheet($this->headTag, '/static/event.css');
+        Tag::stylesheet($this->headTag, '/static/pure.css')->addHost()->addVer('0.1');
+        Tag::stylesheet($this->headTag, '/static/event.css')->addHost()->addVer('0.1');
 
-        Tag::script($this->headTag, ['src' => '/static/toknot.js']);
+        Tag::script($this->headTag, ['src' => '/static/toknot.js'])->addHost()->addVer('0.1');
     }
 
     public function body() {

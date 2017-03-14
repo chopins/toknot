@@ -115,38 +115,4 @@ abstract class View extends Object {
         Kernel::single()->routerIns()->url($route, $params);
     }
 
-    public function addVersion($url, &$curVersion = 0, $docmentRoot = '', $checkSec = 600) {
-        $urlPart = parse_url($url);
-        Tookit::coalesce($urlPart, 'scheme');
-        $curTime = time();
-        if ($urlPart['path'] == $url && $curTime - $curVersion >= $checkSec) {
-            return "{$url}?v=" . filemtime("{$docmentRoot}{$url}");
-        } elseif ($urlPart['scheme'] == 'http' || $urlPart['scheme'] == 'https') {
-            $offset = Tookit::getTimezoneOffset(true);
-            if ($curTime - $offset - $curVersion <= $checkSec) {
-                return "$url?v=$curVersion";
-            }
-            $header = '';
-            if ($curVersion) {
-                $header = httpTool::formatHeader('If-Modified-Since', HttpTool::formatDate($curVersion));
-            }
-
-            $http = new httpTool($url, 'HEAD', $header);
-
-            $statusCode = $http->getStatus();
-            if ($statusCode == '304') {
-                return "$url?v=$curVersion";
-            } elseif ($statusCode != 200) {
-                return $url;
-            }
-
-            $m = $http->getHeader('Last-Modified');
-            if ($m) {
-                $curVersion = strtotime(trim($m));
-                return "$url?v=$curVersion";
-            }
-        }
-        return $url;
-    }
-
 }

@@ -40,6 +40,8 @@ abstract class TagBulid extends Object {
     protected $tagName = '';
     protected $tagStyle = [];
     protected $tagClass = [];
+    protected $attr = [];
+    private $srckey = null;
 
     /**
      *
@@ -70,7 +72,12 @@ abstract class TagBulid extends Object {
         array_push(self::$singleTagList, strtolower($tagName));
     }
 
+    final public function autoHost() {
+        $this->disableAutoHost = false;
+    }
+
     public function end() {
+        $this->buildAttr();
         $this->buildClass();
         $this->buildStyle();
         if ($this->singleTag) {
@@ -138,6 +145,16 @@ abstract class TagBulid extends Object {
         $this->html .= " style=\"$style\"";
     }
 
+    protected function buildAttr() {
+        foreach ($this->attr as $attr => $value) {
+            if (is_bool($value)) {
+                $value = $value ? 'true' : 'false';
+            }
+            $v = addcslashes($value, '\'\\');
+            $this->html .= " $attr=\"$v\"";
+        }
+    }
+
     public function addStyle($key, $v) {
         $this->tagStyle[$key] = $v;
         return $this;
@@ -200,11 +217,9 @@ abstract class TagBulid extends Object {
     }
 
     public function addAttr($attr, $value) {
-        if (is_bool($value)) {
-            $value = $value ? 'true' : 'false';
-        }
-        $v = addcslashes($value, '\'\\');
-        $this->html .= " $attr=\"$v\"";
+        $this->srckey = $attr == 'src' ? 'src' : ($attr == 'href' ? 'href' : null);
+        $this->attr[$attr] = $value;
+        return $this;
     }
 
     public function addId($value) {
@@ -217,6 +232,26 @@ abstract class TagBulid extends Object {
 
     public function setTitle($title) {
         $this->addAttr('title', $title);
+    }
+
+    final public function addHost($srcHost = '') {
+        if (!$this->srckey) {
+            return $this;
+        }
+        $uri = $this->attr[$this->srckey];
+        if (!$srcHost) {
+            list($pro) = explode('/', getenv('SERVER_PROTOCOL'));
+            $this->attr[$this->srckey] = strtolower($pro) . "://" . getenv('SERVER_NAME') . $uri;
+        }
+        $this->attr[$this->srckey] = "$srcHost$uri";
+        return $this;
+    }
+
+    final public function addVer($ver = false) {
+        if ($this->srckey && $ver) {
+            $this->attr[$this->srckey] = $this->attr[$this->srckey] . '?v=' . $ver;
+        }
+        return $this;
     }
 
 }
