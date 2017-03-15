@@ -7,6 +7,7 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
+
 use Toknot\Boot\Kernel;
 use Toknot\Share\CommandLine;
 use Toknot\Boot\Tookit;
