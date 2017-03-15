@@ -28,6 +28,7 @@ class Test {
     }
 
     public function check() {
+        ;
         eval('$v = get_defined_vars();$f = function($k) use($v) { return array_key_exists($k,$v);};');
         return $f;
     }

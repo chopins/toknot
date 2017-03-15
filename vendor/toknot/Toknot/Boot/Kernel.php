@@ -16,6 +16,7 @@ use Toknot\Boot\Object;
 use Toknot\Boot\Configuration;
 use Toknot\Exception\BaseException;
 use Toknot\Exception\ShutdownException;
+use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
 
 final class Kernel extends Object {
@@ -26,7 +27,6 @@ final class Kernel extends Object {
     private $import;
     private $isCLI = false;
     private $cmdOption = [];
-    private $pipeRet = null;
     private $promiseExecCallable = '';
     private $promiseExecStat = true;
     private $confgType = 'ini';
@@ -404,23 +404,25 @@ final class Kernel extends Object {
      * will start new pipe
      * 
      * <code>
-     * $this->pipe('callable1',$arg)->pipe('callable2)->pipe('callable3');
+     * $c = $this->pipe('callable1',$arg)->callable2()->callable3()->result();
      * //above code same below
      * $a = callable1($arg); 
      * $b = callable2($a); 
      * $c = callable3($b); 
+     * 
+     * $c = $this->pipe('callable1',$arg)->callable2($obj)->callable3($obj2)->result();
+     * $a = callable1($arg);
+     * $b = $obj->callable2($a);
+     * $c = $obj2->callable3($b);
+     *
      * </code>
      * 
      * @param callable $callable
      * @param array $argv
-     * @return Toknot\Boot\Kernel
+     * @return Toknot\Boot\Pipe
      */
     public function pipe($callable, $argv = []) {
-        if (empty($argv) && $this->pipeRet) {
-            $argv[] = $this->pipeRet;
-        }
-        $this->pipeRet = self::callFunc($callable, $argv);
-        return $this;
+        return new Pipe($callable, $argv);
     }
 
     /**
