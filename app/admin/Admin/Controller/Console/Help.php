@@ -51,7 +51,7 @@ class Help {
         foreach ($message as $line) {
             $prefix = "php $script ";
             $lineMsg = $prefix . str_pad($line[0], $maxlength) . $line[1];
-            Logs::colorMessage($lineMsg, 'white');
+            Logs::colorMessage($lineMsg, 'green');
             $prefixSpace = str_repeat(' ', strlen($prefix));
 
             Logs::colorMessage($prefixSpace.str_replace("\n", PHP_EOL.$prefixSpace, $line[2]));
