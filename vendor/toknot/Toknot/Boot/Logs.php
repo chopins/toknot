@@ -15,6 +15,7 @@ use Toknot\Boot\Tookit;
 class Logs {
 
     public static $shortPath = 0;
+    private static $supportColor = null;
 
     const COLOR_BLACK = 188;
     const COLOR_RED = 190;
@@ -104,7 +105,10 @@ class Logs {
      */
     public static function addCLIColor($str, $color) {
         $mask2 = 1 << 7;
-        if (empty(Tookit::env('COLORTERM'))) {
+        if (self::$supportColor == null) {
+            self::$supportColor = isset(Tookit::env('COLORTERM'));
+        }
+        if (!self::$supportColor) {
             return $str;
         }
         if (!is_numeric($color) && is_string($color)) {

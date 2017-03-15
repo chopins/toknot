@@ -21,8 +21,14 @@ class Test {
      */
     public function __construct() {
         $a = null;
+
+        $f = $this->check();
         
-        var_dump(array_key_exists('a',get_defined_vars()));
+        var_dump($f('a'));
     }
 
+    public function check() {
+        eval('$v = get_defined_vars();$f = function($k) use($v) { return array_key_exists($k,$v);};');
+        return $f;
+    }
 }
