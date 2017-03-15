@@ -1,4 +1,4 @@
-＃ 控制器数据库Model文档
+# 控制器数据库Model文档
 
 ## 控制器父类 Toknot\Share\Controller
 
