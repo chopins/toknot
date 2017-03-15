@@ -724,16 +724,19 @@ class Tookit extends Object {
             return;
         }
         self::$phpfilter = false;
-        self::$phpSupportVar['SERVER'] = $_SERVER;
         self::$phpSupportVar['GET'] = $_GET;
         self::$phpSupportVar['POST'] = $_POST;
         self::$phpSupportVar['COOKIE'] = $_COOKIE;
+        self::$phpSupportVar['ENV'] = $_ENV;
     }
 
-    public static function hasVar($type, $key) {
+    public static function isExternal($type, $key) {
         if (self::$phpfilter) {
             $type = constant("INPUT_$type");
             return filter_has_var($type, $key);
+        }
+        if ($type == self::INPUT_SERVER) {
+            return getenv($key, true) ? true : false;
         }
         return isset(self::$phpSupportVar[$type][$key]);
     }
@@ -778,16 +781,16 @@ class Tookit extends Object {
 
     public static function isUrl($value) {
         $urls = parse_url($value);
-        if(!$urls) {
+        if (!$urls) {
             return false;
         }
-        if(!is_array($urls)) {
+        if (!is_array($urls)) {
             return false;
         }
-        if(empty($urls['scheme']) || $urls['scheme'] != 'http' || $urls['scheme'] != 'https' ) {
+        if (empty($urls['scheme']) || $urls['scheme'] != 'http' || $urls['scheme'] != 'https') {
             return false;
         }
-        if(empty($urls['host'])) {
+        if (empty($urls['host'])) {
             return false;
         }
         return true;
@@ -824,11 +827,9 @@ class Tookit extends Object {
         if (!isset(self::$phpSupportVar[$type][$key])) {
             return null;
         }
-        $value = self::$phpSupportVar[$type][$key];
-        switch ($filter) {
 
-            case self::FILTER_UNSAFE_RAW :
-                return $value;
+        $value = $type == self::INPUT_SERVER ? getenv($key) : self::$phpSupportVar[$type][$key];
+        switch ($filter) {
             case self::FILTER_VALIDATE_EMAIL:
                 if (self::isEmail($value)) {
                     return $value;
@@ -854,17 +855,14 @@ class Tookit extends Object {
                     return $value;
                 }
                 return false;
+            case self::FILTER_UNSAFE_RAW:
+            default:
+                return $value;
         }
     }
 
     public static function env($key) {
-        if (self::hasVar(self::INPUT_SERVER, $key)) {
-            return self::filter(self::INPUT_SERVER, $key);
-        }
-        if (self::hasVar(self::INPUT_ENV, $key)) {
-            return self::filter(self::INPUT_ENV, $key);
-        }
-        return false;
+        return getenv($key, true);
     }
 
 }

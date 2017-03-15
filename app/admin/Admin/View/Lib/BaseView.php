@@ -49,7 +49,7 @@ abstract class BaseView extends View {
     }
 
     public function showExecTime() {
-        $execTime = 'Exec Time:' . (microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']);
+        $execTime = 'Exec Time:' . (microtime(true) - Tookit::env('REQUEST_TIME_FLOAT'));
         $this->p($this->layout->right)->pushText($execTime);
     }
 

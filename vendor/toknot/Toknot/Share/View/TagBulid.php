@@ -238,8 +238,8 @@ abstract class TagBulid extends Object {
         $uri = $this->attr[$this->srckey];
         $srcHost = $srcHost ? $srcHost : (self::$srcDefaultHost ? self::$srcDefaultHost : false);
         if (!$srcHost) {
-            list($pro) = explode('/', getenv('SERVER_PROTOCOL'));
-            $this->attr[$this->srckey] = strtolower($pro) . "://" . getenv('SERVER_NAME') . $uri;
+            list($pro) = explode('/', getenv('SERVER_PROTOCOL',true));
+            $this->attr[$this->srckey] = strtolower($pro) . "://" . getenv('SERVER_NAME',true) . $uri;
         }
         $this->attr[$this->srckey] = "$srcHost$uri";
         return $this;

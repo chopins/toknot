@@ -186,7 +186,7 @@ class Logs {
 
     public static function opeateArg($args, &$str) {
         $argc = count($args) - 1;
-        
+
         foreach ($args as $i => $arg) {
             if (is_null($arg)) {
                 continue;
@@ -214,7 +214,6 @@ class Logs {
             }
             $str .= '</span>';
         }
-
     }
 
     /**

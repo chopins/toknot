@@ -22,16 +22,9 @@ class Test {
      * @console test
      */
     public function __construct() {
-        $cmd = new CommandLine;
-        $cmd->autoCompletion(function($re) use($cmd) {
-            $cmd->newline();
-            echo 'test';
-            $cmd->newline();
-        });
-        $cmd->interactive(function() use($cmd) {
-           
-        });
-        
+        foreach ($_SERVER as $k => $v) {
+            echo $k . '  |  ' . (filter_has_var(INPUT_SERVER, $k) ? 'yes' : 'no') . PHP_EOL;
+        }
     }
 
 }

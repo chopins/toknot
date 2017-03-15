@@ -118,7 +118,7 @@ class BaseException extends Exception {
             $str .= str_repeat('=', 20) . PHP_EOL;
         }
         $str .= '<div>';
-        if (PHP_SAPI == 'cli' && !empty($_SERVER['COLORTERM'])) {
+        if (PHP_SAPI == 'cli' && !empty(getenv('COLORTERM',true))) {
             $this->message = Logs::addCLIColor($this->message, Logs::COLOR_RED);
         }
         $str .= "<p>{$this->message}</p>" . PHP_EOL;
@@ -126,7 +126,7 @@ class BaseException extends Exception {
         if (PHP_SAPI == 'cli') {
             $str .= 'Process ID:' . getmypid() . PHP_EOL;
         } else {
-            $str .= 'Server IP:' . getenv('SERVER_ADDR') . PHP_EOL;
+            $str .= 'Server IP:' . getenv('SERVER_ADDR',true) . PHP_EOL;
         }
 
         if (empty($this->traceArr)) {
