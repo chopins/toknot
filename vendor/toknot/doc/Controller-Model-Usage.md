@@ -1,8 +1,8 @@
-＃控制器数据库Model文档
+＃ 控制器数据库Model文档
 
-##控制器父类 Toknot\Share\Controller
+## 控制器父类 Toknot\Share\Controller
 
-###｀Toknot\Share\Controller｀方法列表：
+### ｀Toknot\Share\Controller｀方法列表：
 
 * `model($tableName)`  实例化一个表model类，传入表名或model类名, 数据库表名字中的下划线将会被视为单词分割，然后大写首字母，并去掉下划线。model类名字不需要包括应用的命名空间和视图的命名空间，点会被视为命名空间名字分割线，例如：`user_info`表会获得`AppNs\ModelNs\UserInfo`类的实例。`call.user.info_ext`将会获得`AppNs\ModelNs\Call\User\Info_ext`的实例
 * `setTitle($title)`  设置页面的标题
@@ -19,7 +19,7 @@
 * `checkCsrf()`  校验CSRF值
 * `v($key, $value)`  设置视图内部变量
 
-##Model操作方法
+## Model操作方法
 
 * `getTableInfo()` 获取当前Model指定表的结构信息
 * `getLastSql()`  获取最后执行的SQL语句

@@ -1,4 +1,4 @@
-#The main config document
+# The main config document
 
 ### App config in section name of ini file:`[app]`
 * `disable_install = true`
