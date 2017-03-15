@@ -10,7 +10,7 @@
 
 namespace Tool\Controller\Console;
 
-use Toknot\Share\DB\DBA;
+use Toknot\Share\CommandLine;
 
 /**
  * Test
@@ -22,7 +22,16 @@ class Test {
      * @console test
      */
     public function __construct() {
-        echo 'test';
+        $cmd = new CommandLine;
+        $cmd->autoCompletion(function($re) use($cmd) {
+            $cmd->newline();
+            echo 'test';
+            $cmd->newline();
+        });
+        $cmd->interactive(function() use($cmd) {
+           
+        });
+        
     }
 
 }

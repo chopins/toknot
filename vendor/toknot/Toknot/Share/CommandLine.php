@@ -22,8 +22,33 @@ use Toknot\Boot\Tookit;
 class CommandLine {
 
     private $progMsgStart = 0;
+    private static $autoHistory = false;
 
     const RE_ENTER = -100;
+
+    private static $readline = null;
+
+    public function __construct($historyFile = null) {
+        $this->checkReadline();
+        if (self::$readline) {
+            readline_write_history($historyFile);
+        }
+    }
+
+    public function autoHistory() {
+        self::$autoHistory = true;
+    }
+
+    public function checkReadline() {
+        if (self::$readline !== null) {
+            return self::$readline;
+        }
+        self::$readline = extension_loaded('readline');
+    }
+
+    public function getReadlineStatus() {
+        return self::$readline;
+    }
 
     /**
      * get terminal number of columns
@@ -98,6 +123,14 @@ class CommandLine {
     public function nl() {
         echo PHP_EOL;
     }
+    
+    public function newline() {
+        if(self::$readline) {
+            readline_on_new_line();
+        } else {
+            $this->nl();
+        }
+    }
 
     /**
      * print message on same line
@@ -110,6 +143,12 @@ class CommandLine {
         $this->message($msg, $color, false);
     }
 
+    public function flush() {
+        if (self::$readline) {
+            readline_redisplay();
+        }
+    }
+
     /**
      * print prompt message and get command line input
      * 
@@ -117,9 +156,17 @@ class CommandLine {
      * @param string $color     message color
      * @return string           input string
      */
-    public function prompt($msg, $color = null) {
-        $this->message($msg, $color, false);
-        return trim(fgets(STDIN));
+    public function readline($msg, $color = null) {
+        if (self::$readline) {
+            $line = readline($msg);
+        } else {
+            $this->message($msg, $color, false);
+            $line = trim(fgets(STDIN));
+        }
+        if (self::$autoHistory) {
+            $this->addHistory($line);
+        }
+        return $line;
     }
 
     /**
@@ -143,7 +190,10 @@ class CommandLine {
         $this->message('Toknot interactive shell, ( Ctrl+C exit)');
         $prompt = Tookit::coal($prompt, '>>>');
         do {
-            $enter = $this->prompt($prompt, 'white');
+            $enter = $this->readline($prompt, 'green');
+            if (!self::$autoHistory) {
+                $this->addHistory($enter);
+            }
             $callable($enter);
         } while (true);
     }
@@ -156,9 +206,9 @@ class CommandLine {
      * @param callable $verifyEnter     check enter value function
      * @return string                   input value
      */
-    public function fprompt($msg, $mismatch = '', $verifyEnter = null, $color = '') {
+    public function freadline($msg, $mismatch = '', $verifyEnter = null, $color = '') {
         do {
-            $enter = $this->prompt($msg, $color);
+            $enter = $this->readline($msg, $color);
             $ret = $this->checkInput($verifyEnter, $enter, $mismatch);
             if ($ret === self::RE_ENTER) {
                 continue;
@@ -197,6 +247,18 @@ class CommandLine {
     public function error($msg, $status = 255) {
         $this->message($msg, 'red');
         exit($status);
+    }
+
+    public function autoCompletion($func) {
+        if (self::$readline) {
+            readline_completion_function($func);
+        }
+    }
+
+    public function addHistory($history) {
+        if (self::$readline) {
+            readline_add_history($history);
+        }
     }
 
 }

@@ -27,7 +27,7 @@ class InitApp {
         $this->cmd->message('App Init Guide 0.1');
         $this->cmd->message('Copyright (c) 2011-2017 Toknot.com');
         $this->cmd->message('( Ctrl+C ) Quit Guide');
-        $this->cmd->fprompt('set your app path:', '', array($this, 'checkPath'));
+        $this->cmd->freadline('set your app path:', '', array($this, 'checkPath'));
         $this->createAppDir();
         $this->gindex();
         $this->gmainConfig();
@@ -139,7 +139,7 @@ EOF;
         $this->appPath = Tookit::getRealPath($path);
         if (file_exists($this->appPath)) {
             $msg = 'path is exist, whether enter new path (y/n,default n):';
-            $ask = $this->cmd->prompt($msg);
+            $ask = $this->cmd->readline($msg);
             if ($ask == 'y') {
                 return -1;
             }
@@ -149,7 +149,7 @@ EOF;
         $ret = mkdir($this->appPath, 0755, true);
         if (!$ret) {
             $msg = 'dir create failure,whether enter new path (y/n,default y):';
-            $ask = $this->cmd->prompt($msg);
+            $ask = $this->cmd->readline($msg);
             if ($ask != 'y') {
                 exit;
             }
