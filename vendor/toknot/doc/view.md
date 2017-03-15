@@ -1,9 +1,9 @@
-##View 和 Layout 文档
+## View 和 Layout 文档
 
 * 页面视图类必须继承`Toknot\Share\View\View`
 * 页面布局类必须继承`Toknot\Share\View\Layout`
 
-####`Toknot\Share\View\View`
+## `Toknot\Share\View\View`
 
 需在页面视图类中实现以下方法：
 * `page()` 创建页面内容
@@ -18,7 +18,7 @@
 
 魔术方法：未定义方法调用将返回同名标签构建类实例
 
-####`Toknot\Share\View\Layout`
+## `Toknot\Share\View\Layout`
 
 需要在布局类中实现以下方法：
 * `head()` 本方法设置页面head头信息
@@ -27,7 +27,7 @@
 * `docType()` 设置页面doc版本
 * `body()` 本方法返回body标签属性
 
-####`Toknot\Share\View\Tag`
+## `Toknot\Share\View\Tag`
 
 本类实现创建所有HTML标签的HTML文档。
 以下为静态方法：
@@ -85,7 +85,7 @@
 
 以上方法返回`Toknot\Share\View\TagBulid`实例
 
-####`Toknot\Share\View\TagBulid`
+## `Toknot\Share\View\TagBulid`
 
 方法如下：
 * `static $srcDefaultHost` 资源URI默认和host
@@ -107,12 +107,12 @@
 * `addName($value)` 添加name属性
 * `addId($value)` 添加ID属性
 
-####创建Layout
+## 创建Layout
 
 命令行中执行: `php app/tool/index.php layout output_file_path.php` 将生成一个简单的layout类
 
-####将HTML文件转换成 view类
+## 将HTML文件转换成 view类
 
 命令行中执行: `php app/tool/index.php parsehtml -h your_html.html -o your_view_class.php 将会转换html为 view 类代码
 
-####其他详细用法见`app/admin`应用 
+## 其他详细用法见`app/admin`应用 
