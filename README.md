@@ -1,14 +1,14 @@
-####About
+### About
 ToKnot is a php framework
 
 [http://toknot.com](http://toknot.com)
 
-####License
+### License
 The PHP framework is under New BSD License (http://toknot.com/LICENSE.txt)
 
 The demos is under GNU GPL version 3 or later <http://opensource.org/licenses/gpl-3.0.html>
 
-####Usage and Configure
+### Usage and Configure
 On command line exec: `php vendor/toknot/initapp.php` App Init Guide build your app
 
 On command line exec: `php app/tool/index.php` show tool app help message
@@ -23,7 +23,7 @@ On command line exec: `php app/tool/index.php` show tool app help message
 * [table config](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/table-config.md)  
 * [view document](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/view.md) 
 
-####Server Config
+### Server Config
 将所有请求都定向到index.php入口文件，以下是nginx与apache服务器配置方法
 * nginx:
     ```conf
@@ -45,5 +45,5 @@ On command line exec: `php app/tool/index.php` show tool app help message
   php -S 127.0.0.1:8000 index.php
   ```
 
-####Todo
+### Todo
 * test Toknot\Share\Process\Process
