@@ -104,7 +104,7 @@ class Logs {
      */
     public static function addCLIColor($str, $color) {
         $mask2 = 1 << 7;
-        if (empty($_SERVER['COLORTERM'])) {
+        if (empty(Tookit::env('COLORTERM'))) {
             return $str;
         }
         if (!is_numeric($color) && is_string($color)) {
