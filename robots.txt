@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: http://toknot.com/toknot/sitemap.xml
