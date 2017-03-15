@@ -220,7 +220,7 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
 
     public function valid() {
         $this->iteratorKey = $this->key();
-        return isset($this->{$this->iteratorProperty}[$this->iteratorKey]);
+        return array_key_exists($this->iteratorKey,$this->{$this->iteratorProperty});
     }
 
     public function rewind() {
@@ -228,7 +228,7 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
     }
 
     public function offsetExists($offset) {
-        return isset($this->getIteratorProperty()[$offset]);
+        return array_key_exists($offset, $this->getIteratorProperty());
     }
 
     public function offsetGet($offset) {

@@ -10,8 +10,6 @@
 
 namespace Tool\Controller\Console;
 
-use Toknot\Share\CommandLine;
-
 /**
  * Test
  *
@@ -22,9 +20,9 @@ class Test {
      * @console test
      */
     public function __construct() {
-        foreach ($_SERVER as $k => $v) {
-            echo $k . '  |  ' . (filter_has_var(INPUT_SERVER, $k) ? 'yes' : 'no') . PHP_EOL;
-        }
+        $a = null;
+        
+        var_dump(array_key_exists('a',get_defined_vars()));
     }
 
 }

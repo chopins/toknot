@@ -33,7 +33,7 @@ class Configuration extends Object {
     }
 
     public function __isset($name) {
-        return isset($this->iteratorArray[$name]);
+        return array_key_exists($name, $this->iteratorArray);
     }
 
     public function __unset($name) {
@@ -56,7 +56,6 @@ class Configuration extends Object {
         return new static($cfg);
     }
 
-
     /**
      * not found return null else return the key value
      * 
@@ -71,11 +70,22 @@ class Configuration extends Object {
         $ks = explode('.', $key);
         $cur = $this->iteratorArray;
         foreach ($ks as $k) {
-            if (isset($cur[$k])) {
+            if (array_key_exists($k, $cur)) {
                 $cur = $cur[$k];
             } else {
                 return null;
             }
+        }
+        return $cur;
+    }
+
+    public static function getItem($cfg, array $keyc) {
+        $cur = $cfg;
+        foreach ($keyc as $k) {
+            if (empty($k)) {
+                break;
+            }
+            $cur = $cur[$k];
         }
         return $cur;
     }

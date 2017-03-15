@@ -110,7 +110,7 @@ class Tookit extends Object {
                 $sub = $tmp;
             }
         }
-        if (isset($re[$k])) {
+        if (array_key_exists($k, $re)) {
             $re[$k] = array_merge_recursive($re[$k], $sub[$k]);
         } else {
             return $re[$k] = $sub[$k];
@@ -465,7 +465,7 @@ class Tookit extends Object {
         if (!is_array($arr) && !$arr instanceof \ArrayAccess) {
             throw new BaseException('Argument 1 must be of array or can be array access');
         }
-        $arr[$key] = isset($arr[$key]) ? $arr[$key] : $def;
+        $arr[$key] = array_key_exists($key, $arr) ? $arr[$key] : $def;
         return $arr[$key];
     }
 
@@ -482,7 +482,7 @@ class Tookit extends Object {
      * @return array
      */
     public static function splitStr(array &$param, $key, $del = ',', $setDef = []) {
-        $param[$key] = isset($param[$key]) ? explode($del, $param[$key]) : $setDef;
+        $param[$key] = array_key_exists($key, $param) ? explode($del, $param[$key]) : $setDef;
         return $param[$key];
     }
 
@@ -553,7 +553,7 @@ class Tookit extends Object {
      */
     public static function arrayDelete(array &$arr, $key) {
         $res = false;
-        if (isset($arr[$key])) {
+        if (array_key_exists($key, $arr)) {
             $res = $arr[$key];
             unset($arr[$key]);
         }
