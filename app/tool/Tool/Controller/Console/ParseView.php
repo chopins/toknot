@@ -12,6 +12,7 @@ namespace Tool\Controller\Console;
 
 use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
+use Toknot\Boot\Tookit;
 
 /**
  *  ParseView
@@ -24,16 +25,39 @@ class ParseView {
     /**
      * create view from html file
      * 
-     * parsehtml -h your_path/view.html -o your_path/view.php
+     * view.gen -h your_path/view.html -o your_path/view.php
      * 
-     * @console parsehtml
+     * @console view.gen
      */
     public function createView() {
         $file = Kernel::single()->getOption('-h');
+        $out = Kernel::single()->getOption('-o');
         $tagList = '';
         $this->init($file);
         $this->findBody($tagList);
-        $this->generationView($tagList);
+        $this->generationView($tagList, $out);
+    }
+
+    /**
+     * generation view class from dir of html
+     * 
+     * view.allgen -d your_html_dir  -d your_app_path
+     * 
+     * @console view.allgen
+     */
+    public function scan() {
+        $dir = Kernel::single()->getOption('-d');
+        $app = Kernel::single()->getOption('-a');
+        $apppath = realpath($app);
+        $appTopNs = ucwords(basename($apppath));
+        $view = $apppath . DIRECTORY_SEPARATOR . $appTopNs . DIRECTORY_SEPARATOR . 'View';
+        Tookit::dirWalk($dir, function($html) use($view) {
+            $tagList = '';
+            $this->init($html);
+            $this->findBody($tagList);
+            $name = basename($html, '.html');
+            $this->generationView($tagList, "$view/$name");
+        });
     }
 
     public function init($file) {
@@ -115,8 +139,7 @@ class ParseView {
         }
     }
 
-    public function generationView($tagList) {
-        $file = Kernel::single()->getOption('-o');
+    public function generationView($tagList, $file) {
         $name = $file ? basename($file, '.php') : 'DefaultView';
         $code = <<<EOF
 <?php
@@ -161,7 +184,7 @@ EOF;
      */
     public function generationLayout() {
         $file = Kernel::single()->getOption(2);
-        if(!$file) {
+        if (!$file) {
             throw new BaseException('must give a file path');
         }
         $name = basename($file, '.php');

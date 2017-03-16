@@ -14,6 +14,7 @@ use Toknot\Boot\Kernel;
 use Toknot\Share\CommandLine;
 use Toknot\Boot\Import;
 use Zend\Reflection\Docblock;
+use Toknot\Boot\Tookit;
 
 /**
  * Route
@@ -44,21 +45,18 @@ class Route {
             $cmd->error("must give app dir");
         }
         $apppath = realpath($path);
-        $appToNs = ucwords(basename($apppath));
-        $dir = $apppath . DIRECTORY_SEPARATOR . $appToNs;
+        $appTopNs = ucwords(basename($apppath));
+        $dir = $apppath . DIRECTORY_SEPARATOR . $appTopNs;
         Import::addPath($dir);
-        $this->appNs = $appToNs . PHP_NS . 'Controller' . PHP_NS;
+        $this->appNs = $appTopNs . PHP_NS . 'Controller' . PHP_NS;
         $ini = $this->dir($dir, $this->appNs);
-        if ($output) {
-            file_put_contents($output, $ini);
-        } else {
-            $cmd->message($ini);
-        }
+        $output = $output ? $output : "$apppath/config.router.ini";
+        file_put_contents($output, $ini);
     }
 
     public function dir($dir, $appNs) {
         $path = Import::transformNamespaceToPath($appNs, $dir);
-        $d = dir($path);
+
         $ini = '';
         if ($this->confgType == 'yml') {
             $configTpl = <<<EOF
@@ -76,19 +74,9 @@ method = %s
 EOF;
         }
         $configTpl .= PHP_EOL;
-        while (false !== ($f = $d->read())) {
-            if ($f == '.' || $f == '..') {
-                continue;
-            }
-
-            $subpath = "$path/$f";
-
-            if (is_dir($subpath)) {
-                $ini .= $this->dir($dir, $appNs . $f . PHP_NS);
-                continue;
-            }
-
-            $class = $appNs . basename($f, '.php');
+ 
+        Tookit::dirWalk($path, function($file) use($appNs, $configTpl, &$ini) {
+            $class = $appNs . basename($file, '.php');
 
             $rf = new \ReflectionClass($class);
             $ms = $rf->getMethods();
@@ -105,7 +93,8 @@ EOF;
                     $ini .= sprintf($configTpl, $routename, $routepath, $cont, $mp, $rm);
                 }
             }
-        }
+        });
+
         return $ini;
     }
 

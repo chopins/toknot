@@ -649,10 +649,10 @@ abstract class Model extends Object {
     }
 
     public function againSelect($where, $feild = []) {
-        if($this->qr->getType() != DBA::SELECT) {
+        if ($this->qr->getType() != DBA::SELECT) {
             throw new BaseException('can not found first selct query');
         }
-        
+
         $subSql = '(' . $this->qr->getSQL() . ')';
         $this->qr = $this->builder()->from($subSql);
         $column = empty($feild) ? '*' : implode(',', $feild);
@@ -771,50 +771,7 @@ abstract class Model extends Object {
         }
         return $this->conn->lastInsertId();
     }
-
-    /**
-     * start transaction update
-     */
-    public function beginTransaction() {
-        if ($this->transactionActive) {
-            return;
-        }
-        $this->transactionActive = true;
-        $this->conn->beginTransaction();
-    }
-
-    /**
-     * submit query
-     * 
-     * @throws \Exception
-     */
-    public function commit() {
-        if ($this->transactionActive === false) {
-            throw new BaseException('transaction not start');
-        }
-        try {
-            $this->conn->commit();
-        } catch (\Exception $e) {
-            $this->conn->rollBack();
-            throw $e;
-        }
-    }
-
-    public function rollBack() {
-        if ($this->transactionActive === false) {
-            throw new BaseException('transaction not start');
-        }
-        try {
-            $this->conn->rollBack();
-        } catch (\Exception $e) {
-            Kernel::single()->echoException($e);
-        }
-        $this->transactionActive = false;
-    }
-
-    public function autoCommit($mark = true) {
-        $this->conn->setAutoCommit($mark);
-    }
+    
 
     public function getList($where, $limit = 20, $start = 0) {
         return $this->select($where)->get($limit, $start);

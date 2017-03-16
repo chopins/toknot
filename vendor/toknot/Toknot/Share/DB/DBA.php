@@ -37,8 +37,8 @@ class DBA extends Object {
      *
      * @var \Doctrine\DBAL\Connection
      */
-    private static $conn;
-    private static $nodbconn;
+    private $conn;
+    private $nodbconn;
     private static $modelNs;
     private static $usedb;
     private $tableConfig;
@@ -46,6 +46,8 @@ class DBA extends Object {
     public static $confType = 'ini';
     public static $fechStyle = \PDO::FETCH_ASSOC;
     public static $cursorOri = \PDO::FETCH_ORI_NEXT;
+    private $transactionActive = false;
+    public static $appDir = APPDIR;
 
     const T_OR = '||';
     const T_AND = '&&';
@@ -61,8 +63,8 @@ class DBA extends Object {
      * 
      * @param array $db The database config key
      */
-    protected function __construct($db = '') {
-        $allcfg = Kernel::single()->cfg;
+    protected function __construct($db = '', $cfg = '') {
+        $allcfg = $cfg ? $cfg : Kernel::single()->cfg;
 
         if (empty($db) && empty(self::$usedb)) {
             self::$usedb = $allcfg->app->default_db_config_key;
@@ -84,7 +86,7 @@ class DBA extends Object {
 
         $appCfg = $allcfg->app;
         self::$modelNs = Tookit::nsJoin($appCfg->app_ns, $appCfg->model_ns);
-        self::$modelDir = Tookit::realpath($allcfg->app->model_dir, APPDIR);
+        self::$modelDir = Tookit::realpath($allcfg->app->model_dir, self::$appDir);
     }
 
     public static function getUseDBConfig() {
@@ -92,7 +94,7 @@ class DBA extends Object {
     }
 
     public function getQuotedName($name) {
-        $platform = self::$conn->getDatabasePlatform();
+        $platform = $this->conn->getDatabasePlatform();
         $keywords = $platform->getReservedKeywordsList();
         $parts = explode(".", $name);
 
@@ -121,43 +123,43 @@ class DBA extends Object {
      * @return array
      */
     public function loadConfig($name) {
-        $cnf = APPDIR . "/config/$name." . self::$confType;
+        $cnf = self::$appDir . "/config/$name." . self::$confType;
         return Kernel::single()->loadConf($cnf);
     }
 
-    public function connect($singleConn = true) {
-        if (self::$conn instanceof Connection && $singleConn) {
-            return self::$conn;
+    public function connect($newConn = false) {
+        if ($this->conn instanceof Connection && !$newConn) {
+            return $this->conn;
         }
         $config = new Configuration;
         $connectionParams = $this->dbconfig()->toArray();
 
-        self::$conn = DriverManager::getConnection($connectionParams, $config);
+        $this->conn = DriverManager::getConnection($connectionParams, $config);
 
-        return self::$conn;
+        return $this->conn;
     }
 
     public function unSelectDBConnect() {
-        if (self::$nodbconn instanceof Connection) {
-            return self::$nodbconn;
+        if ($this->nodbconn instanceof Connection) {
+            return $this->nodbconn;
         }
         $config = new Configuration;
         $connectionParams = $this->dbconfig()->toArray();
         unset($connectionParams['dbname']);
-        self::$nodbconn = DriverManager::getConnection($connectionParams, $config);
+        $this->nodbconn = DriverManager::getConnection($connectionParams, $config);
 
-        return self::$nodbconn;
+        return $this->nodbconn;
     }
 
     public function close($conn = null) {
         if ($conn) {
             return $conn->close();
         }
-        return self::$conn->close();
+        return $this->conn->close();
     }
 
     public function query($sql) {
-        return self::$conn->executeQuery($sql);
+        return $this->conn->executeQuery($sql);
     }
 
     public function getDatabase() {
@@ -235,10 +237,10 @@ class DBA extends Object {
         $execResult = [];
         foreach ($query as $i => $t) {
             if ($force) {
-                self::$conn->executeQuery($dropSql[$i]);
+                $this->conn->executeQuery($dropSql[$i]);
             }
             $execResult[] = $t;
-            self::$conn->executeQuery($t);
+            $this->conn->executeQuery($t);
         }
         return $execResult;
     }
@@ -249,10 +251,9 @@ class DBA extends Object {
      * @param string $dbconfig
      * @return \Toknot\Share\Model
      */
-    public static function table($table, $dbconfig = '', $singleConn = true) {
-        $db = $dbconfig ? self::single($dbconfig) : self::single();
-
-        $db->connect($singleConn);
+    public static function table($table, $dbconfig = '', $newConn = false) {
+        $db = self::decideIns($dbconfig);
+        $conn = $db->connect($newConn);
         $tableClass = Tookit::nsJoin(self::$modelNs, self::table2Class($table));
         $tableClass = Tookit::dotNS($tableClass);
 
@@ -262,12 +263,74 @@ class DBA extends Object {
         }
         $db->loadModel();
         $m = new $tableClass(self::$cfg->tables[$table]);
-        $m->connect(self::$conn);
+        $m->connect($conn);
         return $m;
     }
 
     public static function composite($type, $where) {
         return new CompositeExpression($type, $where);
+    }
+
+    /**
+     * 
+     * @param string $config
+     * @return $this
+     */
+    public static function decideIns($config = '') {
+        return $config ? self::single($config) : self::single();
+    }
+
+    public static function transaction($callable, $dbconfig = '') {
+        $conn = self::decideIns($dbconfig)->connect();
+        $conn->beginTransaction();
+        $callable();
+        try {
+            $conn->commit();
+        } catch (\Exception $e) {
+            $conn->rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * start transaction update
+     */
+    public function beginTransaction() {
+        if ($this->transactionActive) {
+            return;
+        }
+        $this->transactionActive = true;
+        $this->conn->beginTransaction();
+    }
+
+    /**
+     * submit query
+     * 
+     * @throws \Exception
+     */
+    public function commit() {
+        if ($this->transactionActive === false) {
+            throw new BaseException('transaction not start');
+        }
+        try {
+            $this->conn->commit();
+        } catch (\Exception $e) {
+            $this->conn->rollBack();
+            throw $e;
+        }
+    }
+
+    public function rollBack() {
+        if ($this->transactionActive === false) {
+            throw new BaseException('transaction not start');
+        }
+
+        $this->conn->rollBack();
+        $this->transactionActive = false;
+    }
+
+    public function autoCommit($mark = true) {
+        $this->conn->setAutoCommit($mark);
     }
 
     /**
@@ -286,24 +349,24 @@ class DBA extends Object {
 
     public function createDatabase($dbname) {
         $this->unSelectDBConnect();
-        return self::$nodbconn->getSchemaManager()->createDatabase($dbname);
+        return $this->nodbconn->getSchemaManager()->createDatabase($dbname);
     }
 
     public function getTableStructure($table) {
-        return self::$conn->getSchemaManager()->listTableColumns($table);
+        return $this->conn->getSchemaManager()->listTableColumns($table);
     }
 
     public function getTableList() {
-        return self::$conn->getSchemaManager()->listTables();
+        return $this->conn->getSchemaManager()->listTables();
     }
 
     public function getDBList() {
         $this->unSelectDBConnect();
-        return self::$nodbconn->getSchemaManager()->listDatabases();
+        return $this->nodbconn->getSchemaManager()->listDatabases();
     }
 
     public function getTableIndexs($table) {
-        return self::$conn->getSchemaManager()->listTableIndexes($table);
+        return $this->conn->getSchemaManager()->listTableIndexes($table);
     }
 
     public function getAllTableStructureCacheArray() {
@@ -471,7 +534,7 @@ class DBA extends Object {
      */
     public function updateSchema($from, $to) {
         $this->initType();
-        $platform = self::$conn->getDatabasePlatform();
+        $platform = $this->conn->getDatabasePlatform();
         $fromSchema = $this->newSchema($from);
         $toSchema = $this->newSchema($to);
         $comparator = new Comparator;
@@ -488,7 +551,7 @@ class DBA extends Object {
      */
     public function createSchema($tables) {
         $this->initType();
-        $platform = self::$conn->getDatabasePlatform();
+        $platform = $this->conn->getDatabasePlatform();
         $schema = $this->newSchema($tables);
         $query = $schema->toSql($platform);
         //$dropSql = $schema->toDropSql($platform);

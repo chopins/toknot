@@ -13,6 +13,7 @@ namespace Admin\Controller\Console;
 use Zend\Reflection\Docblock;
 use Toknot\Boot\Logs;
 use Toknot\Boot\Kernel;
+use Toknot\Boot\Tookit;
 
 /**
  * Help
@@ -27,16 +28,13 @@ class Help {
      * @console help
      */
     public function __construct() {
-        $dir = dir(__DIR__);
         $ns = 'Admin\Controller\Console\\';
         $script = Kernel::single()->getOption(0);
         $message = [];
         $maxlength = 0;
-        while (false !== ($f = $dir->read())) {
-            if ($f == '.' || $f == '..') {
-                continue;
-            }
-            list($cn) = explode('.', $f);
+
+        Tookit::dirWalk(__DIR__, function($f) use($ns, &$message, &$maxlength) {
+            $cn = basename($f, '.php');
             $rf = new \ReflectionClass("$ns$cn");
             $ms = $rf->getMethods();
             foreach ($ms as $m) {
@@ -45,7 +43,8 @@ class Help {
                     $this->parseDocComment($message, $docs, $maxlength);
                 }
             }
-        }
+        });
+
         $maxlength = $maxlength + 8;
         Logs::colorMessage('The command line usage:', 'white');
         foreach ($message as $line) {
@@ -54,7 +53,7 @@ class Help {
             Logs::colorMessage($lineMsg, 'green');
             $prefixSpace = str_repeat(' ', strlen($prefix));
 
-            Logs::colorMessage($prefixSpace.str_replace("\n", PHP_EOL.$prefixSpace, $line[2]));
+            Logs::colorMessage($prefixSpace . str_replace("\n", PHP_EOL . $prefixSpace, $line[2]));
         }
     }
 

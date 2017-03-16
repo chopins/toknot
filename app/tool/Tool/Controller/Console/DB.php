@@ -14,6 +14,7 @@ use Toknot\Share\DB\DBA;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Tookit;
 use Toknot\Boot\Logs;
+use Toknot\Boot\Configuration;
 
 class DB {
 
@@ -24,6 +25,7 @@ class DB {
     public $tkdb;
     public $dbcfg;
     public $appcfg;
+    public $appdir;
     public $kernel;
     public $usedb;
     public $force = false;
@@ -32,15 +34,26 @@ class DB {
 
     public function __construct() {
         $this->kernel = Kernel::single();
+        $this->appdir = $this->kernel->getOption('-a');
+        $type = $this->kernel->getOption('-t');
+        if ($this->appdir) {
+            $this->appdir = realpath($this->appdir);
+            $type || $type = 'ini';
+            $config = "{$this->appdir}/config/config.$type";
+            $php = "{$this->appdir}/runtime/config/config.php";
+            $this->appcfg = Configuration::loadConfig($config, $php);
+        } else {
+            $this->appcfg = $this->kernel->cfg;
+        }
 
-        $this->appcfg = $this->kernel->cfg;
         $this->dbcfg = $this->appcfg->database;
 
         $this->usedb = $this->appcfg->app->default_db_config_key;
         $this->setOption();
         $this->tableOption = $this->dbcfg[$this->usedb];
+        DBA::$appDir = $this->appdir;
 
-        $this->tkdb = DBA::single($this->usedb);
+        $this->tkdb = DBA::single($this->usedb, $this->appcfg);
         $dbs = $this->tkdb->getDBList();
         $dbname = $this->tableOption['table_config'];
         if (!in_array($dbname, $dbs)) {
@@ -73,6 +86,7 @@ class DB {
      * 
      * db.init -f           init database table and drop if table exists
      * db.init -d dbname    use config name of dbname
+     * db.init -d dbname -a you_app_dir -t ini   use config name of dbname
      * 
      * @console db.init
      */
@@ -89,15 +103,15 @@ class DB {
     /**
      * update database table struct
      * 
-     * db.update -d dbname
+     * db.update -d dbname -a you_app_dir 
      * 
      * @console db.update
      */
     public function update() {
         $tablefile = $this->tableOption['table_config'];
         $confType = Tookit::coalesce($this->tableOption, 'config_type', 'ini');
-        $ini = APPDIR . "/config/{$tablefile}.{$confType}";
-        $link = APPDIR . "/runtime/config/{$tablefile}.php";
+        $ini = "{$this->appdir}/config/{$tablefile}.{$confType}";
+        $link = "{$this->appdir}/runtime/config/{$tablefile}.php";
 
         $ret = Tookit::createCache($ini, $link, function($ini, $php) {
                     $from = $this->tkdb->getAllTableStructureCacheArray();

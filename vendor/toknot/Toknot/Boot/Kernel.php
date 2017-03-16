@@ -389,7 +389,9 @@ final class Kernel extends Object {
     }
 
     public function loadConf($ini) {
-        return Configuration::loadConfig($ini);
+        $filename = pathinfo($ini, PATHINFO_FILENAME);
+        $php = APPDIR . "/runtime/config/$filename.php";
+        return Configuration::loadConfig($ini, $php);
     }
 
     /**

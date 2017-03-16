@@ -11,6 +11,7 @@
 namespace Toknot\Boot;
 
 use Toknot\Boot\Tookit;
+use Toknot\Boot\Logger;
 
 class Logs {
 
@@ -55,11 +56,12 @@ class Logs {
         echo $message;
     }
 
-    public static function save($logs, $str, $color = null) {
-        if ($color) {
-            $str = self::addColor($str, $color);
+    public static function save($logs, $str) {
+        if ($logs instanceof Logger) {
+            $logs->save($str);
+        } else {
+            file_put_contents($logs, $str . PHP_EOL, FILE_APPEND);
         }
-        file_put_contents($logs, $str . PHP_EOL, FILE_APPEND);
     }
 
     /**

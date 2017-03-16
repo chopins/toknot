@@ -41,6 +41,7 @@ class Router extends TKRoute {
     private $subCollection = [];
     private $subCollectionParams = [];
     private $confType = 'ini';
+    public $appDIr = APPDIR;
 
     /**
      *
@@ -162,8 +163,8 @@ class Router extends TKRoute {
     }
 
     public function load() {
-        $ini = APPDIR . '/config/router.' . $this->confType;
-        $php = APPDIR . '/runtime/config/route.php';
+        $ini = "{$this->appDIr}/config/router.{$this->confType}";
+        $php = "{$this->appDIr}/runtime/config/route.php";
 
         return Tookit::includeCache($ini, $php, function ($ini, $target) {
                     $routerMap = Tookit::parseConf($ini);

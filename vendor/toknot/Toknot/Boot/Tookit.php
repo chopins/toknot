@@ -370,7 +370,7 @@ class Tookit extends Object {
     public static function readCache($ini, $php, $parseFunction) {
         $res = self::createCache($ini, $php, $parseFunction);
 
-        if ($res === 0) {
+        if ($res === self::EQ_0) {
             return self::parseConf($ini);
         }
         $key = md5($ini);
@@ -399,7 +399,7 @@ class Tookit extends Object {
         } elseif (self::$parseConfObject !== null && self::$parseConfObject->support($ext)) {
             return self::$parseConfObject->parse($file);
         }
-        throw new BaseException('unknown type of config file, current only support ini,yml file');
+        throw new BaseException("$ext type un-support, current only support ini,yml file");
     }
 
     /**
@@ -662,19 +662,8 @@ class Tookit extends Object {
         if ($recursion === false) {
             return rmdir($folder);
         }
-        $d = dir($folder);
-        while (false !== ($f = $d->read())) {
-            if ($f == '.' || $f == '..') {
-                continue;
-            }
-            $path = "$folder/$f";
-            if (is_dir($path)) {
-                self::rmdir($path, true);
-            } else {
-                unlink($path);
-            }
-        }
-        return rmdir($folder);
+
+        self::dirWalk($folder, 'unlink', 'rmdir');
     }
 
     public static function getStreamWrappersData($uri, $opt) {
@@ -863,6 +852,22 @@ class Tookit extends Object {
 
     public static function env($key) {
         return getenv($key, true);
+    }
+
+    public static function dirWalk($dir, $callable, $dirCallable = null) {
+        $d = dir($dir);
+        while (false !== ($enter = $d->read())) {
+            if ($enter == '.' || $enter == '..') {
+                continue;
+            }
+            $path = "$dir/$enter";
+            if (is_dir($enter)) {
+                self::dirWalk($path, $callable);
+                $dirCallable && $dirCallable($path);
+            } else {
+                $callable($enter);
+            }
+        }
     }
 
 }
