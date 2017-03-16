@@ -24,7 +24,7 @@ class Index extends Common {
      */
     public function index() {
         $u = $this->model('user');
-        $this->v('pageNav', '个人');
+        $this->v->pageNav = '个人';
 
         $this->setTitle('ProcessHub');
         $u->getKeyValue(1);

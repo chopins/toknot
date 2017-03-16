@@ -15,7 +15,7 @@ use Toknot\Share\Controller;
 class Account extends Controller {
 
     public function __construct() {
-        $this->setLayout($this->config('app', 'default_layout'));
+        $this->setLayout($this->config('app.default_layout'));
         $this->enableCsrf();
 
         $this->startSession();
@@ -26,9 +26,9 @@ class Account extends Controller {
      */
     public function login() {
         $this->setTitle('Login');
-        $this->v('pageNav', '登录');
-        $this->v('signup', $this->url('signup-view'));
-        $this->v('login', $this->url('login-submit'));
+        $this->v()->pageNav = '登录';
+        $this->v()->signup = $this->url('signup-view');
+        $this->v()->login = $this->url('login-submit');
 
         $this->view('account.login');
     }
@@ -49,8 +49,8 @@ class Account extends Controller {
      */
     public function signup() {
         $this->setTitle('Signup');
-        $this->v('login', $this->url('login-view'));
-        $this->v('signup', $this->url('signup-submit'));
+        $this->v()->login = $this->url('login-view');
+        $this->v()->signup = $this->url('signup-submit');
 
         $this->view('account.signup');
     }
@@ -61,13 +61,12 @@ class Account extends Controller {
     public function postSignup() {
         
     }
-    
+
     /**
      * @route
      */
     public function logout() {
         
     }
-
 
 }

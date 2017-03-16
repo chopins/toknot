@@ -19,8 +19,8 @@ class User extends Common {
      */
     public function index() {
         $this->setTitle('个人信息');
-        $this->v('pageNav', '个人信息');
-        $this->v('leftMenuSelected', 'account');
+        $this->v()->pageNav = '个人信息';
+        $this->v()->leftMenuSelected = 'account';
         $this->view('account.index');
     }
 

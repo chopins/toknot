@@ -17,7 +17,8 @@
 * `startSession()` 启动session,session管理类是`Toknot\Share\Session`
 * `enableCsrf()` 激活CSRF校验,本方法需要配合在视图中调用`$this->enableCsrf($form)`
 * `checkCsrf()`  校验CSRF值
-* `v($key, $value)`  设置视图内部变量
+* `v()`  返回视图参数设置类，在控制器中设置一个视图变量：`$this->v()->aa = 'test'`，
+* `$v`  该属性同`v()`方法，在控制器中设置一个视图变量：`$this->v->aa = 'test`;
 
 ## Model操作方法
 

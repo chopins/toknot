@@ -454,6 +454,27 @@ class Tookit extends Object {
     }
 
     /**
+     * 
+     * @param array $arr
+     * @param array $keys
+     * @return mixed
+     */
+    public static function arrayFind($arr, $keys) {
+        $cur = $arr;
+        foreach ($keys as $k) {
+            if (empty($k)) {
+                break;
+            }
+            if (array_key_exists($k, $cur)) {
+                $cur = $cur[$k];
+            } else {
+                return null;
+            }
+        }
+        return $cur;
+    }
+
+    /**
      * check a key of array if empty set default value
      * 
      * @param array &$arr

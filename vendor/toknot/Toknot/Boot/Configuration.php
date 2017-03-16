@@ -49,7 +49,7 @@ class Configuration extends Object {
         }
     }
 
-    public static function loadConfig($ini,$outphp) {
+    public static function loadConfig($ini, $outphp) {
         $cfg = Tookit::readConf($ini, $outphp);
         return new static($cfg);
     }
@@ -75,22 +75,6 @@ class Configuration extends Object {
             }
         }
         return $cur;
-    }
-
-    public static function getItem($cfg, array $keyc) {
-        $cur = $cfg;
-        foreach ($keyc as $k) {
-            if (empty($k)) {
-                break;
-            }
-            $cur = $cur[$k];
-        }
-        return $cur;
-    }
-
-    public function __invoke() {
-        $keyc = func_get_args();
-        return self::getItem($this, $keyc);
     }
 
     public function toArray() {

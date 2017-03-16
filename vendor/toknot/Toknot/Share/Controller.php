@@ -17,10 +17,12 @@ use Toknot\Boot\Tookit;
 use Toknot\Share\Session\Session;
 use Symfony\Component\HttpFoundation\Response;
 use Toknot\Share\View\XML;
+use Toknot\Share\View\ParameterBag;
+use Toknot\Exception\BaseException;
 
 class Controller extends Object {
 
-    private $viewParams = [];
+    private $viewParams = null;
     private $title = '';
     private $layout = null;
     private static $sessionStarted = false;
@@ -138,7 +140,6 @@ class Controller extends Object {
         $this->response(200, $xml);
     }
 
-
     final public function allowOrigin($host) {
         $route = $this->kernel()->routerIns()->findRouteByController($this->kernel()->call['controller']);
 
@@ -203,9 +204,8 @@ class Controller extends Object {
      * @param string $_         the other level item of key
      * @return array|string
      */
-    public function config($key0 = '', $key1 = '', $key2 = '') {
-        $num = func_num_args();
-        return $this->kernel()->invokeMethod($num, 'config', func_get_args());
+    public function config($key) {
+        return $this->kernel()->config($key);
     }
 
     /**
@@ -250,7 +250,8 @@ class Controller extends Object {
      */
     public function enableCsrf() {
         $hash = uniqid();
-        $this->v('_csrf_hash', $hash);
+        $this->v()->_csrf_hash = $hash;
+
         $_SESSION['_csrf_hash'] = $hash;
     }
 
@@ -267,13 +268,26 @@ class Controller extends Object {
     }
 
     /**
-     * set view of params
+     * get view of params
      * 
-     * @param string $key
-     * @param mix $value
      */
-    final public function v($key, $value) {
-        $this->viewParams[$key] = $value;
+    final public function v() {
+        if ($this->viewParams instanceof ParameterBag) {
+            return $this->viewParams;
+        }
+        $this->viewParams = new ParameterBag();
+        return $this->viewParams;
+    }
+
+    final public function __get($name) {
+        if ($name == 'v') {
+            return $this->v();
+        }
+        $this->exception("property $name undefined");
+    }
+
+    final public function exception($msg) {
+        throw new BaseException($msg);
     }
 
 }

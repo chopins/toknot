@@ -383,9 +383,8 @@ final class Kernel extends Object {
         return $this->loadConf($ini);
     }
 
-    public function config() {
-        $keys = func_get_args();
-        return Configuration::getItem($this->cfg, $keys);
+    public function config($key) {
+        return $this->cfg->find($key);
     }
 
     public function loadConf($ini) {

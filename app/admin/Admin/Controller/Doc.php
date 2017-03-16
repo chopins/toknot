@@ -25,8 +25,8 @@ class Doc extends Common {
     public function index() {
         $active = strtolower(get_called_class());
         $this->setTitle($active);
-        $this->v('pageNav', $active);
-        $this->v('leftMenuSelected', $active);
+        $this->v->pageNav = $active;
+        $this->v->leftMenuSelected = $active;
         $this->view('doc.index');
     }
 

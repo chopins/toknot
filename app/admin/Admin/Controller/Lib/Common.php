@@ -32,8 +32,8 @@ class Common extends Controller {
         $header = ['user-profile' => '昵称', 'message' => ['消息', 'fa-bell'],
             'user-setting' => ['设置', 'fa-gear'], 'day' => ['日历', 'fa-calendar'], 'logout' => ['退出', 'fa-sign-out']];
         $headerUrl = $this->addMenuItem($header);
-        $this->v('leftMenu', $leftUrl);
-        $this->v('headerMenu', $headerUrl);
+        $this->v->leftMenu = $leftUrl;
+        $this->v->headerMenu = $headerUrl;
     }
 
     public function addMenuItem($menuConfig) {
