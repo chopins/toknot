@@ -20,16 +20,10 @@ class Test {
      * @console test
      */
     public function __construct() {
-        $a = null;
-
-        $f = $this->check();
-        
-        var_dump($f('a'));
+        $c = \Toknot\Boot\Kernel::single()->call['controller'];
+        $route = \Toknot\Boot\Kernel::single()->routerIns()->findRouteByController($c);
+        var_dump($route);
     }
 
-    public function check() {
-        ;
-        eval('$v = get_defined_vars();$f = function($k) use($v) { return array_key_exists($k,$v);};');
-        return $f;
-    }
+   
 }

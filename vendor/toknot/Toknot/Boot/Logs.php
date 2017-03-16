@@ -106,7 +106,7 @@ class Logs {
     public static function addCLIColor($str, $color) {
         $mask2 = 1 << 7;
         if (self::$supportColor == null) {
-            self::$supportColor = isset(Tookit::env('COLORTERM'));
+            self::$supportColor = Tookit::env('COLORTERM');
         }
         if (!self::$supportColor) {
             return $str;

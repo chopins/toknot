@@ -16,6 +16,7 @@ use Toknot\Boot\Kernel;
 use Toknot\Boot\Tookit;
 use Toknot\Share\Session\Session;
 use Symfony\Component\HttpFoundation\Response;
+use Toknot\Share\View\XML;
 
 class Controller extends Object {
 
@@ -119,6 +120,38 @@ class Controller extends Object {
     final public function response($statusCode, $responseContent = '') {
         $this->setResponse($statusCode, $responseContent);
         $this->kernel()->shutdown();
+    }
+
+    /**
+     * immediately response json data
+     * 
+     * @param array $data
+     */
+    final public function responseJson($data) {
+        $this->header = 'Content-Type: text/json';
+        $this->response(200, json_encode($data));
+    }
+
+    final public function responesXml($data) {
+        $this->header = 'Content-Type: text/xml';
+        $xml = new XML($data);
+        $this->response(200, $xml);
+    }
+
+
+    final public function allowOrigin($host) {
+        $route = $this->kernel()->routerIns()->findRouteByController($this->kernel()->call['controller']);
+
+        $spro = $this->kernel()->schemes;
+        $schemes = $route->getSchemes();
+        $pro = !in_array($spro, $schemes) ? $schemes[0] : $spro;
+
+        $url = "$pro://$host";
+        $this->header = "Access-Control-Allow-Origin: $url";
+
+        $method = implode(',', $route->getMethods());
+
+        $this->header = "Access-Control-Allow-Methods: $method";
     }
 
     final public function header($header) {

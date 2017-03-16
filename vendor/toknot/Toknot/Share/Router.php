@@ -25,7 +25,6 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
-
 /**
  * Description of Router
  *
@@ -87,6 +86,16 @@ class Router extends TKRoute {
         return $g->generate($action, $parameters);
     }
 
+    public function findRouteByController($controller) {
+        foreach ($this->topRoutes as $route) {
+            $def = $route->getDefaults();
+            if ($def['controller'] == $controller) {
+                return $route;
+            }
+        }
+        return null;
+    }
+
     /**
      * 
      * @return \Toknot\Share\Request
@@ -120,7 +129,7 @@ class Router extends TKRoute {
             $parameters = $matcher->matchRequest($this->request);
         } catch (ResourceNotFoundException $e) {
             throw new NotFoundException($e);
-        } catch(MethodNotAllowedException $e) {
+        } catch (MethodNotAllowedException $e) {
             throw new MethodNotAllowed($e);
         }
         $tparams = Tookit::arrayRemove($parameters, 'controller', 'before', 'after', 'group', '_route');

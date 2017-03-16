@@ -30,6 +30,8 @@ final class Kernel extends Object {
     private $promiseExecCallable = '';
     private $promiseExecStat = true;
     private $confgType = 'ini';
+    private $call = [];
+    private $schemes = '';
 
     const PASS_STATE = 0;
     const PROMISE_PASS = true;
@@ -57,6 +59,8 @@ final class Kernel extends Object {
         $this->initImport();
 
         $this->phpIniSet();
+        list($this->schemes) = Tookit::env('SERVER_PROTOCOL', '/');
+        $this->schemes = strtolower($this->schemes);
         if (PHP_SAPI == 'cli') {
             $this->isCLI = true;
             $this->console();
@@ -174,6 +178,7 @@ final class Kernel extends Object {
     }
 
     private function console() {
+        $this->schemes = 'cli';
         $_SERVER['REQUEST_METHOD'] = 'CLI';
         if ($this->argc < 2) {
             return;
@@ -188,35 +193,39 @@ final class Kernel extends Object {
 
         if (is_array($parameters[$type])) {
             foreach ($parameters[$type] as $name) {
-                $this->invoke($name, $ns, $requireParams);
+                if (empty($name)) {
+                    continue;
+                }
+                $class = Tookit::nsJoin($ns, $name);
+                $this->call[$type] = $name;
+                $this->invoke($class, $requireParams);
             }
         } else {
-            $this->invoke($parameters[$type], $ns, $requireParams);
+            $class = Tookit::nsJoin($ns, $parameters[$type]);
+            $this->call[$type] = $parameters[$type];
+            $this->invoke($class, $requireParams);
         }
     }
 
-    private function invoke($names, $ns, $requireParams) {
+    private function invoke($call, $requireParams) {
         if ($this->runResult['code'] !== self::PASS_STATE) {
             return false;
         }
-        if (empty($names)) {
-            return false;
-        }
-        $group = explode('::', $names);
 
-        $groupclass = Tookit::nsJoin($ns, $group[0]);
+        $calls = explode('::', $call);
+        $class = $calls[0];
         $paramsCount = $requireParams->count();
 
         $params = iterator_to_array($requireParams, false);
         if ($paramsCount > 0) {
-            $groupins = self::constructArgs($paramsCount, $params, $groupclass);
+            $groupins = self::constructArgs($paramsCount, $params, $class);
         } else {
-            $groupins = new $groupclass();
+            $groupins = new $class();
         }
 
-        if (isset($group[1])) {
+        if (isset($calls[1])) {
             if ($paramsCount > 0) {
-                self::callMethod($paramsCount, $group[1], $params, $groupins);
+                self::callMethod($paramsCount, $calls[1], $params, $groupins);
             } else {
                 $groupins->{$group[1]}();
             }
@@ -360,6 +369,12 @@ final class Kernel extends Object {
                 return $this->pid;
             case 'tid':
                 return $this->tid;
+            case 'call':
+                return $this->call;
+            case 'schemes':
+                return $this->schemes;
+            default :
+                throw new BaseException("undefined property Kernel::\${$name}");
         }
     }
 
@@ -374,7 +389,7 @@ final class Kernel extends Object {
     }
 
     public function loadConf($ini) {
-        return Configuration::loadConfig($ini, $this->parseObject);
+        return Configuration::loadConfig($ini);
     }
 
     /**
