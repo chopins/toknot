@@ -42,6 +42,8 @@ abstract class TagBulid extends Object {
     protected $tagClass = [];
     protected $attr = [];
     private $srckey = null;
+    private $resourceVer = null;
+    private $host = null;
 
     /**
      *
@@ -147,6 +149,19 @@ abstract class TagBulid extends Object {
             if (is_bool($value)) {
                 $value = $value ? 'true' : 'false';
             }
+            if ($this->srckey == $attr && $this->resourceVer !== null) {
+                $value = "{$value}?v={$this->resourceVer}";
+            }
+
+            if (!$this->srckey == $attr && $this->host !== null) {
+                $srcHost = $this->host ? $this->host : (self::$srcDefaultHost ? self::$srcDefaultHost : false);
+                if (!$srcHost) {
+                    list($pro) = explode('/', getenv('SERVER_PROTOCOL', true));
+                    $value = strtolower($pro) . "://" . getenv('SERVER_NAME', true) . $value;
+                }
+                $value = "$srcHost$value";
+            }
+
             $v = addcslashes($value, '\'\\');
             $this->html .= " $attr=\"$v\"";
         }
@@ -231,23 +246,16 @@ abstract class TagBulid extends Object {
         $this->addAttr('title', $title);
     }
 
-    final public function addHost($srcHost = '') {
-        if (!$this->srckey) {
-            return $this;
+    final public function addHost($srcHost = false) {
+        if ($srcHost !== false) {
+            $this->host = $srcHost;
         }
-        $uri = $this->attr[$this->srckey];
-        $srcHost = $srcHost ? $srcHost : (self::$srcDefaultHost ? self::$srcDefaultHost : false);
-        if (!$srcHost) {
-            list($pro) = explode('/', getenv('SERVER_PROTOCOL',true));
-            $this->attr[$this->srckey] = strtolower($pro) . "://" . getenv('SERVER_NAME',true) . $uri;
-        }
-        $this->attr[$this->srckey] = "$srcHost$uri";
         return $this;
     }
 
     final public function addVer($ver = false) {
-        if ($this->srckey && $ver !== false) {
-            $this->attr[$this->srckey] = $this->attr[$this->srckey] . '?v=' . $ver;
+        if ($ver !== false) {
+            $this->resourceVer = $ver;
         }
         return $this;
     }
