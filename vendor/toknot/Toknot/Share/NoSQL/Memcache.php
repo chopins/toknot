@@ -19,35 +19,46 @@ use Toknot\Exception\BaseException;
  */
 class Memcache extends Object {
 
-    private $extClass = null;
+    private $cacheObj = null;
     private $oop = true;
     private $compress = null;
     private $memcahed = true;
+    private $extClassName = '';
 
     public function __construct() {
         if (extension_loaded('memcached')) {
-            $this->extClass = new \Memcached;
+            $this->extClassName = 'Memcached';
+            $this->cacheObj = new \Memcached;
         } elseif (extension_loaded('memcache')) {
             $this->memcahed = false;
+            $this->extClassName = 'Memcache';
             if (class_exists('Memcache', false)) {
-                $this->extClass = new \Memcache;
+                $this->cacheObj = new \Memcache;
             } else {
                 $this->oop = false;
             }
         } else {
             $this->memcahed = false;
             $this->oop = false;
-            $this->extClass = false;
+            $this->cacheObj = false;
             throw new BaseException('memcache/memcached extension unload');
         }
     }
 
+    public function getClass() {
+        return $this->extClassName;
+    }
+
+    public function getObj() {
+        return $this->memcahed;
+    }
+
     public function close() {
         if ($this->memcahed) {
-            return $this->extClass->quit();
+            return $this->cacheObj->quit();
         }
         if ($this->oop) {
-            return $this->extClass->close();
+            return $this->cacheObj->close();
         }
         return memcache_close();
     }
@@ -56,18 +67,18 @@ class Memcache extends Object {
         if ($compress && !$this->memcahed) {
             $this->compress = MEMCACHE_COMPRESSED;
         } elseif ($this->memcahed) {
-            $this->extClass->setOption(Memcached::OPT_COMPRESSION);
+            $this->cacheObj->setOption(Memcached::OPT_COMPRESSION);
         }
     }
 
     public function addServer($host, $port = 11211) {
         if ($this->oop) {
-            return $this->extClass->addServer($host, $port);
+            return $this->cacheObj->addServer($host, $port);
         } else {
-            if (!$this->extClass) {
+            if (!$this->cacheObj) {
                 return $this->connect($host, $port);
             }
-            return memcache_add_server($this->extClass, $host, $port);
+            return memcache_add_server($this->cacheObj, $host, $port);
         }
     }
 
@@ -76,9 +87,9 @@ class Memcache extends Object {
             return;
         }
         if ($this->oop) {
-            $this->extClass->connect($host, $port);
+            $this->cacheObj->connect($host, $port);
         } else {
-            $this->extClass = memcache_connect($host, $port);
+            $this->cacheObj = memcache_connect($host, $port);
         }
     }
 
@@ -87,18 +98,18 @@ class Memcache extends Object {
             return;
         }
         if ($this->oop) {
-            $this->extClass->pconnect($host, $port);
+            $this->cacheObj->pconnect($host, $port);
         } else {
-            $this->extClass = memcache_pconnect($host, $port);
+            $this->cacheObj = memcache_pconnect($host, $port);
         }
     }
 
     private function changeFactory($m, $key, $value, $expire) {
         if ($this->memcahed) {
-            return $this->extClass->$m($key, $value, $expire);
+            return $this->cacheObj->$m($key, $value, $expire);
         }
         if ($this->oop) {
-            return $this->extClass->$m($key, $value, $this->compress, $expire);
+            return $this->cacheObj->$m($key, $value, $this->compress, $expire);
         } else {
             $func = "memcache_$m";
             return $func($key, $value, $this->compress, $expire);
@@ -107,27 +118,27 @@ class Memcache extends Object {
 
     private function changeFactory2($m, $key, $num) {
         if ($this->oop) {
-            return $this->extClass->$m($key, $num);
+            return $this->cacheObj->$m($key, $num);
         } else {
             $func = "memcache_$m";
-            return $func($this->extClass, $key, $num);
+            return $func($this->cacheObj, $key, $num);
         }
     }
 
     public function get($key, $cacheCb = null, &$casToken = 0) {
         if ($this->memcahed) {
-            return $this->extClass->get($key, $cacheCb, $casToken);
+            return $this->cacheObj->get($key, $cacheCb, $casToken);
         }
         if ($this->oop) {
-            return $this->extClass->get($key);
+            return $this->cacheObj->get($key);
         } else {
-            return memcache_get($this->extClass, $key);
+            return memcache_get($this->cacheObj, $key);
         }
     }
 
     public function cas($casToken, $key, $value, $expire = 0) {
         if ($this->memcahed) {
-            return $this->extClass->cas($casToken, $key, $value, $expire);
+            return $this->cacheObj->cas($casToken, $key, $value, $expire);
         }
     }
 
@@ -157,17 +168,17 @@ class Memcache extends Object {
 
     public function flush() {
         if ($this->oop) {
-            return $this->extClass->flush();
+            return $this->cacheObj->flush();
         } else {
-            return memcache_flush($this->extClass);
+            return memcache_flush($this->cacheObj);
         }
     }
 
     public function __call($m, $argv = null) {
         if ($this->oop) {
-            return self::callMethod(count($argv), $m, $argv, $this->extClass);
+            return self::callMethod(count($argv), $m, $argv, $this->cacheObj);
         } else {
-            array_unshift($argv, $this->extClass);
+            array_unshift($argv, $this->cacheObj);
             return self::callFunc("memcache_$m", $argv);
         }
     }

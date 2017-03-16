@@ -101,7 +101,7 @@
 * `push($tag)` 向标签添加子标签
 * `delTag($tag)`删除子标签
 * `addAttr($attr, $value)` 给标签添加属性
-* `addHost($srcHost = '')` 给资源URI添加host
+* `addHost($srcHost = false)` 给资源URI添加host, 给无host URI添加上host.如果仅仅调用不传值，将会添加默认URI `TagBulid::$srcDefaultHost`，注意如果`TagBulid::$srcDefaultHost`值为空，程序会取使用前访问的host值。
 * `addVer($ver = false)` 给资源URI添加版本
 * `setTitle($title)` 添加title属性
 * `addName($value)` 添加name属性

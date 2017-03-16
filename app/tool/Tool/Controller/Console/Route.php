@@ -92,7 +92,7 @@ EOF;
 
             $rf = new \ReflectionClass($class);
             $ms = $rf->getMethods();
-            $method = 'GET';
+            $rm = 'GET';
             foreach ($ms as $m) {
                 $routepath = $this->parseDocComment($m, $rm);
                 if ($routepath !== false) {
