@@ -60,4 +60,7 @@ class Pipe extends Object {
         return $this;
     }
 
+    public function __invoke() {
+        return $this->ret;
+    }
 }

@@ -95,8 +95,8 @@ abstract class Model extends Object {
         return $this->getTableAlias() . ".$column";
     }
 
-    public function cacheSQL($data) {
-        
+    public function cacheSQL($cacheHandler) {
+        $cacheHandler->save($this->lastSql);
     }
 
     public function correctUnsignedValue($type, $value) {
