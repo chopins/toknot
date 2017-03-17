@@ -7,10 +7,10 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
-
 use Toknot\Boot\Kernel;
 use Toknot\Share\CommandLine;
 use Toknot\Boot\Tookit;
+use Toknot\Boot\Logs;
 
 class InitApp {
 
@@ -27,7 +27,7 @@ class InitApp {
         $this->cmd->message('App Init Guide 0.1');
         $this->cmd->message('Copyright (c) 2011-2017 Toknot.com');
         $this->cmd->message('( Ctrl+C ) Quit Guide');
-        $this->cmd->freadline('set your app path:', '', array($this, 'checkPath'));
+        $this->cmd->freadline('set your app path :', '', array($this, 'checkPath'), Logs::COLOR_GREEN | Logs::SET_BOLD);
         $this->createAppDir();
         $this->gindex();
         $this->gmainConfig();
@@ -35,7 +35,7 @@ class InitApp {
 
     public function createAppDir() {
         $appName = basename($this->appPath);
-        $this->appNS =ucwords($appName);
+        $this->appNS = ucwords($appName);
         $app = "{$this->appPath}/" . $this->appNS;
         mkdir($app, 0755);
         mkdir("{$app}/Controller", 0755);
@@ -67,7 +67,7 @@ main('$this->appPath');
 EOF;
         file_put_contents($index, $code);
         $this->cmd->message('Generate webroot index file success');
-        $this->cmd->message("copy file $index to your webroot directory", 'green');
+        $this->cmd->message("copy file $index to your webroot directory", 'green|bold');
     }
 
     public function gmainConfig() {
@@ -156,6 +156,7 @@ EOF;
             return -1;
         }
         $this->appPath = realpath($this->appPath);
+        $this->cmd->message("Your app path is: $this->appPath", 'green|bold');
     }
 
 }
