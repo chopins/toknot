@@ -20,14 +20,39 @@ use Toknot\Boot\Tookit;
 class HttpTool {
 
     private $wrapper = null;
+    private $option = [];
+    private $url = '';
+    private $fp = null;
+    private $scheme = '';
+    private $cookie = [];
 
     public function __construct($url, $method = 'HEAD', $header = '') {
+        $this->url = $url;
         $urlPart = parse_url($url);
-        $option = [$urlPart['scheme'] => ['method' => $method, 'header' => $header]];
-        $this->wrapper = Tookit::getStreamWrappersData($url, $option);
+        $this->scheme = $urlPart['scheme'];
+        $this->option = [$urlPart['scheme'] => ['method' => $method, 'header' => $header]];
+    }
+
+    public function getScheme() {
+        return $this->scheme;
+    }
+
+    public function getUrl() {
+        return $this->url;
+    }
+
+    public function getOption() {
+        return $this->option;
+    }
+
+    public function getWrapper() {
+        $fp = null;
+        $this->wrapper = Tookit::getStreamWrappersData($this->url, $this->option, $fp);
+        $this->fp = $fp;
     }
 
     public function getHeader($field) {
+        $this->getWrapper();
         foreach ($this->wrapper as $header) {
             if (strpos($header, $field) === 0) {
                 list(, $v) = explode(':', $header, 2);
@@ -64,6 +89,30 @@ class HttpTool {
             return trim($ip);
         }
         return Tookit::env('REMOTE_ADDR');
+    }
+
+    public function addCookie($cookie) {
+        $this->option[$this->scheme]['header'] .= "Cookie: $cookie\r\n";
+        return $this;
+    }
+
+    public function addReferer($referer) {
+        $this->option[$this->scheme]['header'] .= "Referer: $referer\r\n";
+        return $this;
+    }
+
+    public function getPage() {
+        $context = stream_context_create($this->option);
+        return file_get_contents($this->url, false, $context);
+    }
+
+    public function pushCookie($k, $v) {
+        $v = urlencode($v);
+        $this->cookie[] = "$k=$v";
+    }
+
+    public function buildCookie() {
+        return implode(';', $this->cookie);
     }
 
 }

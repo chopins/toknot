@@ -14,6 +14,7 @@ use Zend\Reflection\Docblock;
 use Toknot\Boot\Logs;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Tookit;
+
 /**
  * Help
  *
@@ -31,7 +32,7 @@ class Help {
         $script = Kernel::single()->getOption(0);
         $message = [];
         $maxlength = 0;
-        
+
         Tookit::dirWalk(__DIR__, function($f) use($ns, &$message, &$maxlength) {
             $cn = basename($f, '.php');
             $rf = new \ReflectionClass("$ns$cn");
@@ -47,11 +48,18 @@ class Help {
         Logs::colorMessage('The command line usage:', 'white');
         foreach ($message as $line) {
             $prefix = "php $script ";
+
             $lineMsg = $prefix . str_pad($line[0], $maxlength) . $line[1];
             Logs::colorMessage($lineMsg, 'green');
-            $prefixSpace = str_repeat(' ', strlen($prefix));
-
-            Logs::colorMessage($prefixSpace.str_replace("\n", PHP_EOL.$prefixSpace, $line[2]));
+            $prefixSpace = str_repeat(' ', strlen($prefix . $line[0]));
+            if ($line[2]) {
+                $optionList = explode("\n", $line[2]);
+                foreach ($optionList as $op) {
+                    list($option, $desc) = explode(' ', $op, 2);
+                    $arg = str_pad($option, $maxlength - strlen($line[0])) . trim($desc);
+                    Logs::colorMessage($prefixSpace . str_replace("\n", PHP_EOL . $prefixSpace, $arg));
+                }
+            }
         }
     }
 

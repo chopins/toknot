@@ -687,7 +687,7 @@ class Tookit extends Object {
         self::dirWalk($folder, 'unlink', 'rmdir');
     }
 
-    public static function getStreamWrappersData($uri, $opt) {
+    public static function getStreamWrappersData($uri, $opt, &$fp) {
         $context = stream_context_create($opt);
         $fp = fopen($uri, 'r', false, $context);
         $stat = stream_get_meta_data($fp);

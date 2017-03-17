@@ -25,7 +25,8 @@ class ParseView {
     /**
      * create view from html file
      * 
-     * view.gen -h your_path/view.html -o your_path/view.php
+     * -h parse html
+     * -o output file
      * 
      * @console view.gen
      */
@@ -41,7 +42,8 @@ class ParseView {
     /**
      * generation view class from dir of html
      * 
-     * view.allgen -d your_html_dir  -d your_app_path
+     * -d  save html dir for scan
+     * -a  your app path
      * 
      * @console view.allgen
      */
@@ -178,7 +180,7 @@ EOF;
     /**
      * generation base layout class
      * 
-     * layout your_path/layout.php
+     * [FILE] your_path/layout.php
      * 
      * @console layout
      */

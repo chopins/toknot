@@ -84,9 +84,10 @@ class DB {
     /**
      * init database tables
      * 
-     * db.init -f           init database table and drop if table exists
-     * db.init -d dbname    use config name of dbname
-     * db.init -d dbname -a you_app_dir -t ini   use config name of dbname
+     * -f drop table if exists
+     * -d key of dbname config
+     * -a set app path
+     * -t config type
      * 
      * @console db.init
      */
@@ -103,7 +104,9 @@ class DB {
     /**
      * update database table struct
      * 
-     * db.update -d dbname -a you_app_dir 
+     * -d key of dbname config
+     * -a app path 
+     * -t config type
      * 
      * @console db.update
      */

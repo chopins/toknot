@@ -28,8 +28,9 @@ class Route {
     /**
      * generate route ini based on controller class
      * 
-     * route -a your_app_dir_path
-     * route -a your_app_dir_path -o output_your_route_ini_path.ini -t yml|ini
+     * -a app path
+     * -o output file
+     * -t generate config type,yml|ini
      * 
      * @console route
      */
