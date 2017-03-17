@@ -109,7 +109,8 @@ class ParseView {
     }
 
     public function getTextTag($node) {
-        if ($node->nodeType == XML_TEXT_NODE && !empty(trim($node->wholeText))) {
+        $text = trim($node->wholeText);
+        if ($node->nodeType == XML_TEXT_NODE && !$text) {
             return $node->wholeText;
         }
         return false;

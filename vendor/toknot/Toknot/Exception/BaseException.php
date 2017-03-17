@@ -118,7 +118,8 @@ class BaseException extends Exception {
             $str .= str_repeat('=', 20) . PHP_EOL;
         }
         $str .= '<div>';
-        if (PHP_SAPI == 'cli' && !empty(getenv('COLORTERM',true))) {
+        $color = getenv('COLORTERM');
+        if (PHP_SAPI == 'cli' && !empty($color)) {
             $this->message = Logs::addCLIColor($this->message, Logs::COLOR_RED);
         }
         $str .= "<p>{$this->message}</p>" . PHP_EOL;

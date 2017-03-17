@@ -262,12 +262,12 @@ class Tookit extends Object {
                 break;
             }
 
-            $l = $s[$i];
-            if (empty(trim($l))) {
+            $l = trim($s[$i]);
+            if (empty($l)) {
                 $i++;
                 continue;
             }
-            if (strpos(trim($l), '#') === 0) {
+            if (strpos($l, '#') === 0) {
                 $i++;
                 continue;
             }
@@ -298,7 +298,7 @@ class Tookit extends Object {
                 $key = trim($sub[0]);
                 $var = trim($sub[1]);
                 $checkAnchor = (strpos($var, '&') === 0);
-                if (empty(trim($sub[1])) || $checkAnchor === true) {
+                if (empty($var) || $checkAnchor === true) {
                     $i++;
                     $res[$key] = self::eachYaml($i, $s, $cn, $indent, $anchor);
                     if ($checkAnchor) {
@@ -872,7 +872,7 @@ class Tookit extends Object {
     }
 
     public static function env($key) {
-        return getenv($key, true);
+        return PHP_MIN_VERSION > 6 ? getenv($key, true) : getenv($key);
     }
 
     public static function dirWalk($dir, $callable, $dirCallable = null) {
@@ -889,6 +889,10 @@ class Tookit extends Object {
                 $callable($enter);
             }
         }
+    }
+
+    public static function hookEmpty($var) {
+        return empty($var);
     }
 
 }

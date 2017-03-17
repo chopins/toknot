@@ -55,7 +55,7 @@ final class Kernel extends Object {
     protected function __construct($argc, $argv) {
         define('PHP_NS', '\\');
         $this->setArg($argc, $argv);
-
+        $this->checkPHPVersion();
         $this->initImport();
 
         $this->phpIniSet();
@@ -76,6 +76,18 @@ final class Kernel extends Object {
             $this->echoException($e);
             $this->response();
             exit();
+        }
+    }
+
+    public function checkPHPVersion() {
+        if (version_compare(PHP_VERSION, '5.4') < 0) {
+            die('require php version >=5.4');
+        }
+        list($m, $r) = explode('.', PHP_VERSION);
+        if ($m == 5) {
+            define('PHP_MIN_VERSION', $r);
+        } else {
+            define('PHP_MIN_VERSION', 7);
         }
     }
 
