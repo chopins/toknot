@@ -8,4 +8,4 @@
  * @link       https://github.com/chopins/toknot
  */
 include __DIR__.'/../../vendor/toknot/boot.php';
-main(__DIR__);
+main(__DIR__,true);

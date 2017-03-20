@@ -32,6 +32,7 @@ final class Kernel extends Object {
     private $confgType = 'ini';
     private $call = [];
     private $schemes = '';
+    private $trace = false;
 
     const PASS_STATE = 0;
     const PROMISE_PASS = true;
@@ -77,6 +78,11 @@ final class Kernel extends Object {
             $this->response();
             exit();
         }
+    }
+
+    public function enableTrace() {
+        $this->trace = true;
+        return $this;
     }
 
     public function checkPHPVersion() {
@@ -260,13 +266,14 @@ final class Kernel extends Object {
         if ($e instanceof ShutdownException) {
             return;
         }
+
         try {
             throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
         } catch (BaseException $se) {
             $this->runResult = [];
             $this->runResult['code'] = $e instanceof BaseException ? $e->getHttpCode() : 500;
             $this->runResult['message'] = $e instanceof BaseException ? $e->getHttpMessage() : 'Internal Server Error';
-            $this->runResult['content'] = $se->getDebugTraceAsString();
+            $this->runResult['content'] = $this->trace ? $se->getDebugTraceAsString() : '';
             //$this->runResult['option'][] = '';
         }
     }
