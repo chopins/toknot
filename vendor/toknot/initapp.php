@@ -82,7 +82,7 @@ EOF;
 ; @link       https://github.com/chopins/toknot
 ;
 [app]
-disable_install = true
+trace = true
 timezone = UTC
 charet = utf8
 app_ns={$this->appNS}
@@ -101,7 +101,9 @@ default_layout =
 session.table = session
 session.name = sid
 session.cookie_httponly = 1
-                
+log.enable = false
+log.logger = runtime/logs/trace
+;log.logger = APP\Logger        
 [vendor]
 dbal = doctrine/Doctrine
 routing = symfony/Symfony

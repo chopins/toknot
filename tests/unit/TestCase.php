@@ -7,13 +7,14 @@
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
  */
-
-
 abstract class TestCase extends \PHPUnit_Framework_TestCase {
+
     public function setUp() {
         
     }
+
     public function tearDown() {
         
     }
+
 }

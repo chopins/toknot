@@ -25,7 +25,6 @@ class BaseException extends Exception {
     private $fatalError = false;
     public $traceArr = array();
     public $exceptionInstance = null;
-   
     protected $httpStatusCode = 0;
     protected $httpMessage = '';
 
@@ -54,17 +53,20 @@ class BaseException extends Exception {
     }
 
     static public function errorReportHandler($argv) {
+        if (strpos($argv[1], 'No such file or directory') > 0) {
+            return new NoFileOrDirException($argv[1], $argv[0], $argv[2], $argv[3]);
+        }
         return new BaseException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
     public function getHttpCode() {
         return $this->httpStatusCode;
     }
-    
+
     public function getHttpMessage() {
         return $this->httpMessage;
     }
-    
+
     public function getErrorType($code) {
         switch ($code) {
             case E_USER_ERROR:
@@ -119,15 +121,20 @@ class BaseException extends Exception {
         }
         $str .= '<div>';
         $color = getenv('COLORTERM');
+        $time = date('Y-m-d H:i:s T');
+        $this->message = "[$time] $this->message";
         if (PHP_SAPI == 'cli' && !empty($color)) {
             $this->message = Logs::addCLIColor($this->message, Logs::COLOR_RED);
         }
+
         $str .= "<p>{$this->message}</p>" . PHP_EOL;
         $str .= "<div><b>Throw Exception in file {$this->file} line {$this->line}</b></div>" . PHP_EOL;
         if (PHP_SAPI == 'cli') {
-            $str .= 'Process ID:' . getmypid() . PHP_EOL;
+            $hostname = getenv('HOSTNAME');
+            $ip = gethostbyname($hostname);
+            $str .= "CLI on Server IP: $ip($hostname)  User:" . getenv('USERNAME') . PHP_EOL;
         } else {
-            $str .= 'Server IP:' . getenv('SERVER_ADDR',true) . PHP_EOL;
+            $str .= 'Server IP:' . getenv('SERVER_ADDR') . PHP_EOL;
         }
 
         if (empty($this->traceArr)) {

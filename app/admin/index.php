@@ -10,4 +10,4 @@
 $path = dirname(dirname(__DIR__)) ;
 
 include "$path/vendor/toknot/boot.php";
-main("$path/app/admin", true);
+main("$path/app/admin");

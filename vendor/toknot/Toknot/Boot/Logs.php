@@ -12,6 +12,7 @@ namespace Toknot\Boot;
 
 use Toknot\Boot\Tookit;
 use Toknot\Boot\Logger;
+use Toknot\Exception\NoFileOrDirException;
 
 class Logs {
 
@@ -60,11 +61,18 @@ class Logs {
         if (empty($logs)) {
             return false;
         }
+        $str = preg_replace("/\e\[[0-9;]+m(.+)\e\[0m/im", '$1', $str);
         if ($logs instanceof Logger) {
             $logs->save($str);
         } else {
             $day = date('Ymd');
-            file_put_contents("$logs.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
+            $logs = Tookit::getRealPath($logs, APPDIR);
+            try {
+                file_put_contents("$logs/log.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
+            } catch (NoFileOrDirException $e) {
+                mkdir($logs, 0755, true);
+                file_put_contents("$logs/log.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
+            }
         }
     }
 

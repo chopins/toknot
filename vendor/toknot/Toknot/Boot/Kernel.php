@@ -16,6 +16,7 @@ use Toknot\Boot\Object;
 use Toknot\Boot\Configuration;
 use Toknot\Exception\BaseException;
 use Toknot\Exception\ShutdownException;
+use Toknot\Exception\NoFileOrDirException;
 use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
 
@@ -32,7 +33,7 @@ final class Kernel extends Object {
     private $confgType = 'ini';
     private $call = [];
     private $schemes = '';
-    private $trace = false;
+    private $trace = true;
     private $logger = null;
     private $logEnable = false;
 
@@ -82,11 +83,6 @@ final class Kernel extends Object {
         }
     }
 
-    public function enableTrace() {
-        $this->trace = true;
-        return $this;
-    }
-
     public function checkPHPVersion() {
         if (version_compare(PHP_VERSION, '5.4') < 0) {
             die('require php version >=5.4');
@@ -107,17 +103,21 @@ final class Kernel extends Object {
     }
 
     private function setRuntimeEnv($parseClass = null) {
-        $this->initRuntime();
-
         Tookit::setParseConfObject($parseClass);
+
         $this->cfg = $this->loadConfig();
+
+        $this->trace = $this->cfg->find('app.trace');
+
         $loggerClass = $this->cfg->find('app.log.logger');
+
         $this->logEnable = $this->cfg->find('app.log.enable');
         if ($this->logEnable && is_subclass_of($loggerClass, 'Toknot\Boot\Logger')) {
             $this->logger = new $loggerClass($this->cfg->find('app.log'));
         } else {
-            $this->logger = $this->cfg->find('app.log.file');
+            $this->logger = $this->cfg->find('app.log.logger');
         }
+
         if (!extension_loaded('filter')) {
             Tookit::disablePHPFilter();
         }
@@ -283,6 +283,7 @@ final class Kernel extends Object {
             $this->runResult['message'] = $e instanceof BaseException ? $e->getHttpMessage() : 'Internal Server Error';
             $trace = $se->getDebugTraceAsString();
             $this->runResult['content'] = $this->trace ? $trace : '';
+
             if ($this->logEnable) {
                 Logs::save($this->logger, $trace);
             }
@@ -359,18 +360,6 @@ final class Kernel extends Object {
         return isset($this->cmdOption[$key]);
     }
 
-    private function initRuntime() {
-        if (!is_dir(APPDIR . '/runtime')) {
-            mkdir(APPDIR . '/runtime');
-        }
-        if (!is_dir(APPDIR . '/runtime/config')) {
-            mkdir(APPDIR . '/runtime/config');
-        }
-        if (!is_dir(APPDIR . '/runtime/logs')) {
-            mkdir(APPDIR . '/runtime/logs');
-        }
-    }
-
     private function initImport() {
         include __DIR__ . '/Import.php';
         $this->import = new Import();
@@ -414,7 +403,21 @@ final class Kernel extends Object {
 
     private function loadConfig() {
         $ini = APPDIR . "/config/config.{$this->confgType}";
-        return $this->loadConf($ini);
+        try {
+            return $this->loadConf($ini);
+        } catch (NoFileOrDirException $e) {
+            $this->exceptionMkdir($e);
+            return $this->loadConf($ini);
+        }
+    }
+
+    public function exceptionMkdir($e, $isfile = true) {
+        $f = $e->getExceptionFile();
+        if ($isfile) {
+            mkdir(dirname($f), 0755, true);
+        } else {
+            mkdir($f, 0755, true);
+        }
     }
 
     public function config($key) {
@@ -424,7 +427,12 @@ final class Kernel extends Object {
     public function loadConf($ini) {
         $filename = pathinfo($ini, PATHINFO_FILENAME);
         $php = APPDIR . "/runtime/config/$filename.php";
-        return Configuration::loadConfig($ini, $php);
+        try {
+            return Configuration::loadConfig($ini, $php);
+        } catch (NoFileOrDirException $e) {
+            $this->exceptionMkdir($e);
+            return Configuration::loadConfig($ini, $php);
+        }
     }
 
     /**

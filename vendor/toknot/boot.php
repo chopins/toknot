@@ -19,7 +19,7 @@ use Toknot\Boot\Kernel;
  * @param string $parseClass    parse config class,must first include
  * @return Toknot\Boot\Kernel|int
  */
-function main($appdir = '', $debug = false, $confType = 'ini', $parseClass = null) {
+function main($appdir = '', $confType = 'ini', $parseClass = null) {
     global $argc, $argv;
     if (!is_dir($appdir)) {
         echo "$appdir is not exist" . PHP_EOL;
@@ -31,8 +31,5 @@ function main($appdir = '', $debug = false, $confType = 'ini', $parseClass = nul
     include __DIR__ . '/Toknot/Boot/Object.php';
     include __DIR__ . "/Toknot/Boot/Tookit.php";
     include __DIR__ . "/Toknot/Boot/Kernel.php";
-    if ($debug) {
-        Kernel::single($argc, $argv)->enableTrace()->run($confType, $parseClass);
-    }
     return Kernel::single($argc, $argv)->run($confType, $parseClass);
 }
