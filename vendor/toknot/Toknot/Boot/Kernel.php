@@ -33,6 +33,8 @@ final class Kernel extends Object {
     private $call = [];
     private $schemes = '';
     private $trace = false;
+    private $logger = null;
+    private $logEnable = false;
 
     const PASS_STATE = 0;
     const PROMISE_PASS = true;
@@ -109,7 +111,13 @@ final class Kernel extends Object {
 
         Tookit::setParseConfObject($parseClass);
         $this->cfg = $this->loadConfig();
-
+        $loggerClass = $this->cfg->find('app.log.logger');
+        $this->logEnable = $this->cfg->find('app.log.enable');
+        if ($this->logEnable && is_subclass_of($loggerClass, 'Toknot\Boot\Logger')) {
+            $this->logger = new $loggerClass($this->cfg->find('app.log'));
+        } else {
+            $this->logger = $this->cfg->find('app.log.file');
+        }
         if (!extension_loaded('filter')) {
             Tookit::disablePHPFilter();
         }
@@ -273,7 +281,11 @@ final class Kernel extends Object {
             $this->runResult = [];
             $this->runResult['code'] = $e instanceof BaseException ? $e->getHttpCode() : 500;
             $this->runResult['message'] = $e instanceof BaseException ? $e->getHttpMessage() : 'Internal Server Error';
-            $this->runResult['content'] = $this->trace ? $se->getDebugTraceAsString() : '';
+            $trace = $se->getDebugTraceAsString();
+            $this->runResult['content'] = $this->trace ? $trace : '';
+            if ($this->logEnable) {
+                Logs::save($this->logger, $trace);
+            }
             //$this->runResult['option'][] = '';
         }
     }
@@ -353,6 +365,9 @@ final class Kernel extends Object {
         }
         if (!is_dir(APPDIR . '/runtime/config')) {
             mkdir(APPDIR . '/runtime/config');
+        }
+        if (!is_dir(APPDIR . '/runtime/logs')) {
+            mkdir(APPDIR . '/runtime/logs');
         }
     }
 

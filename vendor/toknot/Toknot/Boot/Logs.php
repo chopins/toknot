@@ -57,10 +57,14 @@ class Logs {
     }
 
     public static function save($logs, $str) {
+        if (empty($logs)) {
+            return false;
+        }
         if ($logs instanceof Logger) {
             $logs->save($str);
         } else {
-            file_put_contents($logs, $str . PHP_EOL, FILE_APPEND);
+            $day = date('Ymd');
+            file_put_contents("$logs.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
     }
 

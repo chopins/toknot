@@ -197,7 +197,7 @@ class Tookit extends Object {
     public static function conf2php($ini, $php) {
         $data = self::parseConf($ini);
         $str = '<?php return ' . var_export($data, true) . ';';
-        file_put_contents($php, $str);
+        file_put_contents($php, $str, LOCK_EX);
     }
 
     /**
