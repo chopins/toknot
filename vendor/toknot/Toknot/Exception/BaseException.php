@@ -156,7 +156,11 @@ class BaseException extends Exception {
     }
 
     public function __toString() {
-        return $this->getDebugTraceAsString();
+        try {
+            return $this->getDebugTraceAsString();
+        } catch (\Exception $e) {
+            return '*** Exception has throw exception *** message is: '. $e->getMessage();
+        }
     }
 
     public function each($traceArr) {

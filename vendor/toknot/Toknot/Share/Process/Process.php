@@ -24,6 +24,7 @@ class Process extends Object {
     private $processPool = [];
     private $lock = null;
     private $alock = null;
+    private $cwd = null;
 
     const CMD_LOCK = 'LOCK';
     const CMD_UNLOCK = 'UNLOCK';
@@ -36,11 +37,13 @@ class Process extends Object {
     const QUEUE_GET = 'QGET';
 
     public function __construct() {
+        try {
+            $this->cwd = posix_getcwd();
+        } catch (\Exception $ex) {
+            throw new BaseException('posix extension un-loaded');
+        }
         if (!extension_loaded('pcntl')) {
             throw new BaseException('pcntl extension un-loaded');
-        }
-        if (!extension_loaded('posix')) {
-            throw new BaseException('posix extension un-loaded');
         }
     }
 
@@ -50,7 +53,11 @@ class Process extends Object {
     }
 
     public function setProcessTitle($title) {
-        return cli_set_process_title($title);
+        try {
+            return cli_set_process_title($title);
+        } catch (BaseException $e) {
+            throw new BaseException('set title need php version greater than 5.5');
+        }
     }
 
     public function pipe() {

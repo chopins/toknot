@@ -132,6 +132,9 @@ final class Kernel extends Object {
     private function phpIniSet() {
         ini_set('html_errors', 0);
         ini_set('log_errors', 0);
+        if(!ini_get('date.timezone')) {
+            //ini_set('date.timezone', 'ETC/GMT-0');
+        }
     }
 
     /**
