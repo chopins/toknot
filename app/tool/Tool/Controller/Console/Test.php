@@ -24,12 +24,12 @@ class Test {
      * @console test
      */
     public function __construct() {
-        //pcntl_exec('/usr/bin/mpg123');
-        $this->cmd = new  CommandLine;
-        $id = '1792702528,1774490672,1795263120,1792567930,1792541433,1774321215,1792568090,1774078768,1774917404,1792621117,1775713590,1774191999,1775751240,1775713592,1795540323,1774946504,1774998780,1792701804,1795428369,1776204257,1792724108,1792568097,1776429386,1792568093,1776080300';
-
-        $songlist = $this->findPlaylist($id);
-        $this->song($songlist);
+      $s = new \Toknot\Share\RobotSpot;
+      //echo $s->number2zh(4.4) . PHP_EOL;
+      echo $s->findOrder($result) . PHP_EOL;
+      var_dump($result);
+      echo $s->calculation($result) . PHP_EOL;
+      var_dump($result);
     }
 
     public function song($songlist) {
