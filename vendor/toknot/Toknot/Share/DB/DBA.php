@@ -67,17 +67,17 @@ class DBA extends Object {
         $allcfg = $cfg ? $cfg : Kernel::single()->cfg;
 
         if (empty($db) && empty(self::$usedb)) {
-            self::$usedb = $allcfg->app->default_db_config_key;
+            self::$usedb = $allcfg->find('app.default_db_config_key');
         } elseif (isset($db)) {
             self::$usedb = $db;
         }
 
-        $this->extType = explode(',', $allcfg->database->ext_type);
+        $this->extType = explode(',', $allcfg->find('database.ext_type'));
         $config = $allcfg->database[self::$usedb];
         if (isset($config['config_type'])) {
             self::$confType = $config['config_type'];
         }
-        $this->tableConfig = $config->table_config;
+        $this->tableConfig = $config['table_config'];
 
         self::$cfg = $config;
 
@@ -85,8 +85,8 @@ class DBA extends Object {
         Tookit::coalesce(self::$cfg, 'column_default', []);
 
         $appCfg = $allcfg->app;
-        self::$modelNs = Tookit::nsJoin($appCfg->app_ns, $appCfg->model_ns);
-        self::$modelDir = Tookit::realpath($allcfg->app->model_dir, self::$appDir);
+        self::$modelNs = Tookit::nsJoin($appCfg['app_ns'], $appCfg->find(model_ns));
+        self::$modelDir = Tookit::realpath($allcfg->find('app.model_dir'), self::$appDir);
     }
 
     public static function getUseDBConfig() {
@@ -258,7 +258,7 @@ class DBA extends Object {
         $tableClass = Tookit::dotNS($tableClass);
 
         if (empty(self::$cfg->tables)) {
-            self::$cfg->tables = $db->loadConfig(self::$cfg->table_config);
+            self::$cfg->tables = $db->loadConfig(self::$cfg['table_config']);
             $db->iteratorArray = self::$cfg->tables;
         }
         $db->loadModel();
@@ -435,8 +435,8 @@ class DBA extends Object {
      * @param array $tables
      */
     protected function createTable(Schema &$schema, $tables) {
-        $tableDefault = self::$cfg->table_default;
-        $columnDefault = self::$cfg->column_default;
+        $tableDefault = self::$cfg->find('table_default');
+        $columnDefault = self::$cfg->find('column_default');
 
         foreach ($tables as $table => $info) {
             $nt = $schema->createTable($table);

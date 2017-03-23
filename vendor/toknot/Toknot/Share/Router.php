@@ -141,8 +141,8 @@ class Router extends TKRoute {
     }
 
     public function middlewareNamespace($appCfg) {
-        $ctlns = Tookit::nsJoin($appCfg->app_ns, $appCfg->ctl_ns);
-        $middlens = Tookit::nsJoin($appCfg->app_ns, $appCfg->middleware_ns);
+        $ctlns = Tookit::nsJoin($appCfg['app_ns'], $appCfg['ctl_ns']);
+        $middlens = Tookit::nsJoin($appCfg['app_ns'], $appCfg['middleware_ns']);
         return ['group' => $middlens, 'before' => $middlens, 'controller' => $ctlns, 'after' => $middlens];
     }
 

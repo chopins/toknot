@@ -74,7 +74,7 @@ class Configuration extends Object {
                 return null;
             }
         }
-        return $cur;
+        return is_array($cur) ? new static($cur) : $cur;
     }
 
     public function toArray() {
