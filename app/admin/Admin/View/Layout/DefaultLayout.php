@@ -32,7 +32,8 @@ class DefaultLayout extends Layout {
     public $leftMenu;
     public $section;
 
-    public function init() {
+    public function __construct($params) {
+        parent::__construct($params);
         $this->setHtmlMode('strict');
         $this->setHtmlVer(5);
         $this->addBodyAttr('onload', 'void(0);');

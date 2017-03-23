@@ -56,12 +56,6 @@ abstract class Layout extends Object {
      */
     final public function __construct($param = []) {
         $this->param = $param;
-        $this->headTags = new \SplObjectStorage;
-        $this->init();
-    }
-
-    public function init() {
-        
     }
 
     final public function initPage() {
@@ -150,14 +144,6 @@ abstract class Layout extends Object {
 
     public function getHtmlMode() {
         return $this->htmlMode;
-    }
-
-    public function addHeadTag($tag) {
-        $this->headTags->attach($tag);
-    }
-
-    public function removeHeadTag($tag) {
-        $this->headTags->detach($tag);
     }
 
 }

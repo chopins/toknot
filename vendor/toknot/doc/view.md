@@ -20,12 +20,22 @@
 
 ## `Toknot\Share\View\Layout`
 
-需要在布局类中实现以下方法：
-* `head()` 本方法设置页面head头信息
-以下方法为可选实现：
-* `html()` 本方法返回html标签属性
-* `docType()` 设置页面doc版本
-* `body()` 本方法返回body标签属性
+方法文档
+* `getHtmlDoc()`    返回页面HTML文档
+* `getBody()`   返回`body`标签实例
+* `getHead()`   返回标签`head`实例
+* `title($text)` 设置页面标题
+* `addBodyAttr($key, $value)`  添加`body`属性
+* `addHtmlAttr($key, $value)`   添加`html`属性,需要在布局初始化时调用
+* `setHtmlVer($ver)` 设置DOM文档版本,需要在布局初始化时调用
+* `setHtmlMode($mode)` 设置DOM文档模式,需要在布局初始化时调用
+
+## 页面渲染流程
+1. 实例化布局
+2. 实例化视图
+3. 实例调用调用布局实例的`initPage()`方法，创建`html`,`body`,`head`标签实例
+4. 视图调用视图的`page()`方法
+5. 调用布局实例的`getHtmlDoc()`方法生成HTML
 
 ## `Toknot\Share\View\Tag`
 
