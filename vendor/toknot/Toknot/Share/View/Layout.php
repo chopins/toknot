@@ -54,7 +54,7 @@ abstract class Layout extends Object {
      * @param \Event\View\Layout $tpl
      * @param array $param
      */
-    final public function __construct($param = []) {
+    public function __construct($param = []) {
         $this->param = $param;
     }
 
