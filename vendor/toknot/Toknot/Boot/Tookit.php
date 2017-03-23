@@ -882,13 +882,13 @@ class Tookit extends Object {
                 continue;
             }
             $path = "$dir/$enter";
-            if (is_dir($enter)) {
-                self::dirWalk($path, $callable);
-                $dirCallable && $dirCallable($path);
+            if (is_dir($path)) {
+                self::dirWalk($path, $callable, $dirCallable);
             } else {
-                $callable($enter);
+                $callable($path);
             }
         }
+        $dirCallable && $dirCallable($dir);
     }
 
     public static function hookEmpty($var) {

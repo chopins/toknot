@@ -16,6 +16,13 @@ namespace Toknot\Share;
  */
 class File extends \SplFileObject {
 
+    /**
+     * find string in between $start string and $end string 
+     * 
+     * @param string $start
+     * @param string $end
+     * @return string
+     */
     public function findRange($start, $end) {
         $find = '';
         $res = '';
@@ -26,9 +33,11 @@ class File extends \SplFileObject {
             if ($search == $end) {
                 $res .= $char;
             }
-            if (strpos($search, $find) !== false) {
-                $find = '';
+      
+            if (strpos($search, $find) === false) {
+                $find = $char;
             }
+         
             if ($find == $end) {
                 break;
             }
@@ -37,7 +46,8 @@ class File extends \SplFileObject {
                 $search = $end;
             }
         }
-        return $res;
+
+        return substr($res, 0, strlen($end) * -1);
     }
 
     public function substr($start, $len) {
@@ -54,19 +64,28 @@ class File extends \SplFileObject {
         return $res;
     }
 
+    /**
+     * find string offset
+     * 
+     * @param string $search
+     * @return int
+     */
     public function strpos($search) {
         $find = '';
         $sl = strlen($search);
+
         while (!($this->eof())) {
             $char = $this->fread(1);
             $find .= $char;
-            if (strpos($search, $find) !== false) {
-                $find = '';
+
+            if (strpos($search, $find) === false) {
+                $find = $char;
             }
             if ($search == $find) {
                 return $this->ftell() - $sl;
             }
         }
+        return false;
     }
 
 }

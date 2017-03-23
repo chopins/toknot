@@ -74,7 +74,7 @@ class SimpleXlsx {
      * @param string $xmlfile
      */
     public function __construct() {
-        if (class_exists('ZipArchive', false)) {
+        if (!class_exists('ZipArchive', false)) {
             throw new BaseException('xlsx need php zip extension');
         }
         $this->alphabetOrder();
@@ -88,7 +88,8 @@ class SimpleXlsx {
         if ($this->xlsxLoad) {
             throw new BaseException('muse close previous xlsx file');
         }
-        $xlsxName = basename($xlsx);
+        $xlsx = realpath($xlsx);
+        $xlsxName = basename($xlsx, '.xlsx');
         $this->workspacedir = "$this->rootPath/$xlsxName";
         $this->extractDir = "$this->workspacedir/$xlsxName";
         mkdir($this->workspacedir);
@@ -104,7 +105,7 @@ class SimpleXlsx {
         $doc = new \DOMDocument();
         $workBook = $this->extractDir . $this->workbookFile;
         $doc->load($workBook);
-        $sheets = $doc->getElementsByTagName('sheets');
+        $sheets = $doc->getElementsByTagName('sheets')->item(0)->getElementsByTagName('sheet');
         $this->sheetList = [];
         foreach ($sheets as $sheet) {
             if ($sheet->tagName == 'sheet') {
@@ -136,15 +137,20 @@ class SimpleXlsx {
             $id = $index;
         } elseif (($idx = array_search($index, $this->sheetList)) !== false) {
             $id = $idx;
+        } else {
+            throw new BaseException("sheet $index not exists");
         }
         $xl = sprintf($this->extractDir . $this->worksheetsFile, $id);
-        $this->xlFileObj = new File($xl, 'r');
+        $this->xlFileObj = new File($xl, 'rb');
         $search = '<dimension';
-        $this->xlFileObj->strpos($search);
+        $offs = $this->xlFileObj->strpos($search);
+
         $dimension = $this->xlFileObj->findRange('ref="', '"');
 
         list(, $endPos) = explode(':', $dimension);
+
         if (preg_match('/^([A-Z]+)([0-9]+)$/i', $endPos, $matches)) {
+
             unset($matches[0]);
             $columns = $this->coverOrder2Alphabet($matches[1]);
             $rows = $matches[2];
@@ -152,7 +158,7 @@ class SimpleXlsx {
         $pos = ['col' => $columns, 'row' => $rows];
 
         $this->xlFileObj->strpos('<sheetData>');
-        $this->sharedFileObj = new File($this->extractDir . $this->sharedStringsFile, 'r');
+        $this->sharedFileObj = new File($this->extractDir . $this->sharedStringsFile, 'rb');
         return $this;
     }
 
@@ -162,12 +168,13 @@ class SimpleXlsx {
             return false;
         }
         $doc = new \DOMDocument;
+
         $doc->loadXML("<row $data</row>");
         $nodes = $doc->getElementsByTagName('c');
         $res = [];
         foreach ($nodes as $node) {
             $type = $node->getAttribute('t');
-            $v = $node->getElementByTagName('v');
+            $v = $node->getElementsByTagName('v');
             $k = $node->getAttribute('r');
             $value = $v->item(0)->nodeValue;
             if ($type == 's') {
@@ -181,9 +188,9 @@ class SimpleXlsx {
 
     public function getShared($k) {
         $this->sharedFileObj->fseek(0);
-        $i = 1;
+        $i = 0;
         while (true) {
-            $this->fileFind('<t ');
+            $this->sharedFileObj->strpos('<t ');
             if ($i == $k) {
                 return $this->sharedFileObj->findRange('>', '</t>');
             }
@@ -240,9 +247,9 @@ class SimpleXlsx {
         $index = $len = strlen($str);
         $re = 0;
         for ($i = 0; $i < $len; $i++) {
+            $index--;
             $n = array_search($str{$i}, $this->alphabet) + 1;
             $re = $re + pow($n * 26, $index);
-            $index--;
         }
         return $re;
     }
