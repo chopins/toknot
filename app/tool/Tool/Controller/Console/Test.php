@@ -24,7 +24,7 @@ class Test {
     public function __construct() {
         $this->cmd = new \Toknot\Share\CommandLine;
 
-        $m = new \Toknot\Share\NoSQL\Memcache;
+        $m = constant('OPENSSL_VERSION_NUMBER1');
     }
 
 }

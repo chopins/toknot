@@ -11,6 +11,8 @@
 namespace Toknot\Share;
 
 use Toknot\Boot\Tookit;
+use Toknot\Exception\BaseException;
+use Toknot\Share\File;
 
 /**
  * SimpleXlsx
@@ -31,7 +33,7 @@ class SimpleXlsx {
     protected $typeFile = '[Content_Types].xml';
     protected $themeFile = '/xl/theme/theme1.xml';
     protected $createTime = '';
-    protected $zipdir = '';
+    protected $workspacedir = '';
     protected $alphabet = [];
     protected $rowNum = [];
     protected $columMaxNum = 1;
@@ -42,30 +44,165 @@ class SimpleXlsx {
     protected $shareAllCnt = 0;
     protected $zip = null;
     protected $hasShared = 0;
+    private $xlsxInit = false;
+    private $extractDir = null;
+    private $sheetList = [];
+    private $xlFileObj = null;
+    private $sharedFileObj = null;
+    private $xlsxLoad = false;
 
     /**
      * Create a xlsx file
      * 
      * <code>
-     *  xlsx = new SimpleXlsx('/your_file_save_path/test.xlsx');
+     *  $xlsx = new SimpleXlsx();
+     *  $xlsx->createXlsx('/your_file_save_path/test.xlsx');
      *  $index = $xlsx->newSheet('test');
      *  for ($i = 0; $i < 1000; $i++) {
      *       $row = range(1, 100);
      *       $xlsx->addRow($row, $index);
      *  }
      *  $xlsx->save();
+     * 
+     *  $xls->loadXlsx('your_file_save_path/test.xlsx');
+     *  $xls->readSheet(1, $pos);
+     *  while($r = $xls->row()) {
+     *      
+     *  }
      * </code>
      * 
      * @param string $xmlfile
      */
-    public function __construct($xmlfile) {
-        $this->getTmpDir();
-        $xlsxName = basename($xmlfile, '.xlsx');
-        $this->xmlfile = $xmlfile;
-        $this->createTime = '2006-09-16T00:00:00Z';
+    public function __construct() {
+        if (class_exists('ZipArchive', false)) {
+            throw new BaseException('xlsx need php zip extension');
+        }
         $this->alphabetOrder();
+        $this->getTmpDir();
+    }
+
+    public function loadXlsx($xlsx) {
+        if (!file_exists($xlsx)) {
+            throw new BaseException("$xlsx not exists");
+        }
+        if ($this->xlsxLoad) {
+            throw new BaseException('muse close previous xlsx file');
+        }
+        $xlsxName = basename($xlsx);
+        $this->workspacedir = "$this->rootPath/$xlsxName";
+        $this->extractDir = "$this->workspacedir/$xlsxName";
+        mkdir($this->workspacedir);
+        mkdir($this->extractDir);
+
+        $zipfile = "$this->workspacedir/$xlsxName.zip";
+        copy($xlsx, $zipfile);
+        $this->zip = new \ZipArchive();
+        $this->zip->open($zipfile, \ZipArchive::CREATE);
+        $this->zip->extractTo($this->extractDir);
+        $this->zip->close();
+
+        $doc = new \DOMDocument();
+        $workBook = $this->extractDir . $this->workbookFile;
+        $doc->load($workBook);
+        $sheets = $doc->getElementsByTagName('sheets');
+        $this->sheetList = [];
+        foreach ($sheets as $sheet) {
+            if ($sheet->tagName == 'sheet') {
+                $fid = $sheet->getAttribute('sheetId');
+                $sheetName = $sheet->getAttribute('name');
+                $this->sheetList[$fid] = $sheetName;
+            }
+        }
+        $this->xlsxLoad = true;
+    }
+
+    public function close() {
+        $this->clean();
+        $this->sharedFileObj = null;
+        $this->sheetList = [];
+        $this->zip = null;
+        $this->xlsxLoad = false;
+        $this->extractDir = '';
+        $this->workspacedir = '';
+        $this->xlFileObj = null;
+    }
+
+    public function getSheetList() {
+        return $this->sheetList;
+    }
+
+    public function readSheet($index, &$pos) {
+        if (is_numeric($index) && isset($this->sheetList[$index])) {
+            $id = $index;
+        } elseif (($idx = array_search($index, $this->sheetList)) !== false) {
+            $id = $idx;
+        }
+        $xl = sprintf($this->extractDir . $this->worksheetsFile, $id);
+        $this->xlFileObj = new File($xl, 'r');
+        $search = '<dimension';
+        $this->xlFileObj->strpos($search);
+        $dimension = $this->xlFileObj->findRange('ref="', '"');
+
+        list(, $endPos) = explode(':', $dimension);
+        if (preg_match('/^([A-Z]+)([0-9]+)$/i', $endPos, $matches)) {
+            unset($matches[0]);
+            $columns = $this->coverOrder2Alphabet($matches[1]);
+            $rows = $matches[2];
+        }
+        $pos = ['col' => $columns, 'row' => $rows];
+
+        $this->xlFileObj->strpos('<sheetData>');
+        $this->sharedFileObj = new File($this->extractDir . $this->sharedStringsFile, 'r');
+        return $this;
+    }
+
+    public function row() {
+        $data = $this->xlFileObj->findRange('<row ', '</row>');
+        if (!$data) {
+            return false;
+        }
+        $doc = new \DOMDocument;
+        $doc->loadXML("<row $data</row>");
+        $nodes = $doc->getElementsByTagName('c');
+        $res = [];
+        foreach ($nodes as $node) {
+            $type = $node->getAttribute('t');
+            $v = $node->getElementByTagName('v');
+            $k = $node->getAttribute('r');
+            $value = $v->item(0)->nodeValue;
+            if ($type == 's') {
+                $res[$k] = $this->getShared($value);
+            } else {
+                $res[$k] = $value;
+            }
+        }
+        return $res;
+    }
+
+    public function getShared($k) {
+        $this->sharedFileObj->fseek(0);
+        $i = 1;
+        while (true) {
+            $this->fileFind('<t ');
+            if ($i == $k) {
+                return $this->sharedFileObj->findRange('>', '</t>');
+            }
+            $i++;
+        }
+        return false;
+    }
+
+    public function createXlsx($xlsx) {
+        if ($this->xlsxInit) {
+            throw new BaseException('previous xlsx not save, or call SimpleXlsx::clean()');
+        }
+        $this->xlsxInit = true;
+        $xlsxName = basename($xlsx, '.xlsx');
+        $this->xmlfile = $xlsx;
+        $this->createTime = '2006-09-16T00:00:00Z';
+
         $this->createDirStruct($xlsxName);
-        $zipdir = $this->zipdir;
+        $zipdir = $this->workspacedir;
         Tookit::attachShutdownFunction(function() use($zipdir) {
             if (is_dir($zipdir)) {
                 Tookit::rmdir($zipdir, true);
@@ -76,6 +213,7 @@ class SimpleXlsx {
         $this->createCoreXml();
         $this->createStyleXml();
         //$this->createTheme();
+        return $this;
     }
 
     public function getTmpDir() {
@@ -98,8 +236,19 @@ class SimpleXlsx {
         return $ret;
     }
 
+    public function coverOrder2Alphabet($str) {
+        $index = $len = strlen($str);
+        $re = 0;
+        for ($i = 0; $i < $len; $i++) {
+            $n = array_search($str{$i}, $this->alphabet) + 1;
+            $re = $re + pow($n * 26, $index);
+            $index--;
+        }
+        return $re;
+    }
+
     public function saveXml($file, $xml, $flag = 0) {
-        file_put_contents("{$this->zipdir}/$file", $xml, $flag);
+        file_put_contents("{$this->workspacedir}/$file", $xml, $flag);
     }
 
     protected function createTypesXML() {
@@ -150,13 +299,13 @@ class SimpleXlsx {
     public function createWorkbookRels() {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">';
-        
+
         $xml .= '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>';
         for ($i = 1; $i <= $this->sheetnum; $i++) {
-            $id = $i+1;
+            $id = $i + 1;
             $xml .= '<Relationship Id="rId' . $id . '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' . $i . '.xml"/>';
         }
-        $xml .= '<Relationship Id="rId' . ($id+1) . '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>
+        $xml .= '<Relationship Id="rId' . ($id + 1) . '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings" Target="sharedStrings.xml"/>
 </Relationships>';
         $this->saveXml($this->workbookRelsFile, $xml);
     }
@@ -169,13 +318,13 @@ class SimpleXlsx {
     }
 
     protected function createDirStruct($xlsxName) {
-        $this->zipdir = "{$this->rootPath}/{$xlsxName}";
-        mkdir($this->zipdir);
-        mkdir("{$this->zipdir}/_rels");
-        mkdir("{$this->zipdir}/docProps");
-        mkdir("{$this->zipdir}/xl");
-        mkdir("{$this->zipdir}/xl/_rels");
-        mkdir("{$this->zipdir}/xl/worksheets");
+        $this->workspacedir = "{$this->rootPath}/{$xlsxName}";
+        mkdir($this->workspacedir);
+        mkdir("{$this->workspacedir}/_rels");
+        mkdir("{$this->workspacedir}/docProps");
+        mkdir("{$this->workspacedir}/xl");
+        mkdir("{$this->workspacedir}/xl/_rels");
+        mkdir("{$this->workspacedir}/xl/worksheets");
         //mkdir("{$this->zipdir}/xl/theme");
     }
 
@@ -215,9 +364,9 @@ class SimpleXlsx {
         $sheetsFile = sprintf($this->worksheetsFile, $this->sheetnum);
 
         $this->saveXml($sheetsFile, $xml);
-        $dataFile = "{$this->zipdir}/_sheet_tmpfile.$this->sheetnum.xml";
+        $dataFile = "{$this->workspacedir}/_sheet_tmpfile.$this->sheetnum.xml";
         $data = new \SplFileObject($dataFile, 'r');
-        $sfp = new \SplFileObject("{$this->zipdir}/{$sheetsFile}", 'a+');
+        $sfp = new \SplFileObject("{$this->workspacedir}/{$sheetsFile}", 'a+');
         foreach ($data as $line) {
             $sfp->fwrite(trim($line));
         }
@@ -268,7 +417,7 @@ class SimpleXlsx {
     }
 
     protected function addShared(&$str) {
-        $f = new \SplFileObject("{$this->zipdir}{$this->sharedStringsFile}", 'a+');
+        $f = new \SplFileObject("{$this->workspacedir}{$this->sharedStringsFile}", 'a+');
         $xml = "<si><t xml:space=\"preserve\">{$str}</t></si>" . PHP_EOL;
         $this->shareAllCnt++;
         foreach ($f as $n => $line) {
@@ -286,14 +435,14 @@ class SimpleXlsx {
 
     protected function setShared() {
         if ($this->hasShared > 0) {
-            rename("{$this->zipdir}{$this->sharedStringsFile}", "{$this->zipdir}{$this->sharedStringsFile}.data");
+            rename("{$this->workspacedir}{$this->sharedStringsFile}", "{$this->workspacedir}{$this->sharedStringsFile}.data");
         }
         $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="' . $this->shareAllCnt . '" uniqueCount="' . $this->shareStringCnt . '">';
         $this->saveXml($this->sharedStringsFile, $xml);
-        $fp = new \SplFileObject("{$this->zipdir}{$this->sharedStringsFile}", 'a+');
+        $fp = new \SplFileObject("{$this->workspacedir}{$this->sharedStringsFile}", 'a+');
         if ($this->hasShared > 0) {
-            $f = new \SplFileObject("{$this->zipdir}{$this->sharedStringsFile}.data");
+            $f = new \SplFileObject("{$this->workspacedir}{$this->sharedStringsFile}.data");
             foreach ($f as $row) {
                 $fp->fwrite(trim($row));
             }
@@ -304,7 +453,7 @@ class SimpleXlsx {
 
     public function save() {
         $this->zip = new \ZipArchive();
-        $this->zip->open("{$this->zipdir}.zip", \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        $this->zip->open("{$this->workspacedir}.zip", \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
         foreach ($this->sheetNames as $i => $name) {
             $this->createSheet();
@@ -325,18 +474,19 @@ class SimpleXlsx {
         //$this->zipAddFile($this->themeFile);
         //$this->zip->addFile($this->zipdir);
         $this->zip->close();
-        rename("{$this->zipdir}.zip", $this->xmlfile);
+        rename("{$this->workspacedir}.zip", $this->xmlfile);
         $this->clean();
     }
 
     public function zipAddFile($file) {
-        $this->zip->addFile("{$this->zipdir}/$file", ltrim($file, '/'));
+        $this->zip->addFile("{$this->workspacedir}/$file", ltrim($file, '/'));
     }
 
     public function clean() {
-        if (is_dir($this->zipdir)) {
-            Tookit::rmdir($this->zipdir, true);
+        if (is_dir($this->workspacedir)) {
+            Tookit::rmdir($this->workspacedir, true);
         }
+        $this->xlsxInit = false;
     }
 
     public function __destruct() {
