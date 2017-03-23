@@ -155,7 +155,7 @@ final class Kernel extends Object {
         return $this->response();
     }
 
-    private function response() {
+    public function response() {
         if ($this->isCLI) {
             echo $this->runResult['content'];
             exit($this->runResult['code']);
@@ -256,7 +256,7 @@ final class Kernel extends Object {
             if ($paramsCount > 0) {
                 self::callMethod($paramsCount, $calls[1], $params, $groupins);
             } else {
-                $groupins->{$group[1]}();
+                $groupins->{$calls[1]}();
             }
         }
     }

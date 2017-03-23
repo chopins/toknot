@@ -11,7 +11,7 @@
 namespace Toknot\Share\View;
 
 use Toknot\Share\View\Tag;
-use Toknot\Exception\BaseException;
+use Toknot\Boot\Object;
 
 /**
  * Display
@@ -19,10 +19,9 @@ use Toknot\Exception\BaseException;
  * invoke order:  
  *   $this->head()
  *   $this->title()
- *   $this->body()
  * 
  */
-abstract class Layout {
+abstract class Layout extends Object {
 
     /**
      * body
@@ -44,6 +43,11 @@ abstract class Layout {
      */
     private $head;
     private $title;
+    private $htmlAttr = [];
+    private $bodyAttr = [];
+    private $htmlVer = 5;
+    private $htmlMode = 'strict';
+    private $headTags = null;
 
     /**
      * 
@@ -52,25 +56,19 @@ abstract class Layout {
      */
     final public function __construct($param = []) {
         $this->param = $param;
+        $this->headTags = new \SplObjectStorage;
+        $this->init();
     }
 
-    final public function buildHtml() {
-        $htmlOption = $this->html();
-        $docType = $this->docType();
+    public function init() {
+        
+    }
 
-        Tag::html($htmlOption, $docType);
+    final public function initPage() {
+        Tag::html($this->htmlAttr, ['version' => $this->htmlVer, 'mode' => $this->htmlMode]);
         $this->head = Tag::head();
         $this->setPageTitle();
-        $this->setBodyAttributes();
-    }
-
-    final private function setBodyAttributes() {
-        $body = $this->body();
-        if (!is_array($body)) {
-            $class = get_called_class($this);
-            throw new BaseException("$class::body() must return array of body attributes");
-        }
-        $this->body = Tag::body($body);
+        $this->body = Tag::body($this->bodyAttr);
     }
 
     final public function setPageTitle() {
@@ -109,18 +107,13 @@ abstract class Layout {
     }
 
     /**
-     * set head tag
-     * 
-     */
-    abstract public function head();
-
-    /**
      * set body tag attr
      * 
      * @return array    The body tag attributes
      */
-    public function body() {
-        return [];
+    final public function addBodyAttr($key, $value) {
+        $this->bodyAttr[$key] = $value;
+        return $this;
     }
 
     /**
@@ -128,12 +121,43 @@ abstract class Layout {
      * 
      * @return array   return html attributes
      */
-    public function html() {
-        return [];
+    final public function addHtmlAttr($key, $value) {
+        $this->htmlAttr[$key] = $value;
+        return $this;
     }
 
-    public function docType() {
-        return ['version' => 5];
+    final public function setHtmlVer($ver) {
+        $this->htmlVer = $ver;
+        return $this;
+    }
+
+    final public function setHtmlMode($mode) {
+        $this->htmlMode = $mode;
+        return $this;
+    }
+
+    public function getHtmlAttr() {
+        return $this->htmlAttr;
+    }
+
+    public function getBodyAttr() {
+        return $this->bodyAttr;
+    }
+
+    public function getHtmlVer() {
+        return $this->htmlVer;
+    }
+
+    public function getHtmlMode() {
+        return $this->htmlMode;
+    }
+
+    public function addHeadTag($tag) {
+        $this->headTags->attach($tag);
+    }
+
+    public function removeHeadTag($tag) {
+        $this->headTags->detach($tag);
     }
 
 }

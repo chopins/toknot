@@ -23,15 +23,12 @@ class Test {
      */
     public function __construct() {
         $this->cmd = new \Toknot\Share\CommandLine;
-        $filename = \Toknot\Boot\Kernel::single()->getOption(2);
-        $xls = new \Toknot\Share\SimpleXlsx;
-        $xls->loadXlsx($filename);
-        $xls->readSheet(1, $pos);
-        while ($res = $xls->row()) {
-            var_dump($res);
-        }
-                var_dump($pos);
-
+        $this->run();
     }
 
+    public function run() {
+         $value = '<a onclick="test()">';
+        $msg =  \Toknot\Boot\Tookit::filterXSS($value);
+        $this->cmd->message($msg);
+    }
 }

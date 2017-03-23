@@ -79,12 +79,16 @@ class DBSessionHandler implements \SessionHandlerInterface {
 
     public function write($sesssionId, $data) {
         $maxlifetime = (int) ini_get('session.gc_maxlifetime');
-        $this->model->beginTransaction();
+        try {
+            DBA::single()->beginTransaction();
+        } catch (\Exception $e) {
+            return false;
+        }
         try {
             $this->model->save([$this->sidCol => $sesssionId, $this->dataCol => $data, $this->expireCol => $maxlifetime, $this->timeCol => time()]);
         } catch (\Exception $e) {
-            $this->model->rollBack();
-            $this->model->beginTransaction();
+            DBA::single()->rollBack();
+            DBA::single()->beginTransaction();
             $this->echoException($e);
             return false;
         }
@@ -93,7 +97,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
 
     public function read($sessionId) {
         $this->sessionExpired = false;
-        $this->model->beginTransaction();
+        DBA::single()->beginTransaction();
         try {
             $sessionRow = $this->model->getKeyValue($sessionId);
             if ($sessionRow) {
@@ -107,16 +111,20 @@ class DBSessionHandler implements \SessionHandlerInterface {
 
             $this->model->insert([$this->sidCol => $sessionId, $this->dataCol => '', $this->expireCol => 0, $this->timeCol => time()]);
         } catch (\Exception $e) {
-            $this->model->rollBack();
+            DBA::single()->rollBack();
 
-            $this->model->beginTransaction();
+            DBA::single()->beginTransaction();
             $this->echoException($e);
         }
         return '';
     }
 
     public function close() {
-        $this->model->commit();
+        try {
+            DBA::single()->commit();
+        } catch (\Exception $e) {
+            return false;
+        }
         if ($this->gcCalled) {
             $this->gcCalled = false;
             $this->model->delete(["$this->expireCol + $this->timeCol", time(), '<']);

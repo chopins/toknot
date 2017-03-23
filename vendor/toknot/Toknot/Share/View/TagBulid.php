@@ -13,6 +13,7 @@ namespace Toknot\Share\View;
 use SplObjectStorage;
 use Toknot\Boot\Object;
 use Toknot\Exception\BaseException;
+use Toknot\Boot\Tookit;
 
 /**
  * View
@@ -130,7 +131,7 @@ abstract class TagBulid extends Object {
         if (empty($this->tagClass)) {
             return '';
         }
-        $this->html .= ' class="' . implode(' ', $this->tagClass) . '"';
+        $this->html .= ' class="' . implode($this->tagClass) . '"';
     }
 
     protected function buildStyle() {
@@ -149,15 +150,16 @@ abstract class TagBulid extends Object {
             if (is_bool($value)) {
                 $value = $value ? 'true' : 'false';
             }
+
             if ($this->srckey == $attr && $this->resourceVer !== null) {
                 $value = "{$value}?v={$this->resourceVer}";
             }
 
-            if (!$this->srckey == $attr && $this->host !== null) {
+            if ($this->srckey == $attr) {
                 $srcHost = $this->host ? $this->host : (self::$srcDefaultHost ? self::$srcDefaultHost : false);
                 if (!$srcHost) {
-                    list($pro) = explode('/', getenv('SERVER_PROTOCOL', true));
-                    $value = strtolower($pro) . "://" . getenv('SERVER_NAME', true) . $value;
+                    list($pro) = explode('/', Tookit::env('SERVER_PROTOCOL'));
+                    $value = strtolower($pro) . "://" . Tookit::env('HTTP_HOST') . $value;
                 }
                 $value = "$srcHost$value";
             }
@@ -229,7 +231,12 @@ abstract class TagBulid extends Object {
     }
 
     public function addAttr($attr, $value) {
-        $this->srckey = $attr == 'src' ? 'src' : ($attr == 'href' ? 'href' : null);
+        if ($attr == 'src') {
+            $this->srckey = 'src';
+        } elseif ($attr == 'href') {
+            $this->srckey = 'href';
+        }
+
         $this->attr[$attr] = $value;
         return $this;
     }

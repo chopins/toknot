@@ -14,9 +14,7 @@ use Toknot\Boot\Object;
 use Toknot\Share\View\Layout;
 use Toknot\Share\View\Tag;
 use Toknot\Boot\Kernel;
-use Toknot\Boot\Tookit;
 use Toknot\Exception\BaseException;
-use Toknot\Share\httpTool;
 
 /**
  *  Layout
@@ -54,7 +52,7 @@ abstract class View extends Object {
             throw new BaseException("$layoutClass must is sub of Toknot\Share\View\Layout");
         }
         $this->layoutIns = $layout;
-        $this->layoutIns->buildHtml();
+        $this->layoutIns->initPage();
         $this->head = $this->layoutIns->getHead();
         $this->body = $this->layoutIns->getBody();
         $this->page();

@@ -17,7 +17,7 @@ class Index extends BaseView {
     public $content;
 
     public function contanier() {
-        
+        $this->title('index');
         $rightTable = $this->table($this->rbox, ['class' => 'pure-table']);
         $rightTableThead = $this->thead($rightTable);
         $tr = $this->tr($rightTableThead);
@@ -25,6 +25,7 @@ class Index extends BaseView {
             $this->td($tr)->pushText("#$i Title");
         }
 
+        
         $rightTableBody = $this->tbody($rightTable);
         for ($i = 0; $i < 5; $i++) {
             $bodyTr = $this->tr($rightTableBody);

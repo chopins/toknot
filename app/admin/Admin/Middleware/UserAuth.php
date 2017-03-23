@@ -15,13 +15,13 @@ use Toknot\Share\Controller;
 class UserAuth extends Controller {
 
     public function __construct() {
-        $this->startSession();
+        //$this->startSession();
     }
     
     public function checkLogin() {
-        if(empty($_SESSION['uid'])) {
+        //if(empty($_SESSION['uid'])) {
 //           $this->redirect('login-view'); 
-        }
+        //}
 
     }
 

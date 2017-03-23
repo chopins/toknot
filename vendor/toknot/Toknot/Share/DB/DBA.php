@@ -85,7 +85,7 @@ class DBA extends Object {
         Tookit::coalesce(self::$cfg, 'column_default', []);
 
         $appCfg = $allcfg->app;
-        self::$modelNs = Tookit::nsJoin($appCfg['app_ns'], $appCfg->find(model_ns));
+        self::$modelNs = Tookit::nsJoin($appCfg['app_ns'], $appCfg->find('model_ns'));
         self::$modelDir = Tookit::realpath($allcfg->find('app.model_dir'), self::$appDir);
     }
 

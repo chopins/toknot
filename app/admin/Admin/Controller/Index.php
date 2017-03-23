@@ -27,7 +27,7 @@ class Index extends Common {
         $this->v->pageNav = '个人';
 
         $this->setTitle('ProcessHub');
-        $u->getKeyValue(1);
+        //$u->getKeyValue(1);
         $this->view('Index');
     }
 

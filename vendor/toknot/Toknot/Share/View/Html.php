@@ -10,7 +10,6 @@
 
 namespace Toknot\Share\View;
 
-use Toknot\Boot\Tookit;
 use Toknot\Exception\BaseException;
 
 /**
@@ -48,10 +47,10 @@ class Html extends TagBulid {
     const HTML2 = '"-//IETF//DTD HTML 2.0//EN"';
     const HTML3_2 = '"-//W3C//DTD HTML 3.2 Final//EN"';
 
-    public function __construct($param = '', $ver = 5, $mode = 'strict') {
-        $this->htmlVer = $ver;
-        $this->htmlMode = $mode;
-        $this->setDoctype($ver, $mode);
+    public function __construct($param = '', $type = []) {
+        $this->htmlVer = $type['version'];
+        $this->htmlMode = $type['mode'];
+        $this->setDoctype($type['version'], $type['mode']);
         $this->tagName = 'html';
         $this->initTag($param);
     }
@@ -76,7 +75,6 @@ class Html extends TagBulid {
 
         $this->html .= "<!doctype ";
         $this->html .= $ver == '4.01' ? 'HTML' : 'html';
-
         if (version_compare($ver, 5) == -1) {
             $this->html .= ' PUBLIC ';
 

@@ -107,6 +107,7 @@ class Tag extends TagBulid {
         $area = new AnyTag('textarea', $attr);
         $area->pushText($text);
         $parentTag->push($area);
+        return $area;
     }
 
     /**
@@ -135,6 +136,7 @@ class Tag extends TagBulid {
     public static function stylesheet(TagBulid $parentTag, $src) {
         $link = new AnyTag('link', ['href' => $src, 'rel' => 'stylesheet', 'type' => 'text/css']);
         $parentTag->push($link);
+        return $link;
     }
 
     /**
@@ -152,6 +154,7 @@ class Tag extends TagBulid {
             $script->pushText($attr);
         }
         $parentTag->push($script);
+        return $script;
     }
 
     public static function style(TagBulid $parentTag, $code = '') {
@@ -159,6 +162,7 @@ class Tag extends TagBulid {
         $style = new AnyTag('style', $option);
         $style->pushText($code);
         $parentTag->push($style);
+        return $style;
     }
 
     /**

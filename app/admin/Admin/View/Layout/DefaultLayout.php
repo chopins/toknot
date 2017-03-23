@@ -32,29 +32,22 @@ class DefaultLayout extends Layout {
     public $leftMenu;
     public $section;
 
-    public function html() {
-        return [];
+    public function init() {
+        $this->setHtmlMode('strict');
+        $this->setHtmlVer(5);
+        $this->addBodyAttr('onload', 'void(0);');
+        $this->addHtmlAttr('lang', 'zh');
     }
-    
-    public function docType() {
-        return ['version'=>'5'];
-    }
-   
+
     public function head() {
         $this->headTag = $this->getHead();
         Tag::meta($this->headTag, ['charset' => 'utf-8']);
-        Tag::meta($this->headTag,
-                ['http-equiv' => 'Content-Language', 'content' => 'zh']);
-        Tag::meta($this->headTag,
-                ['name' => 'viewport', 'content' => 'width=device-width']);
+        Tag::meta($this->headTag, ['http-equiv' => 'Content-Language', 'content' => 'zh']);
+        Tag::meta($this->headTag, ['name' => 'viewport', 'content' => 'width=device-width']);
         Tag::stylesheet($this->headTag, '/static/pure.css')->addHost()->addVer('0.1');
         Tag::stylesheet($this->headTag, '/static/event.css')->addHost()->addVer('0.1');
 
         Tag::script($this->headTag, ['src' => '/static/toknot.js'])->addHost()->addVer('0.1');
-    }
-
-    public function body() {
-        return [];
     }
 
     public function contanier() {
@@ -71,22 +64,22 @@ class DefaultLayout extends Layout {
     public function setCrumb($nav) {
         Tag::div($this->right, ['class' => 'breadcrumb'])->pushText($nav);
     }
+
     public function rightBox() {
         return Tag::div($this->right, ['class' => 'right-box']);
     }
+
     public function grids($parent) {
         return Tag::div($parent, ['class' => 'pure-g']);
     }
 
     public function header() {
-        $this->header = Tag::div($this->section,
-                        ['class' => 'pure-u-1 pure-menu pure-menu-horizontal header']);
+        $this->header = Tag::div($this->section, ['class' => 'pure-u-1 pure-menu pure-menu-horizontal header']);
         $g = $this->grids($this->header);
         $left = Tag::div($g, ['class' => 'pure-u-1-12']);
         Tag::a($left, ['class' => 'pure-menu-heading pure-menu-link'])
                 ->pushText('ProcessHub');
-        $right = Tag::div($g,
-                        ['class' => 'pure-u-11-12', 'style' => 'text-align:right;']);
+        $right = Tag::div($g, ['class' => 'pure-u-11-12', 'style' => 'text-align:right;']);
         $this->headerUl = Tag::ul($right, $this->menuListAttr);
     }
 
@@ -107,8 +100,7 @@ class DefaultLayout extends Layout {
     }
 
     public function left() {
-        $leftSider = Tag::div($this->bodyContanier,
-                        ['class' => 'pure-u-1-3 left']);
+        $leftSider = Tag::div($this->bodyContanier, ['class' => 'pure-u-1-3 left']);
 
         $this->leftMenu = Tag::ul($leftSider, $this->menuListAttr);
     }
@@ -119,8 +111,7 @@ class DefaultLayout extends Layout {
     }
 
     public function right() {
-        $this->right = Tag::div($this->bodyContanier,
-                        ['class' => 'right']);
+        $this->right = Tag::div($this->bodyContanier, ['class' => 'right']);
     }
 
 }

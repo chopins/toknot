@@ -34,13 +34,15 @@ abstract class BaseView extends View {
     final public function init() {
         $this->layout = $this->getLayoutInstance();
     }
+    
 
     final public function page() {
+        $this->init();
+        $this->layout->head();
         Input::addType('email');
         Tookit::coalesce($this->param, 'leftMenuSelected');
         Tookit::coalesce($this->param, 'headerMenuSelected');
 
-        $this->init();
         $this->buildFrame();
         $this->layout->setCrumb($this->param['pageNav']);
         $this->rbox = $this->layout->rightBox();

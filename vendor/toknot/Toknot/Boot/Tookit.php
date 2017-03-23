@@ -42,6 +42,7 @@ class Tookit extends Object {
     const FILTER_VALIDATE_FLOAT = 'FILTER_VALIDATE_FLOAT';
     const FILTER_VALIDATE_URL = 'FILTER_VALIDATE_URL';
     const FILTER_VALIDATE_IP = 'FILTER_VALIDATE_IP';
+    const FILTER_SANITIZE_XSS = 'FILTER_SANITIZE_XSS';
 
     public static function setParseConfObject($parseClass) {
         if ($parseClass) {
@@ -829,7 +830,20 @@ class Tookit extends Object {
         return false;
     }
 
+    public static function filterXSS($value) {
+        $str = rawurldecode($value);
+        $str = str_replace(['<', '>', '.', '(', ')'], ['&lt;', '&gt;', '&#46;', '&#40;', '&#41;'], $str);
+        $str = preg_replace('/=([\s\'"]*)javascript(\s*:+)/im', '=$1javascript&#58;', $str);
+        $str = preg_replace('/(\s)on([\w]+)/im', '&nbsp;on$2', $str);
+        $str = preg_replace('/=([\s\'"]*)data(\s*:+)/im', '=$1data&#58;', $str);
+        return $str;
+    }
+
     public static function filter($type, $key, $filter = self::FILTER_DEFAULT) {
+        if ($filter == self::FILTER_SANITIZE_XSS) {
+            $value = self::filter($type, $key);
+            return self::filterXSS($value);
+        }
         if (self::$phpfilter) {
             $type = constant("INPUT_$type");
             return filter_input($type, $key, constant($filter));
@@ -872,7 +886,11 @@ class Tookit extends Object {
     }
 
     public static function env($key) {
-        return PHP_MIN_VERSION > 6 ? getenv($key, true) : getenv($key);
+        $res = PHP_MIN_VERSION > 6 ? getenv($key, true) : getenv($key);
+        if (!$res) {
+            return self::filter(self::INPUT_SERVER, $key);
+        }
+        return $res;
     }
 
     public static function dirWalk($dir, $callable, $dirCallable = null) {
