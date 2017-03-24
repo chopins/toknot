@@ -27,8 +27,15 @@ class Test {
     }
 
     public function run() {
-         $value = '<a onclick="test()">';
-        $msg =  \Toknot\Boot\Tookit::filterXSS($value);
-        $this->cmd->message($msg);
+        $f = new \Toknot\Share\File('./README.md');
     }
+
+    public function loop() {
+        
+    }
+
+    public function y($param) {
+        
+    }
+
 }

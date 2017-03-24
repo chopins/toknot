@@ -10,11 +10,42 @@
 
 namespace Toknot\Share;
 
+use Toknot\Share\Generator;
+
 /**
  * File
  *
  */
 class File extends \SplFileObject {
+
+    private $writer = null;
+    private $reader = null;
+    private $readerLen = 1024;
+
+    public function __construct($filename, $mode = 'r', $useInclude = false, $context = null) {
+        $context ? parent::__construct($filename, $mode, $useInclude, $context) : parent::__construct($filename, $mode, $useInclude);
+
+        if (PHP_MIN_VERSION >= 5) {
+            $this->gwrite();
+            $this->greader();
+        }
+    }
+
+    private function gwrite() {
+        $this->writer = Generator::sloop(true, array($this, 'fwrite'));
+    }
+
+    private function greader() {
+        $this->reader = Generator::gloop(true, array($this, 'fread'), [$this->readerLen]);
+    }
+
+    public function getReader() {
+        return $this->reader;
+    }
+
+    public function getWriter() {
+        return $this->writer;
+    }
 
     /**
      * find string in between $start string and $end string 
@@ -33,11 +64,11 @@ class File extends \SplFileObject {
             if ($search == $end) {
                 $res .= $char;
             }
-      
+
             if (strpos($search, $find) === false) {
                 $find = $char;
             }
-         
+
             if ($find == $end) {
                 break;
             }
@@ -86,6 +117,28 @@ class File extends \SplFileObject {
             }
         }
         return false;
+    }
+
+    /**
+     * yield write string
+     * 
+     * @param string $str
+     */
+    public function yfwrite($str) {
+        $this->writer->send($str);
+    }
+
+    /**
+     * yield read string
+     * 
+     * @param int $len
+     * @return string
+     */
+    public function yfread($len) {
+        $this->readerLen = $len;
+        $res = $this->reader->current();
+        $this->reader->next();
+        return $res;
     }
 
 }

@@ -93,6 +93,10 @@ final class Kernel extends Object {
         } else {
             define('PHP_MIN_VERSION', 7);
         }
+
+        if (!extension_loaded('filter')) {
+            Tookit::disablePHPFilter();
+        }
     }
 
     public function setPHPProcessInfo() {
@@ -118,9 +122,6 @@ final class Kernel extends Object {
             $this->logger = $this->cfg->find('app.log.logger');
         }
 
-        if (!extension_loaded('filter')) {
-            Tookit::disablePHPFilter();
-        }
 
         if ($this->cfg->find('app.short_except_path')) {
             Logs::$shortPath = strlen(dirname(dirname(TKROOT)));
@@ -132,8 +133,8 @@ final class Kernel extends Object {
     private function phpIniSet() {
         ini_set('html_errors', 0);
         ini_set('log_errors', 0);
-        if(!ini_get('date.timezone')) {
-            //ini_set('date.timezone', 'ETC/GMT-0');
+        if (!ini_get('date.timezone')) {
+            ini_set('date.timezone', 'UTC');
         }
     }
 

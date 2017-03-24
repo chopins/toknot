@@ -13,6 +13,7 @@ namespace Toknot\Boot;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
 use Toknot\Boot\ParseConfig;
+use Toknot\Share\Generator;
 
 /**
  * Tookit
@@ -911,6 +912,19 @@ class Tookit extends Object {
 
     public static function hookEmpty($var) {
         return empty($var);
+    }
+
+    public static function xrange($start, $end, $step = 1) {
+        if (PHP_MIN_VERSION < 5 || !is_numeric($start) || !is_numeric($end)) {
+            return range($start, $end, $step);
+        }
+        if (($end - $start) * $step < 0) {
+            throw new BaseException('step error');
+        }
+        if ($step == 0) {
+            throw new BaseException('step error');
+        }
+        return Generator::iteration($start, $end, $step);
     }
 
 }
