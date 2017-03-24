@@ -115,15 +115,4 @@ class HttpTool {
         return implode(';', $this->cookie);
     }
     
-    public function request() {
-        $context = stream_context_create($this->option);
-        $fp = fsockopen($hostname, $port, $errno, $errstr, $timeout);
-    }
-
-    public function map($urls) {
-        $urls = $urls;
-        foreach ($urls as $url) {
-            yield $url;
-        }
-    }
 }
