@@ -24,12 +24,14 @@ class Memcache extends Object {
     private $compress = null;
     private $memcahed = true;
     private $extClassName = '';
+    private $version = 0;
 
     public function __construct() {
-        if (extension_loaded('memcached')) {
+        $this->version = phpversion('memcached');
+        if ($this->version) {
             $this->extClassName = 'Memcached';
             $this->cacheObj = new \Memcached;
-        } elseif (extension_loaded('memcache')) {
+        } elseif (($this->version = phpversion('memcache'))) {
             $this->memcahed = false;
             $this->extClassName = 'Memcache';
             if (class_exists('Memcache', false)) {
@@ -43,6 +45,10 @@ class Memcache extends Object {
             $this->cacheObj = false;
             throw new BaseException('memcache/memcached extension unload');
         }
+    }
+
+    public function getVersion() {
+        return $this->version;
     }
 
     public function getClass() {
