@@ -27,7 +27,7 @@ class Test {
     }
 
     public function run() {
-        $f = new \Toknot\Share\File('./README.md');
+        test();
     }
 
     public function loop() {

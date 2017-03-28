@@ -22,6 +22,7 @@ use Toknot\Exception\ShutdownException;
 use Toknot\Exception\NoFileOrDirException;
 use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
+use Toknot\Exception\ErrorException;
 
 final class Kernel extends Object {
 
@@ -83,6 +84,9 @@ final class Kernel extends Object {
             $this->echoException($e);
             $this->response();
             exit();
+        } catch (\Error $e) {
+            $this->echoException($e);
+            $this->response();
         }
     }
 
@@ -154,6 +158,8 @@ final class Kernel extends Object {
         try {
             $this->router();
         } catch (\Exception $e) {
+            $this->echoException($e);
+        } catch (\Error $e) {
             $this->echoException($e);
         }
         return $this->response();

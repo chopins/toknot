@@ -26,8 +26,8 @@ class BaseException extends Exception {
     protected $isException = false;
     protected $exceptionMessage = null;
     private $fatalError = false;
-    public $traceArr = array();
-    public $exceptionInstance = null;
+    protected $traceArr = array();
+    
     protected $httpStatusCode = 0;
     protected $httpMessage = '';
 
@@ -38,10 +38,10 @@ class BaseException extends Exception {
      * @param integer $code
      * @param string $file
      * @param integer $line
-     * @param object|null $exceIns
+     * @param object|null $previous
      */
-    public function __construct($message = '', $code = 0, $file = null, $line = null, $exceIns = null) {
-        parent::__construct($message, $code, $exceIns);
+    public function __construct($message = '', $code = 0, $file = null, $line = null, $previous = null) {
+        parent::__construct($message, $code, $previous);
         if ($this->exceptionMessage) {
             $this->message = $this->exceptionMessage;
         } else {
@@ -49,7 +49,7 @@ class BaseException extends Exception {
         }
         $this->httpStatusCode = 500;
         $this->httpMessage = 'Internal Server Error';
-        $this->exceptionInstance = $exceIns;
+
         $this->file = empty($file) ? $this->getFile() : $file;
         $this->line = empty($line) ? $this->getLine() : $line;
         $this->getErrorType($code);
@@ -110,9 +110,9 @@ class BaseException extends Exception {
                 $this->fatalError = true;
                 break;
         }
-        if ($this->exceptionInstance) {
-            $type = get_class($this->exceptionInstance);
-            $this->traceArr = $this->exceptionInstance->getTrace();
+        if ($this->getPrevious()) {
+            $type = get_class($this->getPrevious());
+            $this->traceArr = $this->getPrevious()->getTrace();
         }
         $this->message = "<b>$type : </b>" . $this->message;
     }
