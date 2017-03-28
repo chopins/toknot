@@ -91,7 +91,7 @@ final class Kernel extends Object {
         if ($m == 5) {
             define('PHP_MIN_VERSION', $r);
         } else {
-            define('PHP_MIN_VERSION', 7);
+            define('PHP_MIN_VERSION', $m);
         }
 
         if (!extension_loaded('filter')) {
