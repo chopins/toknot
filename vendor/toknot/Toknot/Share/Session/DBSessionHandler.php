@@ -30,8 +30,9 @@ class DBSessionHandler implements \SessionHandlerInterface {
     private $expireCol = 'expire';
 
     public function echoException($e) {
-        Kernel::single()->echoException($e);
-        Kernel::single()->response();
+        //Kernel::single()->echoException($e);
+        //Kernel::single()->response();
+        echo $e;
     }
 
     /**

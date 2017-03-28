@@ -165,7 +165,7 @@ final class Kernel extends Object {
         return $this->response();
     }
 
-    public function response() {
+    protected function response() {
         if ($this->isCLI) {
             echo $this->runResult['content'];
             exit($this->runResult['code']);
