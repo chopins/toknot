@@ -89,8 +89,12 @@ class DBA extends Object {
         self::$modelDir = Tookit::realpath($allcfg->find('app.model_dir'), self::$appDir);
     }
 
-    public static function getUseDBConfig() {
+    public static function getUseDB() {
         return self::$usedb;
+    }
+    
+    public static function getDBConfig() {
+        return self::$cfg;
     }
 
     public function getQuotedName($name) {

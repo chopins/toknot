@@ -14,6 +14,7 @@ use Toknot\Share\DB\DBA;
 use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
+use Toknot\Boot\Tookit;
 
 abstract class Model extends Object {
 
@@ -55,7 +56,7 @@ abstract class Model extends Object {
      *
      * @var boolean
      */
-    public $checkBorder = true;
+    public $setBorderZero = true;
     private $alias = '';
     public $namespace = '';
     private $statement = null;
@@ -99,22 +100,12 @@ abstract class Model extends Object {
         $cacheHandler->save($this->lastSql);
     }
 
-    public function correctUnsignedValue($type, $value) {
-        if (isset($this->unsigned[$type]) && $value > $this->unsigned[$type]) {
-            return $this->unsigned[$type];
+    public function checkIntValue($unsigned, $type, $value) {
+        if (!$unsigned && abs($value) > $this->signed[$type]) {
+            throw BaseException("give $value out bound of $type value (max is (+/-){$this->signed[$type]})");
+        } else if ($value < 0 || $value > $this->signed[$type]) {
+            throw BaseException("give $value out bound of $type value (max is {$this->signed[$type]})");
         }
-        return $value;
-    }
-
-    public function correctSignedValue($type, $value) {
-        if (isset($this->signed[$type])) {
-            if ($value > 0 && $value > $this->signed[$type]) {
-                return $this->signed[$type];
-            } else if ($value < 0 && abs($value) > ($this->signed[$type] + 1)) {
-                return ($this->signed[$type] + 1) * -1;
-            }
-        }
-        return $value;
     }
 
     /**
@@ -180,8 +171,39 @@ abstract class Model extends Object {
      * @return string
      */
     final public function getColumnType($key) {
-        $t = $this->tableInfo['column'][$key]['type'];
-        return DBA::getDBType($t);
+        try {
+            $t = $this->tableInfo['column'][$key]['type'];
+            return DBA::getDBType($t);
+        } catch (BaseException $e) {
+            return false;
+        }
+    }
+
+    final public function getIntType($feild) {
+        $type = $this->getColumnType($feild);
+        if (!$type) {
+            throw BaseException("$feild not exists");
+        }
+
+        if (!isset($this->signed[$type])) {
+            return false;
+        }
+
+        $config = DBA::getDBConfig();
+        $def = $config->find('column_default.unsigned');
+        Tookit::coalesce($this->tableInfo['column'][$feild], 'unsigned', $def);
+
+        if ($this->tableInfo['column'][$feild]['unsigned'] == 1) {
+            return [true, "$type"];
+        }
+        return [false, $type];
+    }
+
+    public function checkBoder($feild, $value) {
+        $number = $this->getIntType($feild);
+        if ($number) {
+            $this->checkIntValue($number[0], $number[1], $value);
+        }
     }
 
     /**
@@ -345,11 +367,13 @@ abstract class Model extends Object {
      * @return int
      */
     public function insert($value) {
-        $values = array_fill_keys(array_keys($value), '?');
+        $keys = array_keys($value);
+        $values = array_fill_keys($keys, '?');
         $this->qr = $this->ready(__FUNCTION__)->values($values);
 
         $i = 0;
         foreach ($value as $v) {
+            $this->checkBoder($keys[$i], $v);
             $this->setQueryArg($i, $v);
             $i++;
         }
@@ -371,11 +395,11 @@ abstract class Model extends Object {
      * @param string $expr
      * @return string
      */
-    public function compute($left, $right, $expr) {
+    public function compute($key, $left, $right, $expr) {
         $defaultExpr = ['+', '-', '*', '/'];
         if (in_array($expr, $defaultExpr)) {
-            if ($this->checkBorder && $expr == '-' && $this->hasColumn($left) &&
-                    $this->isUnsigned($left)) {
+            if ($this->setBorderZero && $expr == '-' && $this->hasColumn($left) &&
+                    $this->isUnsigned($key)) {
                 return "IF($left>=$right,$left $expr $right,0)";
             }
             return "$left $expr $right";
@@ -399,8 +423,9 @@ abstract class Model extends Object {
         $i = 0;
         foreach ($values as $key => $v) {
             if (is_array($v)) {
-                $this->qr->set($key, $this->compute($v[1], $v[2], $v[0]));
+                $this->qr->set($key, $this->compute($key, $v[1], $v[2], $v[0]));
             } else {
+                $this->checkBoder($key, $v);
                 $placeholde = ":s$i$key";
                 $this->qr->set($key, $placeholde);
                 $this->qr->setParameter($placeholde, $v);
@@ -492,6 +517,10 @@ abstract class Model extends Object {
      * @return boolean
      */
     public function isUnsigned($column) {
+        $config = DBA::getDBConfig();
+        $def = $config->find('column_default.unsigned');
+        Tookit::coalesce($this->tableInfo['column'][$column], 'unsigned', $def);
+
         if (isset($this->tableInfo['column'][$column]['unsigned'])) {
             return $this->tableInfo['column'][$column]['unsigned'];
         }
@@ -771,7 +800,6 @@ abstract class Model extends Object {
         }
         return $this->conn->lastInsertId();
     }
-    
 
     public function getList($where, $limit = 20, $start = 0) {
         return $this->select($where)->get($limit, $start);
