@@ -25,7 +25,7 @@ class NoFileOrDirException extends BaseException {
     protected $exceptionFile = '';
 
     public function __construct($message = '', $code = 0, $file = null, $line = null, $exceIns = null) {
-        parent::__construct($message, $code, $exceIns);
+        parent::__construct($message, $code, $file, $line, $exceIns);
         $start = strpos($message, '(') + 1;
         $end = strpos($message, ')');
         $this->exceptionFile = substr($message, $start, $end - $start);
