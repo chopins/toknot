@@ -6,6 +6,9 @@
  * @copyright  Copyright (c) 2011 - 2017 Toknot.com
  * @license    http://toknot.com/LICENSE.txt New BSD License
  * @link       https://github.com/chopins/toknot
+ * @since 4.0
+ * @filesource
+ * @package Toknot.Boot
  */
 
 namespace Toknot\Boot;
@@ -62,8 +65,7 @@ class Import {
     }
 
     public static function transformNamespaceToPath($class, $dir) {
-        return rtrim(self::transformClassNameToFilename($class, $dir),
-                self::$fileSuffix);
+        return rtrim(self::transformClassNameToFilename($class, $dir), self::$fileSuffix);
     }
 
     /**
