@@ -90,6 +90,7 @@ abstract class TagBulid extends Object {
 
         $this->html .= $this->innerHTML();
         $this->html .= "</{$this->tagName}>";
+        return $this;
     }
 
     protected function begin($attr = []) {
@@ -125,6 +126,7 @@ abstract class TagBulid extends Object {
                 $this->addStyle($k, $v);
             }
         }
+        return $this;
     }
 
     protected function buildClass() {
@@ -163,7 +165,7 @@ abstract class TagBulid extends Object {
                 }
                 $value = "$srcHost$value";
             }
-
+          
             $v = addcslashes($value, '\'\\');
             $this->html .= " $attr=\"$v\"";
         }
@@ -243,14 +245,17 @@ abstract class TagBulid extends Object {
 
     public function addId($value) {
         $this->addAttr('id', $value);
+        return $this;
     }
 
     public function addName($value) {
         $this->addAttr('name', $value);
+        return $this;
     }
 
     public function setTitle($title) {
         $this->addAttr('title', $title);
+        return $this;
     }
 
     final public function addHost($srcHost = false) {

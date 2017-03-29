@@ -60,9 +60,12 @@ class Form extends TagBulid {
     public function input($attr, $labelHit = null) {
         $parent = $this;
         if ($labelHit !== null) {
-            $parent = $this->label(Tookit::coal($attr, 'id'), $labelHit);
+            $parent = $this->label(Tookit::coalesce($attr, 'id'), $labelHit);
         }
+        Tookit::coalesce($attr, 'value');
+        $hit = Tookit::coalesce($attr, 'text', $attr['value']);
         $tag = new Input($attr);
+        $tag->pushText($hit);
         $parent->push($tag);
         return $this;
     }
@@ -70,7 +73,7 @@ class Form extends TagBulid {
     public function select($attr = [], $labelHit = null) {
         $parent = $this;
         if ($labelHit !== null) {
-            $parent = $this->label(Tookit::coal($attr, 'id'), $labelHit);
+            $parent = $this->label(Tookit::coalesce($attr, 'id'), $labelHit);
         }
         self::select($parent, $attr);
         return $this;
@@ -82,10 +85,11 @@ class Form extends TagBulid {
             $input['name'] = is_numeric($key) ? '' : $key;
             if ($input['type'] == 'select') {
                 $this->select($input, $input['label']);
-            } elseif (isset($input['label'])) {
-                $this->input($input, $input['label']);
             } elseif ($input['type'] == 'textarea') {
                 $this->textarea($input, $input['label']);
+            } else {
+                Tookit::coalesce($input, 'label', null);
+                $this->input($input, $input['label']);
             }
         }
     }
@@ -93,7 +97,7 @@ class Form extends TagBulid {
     public function textarea($attr = [], $labelHit = null) {
         $parent = $this;
         if ($labelHit !== null) {
-            $parent = $this->label(Tookit::coal($attr, 'id'), $labelHit);
+            $parent = $this->label(Tookit::coalesce($attr, 'id'), $labelHit);
         }
         $value = Tookit::arrayDelete($attr, 'value');
         $area = new AnyTag('textarea', $attr);
