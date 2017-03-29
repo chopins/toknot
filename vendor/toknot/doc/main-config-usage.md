@@ -18,6 +18,7 @@
 * session store table(option of app):`session.table = session`
 * session name(option of app):`session.name = sid`
 * session httponly config(option of app):`session.cookie_httponly = 1`
+* route config type, ini and yml is available:`route_conf_type=ini`
 
 ### section of App vendor lib config:`[vendor]`
 * `dbal = doctrine/Doctrine`
@@ -26,6 +27,7 @@
 
 ### section of App databae config:`[database]`
 * Add type of database data:`ext_type = tinyint`
+* `db1.config_type = ini` the key set table config is ini file 
 * host of db1, the key db1 equal above key `default_db_config_key`:`db1.host = localhost`
 * port of db1:`db1.port = 3369`
 * `db1.user = root`

@@ -37,13 +37,13 @@ class Controller extends Object {
     }
 
     /**
-     * instance table model of database
+     * instance table of database
      * 
      * @param string $tableName the database of table name
      * @param string $db    The config of db item of key
      * @return \Toknot\Share\DBTable
      */
-    public function model($tableName, $db = '') {
+    public function table($tableName, $db = '') {
         return DBA::table($tableName, $db);
     }
 
@@ -288,6 +288,11 @@ class Controller extends Object {
 
     final public function exception($msg) {
         throw new BaseException($msg);
+    }
+
+    public function getTimeZone() {
+        $configZone = $this->kernel()->cfg->find('app.timezone');
+        return $configZone ? $configZone : 'UTC';
     }
 
 }

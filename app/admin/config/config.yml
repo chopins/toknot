@@ -20,6 +20,7 @@ app :
         cookie_httponly : 1
 database :
     ext_type : tinyint
+    config_type : yml
     dbdefault: &dbdefault
         host : 127.0.0.1
         port : 3306
