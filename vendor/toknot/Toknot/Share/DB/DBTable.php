@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Share;
+namespace Toknot\Share\DB;
 
 use Toknot\Share\DB\DBA;
 use Toknot\Boot\Kernel;
@@ -60,6 +60,7 @@ abstract class DBTable extends Object {
     private $alias = '';
     public $namespace = '';
     private $statement = null;
+    protected $compoundKey = false;
 
     /**
      *
@@ -74,10 +75,9 @@ abstract class DBTable extends Object {
      * @param array $tableInfo
      */
     final public function __construct($tableInfo, $alias = '') {
-        //$indexs = Tookit::coalesce($tableInfo, 'indexes');
-        //$this->key = Tookit::coalesce($indexs, 'primary');
         $this->tableInfo = $tableInfo;
         $this->alias = $alias;
+        $this->compoundKey = (count($this->key) > 1);
     }
 
     final public function useNamespace() {
@@ -223,8 +223,12 @@ abstract class DBTable extends Object {
      * 
      * @return string
      */
-    public function keyName() {
+    public function primaryKey() {
         return $this->key;
+    }
+
+    public function isCompoundKey() {
+        return $this->compoundKey;
     }
 
     /**
@@ -296,8 +300,7 @@ abstract class DBTable extends Object {
     }
 
     public function current() {
-
-        if ($this->key) {
+        if ($this->key && !$this->compoundKey) {
             $this->keyValue = $this->currentResult[$this->key];
         }
         return $this->currentResult;
@@ -310,7 +313,7 @@ abstract class DBTable extends Object {
     }
 
     public function key() {
-        if ($this->key) {
+        if ($this->key && !$this->compoundKey) {
             return $this->keyValue;
         }
         return $this->fetchCursorIndex;
@@ -337,7 +340,19 @@ abstract class DBTable extends Object {
      * @return []
      */
     public function getKeyValue($keyValue) {
-        return $this->select([$this->key, $keyValue, '='])->get(1);
+        $where = $this->compoundKeyWhere($keyValue);
+        return $this->select($where)->get(1);
+    }
+
+    protected function compoundKeyWhere($keys) {
+        if ($this->compoundKey) {
+            return [$this->key, $keys, '='];
+        }
+        $where = [];
+        foreach ($keys as $k => $v) {
+            $where[] = [$k, $v, '='];
+        }
+        return $where;
     }
 
     /**
@@ -349,6 +364,9 @@ abstract class DBTable extends Object {
      */
     public function count($where = [], $key = '') {
         $this->qr = $this->ready('select');
+        if (!$key && $this->compoundKey) {
+            throw new BaseException('compound key can not auto count');
+        }
         $ck = $key ? $key : ($this->key ? $this->key : '*');
         $this->qr->select("COUNT($ck) AS cnt");
         if ($where) {
@@ -459,7 +477,8 @@ abstract class DBTable extends Object {
      */
     public function cas($values, $keyValue, $cas, $casFeild = 'cas') {
         $values = array_merge($values, [$casFeild => ['+', $casFeild, 1]]);
-        return $this->update($values, [[$this->key, $keyValue], [$casFeild, $cas]]);
+        $where = array_merge($this->compoundKeyWhere($keyValue), [$casFeild, $cas]);
+        return $this->update($values, $where);
     }
 
     /**
@@ -597,7 +616,7 @@ abstract class DBTable extends Object {
      * @param array|string $where
      * @param int $limit
      * @param int $start
-     * @return  \Toknot\Share\DBTable
+     * @return  $this
      * @before $this->setColumn()
      */
     public function select($where = '') {
@@ -630,7 +649,7 @@ abstract class DBTable extends Object {
     /**
      * set column alias of sql
      * 
-     * @param \Toknot\Share\DBTable $tb
+     * @param $this $tb
      * @return string
      */
     public function columnAlias(DBTable $tb) {
@@ -641,7 +660,7 @@ abstract class DBTable extends Object {
     /**
      * add join table
      * 
-     * @param \Toknot\Share\DBTable $tb
+     * @param $this $tb
      * @param string $join
      * @param array $on
      * @return string
@@ -656,11 +675,11 @@ abstract class DBTable extends Object {
 
     /**
      * 
-     * @param \Toknot\Share\DBTable|array $tables
+     * @param Toknot\Share\DB\DBTable|array $tables
      * @param array $on
      * @param array $where
      * @param string $type
-     * @return \Toknot\Share\DBTable
+     * @return $this
      */
     public function join($tables, $on, $where, $type = 'left') {
         $select = [];
@@ -699,7 +718,7 @@ abstract class DBTable extends Object {
      * 
      * @param string $sort
      * @param string $order
-     * @return \Toknot\Share\DBTable
+     * @return $this
      */
     public function orderBy($sort, $order = null) {
         $this->qr->orderBy($sort, $order);
@@ -710,7 +729,7 @@ abstract class DBTable extends Object {
      * set group by key
      * 
      * @param string $key
-     * @return \Toknot\Share\DBTable
+     * @return $this
      */
     public function groupBy($key) {
         $this->qr->groupBy($key);
@@ -721,7 +740,7 @@ abstract class DBTable extends Object {
      * set haveing key
      * 
      * @param string $clause
-     * @return \Toknot\Share\DBTable
+     * @return $this
      */
     public function having($clause) {
         $this->qr->having($clause);
@@ -731,10 +750,10 @@ abstract class DBTable extends Object {
     /**
      * select at left join 
      * 
-     * @param \Toknot\Share\DBTable|array $table
+     * @param Toknot\Share\DB\DBTable|array $table
      * @param array $on
      * @param array|string $where
-     * @return \Toknot\Share\DBTable
+     * @return $this
      */
     public function leftJoin($table, $on, $where) {
         return $this->join($table, $on, $where, 'left');
@@ -743,11 +762,11 @@ abstract class DBTable extends Object {
     /**
      * select at right join
      * 
-     * @param \Toknot\Share\DBTable|array $table
+     * @param Toknot\Share\DB\DBTable|array $table
      * @param array $on  the value smaliar 
      *                      [$column1,$column2,$expr] or mulit-dimensional-array
      * @param array|string $where  where array
-     * @return \Toknot\Share\DBTable
+     * @return $this
      */
     public function rightJoin($table, $on, $where) {
         return $this->join($table, $on, $where, 'right');
@@ -756,10 +775,10 @@ abstract class DBTable extends Object {
     /**
      * select at inner join
      * 
-     * @param \Toknot\Share\DBTable|array $table
+     * @param Toknot\Share\DB\DBTable|array $table
      * @param array $on
      * @param array|string $where
-     * @return \Toknot\Share\DBTable
+     * @return $this
      */
     public function innerJoin($table, $on, $where) {
         return $this->join($table, $on, $where, 'inner');
@@ -786,7 +805,7 @@ abstract class DBTable extends Object {
         $sql .= ' ON DUPLICATE KEY UPDATE ';
         $update = [];
         foreach ($data as $key => $v) {
-            if ($key == $this->key) {
+            if ($key == $this->key || in_array($key, $this->key)) {
                 continue;
             }
             $hold = ":u{$key}";

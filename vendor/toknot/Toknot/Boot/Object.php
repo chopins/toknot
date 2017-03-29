@@ -16,7 +16,6 @@ namespace Toknot\Boot;
 abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializable {
 
     private static $singletonInstanceStorage = [];
-    private $iteratorProperty = 'iteratorArray';
     private $iteratorKey = null;
     protected $iteratorArray = [];
 
@@ -194,71 +193,67 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
         return trim(vsprintf(str_repeat('$argv[%d],', $argc), range(0, $argc - 1)), ',');
     }
 
-    final public function setIteratorProperty($name, array $data = []) {
-        $this->iteratorProperty = $name;
-        $this->$name = $data;
+    final public function setIteratorArray(array $data = []) {
+        $this->iteratorArray = $data;
     }
 
-    final public function getIteratorProperty() {
-        $arrayProperty = $this->iteratorProperty;
-        return $this->{$arrayProperty};
+    final public function getIteratorArray() {
+        return $this->iteratorArray;
     }
 
     public function count() {
-        return count($this->getIteratorProperty());
+        return count($this->iteratorArray);
     }
 
     public function current() {
-        return current($this->{$this->iteratorProperty});
+        return current($this->iteratorArray);
     }
 
     public function next() {
-        next($this->{$this->iteratorProperty});
+        next($this->iteratorArray);
     }
 
     public function key() {
-        $this->iteratorKey = key($this->{$this->iteratorProperty});
+        $this->iteratorKey = key($this->iteratorArray);
         return $this->iteratorKey;
     }
 
     public function valid() {
         $this->iteratorKey = $this->key();
-        return array_key_exists($this->iteratorKey, $this->{$this->iteratorProperty});
+        return array_key_exists($this->iteratorKey, $this->iteratorArray);
     }
 
     public function rewind() {
-        reset($this->{$this->iteratorProperty});
+        reset($this->iteratorArray);
     }
 
     public function offsetExists($offset) {
-        return array_key_exists($offset, $this->getIteratorProperty());
+        return array_key_exists($offset, $this->iteratorArray);
     }
 
     public function offsetGet($offset) {
-        return $this->getIteratorProperty()[$offset];
+        return $this->iteratorArray[$offset];
     }
 
     public function offsetSet($offset, $value) {
-        $this->{$this->iteratorProperty}[$offset] = $value;
+        $this->iteratorArray[$offset] = $value;
     }
 
     public function offsetUnset($offset) {
-        unset($this->{$this->iteratorProperty}[$offset]);
+        unset($this->iteratorArray[$offset]);
     }
 
     public function serialize() {
-        return serialize($this->getIteratorProperty());
+        return serialize($this->iteratorArray);
     }
 
     public function unserialize($serialized) {
-        $this->{$this->iteratorProperty} = unserialize($serialized);
+        $this->iteratorArray = unserialize($serialized);
     }
 
     public static function __set_state($properties) {
         $obj = new static();
-        $iteratorProperty = $properties['iteratorProperty'];
-        $obj->iteratorProperty = $iteratorProperty;
-        $obj->{$iteratorProperty} = $properties[$iteratorProperty];
+        $obj->iteratorArray = $properties;
         return $obj;
     }
 

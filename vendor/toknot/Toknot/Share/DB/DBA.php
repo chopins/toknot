@@ -204,7 +204,7 @@ class DBA extends Object {
 
         $code = '<?php' . PHP_EOL;
         $code .= 'namespace ' . self::$modelNs . ';' . PHP_EOL;
-        $code .= 'use Toknot\Share\DBTable;' . PHP_EOL;
+        $code .= 'use Toknot\Share\DB\DBTable;' . PHP_EOL;
 
         foreach ($tables as $table => $v) {
             $columnSQL = implode(',', array_keys($v['column']));
@@ -213,7 +213,9 @@ class DBA extends Object {
             $code .= "protected \$table = '$table';";
 
             if (isset($v['indexes']) && isset($v['indexes']['primary'])) {
-                $code .= "protected \$key='{$v['indexes']['primary']}';";
+                $keys = explode(',', $v['indexes']['primary']);
+                $key = count($keys) > 1 ? var_export($keys, true) : '\''.$v['indexes']['primary'].'\'';
+                $code .= "protected \$key=$key;";
             }
 
             $code .= "protected \$columnSql='$columnSQL';}" . PHP_EOL;
@@ -253,7 +255,7 @@ class DBA extends Object {
      * 
      * @param string $table
      * @param string $dbconfig
-     * @return \Toknot\Share\DBTable
+     * @return \Toknot\Share\DB\DBTable
      */
     public static function table($table, $dbconfig = '', $newConn = false) {
         $db = self::decideIns($dbconfig);

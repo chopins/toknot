@@ -22,6 +22,7 @@ use Toknot\Exception\ShutdownException;
 use Toknot\Exception\NoFileOrDirException;
 use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
+use Toknot\Boot\Promise;
 use Toknot\Exception\ErrorException;
 
 final class Kernel extends Object {
@@ -32,8 +33,6 @@ final class Kernel extends Object {
     private $import;
     private $isCLI = false;
     private $cmdOption = [];
-    private $promiseExecCallable = '';
-    private $promiseExecStat = true;
     private $confgType = 'ini';
     private $call = [];
     private $schemes = '';
@@ -42,8 +41,6 @@ final class Kernel extends Object {
     private $logEnable = false;
 
     const PASS_STATE = 0;
-    const PROMISE_PASS = true;
-    const PROMISE_REJECT = false;
 
     /**
      *
@@ -497,69 +494,14 @@ final class Kernel extends Object {
     }
 
     /**
-     * start new promise
      * 
-     * the route map: promise --> then-->  -------- --> then ----------------> then
-     *                               \---> otherwise ---/ -\----> otherwise ---/
-     * @param callable $callable
-     * @param array $argv
-     * @return Toknot\Boot\Kernel
+     * @param mix $passState
+     * @param mix $elseState
+     * @param object $cxt
+     * @return Promise
      */
-    public function promise($callable = null, $argv = []) {
-        $this->promiseExecCallable = null;
-        $this->promiseExecStat = true;
-        if ($callable !== null) {
-            $this->then($callable, $argv);
-        }
-        return $this;
-    }
-
-    /**
-     * repeat invoke previous callable
-     * 
-     * @param array $argv
-     * @return Toknot\Boot\Kernel
-     * @throws BaseException
-     */
-    public function again($argv = []) {
-        if (!$this->promiseExecCallable) {
-            throw new BaseException('call function not give before call again()');
-        }
-
-        if ($this->promiseExecStat === self::PROMISE_PASS) {
-            $this->promiseExecStat = self::callFunc($this->promiseExecCallable, $argv);
-        }
-        return $this;
-    }
-
-    /**
-     * if previous return pass, call current callable
-     * 
-     * @param callable $callable
-     * @param array $argv
-     * @return Toknot\Boot\Kernel
-     */
-    public function then($callable, $argv = []) {
-        if ($this->promiseExecStat === self::PROMISE_PASS) {
-            $this->promiseExecCallable = $callable;
-            $this->promiseExecStat = self::callFunc($callable, $argv);
-        }
-        return $this;
-    }
-
-    /**
-     * if previous return reject, call current callable
-     * 
-     * @param callable $callable
-     * @param array $argv
-     * @return Toknot\Boot\Kernel
-     */
-    public function otherwise($callable, $argv = []) {
-        if ($this->promiseExecStat === self::PROMISE_REJECT) {
-            $this->promiseExecCallable = $callable;
-            $this->promiseExecStat = self::callFunc($callable, $argv);
-        }
-        return $this;
+    public function promise($passState = true, $elseState = false, $cxt = null) {
+        return new Promise($passState, $elseState, $cxt);
     }
 
 }

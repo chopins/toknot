@@ -14,8 +14,9 @@ class MyController {
 
     public function test() {
         $t = \Toknot\Share\DB\DBA::table('user');
-        $res = $t->getList(false, 10);
-        var_dump($res);
+        //$res = $t->getList(false, 10);
+        var_dump($t->primaryKey());
+        var_dump($t->isCompoundKey());
     }
 
 }
