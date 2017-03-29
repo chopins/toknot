@@ -438,7 +438,7 @@ abstract class DBTable extends Object {
      * @param int $start
      * @return int
      */
-    public function update($values, $where = [], $limit = 500, $start = 0) {
+    public function update($values, $where = [], $limit = 0, $start = 0) {
         $this->qr = $this->ready(__FUNCTION__);
         $i = 0;
         foreach ($values as $key => $v) {
@@ -455,8 +455,10 @@ abstract class DBTable extends Object {
         if ($where) {
             $this->qr->where($this->where($where));
         }
-        $this->qr->setFirstResult($start);
-        $this->qr->setMaxResults($limit);
+        if ($limit) {
+            $this->qr->setFirstResult($start);
+            $this->qr->setMaxResults($limit);
+        }
         $this->lastSql = $this->qr->getSQL();
 
         try {
@@ -489,11 +491,13 @@ abstract class DBTable extends Object {
      * @param int $start
      * @return int
      */
-    public function delete($where, $limit = 500, $start = 0) {
+    public function delete($where, $limit = 0, $start = 0) {
         $this->qr = $this->ready(__FUNCTION__);
         $this->qr->where($this->where($where));
-        $this->qr->setFirstResult($start);
-        $this->qr->setMaxResults($limit);
+        if ($limit) {
+            $this->qr->setFirstResult($start);
+            $this->qr->setMaxResults($limit);
+        }
         $this->lastSql = $this->qr->getSQL();
         try {
             return $this->qr->execute();
