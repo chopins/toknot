@@ -85,7 +85,7 @@ class ForeignKeyConstraint extends AbstractAsset implements Constraint
             ? array_combine($localColumnNames, array_map($identifierConstructorCallback, $localColumnNames))
             : array();
 
-        if ($foreignTableName instanceof DBTable) {
+        if ($foreignTableName instanceof Table) {
             $this->_foreignTableName = $foreignTableName;
         } else {
             $this->_foreignTableName = new Identifier($foreignTableName);

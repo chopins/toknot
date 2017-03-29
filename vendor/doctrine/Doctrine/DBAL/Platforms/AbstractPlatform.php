@@ -1389,7 +1389,7 @@ abstract class AbstractPlatform
     {
         $tableArg = $table;
 
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         } elseif (!is_string($table)) {
             throw new \InvalidArgumentException('getDropTableSQL() expects $table parameter to be string or \Doctrine\DBAL\Schema\Table.');
@@ -1454,7 +1454,7 @@ abstract class AbstractPlatform
             $constraint = $constraint->getQuotedName($this);
         }
 
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         }
 
@@ -1475,7 +1475,7 @@ abstract class AbstractPlatform
             $foreignKey = $foreignKey->getQuotedName($this);
         }
 
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         }
 
@@ -1698,7 +1698,7 @@ abstract class AbstractPlatform
      */
     public function getCreateConstraintSQL(Constraint $constraint, $table)
     {
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         }
 
@@ -1740,7 +1740,7 @@ abstract class AbstractPlatform
      */
     public function getCreateIndexSQL(Index $index, $table)
     {
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         }
         $name = $index->getQuotedName($this);
@@ -1862,7 +1862,7 @@ abstract class AbstractPlatform
      */
     public function getCreateForeignKeySQL(ForeignKeyConstraint $foreignKey, $table)
     {
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         }
 

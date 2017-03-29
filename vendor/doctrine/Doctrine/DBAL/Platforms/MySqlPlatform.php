@@ -616,7 +616,7 @@ class MySqlPlatform extends AbstractPlatform
 
         foreach ($diff->removedIndexes as $remKey => $remIndex) {
             // Dropping primary keys requires to unset autoincrement attribute on the particular column first.
-            if ($remIndex->isPrimary() && $diff->fromTable instanceof DBTable) {
+            if ($remIndex->isPrimary() && $diff->fromTable instanceof Table) {
                 foreach ($remIndex->getColumns() as $columnName) {
                     $column = $diff->fromTable->getColumn($columnName);
 
@@ -659,7 +659,7 @@ class MySqlPlatform extends AbstractPlatform
 
         $engine = 'INNODB';
 
-        if ($diff->fromTable instanceof DBTable && $diff->fromTable->hasOption('engine')) {
+        if ($diff->fromTable instanceof Table && $diff->fromTable->hasOption('engine')) {
             $engine = strtoupper(trim($diff->fromTable->getOption('engine')));
         }
 
@@ -692,7 +692,7 @@ class MySqlPlatform extends AbstractPlatform
 
         foreach ($diff->changedIndexes as $changedIndex) {
             // Changed primary key
-            if ($changedIndex->isPrimary() && $diff->fromTable instanceof DBTable) {
+            if ($changedIndex->isPrimary() && $diff->fromTable instanceof Table) {
                 foreach ($diff->fromTable->getPrimaryKeyColumns() as $columnName) {
                     $column = $diff->fromTable->getColumn($columnName);
 
@@ -747,7 +747,7 @@ class MySqlPlatform extends AbstractPlatform
      */
     private function getRemainingForeignKeyConstraintsRequiringRenamedIndexes(TableDiff $diff)
     {
-        if (empty($diff->renamedIndexes) || ! $diff->fromTable instanceof DBTable) {
+        if (empty($diff->renamedIndexes) || ! $diff->fromTable instanceof Table) {
             return array();
         }
 
@@ -885,7 +885,7 @@ class MySqlPlatform extends AbstractPlatform
             throw new \InvalidArgumentException('MysqlPlatform::getDropIndexSQL() expects $index parameter to be string or \Doctrine\DBAL\Schema\Index.');
         }
 
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         } elseif (!is_string($table)) {
             throw new \InvalidArgumentException('MysqlPlatform::getDropIndexSQL() expects $table parameter to be string or \Doctrine\DBAL\Schema\Table.');
@@ -1005,7 +1005,7 @@ class MySqlPlatform extends AbstractPlatform
      */
     public function getDropTemporaryTableSQL($table)
     {
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         } elseif (!is_string($table)) {
             throw new \InvalidArgumentException('getDropTableSQL() expects $table parameter to be string or \Doctrine\DBAL\Schema\Table.');

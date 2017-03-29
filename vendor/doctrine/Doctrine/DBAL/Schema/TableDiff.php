@@ -156,7 +156,7 @@ class TableDiff
     public function getName(AbstractPlatform $platform)
     {
         return new Identifier(
-            $this->fromTable instanceof DBTable ? $this->fromTable->getQuotedName($platform) : $this->name
+            $this->fromTable instanceof Table ? $this->fromTable->getQuotedName($platform) : $this->name
         );
     }
 

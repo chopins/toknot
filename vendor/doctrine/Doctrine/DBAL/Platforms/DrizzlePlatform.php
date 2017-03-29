@@ -427,7 +427,7 @@ class DrizzlePlatform extends AbstractPlatform
             throw new \InvalidArgumentException('DrizzlePlatform::getDropIndexSQL() expects $index parameter to be string or \Doctrine\DBAL\Schema\Index.');
         }
 
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         } elseif (!is_string($table)) {
             throw new \InvalidArgumentException('DrizzlePlatform::getDropIndexSQL() expects $table parameter to be string or \Doctrine\DBAL\Schema\Table.');
@@ -567,7 +567,7 @@ class DrizzlePlatform extends AbstractPlatform
      */
     public function getDropTemporaryTableSQL($table)
     {
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         } elseif (!is_string($table)) {
             throw new \InvalidArgumentException('getDropTableSQL() expects $table parameter to be string or \Doctrine\DBAL\Schema\Table.');

@@ -667,7 +667,7 @@ LEFT JOIN user_cons_columns r_cols
             $foreignKey = $foreignKey->getQuotedName($this);
         }
 
-        if ($table instanceof DBTable) {
+        if ($table instanceof Table) {
             $table = $table->getQuotedName($this);
         }
 
