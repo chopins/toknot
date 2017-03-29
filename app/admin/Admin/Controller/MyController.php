@@ -14,9 +14,7 @@ class MyController {
 
     public function test() {
         $t = \Toknot\Share\DB\DBA::table('user');
-        //$res = $t->getList(false, 10);
-        var_dump($t->primaryKey());
-        var_dump($t->isCompoundKey());
+        $t->update(['email_bak_verify'=>['-','email_bak_verify',1]], ['uid',1]);
     }
 
 }

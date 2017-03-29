@@ -415,13 +415,9 @@ abstract class DBTable extends Object {
      * @param string $expr
      * @return string
      */
-    public function compute($key, $left, $right, $expr) {
+    public function compute($left, $right, $expr) {
         $defaultExpr = ['+', '-', '*', '/'];
         if (in_array($expr, $defaultExpr)) {
-            if ($this->setBorderZero && $expr == '-' && $this->hasColumn($left) &&
-                    $this->isUnsigned($key)) {
-                return "IF($left>=$right,$left $expr $right,0)";
-            }
             return "$left $expr $right";
         } else {
             return "$expr($left,$expr)";
@@ -443,7 +439,7 @@ abstract class DBTable extends Object {
         $i = 0;
         foreach ($values as $key => $v) {
             if (is_array($v)) {
-                $this->qr->set($key, $this->compute($key, $v[1], $v[2], $v[0]));
+                $this->qr->set($key, $this->compute($v[1], $v[2], $v[0]));
             } else {
                 $this->checkBoder($key, $v);
                 $placeholde = ":s$i$key";
