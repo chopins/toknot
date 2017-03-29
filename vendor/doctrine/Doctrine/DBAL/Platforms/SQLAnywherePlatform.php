@@ -392,7 +392,7 @@ class SQLAnywherePlatform extends AbstractPlatform
             return $this->getCreateForeignKeySQL($constraint, $table);
         }
 
-        if ($table instanceof Table) {
+        if ($table instanceof DBTable) {
             $table = $table->getQuotedName($this);
         }
 
@@ -425,7 +425,7 @@ class SQLAnywherePlatform extends AbstractPlatform
      */
     public function getCreatePrimaryKeySQL(Index $index, $table)
     {
-        if ($table instanceof Table) {
+        if ($table instanceof DBTable) {
             $table = $table->getQuotedName($this);
         }
 
@@ -564,7 +564,7 @@ class SQLAnywherePlatform extends AbstractPlatform
             return 'DROP INDEX ' . $index;
         }
 
-        if ($table instanceof Table) {
+        if ($table instanceof DBTable) {
             $table = $table->getQuotedName($this);
         }
 

@@ -92,7 +92,7 @@ class DBA extends Object {
     public static function getUseDB() {
         return self::$usedb;
     }
-    
+
     public static function getDBConfig() {
         return self::$cfg;
     }
@@ -204,12 +204,12 @@ class DBA extends Object {
 
         $code = '<?php' . PHP_EOL;
         $code .= 'namespace ' . self::$modelNs . ';' . PHP_EOL;
-        $code .= 'use Toknot\Share\Model;' . PHP_EOL;
+        $code .= 'use Toknot\Share\DBTable;' . PHP_EOL;
 
         foreach ($tables as $table => $v) {
             $columnSQL = implode(',', array_keys($v['column']));
             $class = self::table2Class($table);
-            $code .= "class $class extends Model {";
+            $code .= "class $class extends DBTable {";
             $code .= "protected \$table = '$table';";
 
             if (isset($v['indexes']) && isset($v['indexes']['primary'])) {
@@ -253,7 +253,7 @@ class DBA extends Object {
      * 
      * @param string $table
      * @param string $dbconfig
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public static function table($table, $dbconfig = '', $newConn = false) {
         $db = self::decideIns($dbconfig);
@@ -398,14 +398,14 @@ class DBA extends Object {
             $indexes = $t->getIndexes();
             $idxArr = [];
             foreach ($indexes as $key => $idx) {
-                $this->cacheIndex($idxArr, $idx, $key);
+                $this->getIndexStructrue($idxArr, $idx, $key);
             }
             $cacheArray[$talename]['indexes'] = $idxArr;
         }
         return $cacheArray;
     }
 
-    private function cacheIndex(&$idxArr, $idx, $key) {
+    private function getIndexStructrue(&$idxArr, $idx, $key) {
         if ($idx->isPrimary()) {
             $primary = $idx->getColumns();
             $idxArr[$key] = $primary[0];
@@ -513,10 +513,18 @@ class DBA extends Object {
         $nt->$func($ic, $key, $option);
     }
 
+    /**
+     * parse index from config
+     * 
+     * primary key value like: id1,id2
+     * 
+     * @param Table $nt
+     * @param array $index
+     */
     public function setIndexes(&$nt, $index) {
         foreach ($index as $key => $v) {
             if ($key == 'primary') {
-                $nt->setPrimaryKey(array($v));
+                $nt->setPrimaryKey(explode(',', $v));
             } else {
                 $this->addIndex($nt, $key, $v);
             }

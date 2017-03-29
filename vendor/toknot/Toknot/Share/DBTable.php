@@ -16,7 +16,7 @@ use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
 use Toknot\Boot\Tookit;
 
-abstract class Model extends Object {
+abstract class DBTable extends Object {
 
     /**
      * The table name
@@ -350,8 +350,10 @@ abstract class Model extends Object {
     public function count($where = [], $key = '') {
         $this->qr = $this->ready('select');
         $ck = $key ? $key : ($this->key ? $this->key : '*');
-        $this->qr->select("COUNT($ck) AS cnt")
-                ->where($this->where($where));
+        $this->qr->select("COUNT($ck) AS cnt");
+        if ($where) {
+            $this->qr->where($this->where($where));
+        }
         return $this->get(1)[0]['cnt'];
     }
 
@@ -432,8 +434,9 @@ abstract class Model extends Object {
                 $i++;
             }
         }
-
-        $this->qr->where($this->where($where));
+        if ($where) {
+            $this->qr->where($this->where($where));
+        }
         $this->qr->setFirstResult($start);
         $this->qr->setMaxResults($limit);
         $this->lastSql = $this->qr->getSQL();
@@ -594,14 +597,16 @@ abstract class Model extends Object {
      * @param array|string $where
      * @param int $limit
      * @param int $start
-     * @return  \Toknot\Share\Model
+     * @return  \Toknot\Share\DBTable
      * @before $this->setColumn()
      */
     public function select($where = '') {
         $columnSql = $this->selectColumn();
         $this->qr = $this->ready(__FUNCTION__);
-        $this->qr->select($columnSql)
-                ->where($this->where($where));
+        $this->qr->select($columnSql);
+        if ($where) {
+            $this->qr->where($this->where($where));
+        }
         return $this;
     }
 
@@ -625,10 +630,10 @@ abstract class Model extends Object {
     /**
      * set column alias of sql
      * 
-     * @param \Toknot\Share\Model $tb
+     * @param \Toknot\Share\DBTable $tb
      * @return string
      */
-    public function columnAlias(Model $tb) {
+    public function columnAlias(DBTable $tb) {
         $tb->setColumn(array_keys($tb->getTableInfo()['column']), $tb->getTableAlias());
         return $tb->selectColumn();
     }
@@ -636,12 +641,12 @@ abstract class Model extends Object {
     /**
      * add join table
      * 
-     * @param \Toknot\Share\Model $tb
+     * @param \Toknot\Share\DBTable $tb
      * @param string $join
      * @param array $on
      * @return string
      */
-    public function addJoinTable(Model $tb, $join, $on) {
+    public function addJoinTable(DBTable $tb, $join, $on) {
         $condition = $this->compKey($on);
         $select = $this->columnAlias($tb);
         $t2 = $tb->tableName();
@@ -651,11 +656,11 @@ abstract class Model extends Object {
 
     /**
      * 
-     * @param \Toknot\Share\Model|array $tables
+     * @param \Toknot\Share\DBTable|array $tables
      * @param array $on
      * @param array $where
      * @param string $type
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public function join($tables, $on, $where, $type = 'left') {
         $select = [];
@@ -694,7 +699,7 @@ abstract class Model extends Object {
      * 
      * @param string $sort
      * @param string $order
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public function orderBy($sort, $order = null) {
         $this->qr->orderBy($sort, $order);
@@ -705,7 +710,7 @@ abstract class Model extends Object {
      * set group by key
      * 
      * @param string $key
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public function groupBy($key) {
         $this->qr->groupBy($key);
@@ -716,7 +721,7 @@ abstract class Model extends Object {
      * set haveing key
      * 
      * @param string $clause
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public function having($clause) {
         $this->qr->having($clause);
@@ -726,10 +731,10 @@ abstract class Model extends Object {
     /**
      * select at left join 
      * 
-     * @param \Toknot\Share\Model|array $table
+     * @param \Toknot\Share\DBTable|array $table
      * @param array $on
      * @param array|string $where
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public function leftJoin($table, $on, $where) {
         return $this->join($table, $on, $where, 'left');
@@ -738,11 +743,11 @@ abstract class Model extends Object {
     /**
      * select at right join
      * 
-     * @param \Toknot\Share\Model|array $table
+     * @param \Toknot\Share\DBTable|array $table
      * @param array $on  the value smaliar 
      *                      [$column1,$column2,$expr] or mulit-dimensional-array
      * @param array|string $where  where array
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public function rightJoin($table, $on, $where) {
         return $this->join($table, $on, $where, 'right');
@@ -751,10 +756,10 @@ abstract class Model extends Object {
     /**
      * select at inner join
      * 
-     * @param \Toknot\Share\Model|array $table
+     * @param \Toknot\Share\DBTable|array $table
      * @param array $on
      * @param array|string $where
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public function innerJoin($table, $on, $where) {
         return $this->join($table, $on, $where, 'inner');
@@ -801,20 +806,55 @@ abstract class Model extends Object {
         return $this->conn->lastInsertId();
     }
 
+    /**
+     * get list from database
+     * 
+     * @param string|array $where
+     * @param int $limit
+     * @param int $start
+     * @return array
+     */
     public function getList($where, $limit = 20, $start = 0) {
         return $this->select($where)->get($limit, $start);
     }
 
+    /**
+     * get list from database and use ASC order by key
+     * 
+     * @param string|array $where
+     * @param string $orderby       order by key name
+     * @param int $limit
+     * @param int $start
+     * @return array
+     */
     public function getAscList($where, $orderby, $limit = 20, $start = 0) {
         return $this->select($where)->orderBy('asc', $orderby)
                         ->get($limit, $start);
     }
 
+    /**
+     * get list from database and use DESC order by key
+     * 
+     * @param string|array $where
+     * @param string $orderby
+     * @param int $limit
+     * @param int $start
+     * @return array
+     */
     public function getDescList($where, $orderby, $limit = 20, $start = 0) {
         return $this->select($where)->orderBy('desc', $orderby)
                         ->get($limit, $start);
     }
 
+    /**
+     * group query and get list
+     * 
+     * @param string|array $where
+     * @param string $group     group by key name
+     * @param int $limit
+     * @param int $start
+     * @return array
+     */
     public function getGroupList($where, $group, $limit = 20, $start = 0) {
         return $this->select($where)->groupBy($group)->get($limit, $start);
     }

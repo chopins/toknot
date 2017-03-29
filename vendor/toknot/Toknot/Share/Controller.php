@@ -41,7 +41,7 @@ class Controller extends Object {
      * 
      * @param string $tableName the database of table name
      * @param string $db    The config of db item of key
-     * @return \Toknot\Share\Model
+     * @return \Toknot\Share\DBTable
      */
     public function model($tableName, $db = '') {
         return DBA::table($tableName, $db);

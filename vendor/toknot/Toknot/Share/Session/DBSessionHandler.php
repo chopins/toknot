@@ -18,7 +18,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
 
     /**
      *
-     * @var \Toknot\Share\Model
+     * @var \Toknot\Share\DBTable
      */
     private $model;
     private $table;

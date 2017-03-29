@@ -164,7 +164,7 @@ class SQLServerPlatform extends AbstractPlatform
             $foreignKey = $foreignKey->getQuotedName($this);
         }
 
-        if ($table instanceof Table) {
+        if ($table instanceof DBTable) {
             $table = $table->getQuotedName($this);
         }
 
@@ -186,7 +186,7 @@ class SQLServerPlatform extends AbstractPlatform
             return 'DROP INDEX ' . $index;
         }
 
-        if ($table instanceof Table) {
+        if ($table instanceof DBTable) {
             $table = $table->getQuotedName($this);
         }
 

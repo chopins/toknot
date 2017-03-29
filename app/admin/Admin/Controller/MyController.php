@@ -13,7 +13,9 @@ namespace Admin\Controller;
 class MyController {
 
     public function test() {
-        echo 'hello';
+        $t = \Toknot\Share\DB\DBA::table('user');
+        $res = $t->getList(false, 10);
+        var_dump($res);
     }
 
 }

@@ -429,7 +429,7 @@ class Table extends AbstractAsset
      */
     public function addNamedForeignKeyConstraint($name, $foreignTable, array $localColumnNames, array $foreignColumnNames, array $options=array())
     {
-        if ($foreignTable instanceof Table) {
+        if ($foreignTable instanceof DBTable) {
             foreach ($foreignColumnNames as $columnName) {
                 if ( ! $foreignTable->hasColumn($columnName)) {
                     throw SchemaException::columnDoesNotExist($columnName, $foreignTable->getName());

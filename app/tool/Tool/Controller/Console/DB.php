@@ -55,9 +55,9 @@ class DB {
 
         $this->tkdb = DBA::single($this->usedb, $this->appcfg);
         $dbs = $this->tkdb->getDBList();
-        $dbname = $this->tableOption['table_config'];
+        $dbname = $this->dbcfg[$this->usedb]['dbname'];
         if (!in_array($dbname, $dbs)) {
-            Logs::colorMessage("Try Create database: $dbname", 'purple', false);
+            Logs::colorMessage("Try Create database: $dbname", 'purple');
             $this->tkdb->createDatabase($dbname);
             Logs::colorMessage('Create Success', 'green');
         }
