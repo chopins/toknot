@@ -345,7 +345,7 @@ abstract class DBTable extends Object {
     }
 
     protected function compoundKeyWhere($keys) {
-        if ($this->compoundKey) {
+        if (!$this->compoundKey) {
             return [$this->key, $keys, '='];
         }
         $where = [];
@@ -813,7 +813,7 @@ abstract class DBTable extends Object {
         $sql .= ' ON DUPLICATE KEY UPDATE ';
         $update = [];
         foreach ($data as $key => $v) {
-            if ($key == $this->key || in_array($key, $this->key)) {
+            if ($key == $this->key || ($this->compoundKey && in_array($key, $this->key))) {
                 continue;
             }
             $hold = ":u{$key}";
