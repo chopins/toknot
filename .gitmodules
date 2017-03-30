@@ -1,0 +1,3 @@
+[submodule "app/admin/public/static/toknot.js"]
+	path = app/admin/public/static/toknot.js
+	url = git@github.com:chopins/toknot.js.git
