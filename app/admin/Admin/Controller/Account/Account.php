@@ -49,6 +49,7 @@ class Account extends Controller {
      */
     public function signup() {
         $this->setTitle('Signup');
+        $this->v()->pageNav = '注册';
         $this->v()->login = $this->url('login-view');
         $this->v()->signup = $this->url('signup-submit');
 

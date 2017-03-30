@@ -40,6 +40,7 @@ abstract class BaseView extends View {
     final public function page() {
         $this->init();
         $this->layout->head();
+        $this->layout->contanier();
         Input::addType('email');
         Tookit::coalesce($this->param, 'leftMenuSelected');
         Tookit::coalesce($this->param, 'headerMenuSelected');
