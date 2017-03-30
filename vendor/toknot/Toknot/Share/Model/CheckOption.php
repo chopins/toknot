@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Boot\Model;
+namespace Toknot\Share\Model;
 
 use Toknot\Boot\Tookit;
 use Toknot\Exception\BaseException;
@@ -20,7 +20,7 @@ use Toknot\Boot\Kernel;
  *
  * @author chopin
  */
-class CheckValue extends Object {
+class CheckOption extends Object {
 
     protected $require = [];
     protected $option = [];

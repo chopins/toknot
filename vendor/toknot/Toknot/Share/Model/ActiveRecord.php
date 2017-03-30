@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Boot\Model;
+namespace Toknot\Share\Model;
 
 use Toknot\Share\DB\DBA;
 

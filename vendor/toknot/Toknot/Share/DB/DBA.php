@@ -39,7 +39,7 @@ class DBA extends Object {
      */
     private $conn;
     private $nodbconn;
-    private static $modelNs;
+    private static $tableClassNs;
     private static $usedb;
     private $tableConfig;
     private $extType = [];
@@ -85,7 +85,7 @@ class DBA extends Object {
         Tookit::coalesce(self::$cfg, 'column_default', []);
 
         $appCfg = $allcfg->app;
-        self::$modelNs = Tookit::nsJoin($appCfg['app_ns'], $appCfg->find('model_ns'));
+        self::$tableClassNs = Tookit::nsJoin($appCfg['app_ns'], $appCfg->find('db_table_ns'));
         self::$modelDir = Tookit::realpath($allcfg->find('app.model_dir'), self::$appDir);
     }
 
@@ -203,7 +203,7 @@ class DBA extends Object {
         }
 
         $code = '<?php' . PHP_EOL;
-        $code .= 'namespace ' . self::$modelNs . ';' . PHP_EOL;
+        $code .= 'namespace ' . self::$tableClassNs . ';' . PHP_EOL;
         $code .= 'use Toknot\Share\DB\DBTable;' . PHP_EOL;
 
         foreach ($tables as $table => $v) {
@@ -260,7 +260,7 @@ class DBA extends Object {
     public static function table($table, $dbconfig = '', $newConn = false) {
         $db = self::decideIns($dbconfig);
         $conn = $db->connect($newConn);
-        $tableClass = Tookit::nsJoin(self::$modelNs, self::table2Class($table));
+        $tableClass = Tookit::nsJoin(self::$tableClassNs, self::table2Class($table));
         $tableClass = Tookit::dotNS($tableClass);
 
         if (empty(self::$cfg->tables)) {

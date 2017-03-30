@@ -6,7 +6,7 @@
 * app charset:`charet = utf8`
 * app namespace:`app_ns=Event`
 * app namespace of controller:`ctl_ns=Controller`
-* app namespace of model:`model_ns=Model`
+* app namespace of model:`db_table_ns=Model`
 * app namespace of middleware:`middleware_ns=Middleware`
 * app namespace of service:`service_ns=`
 * app namespce of view:`view_ns=View`

@@ -23,7 +23,6 @@ use Toknot\Exception\NoFileOrDirException;
 use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
 use Toknot\Boot\Promise;
-use Toknot\Exception\ErrorException;
 
 final class Kernel extends Object {
 
@@ -39,6 +38,8 @@ final class Kernel extends Object {
     private $trace = true;
     private $logger = null;
     private $logEnable = false;
+    private $pid = 0;
+    private $tid = 0;
 
     const PASS_STATE = 0;
 
@@ -60,10 +61,9 @@ final class Kernel extends Object {
     protected function __construct($argc, $argv) {
         define('PHP_NS', '\\');
         $this->setArg($argc, $argv);
-        $this->checkPHPVersion();
-        $this->initImport();
+        $this->initGlobalEnv();
 
-        $this->phpIniSet();
+        $this->initImport();
         list($this->schemes) = Tookit::env('SERVER_PROTOCOL', '/');
         $this->schemes = strtolower($this->schemes);
         if (PHP_SAPI == 'cli') {
@@ -87,7 +87,13 @@ final class Kernel extends Object {
         }
     }
 
-    public function checkPHPVersion() {
+    private function initGlobalEnv() {
+        ini_set('html_errors', 0);
+        ini_set('log_errors', 0);
+        if (!ini_get('date.timezone')) {
+            ini_set('date.timezone', 'UTC');
+        }
+
         if (version_compare(PHP_VERSION, '5.4') < 0) {
             die('require php version >=5.4');
         }
@@ -101,9 +107,7 @@ final class Kernel extends Object {
         if (!extension_loaded('filter')) {
             Tookit::disablePHPFilter();
         }
-    }
 
-    public function setPHPProcessInfo() {
         $this->pid = getmypid();
         if (function_exists('zend_thread_id')) {
             $this->tid = zend_thread_id();
@@ -132,14 +136,6 @@ final class Kernel extends Object {
         }
         $this->importVendor();
         $this->initRouter();
-    }
-
-    private function phpIniSet() {
-        ini_set('html_errors', 0);
-        ini_set('log_errors', 0);
-        if (!ini_get('date.timezone')) {
-            ini_set('date.timezone', 'UTC');
-        }
     }
 
     /**
@@ -406,6 +402,8 @@ final class Kernel extends Object {
                 return $this->call;
             case 'schemes':
                 return $this->schemes;
+            case 'isCLI':
+                return $this->isCLI;
             default :
                 throw new BaseException("undefined property Kernel::\${$name}");
         }

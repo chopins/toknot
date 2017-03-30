@@ -39,7 +39,7 @@ abstract class DBTable extends Object {
      *
      * @var \Doctrine\DBAL\Connection
      */
-    protected $conn;
+    protected static $conn;
     protected $columnSql;
     private $tmpColumnSql = '';
 
@@ -134,7 +134,7 @@ abstract class DBTable extends Object {
      * @param \Doctrine\DBAL\Connection $con
      */
     final public function connect($con) {
-        $this->conn = $con;
+        self::$conn = $con;
     }
 
     /**
@@ -142,7 +142,7 @@ abstract class DBTable extends Object {
      * @return \Doctrine\DBAL\Query\QueryBuilder
      */
     final public function builder() {
-        return $this->conn->createQueryBuilder();
+        return self::$conn->createQueryBuilder();
     }
 
     /**
@@ -404,7 +404,7 @@ abstract class DBTable extends Object {
         } catch (\PDOException $e) {
             return Kernel::single()->echoException($e);
         }
-        return $this->conn->lastInsertId();
+        return self::$conn->lastInsertId();
     }
 
     /**
@@ -420,7 +420,11 @@ abstract class DBTable extends Object {
         if (in_array($expr, $defaultExpr)) {
             return "$left $expr $right";
         } else {
-            return "$expr($left,$expr)";
+            if ($right) {
+                return "$expr($left,$right)";
+            } else {
+                return "$expr($left)";
+            }
         }
     }
 
@@ -593,6 +597,10 @@ abstract class DBTable extends Object {
             }
         }
         return DBA::composite($type, $where);
+    }
+
+    public function filter() {
+        return new QueryHelper;
     }
 
     public function setQueryArg($placeholder, $v) {
@@ -817,12 +825,12 @@ abstract class DBTable extends Object {
         $this->lastSql = $sql;
 
         try {
-            $this->conn->executeUpdate($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
+            self::$conn->executeUpdate($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
         } catch (\Exception $e) {
 
             Kernel::single()->echoException($e);
         }
-        return $this->conn->lastInsertId();
+        return self::$conn->lastInsertId();
     }
 
     /**
