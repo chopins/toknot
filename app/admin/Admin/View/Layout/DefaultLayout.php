@@ -45,10 +45,10 @@ class DefaultLayout extends Layout {
         Tag::meta($this->headTag, ['charset' => 'utf-8']);
         Tag::meta($this->headTag, ['http-equiv' => 'Content-Language', 'content' => 'zh']);
         Tag::meta($this->headTag, ['name' => 'viewport', 'content' => 'width=device-width']);
-        Tag::stylesheet($this->headTag, '/static/pure.css')->addHost()->addVer('0.1');
+        Tag::stylesheet($this->headTag, '/purecss@0.6.2/build/pure-min.css')->addHost('https://unpkg.com');
         Tag::stylesheet($this->headTag, '/static/event.css')->addHost()->addVer('0.1');
 
-        Tag::script($this->headTag, ['src' => '/static/toknot.js'])->addHost()->addVer('0.1');
+        Tag::script($this->headTag, ['src' => '/static/toknot.js/toknot.js'])->addHost()->addVer('0.1');
     }
 
     public function contanier() {
