@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Share;
+namespace Toknot\Share\Security;
 
 use Toknot\Exception\BaseException;
 
