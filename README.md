@@ -3,6 +3,9 @@ ToKnot is a php framework
 
 [http://toknot.com](http://toknot.com)
 
+[![Latest Stable Version](https://poser.pugx.org/toknot/toknot/v/stable)](https://packagist.org/packages/toknot/toknot)
+[![Latest Unstable Version](https://poser.pugx.org/toknot/toknot/v/unstable)](https://packagist.org/packages/toknot/toknot)
+[![License](https://poser.pugx.org/toknot/toknot/license)](https://packagist.org/packages/toknot/toknot)
 ### License
 The PHP framework is under New BSD License (http://toknot.com/LICENSE.txt)
 
