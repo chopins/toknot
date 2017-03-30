@@ -26,23 +26,78 @@ use Toknot\Boot\Promise;
 
 final class Kernel extends Object {
 
+    /**
+     *
+     * @var int 
+     * @readonly
+     */
     private $argc = 0;
+
+    /**
+     *
+     * @var array
+     * @readonly 
+     */
     private $argv = [];
+
+    /**
+     *
+     * @readonly
+     */
     private $cfg;
+
+    /**
+     * @readonly
+     */
     private $import;
+
+    /**
+     * @readonly
+     */
     private $isCLI = false;
     private $cmdOption = [];
     private $confgType = 'ini';
+
+    /**
+     *
+     * @readonly
+     */
     private $call = [];
+
+    /**
+     *
+     * @readonly
+     */
     private $schemes = '';
     private $trace = true;
     private $logger = null;
     private $logEnable = false;
+
+    /**
+     *
+     * @readonly
+     */
     private $pid = 0;
+
+    /**
+     *
+     * @readonly
+     */
     private $tid = 0;
+
+    /**
+     *
+     * @readonly
+     */
     private $request;
     private $runResult = [];
     private $shutdownFunction = null;
+
+    /**
+     *
+     * @readonly
+     */
+    private $requestMethod = 'CLI';
 
     const PASS_STATE = 0;
 
@@ -216,6 +271,7 @@ final class Kernel extends Object {
         if ($this->argc < 2) {
             return;
         }
+        $this->requestMethod = $_SERVER['REQUEST_METHOD'];
         $_SERVER['REQUEST_URI'] = '/' . str_replace('.', '/', $this->argv[1]);
     }
 
@@ -384,30 +440,10 @@ final class Kernel extends Object {
     }
 
     public function __get($name) {
-        switch ($name) {
-            case 'argc':
-                return $this->argc;
-            case 'argv':
-                return $this->argv;
-            case 'import':
-                return $this->import;
-            case 'cfg':
-                return $this->cfg;
-            case 'request':
-                return $this->request;
-            case 'pid':
-                return $this->pid;
-            case 'tid':
-                return $this->tid;
-            case 'call':
-                return $this->call;
-            case 'schemes':
-                return $this->schemes;
-            case 'isCLI':
-                return $this->isCLI;
-            default :
-                throw new BaseException("undefined property Kernel::\${$name}");
+        if ($this->__isReadonlyProperty($name)) {
+            return $this->{$name};
         }
+        throw new BaseException("undefined property Kernel::\${$name}");
     }
 
     private function loadMainConfig() {

@@ -22,7 +22,10 @@ use Toknot\Exception\BaseException;
 
 class Controller extends Object {
 
-    private $viewParams = null;
+    /**
+     * @readonly
+     */
+    private static $viewParams = null;
     private $title = '';
     private $layout = null;
     private static $sessionStarted = false;
@@ -92,8 +95,8 @@ class Controller extends Object {
         if (empty($this->layout)) {
             $this->layout = $appCfg['default_layout'];
         }
-        $layout = new $this->layout($this->viewParams);
-        $html = $viewClass::html($layout, $this->viewParams);
+        $layout = new $this->layout(self::$viewParams);
+        $html = $viewClass::html($layout, self::$viewParams);
 
         if ($return) {
             return $html;
@@ -246,37 +249,15 @@ class Controller extends Object {
     }
 
     /**
-     * enable CSRF 
-     */
-    public function enableCsrf() {
-        $hash = uniqid();
-        $this->v()->_csrf_hash = $hash;
-
-        $_SESSION['_csrf_hash'] = $hash;
-    }
-
-    /**
-     * verify request of CSRF info
-     * 
-     * @return boolean
-     */
-    public function checkCsrf() {
-        $crsf = $this->get('_csrf_hash');
-        $hash = Tookit::coalesce($_SESSION, '_csrf_hash', null);
-        unset($_SESSION['_csrf_hash']);
-        return $crsf === $hash;
-    }
-
-    /**
      * get view of params
      * 
      */
     final public function v() {
-        if ($this->viewParams instanceof ParameterBag) {
-            return $this->viewParams;
+        if (self::$viewParams instanceof ParameterBag) {
+            return self::$viewParams;
         }
-        $this->viewParams = new ParameterBag();
-        return $this->viewParams;
+        self::$viewParams = new ParameterBag();
+        return self::$viewParams;
     }
 
     final public function __get($name) {

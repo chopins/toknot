@@ -10,14 +10,14 @@
 
 namespace Admin\View\Account;
 
-use Toknot\Share\View\View;
+use Admin\View\Lib\BaseView;
 
-class Login extends View {
+class Login extends BaseView {
 
-    public function page() {
-        $this->contanier();
+    public function buildFrame() {
+        
     }
-
+    
     public function contanier() {
         $bodyContaier = $this->div($this->body)
                 ->addClass('box-center')

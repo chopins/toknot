@@ -257,4 +257,13 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
         return $obj;
     }
 
+    final public function __isReadonlyProperty($name) {
+        $ref = new \ReflectionObject($this);
+        $doc = $ref->getProperty($name)->getDocComment();
+        if (preg_match('/^[\s]*\*[\s]*@readonly[\s]*$/m', $doc)) {
+            return true;
+        }
+        return false;
+    }
+
 }

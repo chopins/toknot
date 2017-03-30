@@ -106,7 +106,10 @@ class GlobalFilter {
     public static function env($key) {
         $res = PHP_MIN_VERSION > 6 ? getenv($key, true) : getenv($key);
         if (!$res) {
-            return self::filter(self::INPUT_SERVER, $key);
+            $res = self::filter(self::INPUT_SERVER, $key);
+        }
+        if(!$res) {
+            $res = $_SERVER[$key];
         }
         return $res;
     }

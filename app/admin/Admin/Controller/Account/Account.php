@@ -16,8 +16,6 @@ class Account extends Controller {
 
     public function __construct() {
         $this->setLayout($this->config('app.default_layout'));
-        $this->enableCsrf();
-
         $this->startSession();
     }
 
@@ -37,11 +35,7 @@ class Account extends Controller {
      * @route
      */
     public function postLogin() {
-        if ($this->checkCsrf()) {
-            echo 'pass';
-        } else {
-            echo 'reject';
-        }
+       echo 'pass';
     }
 
     /**
@@ -60,7 +54,7 @@ class Account extends Controller {
      * @route
      */
     public function postSignup() {
-        
+        echo 'pass';
     }
 
     /**

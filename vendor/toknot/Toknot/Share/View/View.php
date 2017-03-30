@@ -105,10 +105,6 @@ abstract class View extends Object {
         return self::invokeStatic($argc, $name, $argv, 'Toknot\Share\View\Tag');
     }
 
-    final public function enableCsrf($form) {
-        Tag::input($form, ['type' => 'hidden', 'name' => '_csrf_hash', 'id' => '_csrf_hash', 'value' => $this->param['_csrf_hash']]);
-    }
-
     final public function route($route, $params = []) {
         Kernel::single()->routerIns()->url($route, $params);
     }
