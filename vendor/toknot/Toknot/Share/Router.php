@@ -12,6 +12,7 @@ namespace Toknot\Share;
 
 use Toknot\Boot\Tookit;
 use Toknot\Boot\Kernel;
+use Toknot\Boot\Configuration;
 use Toknot\Boot\Route as TKRoute;
 use Toknot\Exception\NotFoundException;
 use Toknot\Exception\MethodNotAllowedException as MethodNotAllowed;
@@ -165,14 +166,19 @@ class Router extends TKRoute {
     public function load() {
         $ini = "{$this->appDIr}/config/router.{$this->confType}";
         $php = "{$this->appDIr}/runtime/config/route.php";
+        return $this->createCache($ini, $php);
+    }
 
-        return Tookit::includeCache($ini, $php, function ($ini, $target) {
-                    $routerMap = Tookit::parseConf($ini);
-                    foreach ($routerMap as $rn => $def) {
-                        $this->add($rn, $def);
-                    }
-                    $this->save($target);
-                });
+    public function createCache($ini, $php) {
+        clearstatcache();
+        if (file_exists($php) && filemtime($ini) <= filemtime($php)) {
+            return include $php;
+        }
+        $routerMap = Configuration::parseConf($ini);
+        foreach ($routerMap as $rn => $def) {
+            $this->add($rn, $def);
+        }
+        $this->save($php);
     }
 
     public function save($target) {

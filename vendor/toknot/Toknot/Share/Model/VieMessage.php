@@ -14,8 +14,8 @@ use Toknot\Share\DB\DBA;
 use Toknot\Share\DB\QueryHelper;
 use Toknot\Exception\VieMessageException;
 use Toknot\Boot\Object;
-use Toknot\Boot\Tookit;
 use Toknot\Boot\Kernel;
+use Toknot\Boot\GlobalFilter;
 
 /**
  * VieMessage
@@ -47,7 +47,7 @@ class VieMessage extends Object {
         if ($this->kernel->isCLI) {
             $this->lockPrefix = $this->kernel->pid . $this->kernel->tid;
         } else {
-            $this->lockPrefix = Tookit::env('REMOTE_ADDR') . Tookit::env('REMOTE_PORT');
+            $this->lockPrefix = GlobalFilter::env('REMOTE_ADDR') . GlobalFilter::env('REMOTE_PORT');
         }
     }
 

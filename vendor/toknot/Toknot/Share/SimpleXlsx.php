@@ -10,7 +10,7 @@
 
 namespace Toknot\Share;
 
-use Toknot\Boot\Tookit;
+use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
 use Toknot\Share\File;
 
@@ -210,7 +210,7 @@ class SimpleXlsx {
 
         $this->createDirStruct($xlsxName);
         $zipdir = $this->workspacedir;
-        Tookit::attachShutdownFunction(function() use($zipdir) {
+        Kernel::single()->attachShutdownFunction(function() use($zipdir) {
             if (is_dir($zipdir)) {
                 Tookit::rmdir($zipdir, true);
             }

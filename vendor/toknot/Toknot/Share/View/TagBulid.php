@@ -13,7 +13,7 @@ namespace Toknot\Share\View;
 use SplObjectStorage;
 use Toknot\Boot\Object;
 use Toknot\Exception\BaseException;
-use Toknot\Boot\Tookit;
+use Toknot\Boot\GlobalFilter;
 
 /**
  * View
@@ -160,8 +160,8 @@ abstract class TagBulid extends Object {
             if ($this->srckey == $attr) {
                 $srcHost = $this->host ? $this->host : (self::$srcDefaultHost ? self::$srcDefaultHost : false);
                 if (!$srcHost) {
-                    list($pro) = explode('/', Tookit::env('SERVER_PROTOCOL'));
-                    $value = strtolower($pro) . "://" . Tookit::env('HTTP_HOST') . $value;
+                    list($pro) = explode('/', GlobalFilter::env('SERVER_PROTOCOL'));
+                    $value = strtolower($pro) . "://" . GlobalFilter::env('HTTP_HOST') . $value;
                 }
                 $value = "$srcHost$value";
             }

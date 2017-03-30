@@ -11,7 +11,7 @@
 namespace Toknot\Share\Process;
 
 use Toknot\Boot\Object;
-use Toknot\Boot\Tookit;
+use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
 
 /**
@@ -50,7 +50,7 @@ class Process extends Object {
     }
 
     public function setProcessTitle($title) {
-        if(PHP_MIN_VERSION < 5) {
+        if (PHP_MIN_VERSION < 5) {
             throw new BaseException('setProcessTitle() is avaiabled when only php version greater then 5.5');
         }
         return cli_set_process_title($title);
@@ -340,7 +340,7 @@ class Process extends Object {
      * @param resource $cport
      */
     protected function childClean($cport) {
-        Tookit::attachShutdownFunction(function() use($cport) {
+        Kernel::single()->attachShutdownFunction(function() use($cport) {
             stream_set_blocking($cport, 1);
             $this->quit($cport);
         });

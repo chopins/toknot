@@ -11,6 +11,7 @@
 namespace Toknot\Share;
 
 use Toknot\Boot\Tookit;
+use Toknot\Boot\GlobalFilter;
 
 /**
  * StreamKit
@@ -78,17 +79,17 @@ class HttpTool {
     public static function getClientIp($proxyField = null) {
         if ($proxyField) {
             $field = 'HTTP_' . strtoupper($proxyField);
-            return Tookit::env($field);
+            return GlobalFilter::env($field);
         }
 
-        if (($ip = Tookit::env('HTTP_X_REAL_IP'))) {
+        if (($ip = GlobalFilter::env('HTTP_X_REAL_IP'))) {
             return$ip;
         }
-        if (($ip = Tookit::env('HTTP_X_FORWARDED_FOR'))) {
+        if (($ip = GlobalFilter::env('HTTP_X_FORWARDED_FOR'))) {
             list($ip) = explode(',', $ip);
             return trim($ip);
         }
-        return Tookit::env('REMOTE_ADDR');
+        return GlobalFilter::env('REMOTE_ADDR');
     }
 
     public function addCookie($cookie) {

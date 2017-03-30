@@ -19,7 +19,7 @@ use Toknot\Boot\Object;
 use Toknot\Boot\Configuration;
 use Toknot\Exception\BaseException;
 use Toknot\Exception\ShutdownException;
-use Toknot\Exception\NoFileOrDirException;
+use Toknot\Boot\GlobalFilter;
 use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
 use Toknot\Boot\Promise;
@@ -40,6 +40,9 @@ final class Kernel extends Object {
     private $logEnable = false;
     private $pid = 0;
     private $tid = 0;
+    private $request;
+    private $runResult = [];
+    private $shutdownFunction = null;
 
     const PASS_STATE = 0;
 
@@ -50,8 +53,6 @@ final class Kernel extends Object {
      * @readonly
      * @after Kernel::router()
      */
-    private $request;
-    private $runResult = [];
 
     /**
      * 
@@ -64,7 +65,7 @@ final class Kernel extends Object {
         $this->initGlobalEnv();
 
         $this->initImport();
-        list($this->schemes) = Tookit::env('SERVER_PROTOCOL', '/');
+        list($this->schemes) = GlobalFilter::env('SERVER_PROTOCOL', '/');
         $this->schemes = strtolower($this->schemes);
         if (PHP_SAPI == 'cli') {
             $this->isCLI = true;
@@ -115,9 +116,9 @@ final class Kernel extends Object {
     }
 
     private function setRuntimeEnv($parseClass = null) {
-        Tookit::setParseConfObject($parseClass);
+        Configuration::setParseConfObject($parseClass);
 
-        $this->cfg = $this->loadConfig();
+        $this->cfg = $this->loadMainConfig();
 
         $this->trace = $this->cfg->find('app.trace');
 
@@ -409,38 +410,13 @@ final class Kernel extends Object {
         }
     }
 
-    private function loadConfig() {
+    private function loadMainConfig() {
         $ini = APPDIR . "/config/config.{$this->confgType}";
-        try {
-            return $this->loadConf($ini);
-        } catch (NoFileOrDirException $e) {
-            $this->exceptionMkdir($e);
-            return $this->loadConf($ini);
-        }
-    }
-
-    public function exceptionMkdir($e, $isfile = true) {
-        $f = $e->getExceptionFile();
-        if ($isfile) {
-            mkdir(dirname($f), 0755, true);
-        } else {
-            mkdir($f, 0755, true);
-        }
+        return Configuration::loadConfig($ini);
     }
 
     public function config($key) {
         return $this->cfg->find($key);
-    }
-
-    public function loadConf($ini) {
-        $filename = pathinfo($ini, PATHINFO_FILENAME);
-        $php = APPDIR . "/runtime/config/$filename.php";
-        try {
-            return Configuration::loadConfig($ini, $php);
-        } catch (NoFileOrDirException $e) {
-            $this->exceptionMkdir($e);
-            return Configuration::loadConfig($ini, $php);
-        }
     }
 
     /**
@@ -459,7 +435,7 @@ final class Kernel extends Object {
     }
 
     public function __destruct() {
-        Tookit::releaseShutdownHandler();
+        self::releaseShutdownHandler();
     }
 
     /**
@@ -500,6 +476,22 @@ final class Kernel extends Object {
      */
     public function promise($passState = true, $elseState = false, $cxt = null) {
         return new Promise($passState, $elseState, $cxt);
+    }
+
+    public function attachShutdownFunction($callable) {
+        if (!$this->shutdownFunction instanceof \SplObjectStorage) {
+            $this->shutdownFunction = new \SplObjectStorage;
+        }
+        $this->shutdownFunction->attach($callable);
+    }
+
+    public function releaseShutdownHandler() {
+        if ($this->shutdownFunction instanceof \SplObjectStorage) {
+            foreach ($this->shutdownFunction as $func) {
+                $func();
+                $this->shutdownFunction->detach($func);
+            }
+        }
     }
 
 }

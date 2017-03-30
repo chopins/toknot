@@ -13,6 +13,7 @@ namespace Admin\View\Lib;
 use Toknot\Share\View\View;
 use Toknot\Share\View\Input;
 use Toknot\Boot\Tookit;
+use Toknot\Boot\GlobalFilter;
 
 abstract class BaseView extends View {
 
@@ -51,7 +52,7 @@ abstract class BaseView extends View {
     }
 
     public function showExecTime() {
-        $execTime = 'Exec Time:' . (microtime(true) - Tookit::env('REQUEST_TIME_FLOAT'));
+        $execTime = 'Exec Time:' . (microtime(true) - GlobalFilter::env('REQUEST_TIME_FLOAT'));
         $this->p($this->layout->right)->pushText($execTime);
     }
 

@@ -14,6 +14,7 @@
 namespace Toknot\Boot;
 
 use Toknot\Boot\Tookit;
+use Toknot\Boot\GlobalFilter;
 use Toknot\Boot\Logger;
 use Toknot\Exception\NoFileOrDirException;
 
@@ -123,7 +124,7 @@ class Logs {
     public static function addCLIColor($str, $color) {
         $mask2 = 1 << 7;
         if (self::$supportColor == null) {
-            self::$supportColor = Tookit::env('COLORTERM');
+            self::$supportColor = GlobalFilter::env('COLORTERM');
         }
         if (!self::$supportColor) {
             return $str;

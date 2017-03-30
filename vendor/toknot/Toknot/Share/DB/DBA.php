@@ -14,6 +14,7 @@ use Toknot\Boot\Kernel;
 use Toknot\Boot\Object;
 use Toknot\Boot\Tookit;
 use Toknot\Share\DB\DBSchema as Schema;
+use Toknot\Boot\Configuration as TKConfig;
 use Toknot\Exception\BaseException;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
@@ -128,7 +129,7 @@ class DBA extends Object {
      */
     public function loadConfig($name) {
         $cnf = self::$appDir . "/config/$name." . self::$confType;
-        return Kernel::single()->loadConf($cnf);
+        return TKConfig::loadConfig($cnf);
     }
 
     public function connect($newConn = false) {
@@ -214,7 +215,7 @@ class DBA extends Object {
 
             if (isset($v['indexes']) && isset($v['indexes']['primary'])) {
                 $keys = explode(',', $v['indexes']['primary']);
-                $key = count($keys) > 1 ? var_export($keys, true) : '\''.$v['indexes']['primary'].'\'';
+                $key = count($keys) > 1 ? var_export($keys, true) : '\'' . $v['indexes']['primary'] . '\'';
                 $code .= "protected \$key=$key;";
             }
 
