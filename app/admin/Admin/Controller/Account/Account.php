@@ -35,13 +35,15 @@ class Account extends Controller {
      * @route
      */
     public function postLogin() {
-       echo 'pass';
+        echo 'pass';
     }
 
     /**
      * @route
      */
     public function signup() {
+        $user = $this->table('user');
+        $user->getList(['uid',1,'='], 10);
         $this->setTitle('Signup');
         $this->v()->pageNav = '注册';
         $this->v()->login = $this->url('login-view');

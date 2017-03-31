@@ -120,8 +120,7 @@ final class Kernel extends Object {
         $this->initGlobalEnv();
 
         $this->initImport();
-        list($this->schemes) = GlobalFilter::env('SERVER_PROTOCOL', '/');
-        $this->schemes = strtolower($this->schemes);
+
         if (PHP_SAPI == 'cli') {
             $this->isCLI = true;
             $this->console();
@@ -160,10 +159,7 @@ final class Kernel extends Object {
             define('PHP_MIN_VERSION', $m);
         }
 
-        if (!extension_loaded('filter')) {
-            Tookit::disablePHPFilter();
-        }
-
+        
         $this->pid = getmypid();
         if (function_exists('zend_thread_id')) {
             $this->tid = zend_thread_id();
@@ -171,8 +167,13 @@ final class Kernel extends Object {
     }
 
     private function setRuntimeEnv($parseClass = null) {
-        Configuration::setParseConfObject($parseClass);
+        if (!extension_loaded('filter')) {
+            GlobalFilter::unavailablePHPFilter();
+        }
 
+        Configuration::setParseConfObject($parseClass);
+        list($this->schemes) = GlobalFilter::env('SERVER_PROTOCOL', '/');
+        $this->schemes = strtolower($this->schemes);
         $this->cfg = $this->loadMainConfig();
 
         $this->trace = $this->cfg->find('app.trace');
@@ -266,7 +267,8 @@ final class Kernel extends Object {
     }
 
     private function console() {
-        $this->schemes = 'cli';
+        $_SERVER['SERVER_PROTOCOL'] = 'cli';
+        $_SERVER['HTTP_HOST'] = '127.0.0.1';
         $_SERVER['REQUEST_METHOD'] = 'CLI';
         if ($this->argc < 2) {
             return;
