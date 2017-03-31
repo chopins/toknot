@@ -159,7 +159,7 @@ final class Kernel extends Object {
             define('PHP_MIN_VERSION', $m);
         }
 
-        
+
         $this->pid = getmypid();
         if (function_exists('zend_thread_id')) {
             $this->tid = zend_thread_id();
@@ -484,16 +484,18 @@ final class Kernel extends Object {
      * will start new pipe
      * 
      * <code>
-     * $c = $this->pipe('callable1',$arg)->callable2()->callable3()->result();
+     * $c = $this->pipe()->callable1($arg)->callable2()->callable3()->result();
      * //above code same below
      * $a = callable1($arg); 
      * $b = callable2($a); 
      * $c = callable3($b); 
      * 
-     * $c = $this->pipe('callable1',$arg)->callable2($obj)->callable3($obj2)->result();
-     * $a = callable1($arg);
-     * $b = $obj->callable2($a);
-     * $c = $obj2->callable3($b);
+     * $c = $this->pipe($obj)->callable()->callable2()->result();
+     * //above code same below
+     * $a = $obj->callable1();
+     * $c = $obj->callable2($a);
+     * 
+     * $c = $this->pipe($obj)->callable()->callable2()()
      *
      * </code>
      * 
@@ -501,8 +503,8 @@ final class Kernel extends Object {
      * @param array $argv
      * @return Toknot\Boot\Pipe
      */
-    public function pipe($callable, $argv = []) {
-        return new Pipe($callable, $argv);
+    public function pipe($cxt = null) {
+        return new Pipe($cxt);
     }
 
     /**

@@ -50,6 +50,7 @@ class Account extends Controller {
         $this->v()->signup = $this->url('signup-submit');
 
         $this->view('account.signup');
+        
     }
 
     /**
