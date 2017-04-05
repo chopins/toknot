@@ -22,8 +22,8 @@ use Toknot\Boot\Object;
  */
 class Pipe extends Object {
 
-    private $ret = null;
-    private $cxt = null;
+    protected $ret = null;
+    protected $cxt = null;
 
     /**
      * 

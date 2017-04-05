@@ -85,10 +85,8 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
             case 5:
                 return new $className($args[0], $args[1], $args[2], $args[3], $args[4]);
             default:
-                $argStr = self::argStr($argc);
-                $ins = null;
-                eval("\$ins = new {$className}($argStr);");
-                return $ins;
+                $ref = new \ReflectionClass($className);
+                return $ref->newInstanceArgs($args);
         }
     }
 
@@ -117,10 +115,7 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
             case 5:
                 return $callable($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
             default:
-                $argStr = self::argStr($argc);
-                $ins = null;
-                eval("\$ins = $callable($argStr);");
-                return $ins;
+                return call_user_func_array($callable, $argv);
         }
     }
 
@@ -148,10 +143,9 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
             case 5:
                 return $className::$method($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
             default:
-                $argStr = self::argStr($argc);
-                $ins = null;
-                eval("\$ins = {$className}::$method($argStr);");
-                return $ins;
+                $ref = new \ReflectionMethod($className, $method);
+                $closure = $ref->getClosure(null);
+                return call_user_func_array($closure, $argv);
         }
     }
 
@@ -182,10 +176,9 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
             case 5:
                 return $obj->$method($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
             default:
-                $argStr = self::argStr($argc);
-                $ins = null;
-                eval("\$ins = \$obj->$method($argStr);");
-                return $ins;
+                $ref = new \ReflectionMethod($obj, $method);
+                $closure = $ref->getClosure($obj);
+                return call_user_func_array($closure, $argv);
         }
     }
 
