@@ -50,20 +50,42 @@ class Tookit extends Object {
         }
     }
 
+    /**
+     * join string to path
+     * 
+     * @param string $path1
+     * @return string
+     */
     public static function pathJoin() {
         $paths = func_get_args();
         return DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $paths);
     }
 
+    /**
+     * join string to namspace
+     * 
+     * @return string
+     */
     public static function nsJoin() {
         $ns = func_get_args();
         return join(PHP_NS, $ns);
     }
 
+    /**
+     * covert class of dot to namespace separator
+     * 
+     * @param string $class
+     * @return string
+     */
     public static function dotNS($class) {
         return str_replace('.', PHP_NS, $class);
     }
 
+    /**
+     * check os whehter not windows
+     * 
+     * @return boolean
+     */
     public static function osIsnix() {
         $lower = strtolower(PHP_OS);
         if (strpos($lower, 'win') === 0) {
@@ -128,29 +150,9 @@ class Tookit extends Object {
         return false;
     }
 
-    /**
-     * 
-     * @param array $arr
-     * @param array $keys
-     * @return mixed
-     */
-    public static function arrayFind($arr, $keys) {
-        $cur = $arr;
-        foreach ($keys as $k) {
-            if (empty($k)) {
-                break;
-            }
-            if (array_key_exists($k, $cur)) {
-                $cur = $cur[$k];
-            } else {
-                return null;
-            }
-        }
-        return $cur;
-    }
 
     /**
-     * check a key of array if empty set default value
+     * check a key of array if empty set default value, array value coalsece opreate
      * 
      * @param array &$arr
      * @param string $key
@@ -165,6 +167,13 @@ class Tookit extends Object {
         return $arr[$key];
     }
 
+    /**
+     * if specify value is false return give value, coalsece operate
+     * 
+     * @param mix $check
+     * @param mix $value
+     * @return mix
+     */
     public static function coal($check, $value) {
         return $check ? $check : $value;
     }
@@ -256,6 +265,13 @@ class Tookit extends Object {
         return $res;
     }
 
+    /**
+     * get real path without check path exists
+     * 
+     * @param string $path
+     * @param string $cwd
+     * @return string
+     */
     public static function getRealPath($path, $cwd = '') {
         $isRoot = false;
         if (strtolower(substr(PHP_OS, 0, 3)) == 'WIN') {
@@ -337,14 +353,13 @@ class Tookit extends Object {
         return self::callFunc($func, $argv);
     }
 
-    private static $strFuncPrefix = null;
-
     public static function getStrFunc($func) {
-        if (self::$strFuncPrefix === null) {
-            self::$strFuncPrefix = (extension_loaded('mbstring') ? 'mb_' : (extension_loaded('iconv') ? 'iconv_' : ''));
+        static $strFuncPrefix = null;
+        if ($strFuncPrefix === null) {
+            $strFuncPrefix = (extension_loaded('mbstring') ? 'mb_' : (extension_loaded('iconv') ? 'iconv_' : ''));
         }
 
-        return self::$strFuncPrefix . $func;
+        return $strFuncPrefix . $func;
     }
 
     /**
@@ -362,6 +377,14 @@ class Tookit extends Object {
         self::dirWalk($folder, 'unlink', 'rmdir');
     }
 
+    /**
+     * get wrapper data
+     * 
+     * @param string $uri
+     * @param array $opt
+     * @param resources $fp
+     * @return array
+     */
     public static function getStreamWrappersData($uri, $opt, &$fp) {
         $context = stream_context_create($opt);
         $fp = fopen($uri, 'r', false, $context);
@@ -372,6 +395,7 @@ class Tookit extends Object {
     }
 
     /**
+     * get current timezone offset time
      * 
      * @param boolean $returnSec
      * @return int
@@ -411,6 +435,12 @@ class Tookit extends Object {
         return preg_match('/^[a-z0-9]+([\._]?[a-z0-9]+)*@[a-z0-9]+([\.-]?[a-z]+)*$/i', $string);
     }
 
+    /**
+     * check ipv4 or ipv6 is it effective
+     * 
+     * @param string $value
+     * @return boolean
+     */
     public static function isIp($value) {
         $ip4 = explode('.', $value);
         if (count($ip4) == 4) {
@@ -442,6 +472,12 @@ class Tookit extends Object {
         return false;
     }
 
+    /**
+     * check url is it effcetive
+     * 
+     * @param string $value
+     * @return boolean
+     */
     public static function isUrl($value) {
         $urls = parse_url($value);
         if (!$urls) {
@@ -459,6 +495,12 @@ class Tookit extends Object {
         return true;
     }
 
+    /**
+     * check number or string whether or not float
+     * 
+     * @param mix $value
+     * @return boolean
+     */
     public static function isFloat($value) {
         if (is_float($value)) {
             return true;
@@ -472,6 +514,12 @@ class Tookit extends Object {
         return false;
     }
 
+    /**
+     * check number or string whether or not integer
+     * 
+     * @param mix $value
+     * @return boolean
+     */
     public static function isInt($value) {
         if (is_int($value)) {
             return true;
