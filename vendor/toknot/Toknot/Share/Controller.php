@@ -39,6 +39,10 @@ class Controller extends Object {
         return Kernel::single();
     }
 
+    public function route() {
+        return $this->kernel()->callInstance;
+    }
+
     /**
      * instance table of database
      * 
@@ -91,12 +95,18 @@ class Controller extends Object {
     public function view($view, $return = false) {
         $appCfg = $this->config('app');
         $viewClass = $this->getViewClass($view);
-        $viewClass::setTitle($this->title);
+
         if (empty($this->layout)) {
             $this->layout = $appCfg['default_layout'];
         }
         $layout = new $this->layout(self::$viewParams);
-        $html = $viewClass::html($layout, self::$viewParams);
+        $layout->setController($this);
+        $layout->setRoute($this->route());
+        
+        $viewIns = new $viewClass($layout, self::$viewParams);
+        $viewIns->title($this->title);
+        $viewIns->setRoute($this->route());
+        $html = $viewIns->render();
 
         if ($return) {
             return $html;
@@ -144,7 +154,7 @@ class Controller extends Object {
     }
 
     final public function allowOrigin($host) {
-        $route = $this->kernel()->routerIns()->findRouteByController($this->kernel()->call['controller']);
+        $route = $this->route()->findRouteByController($this->route()->getInvoke('controller'));
 
         $spro = $this->kernel()->schemes;
         $schemes = $route->getSchemes();
@@ -195,7 +205,7 @@ class Controller extends Object {
      * @return string
      */
     public function url($route, $params = []) {
-        return $this->kernel()->routerIns()->url($route, $params);
+        return $this->route()->url($route, $params);
     }
 
     /**

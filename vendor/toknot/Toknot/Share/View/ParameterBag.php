@@ -11,6 +11,7 @@
 namespace Toknot\Share\View;
 
 use Toknot\Boot\Object;
+use Toknot\Boot\Tookit;
 
 /**
  * ParamterBags
@@ -30,4 +31,7 @@ class ParameterBag extends Object {
         return array_key_exists($name, $this->iteratorArray);
     }
 
+    public function offsetGet($offset) {
+        return Tookit::coalesce($this->iteratorArray, $offset);
+    }
 }

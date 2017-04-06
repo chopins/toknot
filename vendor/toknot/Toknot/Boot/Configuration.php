@@ -119,6 +119,7 @@ class Configuration extends Object {
         $data = self::parseConf($ini);
         $str = '<?php return ' . var_export($data, true) . ';';
         try {
+ 
             file_put_contents($php, $str, LOCK_EX);
         } catch (NoFileOrDirException $e) {
             $this->exceptionMkdir($e);
@@ -129,6 +130,7 @@ class Configuration extends Object {
 
     public static function readCache($ini) {
         $key = md5($ini);
+
         if (isset(self::$incData[$key])) {
             return self::$incData[$key];
         }
@@ -138,6 +140,7 @@ class Configuration extends Object {
         if (!file_exists($php)) {
             self::$incData[$key] = self::parseConf($ini);
         }
+        
         if (!isset(self::$incData[$key])) {
             self::$incData[$key] = include_once $php;
         }

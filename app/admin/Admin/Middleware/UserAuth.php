@@ -20,7 +20,7 @@ class UserAuth extends Controller {
     
     public function checkLogin() {
         if(empty($_SESSION['uid'])) {
-           $this->redirect('login-view'); 
+           //$this->redirect('login-view'); 
         }
 
     }

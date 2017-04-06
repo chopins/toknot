@@ -23,7 +23,7 @@ class Index extends Common {
      * @route
      */
     public function index() {
-        $u = $this->model('user');
+        $u = $this->table('user');
         $this->v->pageNav = '个人';
 
         $this->setTitle('ProcessHub');

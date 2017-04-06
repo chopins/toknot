@@ -27,7 +27,8 @@ class Test {
     }
 
     public function run() {
-        test();
+        \Toknot\Share\Service\Wapper::register();
+        file_get_contents('ts://localost/test');
     }
 
     public function loop() {

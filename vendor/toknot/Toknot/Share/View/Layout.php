@@ -47,7 +47,8 @@ abstract class Layout extends Object {
     private $bodyAttr = [];
     private $htmlVer = 5;
     private $htmlMode = 'strict';
-    private $headTags = null;
+    private $controller = null;
+    private $route = null;
 
     /**
      * 
@@ -63,6 +64,22 @@ abstract class Layout extends Object {
         $this->head = Tag::head();
         $this->setPageTitle();
         $this->body = Tag::body($this->bodyAttr);
+    }
+
+    final public function setController($controller) {
+        $this->controller = $controller;
+    }
+
+    final public function getController() {
+        return $this->controller;
+    }
+
+    final public function setRoute($route) {
+        $this->route = $route;
+    }
+
+    final public function getRoute() {
+        return $this->route;
     }
 
     final public function setPageTitle() {

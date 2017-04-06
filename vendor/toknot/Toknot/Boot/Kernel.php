@@ -62,12 +62,6 @@ final class Kernel extends Object {
      *
      * @readonly
      */
-    private $call = [];
-
-    /**
-     *
-     * @readonly
-     */
     private $schemes = '';
     private $trace = true;
     private $logger = null;
@@ -84,14 +78,16 @@ final class Kernel extends Object {
      * @readonly
      */
     private $tid = 0;
+    private $runResult = [];
+    private $shutdownFunction = null;
 
     /**
      *
      * @readonly
      */
-    private $request;
-    private $runResult = [];
-    private $shutdownFunction = null;
+    private $callInstance = null;
+    private $callWrapper = '';
+    private $wrapperList = [];
 
     /**
      *
@@ -192,7 +188,33 @@ final class Kernel extends Object {
             Logs::$shortPath = strlen(dirname(dirname(TKROOT)));
         }
         $this->importVendor();
-        $this->initRouter();
+        $this->registerWrapper();
+        $this->init();
+    }
+
+    public function registerWrapper() {
+        $this->wrapperList = $this->cfg->find('wrapper');
+        foreach ($this->wrapperList as $cls) {
+            $cls::register();
+        }
+    }
+
+    public function init() {
+        $def = $this->cfg->find('app.default_call');
+
+        $url = parse_url(trim($_SERVER['REQUEST_URI'], '/'));
+        if (empty($url['scheme'])) {
+            $this->callWrapper = $this->wrapperList[$def];
+        } else {
+            foreach ($this->wrapperList as $pro => $cls) {
+                if ($pro == $url['scheme']) {
+                    $this->callWrapper = $cls;
+                    break;
+                }
+            }
+        }
+        $this->callInstance = self::invokeStatic(0, 'getInstance', [], $this->callWrapper);
+        $this->callInstance->init();
     }
 
     /**
@@ -206,7 +228,7 @@ final class Kernel extends Object {
         $this->setRuntimeEnv($parseClass);
 
         try {
-            $this->router();
+            $this->callInstance->call();
         } catch (\Exception $e) {
             $this->echoException($e);
         } catch (\Error $e) {
@@ -235,6 +257,14 @@ final class Kernel extends Object {
         throw new ShutdownException;
     }
 
+    public function getResponse() {
+        return $this->runResult;
+    }
+
+    public function isPassState() {
+        return $this->runResult['code'] === self::PASS_STATE;
+    }
+
     /**
      * 
      * @param int $status
@@ -249,90 +279,13 @@ final class Kernel extends Object {
         empty($option) || ($this->runResult['option'] = $option);
     }
 
-    /**
-     * 
-     * @return \Toknot\Boot\Route
-     * @throws BaseException
-     */
-    public function routerIns() {
-        $routerClass = $this->cfg->app->router;
-        if (is_subclass_of($routerClass, 'Toknot\Boot\Route')) {
-            return $routerClass::single();
-        }
-        throw new BaseException("$routerClass must implements Toknot\Boot\Route");
-    }
-
-    private function initRouter() {
-        $this->routerIns()->load();
-    }
-
     private function console() {
         $_SERVER['SERVER_PROTOCOL'] = 'cli';
         $_SERVER['HTTP_HOST'] = '127.0.0.1';
         $_SERVER['REQUEST_METHOD'] = 'CLI';
-        if ($this->argc < 2) {
-            return;
-        }
+
         $this->requestMethod = $_SERVER['REQUEST_METHOD'];
-        $_SERVER['REQUEST_URI'] = '/' . str_replace('.', '/', $this->argv[1]);
-    }
-
-    private function launch($parameters, $ns, $type, $requireParams) {
-        if (empty($parameters[$type])) {
-            return false;
-        }
-
-        if (is_array($parameters[$type])) {
-            foreach ($parameters[$type] as $name) {
-                if (empty($name)) {
-                    continue;
-                }
-                $class = Tookit::nsJoin($ns, $name);
-                $this->call[$type] = $name;
-                $this->invoke($class, $requireParams);
-            }
-        } else {
-            $class = Tookit::nsJoin($ns, $parameters[$type]);
-            $this->call[$type] = $parameters[$type];
-            $this->invoke($class, $requireParams);
-        }
-    }
-
-    private function invoke($call, $requireParams) {
-        if ($this->runResult['code'] !== self::PASS_STATE) {
-            return false;
-        }
-
-        $calls = explode('::', $call);
-        $class = $calls[0];
-        $paramsCount = $requireParams->count();
-
-        $params = iterator_to_array($requireParams, false);
-        if ($paramsCount > 0) {
-            $groupins = self::constructArgs($paramsCount, $params, $class);
-        } else {
-            $groupins = new $class();
-        }
-
-        if (isset($calls[1])) {
-            if ($paramsCount > 0) {
-                self::callMethod($paramsCount, $calls[1], $params, $groupins);
-            } else {
-                $groupins->{$calls[1]}();
-            }
-        }
-    }
-
-    private function router() {
-        $parameters = $this->routerIns()->match();
-        $appCfg = $this->cfg->app;
-
-        $this->request = $this->routerIns()->getRequest();
-        $requireParams = $this->request->attributes;
-        $exec = $this->routerIns()->middlewareNamespace($appCfg);
-        foreach ($exec as $key => $ns) {
-            $this->launch($parameters, $ns, $key, $requireParams);
-        }
+        $_SERVER['REQUEST_URI'] = '/' . str_replace('.', '/', Tookit::coalesce($this->argv, 1));
     }
 
     public function echoException($e) {

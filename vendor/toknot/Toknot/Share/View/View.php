@@ -13,7 +13,7 @@ namespace Toknot\Share\View;
 use Toknot\Boot\Object;
 use Toknot\Share\View\Layout;
 use Toknot\Share\View\Tag;
-use Toknot\Boot\Kernel;
+
 use Toknot\Exception\BaseException;
 
 /**
@@ -43,6 +43,8 @@ abstract class View extends Object {
      */
     protected $head;
     private static $title = '';
+    private $controler = null;
+    private $router = null;
 
     final public function __construct(Layout $layout, $param = []) {
         $this->param = $param;
@@ -55,13 +57,24 @@ abstract class View extends Object {
         $this->layoutIns->initPage();
         $this->head = $this->layoutIns->getHead();
         $this->body = $this->layoutIns->getBody();
-        $this->page();
     }
 
     abstract public function page();
 
-    final public static function setTitle($title) {
-        self::$title = $title;
+    final public function setControoler($controller) {
+        $this->controler = $controller;
+    }
+
+    final public function getController() {
+        return $this->controler;
+    }
+
+    final public function setRoute($route) {
+        $this->router = $route;
+    }
+
+    final public function getRoute() {
+        return $this->router;
     }
 
     /**
@@ -85,9 +98,9 @@ abstract class View extends Object {
      * @param array $param
      * @return string
      */
-    final public static function html($layout, $param = []) {
-        $ins = new static($layout, $param);
-        return $ins->layoutIns->getHtmlDoc();
+    final public function render() {
+        $this->page();
+        return $this->layoutIns->getHtmlDoc();
     }
 
     /**
@@ -106,7 +119,7 @@ abstract class View extends Object {
     }
 
     final public function route($route, $params = []) {
-        Kernel::single()->routerIns()->url($route, $params);
+        return $this->router->url($route, $params);
     }
 
 }
