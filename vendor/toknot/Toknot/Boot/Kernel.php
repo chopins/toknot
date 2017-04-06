@@ -199,6 +199,8 @@ final class Kernel extends Object {
         foreach ($this->wrapperList as $cls) {
             if ($cls instanceof SystemCallWrapper) {
                 $cls::register();
+            } else {
+                throw new BaseException('wrapper must implements Toknot\Boot\SystemCallWrapper');
             }
         }
     }
