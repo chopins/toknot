@@ -81,6 +81,10 @@ class Tookit extends Object {
         return str_replace('.', PHP_NS, $class);
     }
 
+    public static function path2NS($path) {
+        return str_replace('/', PHP_NS, $path);
+    }
+
     /**
      * check os whehter not windows
      * 
@@ -149,7 +153,6 @@ class Tookit extends Object {
         }
         return false;
     }
-
 
     /**
      * check a key of array if empty set default value, array value coalsece opreate
