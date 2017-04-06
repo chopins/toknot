@@ -80,7 +80,7 @@ class Router extends Object implements SystemCallWrapper {
         }
     }
 
-    public function init() {
+    public function init($path = '') {
         $this->load();
     }
 

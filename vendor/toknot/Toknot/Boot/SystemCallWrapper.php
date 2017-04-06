@@ -28,7 +28,7 @@ interface SystemCallWrapper {
     /**
      * wrapper contruct
      */
-    public function init();
+    public function init($path = '');
 
     /**
      * get wrapper instance

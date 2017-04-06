@@ -31,7 +31,7 @@ class Wrapper extends Object implements SystemCallWrapper {
        
     }
 
-    public function init($path) {
+    public function init($path = '') {
         $this->pathInfo = parse_url($path);
     }
 
