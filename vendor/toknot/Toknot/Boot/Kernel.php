@@ -23,7 +23,6 @@ use Toknot\Boot\GlobalFilter;
 use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
 use Toknot\Boot\Promise;
-use Toknot\Boot\SystemCallWrapper;
 use Toknot\Boot\Decorator;
 
 final class Kernel extends Object {
@@ -96,6 +95,12 @@ final class Kernel extends Object {
      * @readonly
      */
     private $requestMethod = 'CLI';
+
+    /**
+     *
+     * @readonly
+     */
+    private $requestUri = '';
 
     const PASS_STATE = 0;
 
@@ -189,6 +194,10 @@ final class Kernel extends Object {
         if ($this->cfg->find('app.short_except_path')) {
             Logs::$shortPath = strlen(dirname(dirname(TKROOT)));
         }
+
+        $this->requestMethod = GlobalFilter::env('REQUEST_METHOD');
+        $this->requestUri = GlobalFilter::env('REQUEST_URI');
+
         $this->importVendor();
         $this->registerWrapper();
         $this->init();
@@ -197,10 +206,10 @@ final class Kernel extends Object {
     public function registerWrapper() {
         $this->wrapperList = $this->cfg->find('wrapper');
         foreach ($this->wrapperList as $cls) {
-            if ($cls instanceof SystemCallWrapper) {
+            if (is_subclass_of($cls, 'Toknot\Boot\SystemCallWrapper', true)) {
                 $cls::register();
             } else {
-                throw new BaseException('wrapper must implements Toknot\Boot\SystemCallWrapper');
+                throw new BaseException("wrapper $cls must implements Toknot\Boot\SystemCallWrapper");
             }
         }
     }
@@ -208,19 +217,19 @@ final class Kernel extends Object {
     public function init() {
         $def = $this->cfg->find('app.default_call');
 
-        $url = parse_url(trim($_SERVER['REQUEST_URI'], '/'));
-        if (empty($url['scheme'])) {
+        $scheme = parse_url(ltrim($this->requestUri, '/'), PHP_URL_SCHEME);
+        if (!$scheme) {
             $this->callWrapper = $this->wrapperList[$def];
         } else {
             foreach ($this->wrapperList as $pro => $cls) {
-                if ($pro == $url['scheme']) {
+                if ($pro == $scheme) {
                     $this->callWrapper = $cls;
                     break;
                 }
             }
         }
         $this->callInstance = self::invokeStatic(0, 'getInstance', [], $this->callWrapper);
-        $this->callInstance->init();
+        $this->callInstance->init($this->requestUri);
     }
 
     /**
@@ -241,6 +250,13 @@ final class Kernel extends Object {
             $this->echoException($e);
         }
         return $this->response();
+    }
+
+    public function call($path) {
+        $scheme = parse_url($path, PHP_URL_SCHEME);
+        $ins = self::invokeStatic(0, 'getInstance', [], $this->wrapperList[$scheme]);
+        $ins->init($path);
+        return $ins->call();
     }
 
     protected function response() {
@@ -289,8 +305,6 @@ final class Kernel extends Object {
         $_SERVER['SERVER_PROTOCOL'] = 'cli';
         $_SERVER['HTTP_HOST'] = '127.0.0.1';
         $_SERVER['REQUEST_METHOD'] = 'CLI';
-
-        $this->requestMethod = $_SERVER['REQUEST_METHOD'];
         $_SERVER['REQUEST_URI'] = '/' . str_replace('.', '/', Tookit::coalesce($this->argv, 1));
     }
 
