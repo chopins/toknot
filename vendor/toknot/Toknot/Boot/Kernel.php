@@ -23,6 +23,8 @@ use Toknot\Boot\GlobalFilter;
 use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
 use Toknot\Boot\Promise;
+use Toknot\Boot\SystemCallWrapper;
+use Toknot\Boot\Decorator;
 
 final class Kernel extends Object {
 
@@ -195,7 +197,9 @@ final class Kernel extends Object {
     public function registerWrapper() {
         $this->wrapperList = $this->cfg->find('wrapper');
         foreach ($this->wrapperList as $cls) {
-            $cls::register();
+            if ($cls instanceof SystemCallWrapper) {
+                $cls::register();
+            }
         }
     }
 
@@ -461,6 +465,7 @@ final class Kernel extends Object {
     }
 
     /**
+     * start a promise
      * 
      * @param mix $passState
      * @param mix $elseState
@@ -469,6 +474,17 @@ final class Kernel extends Object {
      */
     public function promise($passState = true, $elseState = false, $cxt = null) {
         return new Promise($passState, $elseState, $cxt);
+    }
+
+    /**
+     * decorate a function or class
+     * 
+     * @param callable $func
+     * @param boolean $isClass
+     * @return Decorator
+     */
+    public function decorator($func, $isClass = false) {
+        return new Decorator($func, $isClass);
     }
 
     public function attachShutdownFunction($callable) {
