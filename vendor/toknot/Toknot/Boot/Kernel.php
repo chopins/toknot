@@ -418,7 +418,7 @@ final class Kernel extends Object {
         if ($this->__isReadonlyProperty($name)) {
             return $this->{$name};
         }
-        throw new BaseException("undefined property Kernel::\${$name}");
+        throw BaseException::undefineProperty($this, $name);
     }
 
     private function loadMainConfig() {

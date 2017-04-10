@@ -27,7 +27,6 @@ class BaseException extends Exception {
     protected $exceptionMessage = null;
     private $fatalError = false;
     protected $traceArr = array();
-    
     protected $httpStatusCode = 0;
     protected $httpMessage = '';
 
@@ -55,11 +54,19 @@ class BaseException extends Exception {
         $this->getErrorType($code);
     }
 
-    static public function errorReportHandler($argv) {
+    public static function errorReportHandler($argv) {
         if (strpos($argv[1], 'No such file or directory') > 0) {
             return new NoFileOrDirException($argv[1], $argv[0], $argv[2], $argv[3]);
         }
         return new BaseException($argv[1], $argv[0], $argv[2], $argv[3]);
+    }
+
+    public static function undefineProperty($obj, $property) {
+        return new UndefinedPropertyException($obj, $property);
+    }
+
+    public static function shutdown() {
+        return new ShutdownException();
     }
 
     public function getHttpCode() {

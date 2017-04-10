@@ -13,6 +13,7 @@ namespace Toknot\Share\Model;
 use Toknot\Share\DB\DBA;
 use Toknot\Share\DB\QueryHelper;
 use Toknot\Exception\VieMessageException;
+use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\GlobalFilter;
@@ -24,23 +25,103 @@ use Toknot\Boot\GlobalFilter;
  */
 class VieMessage extends Object {
 
+    /**
+     * message table
+     *
+     * @var string
+     * @readonly
+     */
     protected $tableName = '';
+
+    /**
+     * lock feild name in message table
+     *
+     * @var string
+     * @readonly
+     */
     protected $lockFeild = 'lockFlag';
     protected $tableInstance = null;
-    protected $unprocessed = 0;
-    protected $processed = 1;
+
+    /**
+     * not execute flag
+     *
+     * @var mix
+     * @readonly
+     */
+    protected $unprocessedFlag = 0;
+
+    /**
+     * It has been executed of flag
+     *
+     * @var mix
+     * @readonly
+     */
+    protected $processedFlag = 1;
+
+    /**
+     * the number of messages processed be invoked
+     *
+     * @var int
+     * @readonly
+     */
     protected $limit = 5;
+
+    /**
+     * message table last insert id
+     *
+     * @var int 
+     * @readonly
+     */
     protected $lastId = 0;
+
+    /**
+     * message table primary key name
+     *
+     * @var string 
+     * @readonly
+     */
     protected $pk = '';
+
+    /**
+     * the value is prefix of uniqid
+     *
+     * @var string
+     * @readonly
+     */
     protected $lockPrefix = 0;
     protected $kernel = null;
 
     /**
-     * 
-     * @param string $table     message save table name of database
+     * mutex table name, table structure is below:
+     *  id    : auto increment key
+     *  mutex : unique key, value is message mutex value
+     * @var string
+     * @readonly
      */
-    public function __construct($table) {
-        $this->tableName = $table;
+    protected $mutexTable = 'mutexQueue';
+
+    /**
+     * the table mutexQueue of column name, the column must is unique key, value is $mutexMappingFeild in message
+     *
+     * @var string
+     * @readonly
+     */
+    protected $mutexFeild = 'mutex';
+
+    /**
+     * the feild must is message of column and specify same value is mutex
+     *
+     * @var string
+     * @readonly 
+     */
+    protected $mutexMappingFeild = null;
+
+    /**
+     * 
+     * @param string $messageTable     message save table name of database
+     */
+    public function __construct($messageTable) {
+        $this->tableName = $messageTable;
         $this->tableInstance = DBA::table($this->tableName);
         $this->pk = $this->tableInstance->primaryKey();
         $this->kernel = Kernel::single();
@@ -51,12 +132,39 @@ class VieMessage extends Object {
         }
     }
 
+    public function __get($name) {
+        if ($this->__isReadonlyProperty($name)) {
+            return $this->$name;
+        }
+        throw BaseException::undefineProperty($this, $name);
+    }
+
+    public function getLockPrefix() {
+        return $this->lockPrefix;
+    }
+
+    /**
+     * 
+     * @param type $feild
+     */
+    public function setMutexMappingFeild($feild) {
+        $this->mutexMappingFeild = $feild;
+    }
+
+    public function setMutexTable($table) {
+        $this->mutexTable = $table;
+    }
+
+    public function setMutexFeild($feild) {
+        $this->mutexFeild = $feild;
+    }
+
     /**
      * 
      * @param array $data
      */
     public function sendMessage($data) {
-        $data[$this->lockFeild] = $this->unprocessed;
+        $data[$this->lockFeild] = $this->unprocessedFlag;
         $this->lastId = $this->tableInstance->insert($data);
     }
 
@@ -86,7 +194,7 @@ class VieMessage extends Object {
      * @return $this
      */
     public function setUnporcessFlag($flag) {
-        $this->unprocessed = $flag;
+        $this->unprocessedFlag = $flag;
         return $this;
     }
 
@@ -96,7 +204,7 @@ class VieMessage extends Object {
      * @return $this
      */
     public function processFlag($flag) {
-        $this->processed = $flag;
+        $this->processedFlag = $flag;
         return $this;
     }
 
@@ -110,7 +218,7 @@ class VieMessage extends Object {
 
     /**
      * 
-     * @param callable $receiver
+     * @param callable $receiver    the function be invoke and pass a message data
      * @param boolean $rollback
      * @throws VieMessageException
      */
@@ -118,8 +226,15 @@ class VieMessage extends Object {
         $prefix = md5($this->lockPrefix, $this->lastId) . '-';
         $uniqid = uniqid($prefix, true);
 
-        $filter = QueryHelper::equal($this->lockFeild, $this->unprocessed);
-        $this->tableInstance->update([$this->lockFeild => $uniqid], $filter, $this->limit);
+        $filter = QueryHelper::equal($this->lockFeild, $this->unprocessedFlag);
+
+        $set = QueryHelper::set($this->lockFeild, $uniqid);
+        $mutexRow = [];
+        if ($this->mutexMappingFeild) {
+            $mutexRow = $this->insertMutex($filter);
+            $filter = QueryHelper::andX($filter, [$this->mutexMappingFeild, $mutexRow, 'in']);
+        }
+        $this->tableInstance->update($set, $filter, $this->limit);
 
         $where = QueryHelper::equal($this->lockFeild, $uniqid);
         $res = $this->tableInstance->iterator($where, $this->limit);
@@ -128,12 +243,50 @@ class VieMessage extends Object {
             try {
                 self::callFunc($receiver, [$row]);
             } catch (\Exception $e) {
-                $rollbackMsg = $this->rollback($rollback, $uniqid);
+                $rollbackMsg = $this->rollback($rollback, $uniqid, $mutexRow);
                 throw new VieMessageException($pkv, $uniqid, $e, $rollbackMsg);
             }
             $where = QueryHelper::andX(QueryHelper::equal($this->pk, $pkv), QueryHelper::equal($this->lockFeild, $uniqid));
-            $this->tableInstance->update(QueryHelper::set($this->lockFeild, $this->processed), $where, 1);
+            $this->tableInstance->update(QueryHelper::set($this->lockFeild, $this->processedFlag), $where, 1);
         }
+        $this->deleteMutex($mutexRow);
+    }
+
+    protected function insertMutex($filter) {
+        $mutex = DBA::table($this->mutexTable);
+        $mutexRow = [];
+        DBA::transaction(function() use($mutex, &$mutexRow, $filter) {
+            $n = 1;
+            $exist = [];
+            $newfilter = $filter;
+            do {
+                try {
+                    $this->tableInstance->setColumn($this->mutexMappingFeild);
+                    $sql = $this->tableInstance->select($newfilter)->limit(1)->getLastSql();
+                    $mutex->setColumn($this->mutexFeild);
+                    $mutex->insertSelect($sql);
+                    $id = $mutex->lastId();
+                    $mutex = $mutex->select(['id', $id]);
+                    $exist[] = $mutex[$this->mutexMappingFeild];
+                    $f = [$this->mutexMappingFeild, $exist, 'out'];
+                    $newfilter = QueryHelper::andX($filter, $f);
+                    $mutexRow[] = $mutex[$this->mutexMappingFeild];
+                    $n++;
+                } catch (\PDOException $e) {
+                    $cont = stripos($e->getMessage(), 'Duplicate') !== false;
+                }
+                if ($n >= $this->limit) {
+                    return;
+                }
+            } while ($cont);
+            throw $e;
+        });
+        return $mutexRow;
+    }
+
+    protected function deleteMutex($mutexRow) {
+        $mutex = DBA::table($this->mutexTable);
+        $mutex->delete([$this->mutexMappingFeild, $mutexRow, 'in']);
     }
 
     /**
@@ -154,12 +307,13 @@ class VieMessage extends Object {
      * @param string $uniqid
      * @return string
      */
-    protected function rollback($rollback, $uniqid) {
+    protected function rollback($rollback, $uniqid, $mutexRow) {
         if ($rollback) {
             try {
-                $set = QueryHelper::set($this->lockFeild, $this->unprocessed);
+                $set = QueryHelper::set($this->lockFeild, $this->unprocessedFlag);
                 $filter = QueryHelper::equal($this->lockFeild, $uniqid);
                 $this->tableInstance->update($set, $filter, $this->limit);
+                $this->deleteMutex($mutexRow);
                 return 'Has been rollback unprocess message';
             } catch (\Exception $e) {
                 $err = $e->getMessage();

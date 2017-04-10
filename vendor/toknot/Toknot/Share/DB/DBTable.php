@@ -125,7 +125,7 @@ abstract class DBTable extends Object {
      */
     final public function setColumn($column, $alias = '') {
         $glue = $alias == '' ? ', ' : ", $alias.";
-        $this->tmpColumnSql = $alias . is_array($column) ? implode($glue, $column) : $column;
+        $this->tmpColumnSql = $alias . (is_array($column) ? implode($glue, $column) : $column);
     }
 
     /**
@@ -240,15 +240,16 @@ abstract class DBTable extends Object {
      * @return array
      */
     public function get($limit = 50, $start = 0, $fetchMode = \PDO::FETCH_ASSOC) {
+        $this->limit($limit, $start);
+        $smt = $this->qr->execute();
+        return $smt->fetchAll($fetchMode);
+    }
+
+    public function limit($limit = 50, $start = 0) {
         $this->qr->setFirstResult($start);
         $this->qr->setMaxResults($limit);
         $this->lastSql = $this->qr->getSQL();
-        try {
-            $smt = $this->qr->execute();
-            return $smt->fetchAll($fetchMode);
-        } catch (\PDOException $e) {
-            return Kernel::single()->echoException($e);
-        }
+        return $this;
     }
 
     /**
@@ -259,15 +260,9 @@ abstract class DBTable extends Object {
      * @return $this
      */
     public function execute($limit = 50, $start = 0) {
-        $this->qr->setFirstResult($start);
-        $this->qr->setMaxResults($limit);
-        $this->lastSql = $this->qr->getSQL();
-        try {
-            $this->statement = $this->qr->execute();
-            return $this;
-        } catch (\PDOException $e) {
-            return Kernel::single()->echoException($e);
-        }
+        $this->limit($limit, $start);
+        $this->statement = $this->qr->execute();
+        return $this;
     }
 
     public function iterator($where, $limit = 50, $start = 0) {
@@ -287,11 +282,7 @@ abstract class DBTable extends Object {
      * @return array
      */
     public function fetch($fetchMode = \PDO::FETCH_ASSOC) {
-        try {
-            return $this->statement->fetch($fetchMode);
-        } catch (\PDOException $e) {
-            return Kernel::single()->echoException($e);
-        }
+        return $this->statement->fetch($fetchMode);
     }
 
     public function getRow() {
@@ -399,12 +390,19 @@ abstract class DBTable extends Object {
         }
 
         $this->lastSql = $this->qr->getSQL();
-        try {
-            $this->qr->execute();
-        } catch (\PDOException $e) {
-            return Kernel::single()->echoException($e);
-        }
+        $this->qr->execute();
+        return $this->lastId();
+    }
+
+    public function lastId() {
         return self::$conn->lastInsertId();
+    }
+
+    public function insertSelect($sql) {
+        $subSql = '(' . $sql . ')';
+        $this->qr = $this->ready('insert');
+        $sql = $this->lastSql . '(' . $this->tmpColumnSql . ')' . $subSql;
+        self::$conn->executeQuery($sql);
     }
 
     /**
@@ -415,15 +413,18 @@ abstract class DBTable extends Object {
      * @param string $expr
      * @return string
      */
-    public function compute($left, $right, $expr) {
+    public function operator($v) {
         $defaultExpr = ['+', '-', '*', '/'];
-        if (in_array($expr, $defaultExpr)) {
-            return "$left $expr $right";
+        if (in_array($v[0], $defaultExpr)) {
+            return "$v[1] $v[0] $v[2]";
         } else {
-            if ($right) {
-                return "$expr($left,$right)";
+            if (empty($v[1])) {
+                return $v[0];
+            }
+            if (empty($v[2])) {
+                return "{$v[0]}({$v[1]})";
             } else {
-                return "$expr($left)";
+                return "{$v[0]}({$v[1]},{$v[2]})";
             }
         }
     }
@@ -443,7 +444,7 @@ abstract class DBTable extends Object {
         $i = 0;
         foreach ($values as $key => $v) {
             if (is_array($v)) {
-                $this->qr->set($key, $this->compute($v[1], $v[2], $v[0]));
+                $this->qr->set($key, $this->operator($v));
             } else {
                 $this->checkBoder($key, $v);
                 $placeholde = ":s$i$key";
@@ -456,16 +457,11 @@ abstract class DBTable extends Object {
             $this->qr->where($this->where($where));
         }
         if ($limit) {
-            $this->qr->setFirstResult($start);
-            $this->qr->setMaxResults($limit);
+            $this->limit($limit, $start);
         }
         $this->lastSql = $this->qr->getSQL();
 
-        try {
-            return $this->qr->execute();
-        } catch (\PDOException $e) {
-            return Kernel::single()->echoException($e);
-        }
+        return $this->qr->execute();
     }
 
     /**
@@ -495,15 +491,11 @@ abstract class DBTable extends Object {
         $this->qr = $this->ready(__FUNCTION__);
         $this->qr->where($this->where($where));
         if ($limit) {
-            $this->qr->setFirstResult($start);
-            $this->qr->setMaxResults($limit);
+            $this->limit($limit, $start);
         }
         $this->lastSql = $this->qr->getSQL();
-        try {
-            return $this->qr->execute();
-        } catch (\PDOException $e) {
-            return Kernel::single()->echoException($e);
-        }
+
+        return $this->qr->execute();
     }
 
     /**
@@ -521,7 +513,37 @@ abstract class DBTable extends Object {
      */
     public function compKey($param) {
         $operator = isset($param[2]) ? $param[2] : '=';
-        return $this->expr()->comparison($param[0], $operator, $param[1]);
+        if (isset($param[1]) && is_array($param[1])) {
+            $param[1] = $this->operator($param[1]);
+        }
+        switch (strtoupper($operator)) {
+            case '=':
+                return $this->expr()->eq($param[0], $param[1]);
+            case '<':
+                return $this->expr()->lt($param[0], $param[1]);
+            case '>':
+                return $this->expr()->gt($param[0], $param[1]);
+            case '<=':
+                return $this->expr()->lte($param[0], $param[1]);
+            case '>=':
+                return $this->expr()->gte($param[0], $param[1]);
+            case 'IN':
+                return $this->expr()->in($param[0], $param[1]);
+            case 'NOTIN':
+                return $this->expr()->notIn($param[0], $param[1]);
+            case 'OUT':
+                return $this->expr()->notIn($param[0], $param[1]);
+            case 'NULL':
+                return $this->expr()->isNull($param[0]);
+            case 'NOTNULL':
+                return $this->expr()->isNotNull($param[0]);
+            case 'HAS':
+                return $this->expr()->isNotNull($param[0]);
+            case 'LIKE':
+                return $this->expr()->like($param[0], $param[1]);
+            default :
+                return $this->expr()->comparison($param[0], $operator, $param[1]);
+        }
     }
 
     /**
@@ -603,6 +625,11 @@ abstract class DBTable extends Object {
         return new QueryHelper;
     }
 
+    public function quote($input, $type = null) {
+        $type || $type = is_numeric($input) ? \PDO::PARAM_INT : \PDO::PARAM_STR;
+        return $this->expr()->literal($input, $type);
+    }
+
     public function setQueryArg($placeholder, $v) {
         $this->qr->setParameter($placeholder, $v);
     }
@@ -668,7 +695,7 @@ abstract class DBTable extends Object {
     /**
      * add join table
      * 
-     * @param $this $tb
+     * @param DBTable $tb
      * @param string $join
      * @param array $on
      * @return string
@@ -824,13 +851,8 @@ abstract class DBTable extends Object {
         $sql .= implode(',', $update);
         $this->lastSql = $sql;
 
-        try {
-            self::$conn->executeUpdate($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
-        } catch (\Exception $e) {
-
-            Kernel::single()->echoException($e);
-        }
-        return self::$conn->lastInsertId();
+        self::$conn->executeUpdate($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
+        return $this->lastId();
     }
 
     /**

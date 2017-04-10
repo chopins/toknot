@@ -47,24 +47,44 @@ class QueryHelper extends Object {
         return [$key, $expr, '<='];
     }
 
+    public static function in($key, $params) {
+        return [$key, $params, 'IN'];
+    }
+
+    public static function out($key, $params) {
+        return [$key, $params, 'NOTIN'];
+    }
+
+    public static function isNull($key) {
+        return [$key, '', 'NULL'];
+    }
+
+    public static function notNull($key) {
+        return [$key, '', 'NOTNULL'];
+    }
+
     public static function add($left, $right) {
-        return [$left, $right, '+'];
+        return ['+', $left, $right];
     }
 
     public static function minus($left, $right) {
-        return [$left, $right, '-'];
+        return ['-', $left, $right];
     }
 
     public static function mul($left, $right) {
-        return [$left, $right, '*'];
+        return ['*', $left, $right];
     }
 
     public static function div($left, $right) {
-        return [$left, $right, '/'];
+        return ['/', $left, $right];
     }
 
     public static function set($key, $expr) {
         return [$key => $expr];
+    }
+
+    public static function setEqualFeild($key, $feild) {
+        return [$key => [$feild]];
     }
 
     public function __call($method, $args) {

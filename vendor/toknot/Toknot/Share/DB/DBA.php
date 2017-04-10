@@ -52,6 +52,8 @@ class DBA extends Object {
 
     const T_OR = '||';
     const T_AND = '&&';
+    const TS_OR = 'OR';
+    const TS_AND = 'AND';
     const TEXT_LEN = 65535;
     const MTEXT_LEN = 16777215;
     const BTEXT_LEN = 4294967295;
@@ -290,8 +292,8 @@ class DBA extends Object {
     public static function transaction($callable, $dbconfig = '') {
         $conn = self::decideIns($dbconfig)->connect();
         $conn->beginTransaction();
-        $callable();
         try {
+            $callable();
             $conn->commit();
         } catch (\Exception $e) {
             $conn->rollBack();
