@@ -228,6 +228,15 @@ class VieMessage extends Object {
         $this->lockPrefix = $prefix;
     }
 
+    public function uniqid() {
+        $prefix = md5($this->lockPrefix, $this->lastId) . '-';
+        if (function_exists('hash')) {
+            $uniqid = hash('sha256', uniqid($prefix, true));
+        } else {
+            $uniqid = sha1(uniqid($prefix, true));
+        }
+    }
+
     /**
      * receive message
      * 
@@ -236,8 +245,7 @@ class VieMessage extends Object {
      * @throws VieMessageException
      */
     public function receiveMessage($receiver, $rollback = true) {
-        $prefix = md5($this->lockPrefix, $this->lastId) . '-';
-        $uniqid = uniqid($prefix, true);
+        $uniqid = $this->uniqid();
 
         $filter = QueryHelper::equal($this->lockFeild, $this->unprocessedFlag);
 
