@@ -144,22 +144,34 @@ class VieMessage extends Object {
     }
 
     /**
+     * set mutex feild
      * 
-     * @param type $feild
+     * @param string $feild
      */
     public function setMutexMappingFeild($feild) {
         $this->mutexMappingFeild = $feild;
     }
 
+    /**
+     * set mutex queue
+     * 
+     * @param string $table
+     */
     public function setMutexTable($table) {
         $this->mutexTable = $table;
     }
 
+    /**
+     * set mutex feild name
+     * 
+     * @param string $feild
+     */
     public function setMutexFeild($feild) {
         $this->mutexFeild = $feild;
     }
 
     /**
+     * send message
      * 
      * @param array $data
      */
@@ -217,6 +229,7 @@ class VieMessage extends Object {
     }
 
     /**
+     * receive message
      * 
      * @param callable $receiver    the function be invoke and pass a message data
      * @param boolean $rollback
@@ -290,6 +303,7 @@ class VieMessage extends Object {
     }
 
     /**
+     * send message and receive message
      * 
      * @param array $messageData
      * @param callable $receiver
