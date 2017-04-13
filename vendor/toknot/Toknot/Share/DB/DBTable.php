@@ -11,7 +11,6 @@
 namespace Toknot\Share\DB;
 
 use Toknot\Share\DB\DBA;
-use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
 use Toknot\Boot\Tookit;
