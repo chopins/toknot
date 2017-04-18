@@ -13,7 +13,6 @@ namespace Toknot\Share\DB;
 use Toknot\Share\DB\DBA;
 use Toknot\Exception\BaseException;
 use Toknot\Share\DB\TableIterator;
-use Toknot\Boot\Tookit;
 
 namespace Toknot\Share\DB;
 
@@ -485,7 +484,7 @@ class Table extends TableIterator {
     /**
      * select at left join 
      * 
-     * @param Toknot\Share\DB\DBTable|array $table
+     * @param Toknot\Share\DB\Table $table
      * @param array $on
      * @param array|string $where
      * @return $this
@@ -497,7 +496,7 @@ class Table extends TableIterator {
     /**
      * select at right join
      * 
-     * @param Toknot\Share\DB\DBTable|array $table
+     * @param Toknot\Share\DB\Table $table
      * @param array $on  the value smaliar 
      *                      [$column1,$column2,$expr] or mulit-dimensional-array
      * @param array|string $where  where array
@@ -510,7 +509,7 @@ class Table extends TableIterator {
     /**
      * select at inner join
      * 
-     * @param Toknot\Share\DB\DBTable|array $table
+     * @param Toknot\Share\DB\Table|array $table
      * @param array $on
      * @param array|string $where
      * @return $this
@@ -521,7 +520,7 @@ class Table extends TableIterator {
 
     /**
      * 
-     * @param Toknot\Share\DB\DBTable|array $tables
+     * @param Toknot\Share\DB\Table $tables
      * @param array $on
      * @param array $where
      * @param string $type
@@ -530,7 +529,7 @@ class Table extends TableIterator {
     protected function join($table, $on, $type = 'left') {
         $this->builder();
         $join = $this->getJoinFunc($type);
-        $this->qr->$join($this->getTableAlias(), $table, $table->getTableAlias(), $on);
+        $this->qr->$join($this->getTableAlias(), $table->getTableName(), $table->getTableAlias(), $on);
         return $this;
     }
 
