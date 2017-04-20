@@ -100,14 +100,15 @@ class DBSessionHandler implements \SessionHandlerInterface {
         $this->sessionExpired = false;
         DBA::single()->beginTransaction();
         try {
-            $sessionRow = $this->model->getKeyValue($sessionId);
+            $sessionRow = $this->model->findKeyRow($sessionId);
+
             if ($sessionRow) {
-                if ($sessionRow[0][$this->expireCol] + $sessionRow[0][$this->timeCol] < time()) {
+                if ($sessionRow[$this->expireCol] + $sessionRow[$this->timeCol] < time()) {
                     $this->sessionExpired = true;
                     return '';
                 }
 
-                return is_resource($sessionRow[0][$this->dataCol]) ? stream_get_contents($sessionRow[0][$this->dataCol]) : $sessionRow[0][$this->dataCol];
+                return is_resource($sessionRow[$this->dataCol]) ? stream_get_contents($sessionRow[$this->dataCol]) : $sessionRow[$this->dataCol];
             }
 
             $this->model->insert([$this->sidCol => $sessionId, $this->dataCol => '', $this->expireCol => 0, $this->timeCol => time()]);

@@ -28,7 +28,7 @@ class Table extends TableIterator {
      *
      * @var string
      */
-    protected $tableName;
+    protected $tableName = '';
 
     /**
      * Table alias name
@@ -75,7 +75,7 @@ class Table extends TableIterator {
     }
 
     public function getTableAlias() {
-        return $this->tableAlias ? $this->tableAlias : $this->tableName;
+        return $this->tableAlias ? $this->tableAlias : '';
     }
 
     public function alias($alias = '') {
@@ -160,10 +160,9 @@ class Table extends TableIterator {
      * @return Toknot\Share\DB\QueryBuilder
      */
     final protected function builder() {
-        if ($this->qr) {
-            return $this->qr;
+        if (!$this->qr) {
+            $this->qr = new QueryBulider($this->dbconnect, $this);
         }
-        $this->qr = new QueryBulider($this->dbconnect);
         return $this;
     }
 
@@ -195,6 +194,12 @@ class Table extends TableIterator {
         return $this;
     }
 
+    public function limit($limit, $start = 0) {
+        $this->qr->setFirstResult($start);
+        $this->qr->setMaxResults($limit);
+        return $this;
+    }
+
     public function exec($where, $limit, $offset) {
         $this->select($where)->get($limit, $offset);
     }
@@ -208,6 +213,10 @@ class Table extends TableIterator {
         return $this->statement->fetch($fetchMode);
     }
 
+    /**
+     * 
+     * @return QueryWhere
+     */
     public function filter() {
         $this->builder();
         $this->where = new QueryWhere($this, $this->qr);
@@ -287,9 +296,10 @@ class Table extends TableIterator {
         $this->builder();
         $params = [];
         foreach ($value as $key => $v) {
-            $params[] = $this->qr->setParamter($key, $v);
+            $params[$key] = $this->qr->setParamter($key, $v);
         }
-        $this->qr = $this->initQuery(__FUNCTION__)->values($params);
+        $this->initQuery(__FUNCTION__);
+        $this->qr->values($params);
 
         $this->lastSql = $this->qr->getSQL();
         $this->qr->execute();
@@ -343,7 +353,7 @@ class Table extends TableIterator {
             $sql = $subSelect;
         }
         $subSql = '(' . $sql . ')';
-        $this->builder()->initQuery('insert');
+        $this->builder()->initQuery('INSERT');
         $sql = $this->lastSql . '(' . $this->tmpColumnSql . ')' . $subSql;
         $this->dbconnect->executeQuery($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
     }
@@ -369,12 +379,12 @@ class Table extends TableIterator {
      */
     public function save($data) {
         $this->builder();
-        $this->initQuery('insert');
+        $this->initQuery('INSERT');
         $params = [];
         foreach ($data as $key => $v) {
-            $params[] = $this->qr->setParamter($key, $v);
+            $params[$key] = $this->qr->setParamter($key, $v);
         }
-        $this->qr = $this->initQuery(__FUNCTION__)->values($params);
+        $this->qr->values($params);
 
         $sql = $this->qr->getSQL();
 

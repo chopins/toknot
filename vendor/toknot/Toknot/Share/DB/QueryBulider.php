@@ -26,8 +26,15 @@ class QueryBulider extends Object {
     protected $builder = null;
     protected static $paramIndex = 0;
 
-    public function __construct($conn) {
+    /**
+     *
+     * @var Table
+     */
+    protected $table;
+
+    public function __construct($conn, Table $table) {
         $this->builder = $conn->createQueryBuilder();
+        $this->table = $table;
         self::$paramIndex++;
     }
 
@@ -67,7 +74,7 @@ class QueryBulider extends Object {
 
     public function batchSet($values) {
         foreach ($values as $cols => $value) {
-            $c = new QueryColumn($cols, $this);
+            $c = new QueryColumn($cols, $this, $this->table);
             $c->set($value);
         }
         return $this;
@@ -76,7 +83,7 @@ class QueryBulider extends Object {
     public function batchEq($values) {
         $eqs = [];
         foreach ($values as $cols => $value) {
-            $c = new QueryColumn($cols, $this);
+            $c = new QueryColumn($cols, $this, $this->table);
             $c->eq($value);
             $eqs[] = $c->getSQL();
         }

@@ -22,7 +22,7 @@ abstract class TableIterator extends Object {
 
     abstract public function isCompositePrimaryKey();
 
-    abstract public function select($where, $limit, $start);
+    abstract public function select($where);
 
     abstract public function execute($limit, $offset);
 

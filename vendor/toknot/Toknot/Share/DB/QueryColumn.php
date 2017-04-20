@@ -19,6 +19,7 @@ class QueryColumn {
 
     protected $columnName = '';
     protected $conn = '';
+
     /**
      *
      * @var QueryBulider
@@ -28,10 +29,9 @@ class QueryColumn {
     protected $subColumn = null;
     protected $table;
 
-    public function __construct($columnName, $qr, Table $table) {
+    public function __construct($columnName, QueryBulider $qr, Table $table) {
         $this->columnName = $columnName;
         $this->qr = $qr;
-        self::$usedIndex++;
         $this->table = $table;
     }
 
@@ -44,7 +44,7 @@ class QueryColumn {
     }
 
     public function getAllColumnName() {
-        return ($this->table->getTableAlias() ? $this->table->getTableAlias() : '') . '.' . $this->columnName;
+        return ($this->table->getTableAlias() ? $this->table->getTableAlias() . '.' : '') . $this->columnName;
     }
 
     public function leftConvert($value) {

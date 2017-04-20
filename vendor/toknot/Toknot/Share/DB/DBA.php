@@ -207,18 +207,18 @@ class DBA extends Object {
 
         $code = '<?php' . PHP_EOL;
         $code .= 'namespace ' . self::$tableClassNs . ';' . PHP_EOL;
-        $code .= 'use Toknot\Share\DB\DBTable;' . PHP_EOL;
+        $code .= 'use Toknot\Share\DB\Table;' . PHP_EOL;
 
         foreach ($tables as $table => $v) {
             $columnSQL = implode(',', array_keys($v['column']));
             $class = self::table2Class($table);
-            $code .= "class $class extends DBTable {";
-            $code .= "protected \$table = '$table';";
-
+            $code .= "class $class extends Table {";
+            $code .= "protected \$tableName = '$table';";
+            $code .= 'protected $tableStructure=' . var_export($v, true) . ';';
             if (isset($v['indexes']) && isset($v['indexes']['primary'])) {
                 $keys = explode(',', $v['indexes']['primary']);
                 $key = count($keys) > 1 ? var_export($keys, true) : '\'' . $v['indexes']['primary'] . '\'';
-                $code .= "protected \$key=$key;";
+                $code .= "protected \$primaryKeyName=$key;";
             }
 
             $code .= "protected \$columnSql='$columnSQL';}" . PHP_EOL;
@@ -271,8 +271,7 @@ class DBA extends Object {
             $db->iteratorArray = self::$cfg->tables;
         }
         $db->loadModel();
-        $m = new $tableClass(self::$cfg->tables[$table]);
-        $m->connect($conn);
+        $m = new $tableClass($conn);
         return $m;
     }
 
