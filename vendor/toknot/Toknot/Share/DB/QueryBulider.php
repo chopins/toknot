@@ -124,7 +124,7 @@ class QueryBulider extends Object {
                 $update[$key] = $v;
             }
         }
-        
+
         $insertKeyHit = implode(',', array_keys($params));
         $insertHit = implode(',', $params);
 
@@ -152,6 +152,18 @@ class QueryBulider extends Object {
         }
 
         return $sqls[$plat];
+    }
+
+    public function executeQuery($sql) {
+        $res = $this->getConnection()->executeQuery($sql, $this->getParameters(), $this->getParameterTypes());
+        $this->qr->getSQL();
+        return $res;
+    }
+
+    public function executeUpdate($sql) {
+        $res = $this->getConnection()->executeUpdate($sql, $this->getParameters(), $this->getParameterTypes());
+        $this->qr->getSQL();
+        return $res;
     }
 
     public function __call($name, $argv) {

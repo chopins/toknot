@@ -354,19 +354,7 @@ class Table extends TableIterator {
         $subSql = '(' . $sql . ')';
         $this->builder()->initQuery('INSERT');
         $sql = $this->lastSql . '(' . $this->tmpColumnSql . ')' . $subSql;
-        return $this->connectQuery($sql);
-    }
-
-    public function connectQuery($sql) {
-        $res = $this->dbconnect->executeQuery($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
-        $this->qr->getSQL();
-        return $res;
-    }
-
-    public function connectUpdate($sql) {
-        $res = $this->dbconnect->executeUpdate($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
-        $this->qr->getSQL();
-        return $res;
+        return $this->qr->executeQuery($sql);
     }
 
     public function againSelect($where, $feild = []) {
@@ -391,7 +379,7 @@ class Table extends TableIterator {
     public function save($data) {
         $this->builder();
         $this->lastSql = $this->qr->insertOrUpdate($data);
-        $this->connectQuery($this->lastSql);
+        $this->qr->executeQuery($this->lastSql);
         return $this->lastId();
     }
 
