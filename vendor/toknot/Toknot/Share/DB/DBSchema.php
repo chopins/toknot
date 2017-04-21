@@ -24,21 +24,20 @@ class DBSchema extends Schema {
 
     public function toDropIfExistsSql(AbstractPlatform $platform) {
         $hit = '____';
-        $dropSQLs = ['MySql' => "DROP TABLE IF EXISTS $hit",
-            'SQLServer' => "IF OBJECT_ID('$hit','U') IS NOT NULL DROP TABLE $hit",
-            'Oracle' => "BEGIN EXECUTE IMMEDIATE 'DROP TABLE $hit';
+        $dropSQLs = ['mysql' => "DROP TABLE IF EXISTS $hit",
+            'sqlserver' => "IF OBJECT_ID('$hit','U') IS NOT NULL DROP TABLE $hit",
+            'oracle' => "BEGIN EXECUTE IMMEDIATE 'DROP TABLE $hit';
                         EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE;
                         END IF;END;",
-            'PostgreSql' => "DROP TABLE IF EXISTS $hit",
-            'Drizzle' => "DROP TABLE IF EXISTS $hit",
-            'SQLAzure' => "DROP TABLE IF EXISTS $hit",
-            'SQLAnywhere' => "DROP TABLE IF EXISTS $hit"];
-        
-        $platformClass = get_class($platform);
-        $platformName = Tookit::arrayPos(array_keys($dropSQLs), $platformClass);
+            'postgresql' => "DROP TABLE IF EXISTS $hit",
+            'drizzle' => "DROP TABLE IF EXISTS $hit",
+            'sqlazure' => "DROP TABLE IF EXISTS $hit",
+            'sqlanywhere' => "DROP TABLE IF EXISTS $hit"];
 
-        if (!$platformName) {
-            throw new BaseException("$platformClass not support 'IF EXISTS' check SQL");
+        $platformName = strtolower($platform->getName());
+
+        if (!isset($dropSQLs[$platformName])) {
+            throw new BaseException("$platformName not support 'IF EXISTS' for check table");
         }
 
         $dropSQL = $dropSQLs[$platformName];

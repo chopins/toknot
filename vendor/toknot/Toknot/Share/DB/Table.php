@@ -176,7 +176,7 @@ class Table extends TableIterator {
      * @return \Doctrine\DBAL\Query\QueryBuilder
      */
     final protected function initQuery($type) {
-        $this->qr->initQuery($type, $this->getTableName());
+        $this->qr->initQueryType($type, $this->getTableName());
         return $this;
     }
 
@@ -190,7 +190,6 @@ class Table extends TableIterator {
     public function execute($limit = 50, $start = 0) {
         $this->limit($limit, $start);
         $this->statement = $this->qr->execute();
-        $this->qr = null;
         return $this;
     }
 
@@ -355,7 +354,19 @@ class Table extends TableIterator {
         $subSql = '(' . $sql . ')';
         $this->builder()->initQuery('INSERT');
         $sql = $this->lastSql . '(' . $this->tmpColumnSql . ')' . $subSql;
-        $this->dbconnect->executeQuery($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
+        return $this->connectQuery($sql);
+    }
+
+    public function connectQuery($sql) {
+        $res = $this->dbconnect->executeQuery($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
+        $this->qr->getSQL();
+        return $res;
+    }
+
+    public function connectUpdate($sql) {
+        $res = $this->dbconnect->executeUpdate($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
+        $this->qr->getSQL();
+        return $res;
     }
 
     public function againSelect($where, $feild = []) {
@@ -379,28 +390,8 @@ class Table extends TableIterator {
      */
     public function save($data) {
         $this->builder();
-        $this->initQuery('INSERT');
-        $params = [];
-        foreach ($data as $key => $v) {
-            $params[$key] = $this->qr->setParamter($key, $v);
-        }
-        $this->qr->values($params);
-
-        $sql = $this->qr->getSQL();
-
-        $sql .= ' ON DUPLICATE KEY UPDATE ';
-        if ($this->isCompositePrimaryKey()) {
-            foreach ($this->primaryKeyName as $k) {
-                unset($data[$k]);
-            }
-        } else {
-            unset($data[$this->primaryKeyName]);
-        }
-        $update = $this->qr->batchEq($data);
-        $sql .= implode(',', $update);
-        $this->lastSql = $sql;
-
-        $this->dbconnect->executeUpdate($sql, $this->qr->getParameters(), $this->qr->getParameterTypes());
+        $this->lastSql = $this->qr->insertOrUpdate($data);
+        $this->connectQuery($this->lastSql);
         return $this->lastId();
     }
 

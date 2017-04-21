@@ -38,7 +38,8 @@ class QueryBulider extends Object {
         self::$paramIndex++;
     }
 
-    public function initQuery($type, $tableName) {
+    public function initQueryType($type, $tableName) {
+        $type = strtolower($type);
         $fnc = $type == 'select' ? 'from' : $type;
         $this->builder->$fnc($tableName);
         return $this;
@@ -97,6 +98,60 @@ class QueryBulider extends Object {
     public function quote($input, $type = null) {
         $type || $type = is_numeric($input) ? \PDO::PARAM_INT : \PDO::PARAM_STR;
         return $this->expr()->literal($input, $type);
+    }
+
+    public function insertOrUpdate($values) {
+
+        $table = $this->table->getTableName();
+
+        $params = [];
+        $pk = $this->table->getPrimaryKeyName();
+        $keyOn = $keyName = '';
+        $iscopk = $this->table->isCompositePrimaryKey();
+        if ($iscopk) {
+            $keyName = $keyOn = [];
+        }
+
+        foreach ($values as $key => $v) {
+            $params[$key] = $this->setParamter($key, $v);
+            $hv = $this->setParamter($key, $v);
+            if ($iscopk && in_array($key, $pk)) {
+                $keyOn[] = "$key=$hv";
+                $keyName[] = $key;
+            } elseif ($pk == $key) {
+                $keyOn = "$key=$hv";
+            } else {
+                $update[$key] = $v;
+            }
+        }
+        
+        $insertKeyHit = implode(',', array_keys($params));
+        $insertHit = implode(',', $params);
+
+        if ($keyName != $pk) {
+            return "INSERT INTO $table ($insertKeyHit) VALUES ($insertHit)";
+        }
+
+        if ($iscopk) {
+            $keyOn = implode(',', $keyOn);
+        }
+        $pkStr = implode(',', $pk);
+        $updateHit = implode(',', $this->batchEq($update));
+
+        $sqls = ['mysql' => "INSERT INTO $table ($insertKeyHit) VALUES ($insertHit) ON DUPLICATE KEY UPDATE $updateHit",
+            'sqlserver' => "MERGE INTO $table WITH (HOLDLOCK) USING (SELECT 1) ON ($keyOn) WHEN MATCHED THEN UPDATE SET $updateHit WHEN NOT MATCHED THEN INSERT ($insertKeyHit) VALUES ($insertHit)",
+            'oracle' => "MERGE INTO $table USING  DUAL ON ($keyOn) WHEN MATCHED THEN UPDATE SET $updateHit WHEN NOT MATCHED THEN INSERT ($insertKeyHit) VALUES ($insertHit)",
+            'postgresql' => "INSERT INTO $table ($insertKeyHit) VALUES ($insertHit) ON CONFLICT($pkStr) DO UPDATE $updateHit",
+            'drizzle' => "INSERT INTO $table ($insertKeyHit) VALUES ($insertHit) ON DUPLICATE KEY UPDATE $updateHit",
+            'sqlazure' => "MERGE INTO $table AS TAR WITH (HOLDLOCK) USING (SELECT 1) ON ($keyOn) ON ($keyOn) WHEN MATCHED THEN UPDATE SET $updateHit WHEN NOT MATCHED THEN INSERT ($insertKeyHit) VALUES ($insertHit)",
+            'sqlanywhere' => "INSERT INTO $table ($insertKeyHit) ON EXISTING UPDATE ON VALUES ($insertHit) "];
+
+        $plat = strtolower($this->builder->getConnection()->getDatabasePlatform()->getName());
+        if (!isset($sqls[$plat])) {
+            throw new BaseException("$plat not support 'IF EXISTS' check SQL");
+        }
+
+        return $sqls[$plat];
     }
 
     public function __call($name, $argv) {
