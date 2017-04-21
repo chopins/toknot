@@ -32,6 +32,7 @@ class DBSchema extends Schema {
             'postgresql' => "DROP TABLE IF EXISTS $hit",
             'drizzle' => "DROP TABLE IF EXISTS $hit",
             'sqlazure' => "DROP TABLE IF EXISTS $hit",
+            'sqlite' => "DROP TABLE IF EXISTS $hit",
             'sqlanywhere' => "DROP TABLE IF EXISTS $hit"];
 
         $platformName = strtolower($platform->getName());
