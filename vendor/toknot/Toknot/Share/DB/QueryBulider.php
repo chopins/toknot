@@ -148,7 +148,7 @@ class QueryBulider extends Object {
 
         $plat = strtolower($this->builder->getConnection()->getDatabasePlatform()->getName());
         if (!isset($sqls[$plat])) {
-            throw new BaseException("$plat not support 'IF EXISTS' check SQL");
+            throw new BaseException("$plat not support insert on duplicate key update");
         }
 
         return $sqls[$plat];

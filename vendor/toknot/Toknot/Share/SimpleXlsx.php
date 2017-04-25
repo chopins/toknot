@@ -81,12 +81,18 @@ class SimpleXlsx {
         $this->getTmpDir();
     }
 
+    /**
+     * load a xlsx file
+     * 
+     * @param string $xlsx
+     * @throws BaseException
+     */
     public function loadXlsx($xlsx) {
         if (!file_exists($xlsx)) {
             throw new BaseException("$xlsx not exists");
         }
         if ($this->xlsxLoad) {
-            throw new BaseException('muse close previous xlsx file');
+            throw new BaseException('must close previous xlsx file');
         }
         $xlsx = realpath($xlsx);
         $xlsxName = basename($xlsx, '.xlsx');
@@ -128,10 +134,23 @@ class SimpleXlsx {
         $this->xlFileObj = null;
     }
 
+    /**
+     * Get xlsx file of sheet list 
+     * 
+     * @return array
+     */
     public function getSheetList() {
         return $this->sheetList;
     }
 
+    /**
+     * read a sheet of xlsx
+     * 
+     * @param int|string $index  the sheet name or order number
+     * @param array $pos         the sheet max row and columns
+     * @return $this
+     * @throws BaseException
+     */
     public function readSheet($index, &$pos) {
         if (is_numeric($index) && isset($this->sheetList[$index])) {
             $id = $index;
@@ -162,7 +181,15 @@ class SimpleXlsx {
         return $this;
     }
 
+    /**
+     * get a row from sheet and seek next row
+     * 
+     * @return boolean|array
+     */
     public function row() {
+        if(!$this->xlFileObj) {
+            throw new BaseException('no read a sheet');
+        }
         $data = $this->xlFileObj->findRange('<row ', '</row>');
         if (!$data) {
             return false;
@@ -186,7 +213,7 @@ class SimpleXlsx {
         return $res;
     }
 
-    public function getShared($k) {
+    protected function getShared($k) {
         $this->sharedFileObj->fseek(0);
         $i = 0;
         while (true) {
@@ -199,6 +226,13 @@ class SimpleXlsx {
         return false;
     }
 
+    /**
+     * create a xlsx file
+     * 
+     * @param string $xlsx
+     * @return $this
+     * @throws BaseException
+     */
     public function createXlsx($xlsx) {
         if ($this->xlsxInit) {
             throw new BaseException('previous xlsx not save, or call SimpleXlsx::clean()');
@@ -223,15 +257,15 @@ class SimpleXlsx {
         return $this;
     }
 
-    public function getTmpDir() {
+    protected function getTmpDir() {
         $this->rootPath = sys_get_temp_dir();
     }
 
-    public function alphabetOrder() {
+    protected function alphabetOrder() {
         $this->alphabet = range('A', 'Z');
     }
 
-    public function covertAlphabetOrder($number) {
+    protected function covertAlphabetOrder($number) {
         $number = base_convert($number, 10, 26);
         $ret = '';
         $len = strlen($number);
@@ -243,7 +277,7 @@ class SimpleXlsx {
         return $ret;
     }
 
-    public function coverOrder2Alphabet($str) {
+    protected function coverOrder2Alphabet($str) {
         $index = $len = strlen($str);
         $re = 0;
         for ($i = 0; $i < $len; $i++) {
@@ -254,7 +288,7 @@ class SimpleXlsx {
         return $re;
     }
 
-    public function saveXml($file, $xml, $flag = 0) {
+    protected function saveXml($file, $xml, $flag = 0) {
         file_put_contents("{$this->workspacedir}/$file", $xml, $flag);
     }
 
@@ -297,13 +331,13 @@ class SimpleXlsx {
         $this->saveXml($this->typeFile, $xml);
     }
 
-    public function createTheme() {
+    protected function createTheme() {
         $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Toknot SimpleXlsx Theme"><a:themeElements/><a:objectDefaults/><a:extraClrSchemeLst/></a:theme>';
         $this->saveXml($this->themeFile, $xml);
     }
 
-    public function createWorkbookRels() {
+    protected function createWorkbookRels() {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">';
 
@@ -383,6 +417,12 @@ class SimpleXlsx {
         return $this;
     }
 
+    /**
+     * create a sheet of xlsx file
+     * 
+     * @param string $sheetname     the sheet name
+     * @return int                  the sheet index number
+     */
     public function newSheet($sheetname = '') {
         $this->sheetNames[] = $sheetname;
         $this->sheetnum++;
@@ -390,12 +430,19 @@ class SimpleXlsx {
         return $this->sheetnum;
     }
 
-    public function createStyleXml() {
+    protected function createStyleXml() {
         $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="1"><numFmt numFmtId="164" formatCode="General"/></numFmts><fonts count="4"><font><sz val="10"/><name val="思源黑体 CN Regular"/><family val="2"/></font><font><sz val="10"/><name val="Arial"/><family val="0"/></font><font><sz val="10"/><name val="Arial"/><family val="0"/></font><font><sz val="10"/><name val="Arial"/><family val="0"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border diagonalUp="false" diagonalDown="false"><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="20"><xf numFmtId="164" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="true" applyAlignment="true" applyProtection="true"><alignment horizontal="general" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false"/><protection locked="true" hidden="false"/></xf><xf numFmtId="0" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="2" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="2" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="0" fontId="0" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="43" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="41" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="44" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="42" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf><xf numFmtId="9" fontId="1" fillId="0" borderId="0" applyFont="true" applyBorder="false" applyAlignment="false" applyProtection="false"></xf></cellStyleXfs><cellXfs count="1"><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyFont="false" applyBorder="false" applyAlignment="false" applyProtection="false"><alignment horizontal="general" vertical="bottom" textRotation="0" wrapText="false" indent="0" shrinkToFit="false"/><protection locked="true" hidden="false"/></xf></cellXfs><cellStyles count="6"><cellStyle name="Normal" xfId="0" builtinId="0" customBuiltin="false"/><cellStyle name="Comma" xfId="15" builtinId="3" customBuiltin="false"/><cellStyle name="Comma [0]" xfId="16" builtinId="6" customBuiltin="false"/><cellStyle name="Currency" xfId="17" builtinId="4" customBuiltin="false"/><cellStyle name="Currency [0]" xfId="18" builtinId="7" customBuiltin="false"/><cellStyle name="Percent" xfId="19" builtinId="5" customBuiltin="false"/></cellStyles></styleSheet>';
         $this->saveXml($this->stylesFile, $xml);
     }
 
+    /**
+     * add a row to sheet
+     * 
+     * @param array $row     the row data
+     * @param type $index    the sheet index number
+     * @return $this
+     */
     public function addRow($row, $index) {
         $xml = '<row r="%d" customFormat="false" ht="12.8" hidden="false" customHeight="false" outlineLevel="0" collapsed="false">';
 
@@ -458,6 +505,9 @@ class SimpleXlsx {
         return $this;
     }
 
+    /**
+     * save data to xlsx file
+     */
     public function save() {
         $this->zip = new \ZipArchive();
         $this->zip->open("{$this->workspacedir}.zip", \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
@@ -485,7 +535,7 @@ class SimpleXlsx {
         $this->clean();
     }
 
-    public function zipAddFile($file) {
+    protected function zipAddFile($file) {
         $this->zip->addFile("{$this->workspacedir}/$file", ltrim($file, '/'));
     }
 
