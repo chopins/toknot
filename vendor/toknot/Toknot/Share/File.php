@@ -55,8 +55,7 @@ class File extends \SplFileObject {
      * @return string
      */
     public function findRange($start, $end) {
-        $find = '';
-        $res = '';
+        $find = $res = '';
         $search = $start;
         while (!($this->eof())) {
             $char = $this->fread(1);
@@ -69,7 +68,7 @@ class File extends \SplFileObject {
                 $find = $char;
             }
 
-            if ($find == $end) {
+            if ($find == $end && $search == $end) {
                 break;
             }
             if ($start == $find) {
@@ -78,6 +77,48 @@ class File extends \SplFileObject {
             }
         }
 
+        return substr($res, 0, strlen($end) * -1);
+    }
+
+    /**
+     * move seek to a string
+     * 
+     * @param string $start
+     * @return boolean
+     */
+    public function seekPos($start) {
+        while (!($this->eof())) {
+            $char = $this->fread(1);
+            $find .= $char;
+            if (strpos($start, $find) === false) {
+                $find = $char;
+            }
+            if ($find == $start) {
+                return $this->ftell();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * find offset to end string from current seek
+     * 
+     * @param string $end
+     * @return string
+     */
+    public function findNextRange($end) {
+        $find = $res = '';
+        while (!($this->eof())) {
+            $char = $this->fread(1);
+            $find .= $char;
+            $res .= $char;
+            if (strpos($end, $find) === false) {
+                $find = $char;
+            }
+            if ($find == $end) {
+                break;
+            }
+        }
         return substr($res, 0, strlen($end) * -1);
     }
 
