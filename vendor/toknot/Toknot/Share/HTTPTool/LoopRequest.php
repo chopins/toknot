@@ -106,8 +106,8 @@ class LoopRequest extends Object {
      * </code>
      * 
      * @param callable $callable
-     * @param string|array $retry   if is array, key is flag,value is callable
-     * @param string|array $exit    if is array, key is flag,value is callable
+     * @param string|array $retry   retry flag, if is array, key is flag,value is callable
+     * @param string|array $exit    exit flag, if is array, key is flag,value is callable
      * @return null
      */
     public function loopGet($callable, $retry = [], $exit = []) {
