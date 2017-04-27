@@ -372,7 +372,17 @@ class Process extends Object {
     /**
      * multi-process run until task exit
      * 
-     * @param int $number
+     * <code>
+     * $p = new Process();
+     * $status = $p->multiProcess(10);
+     * if($status) {
+     *      //your parent process
+     * } else {
+     *      //your child process
+     * }
+     * </code>
+     * 
+     * @param int $number   if the number equal 0 is child process,  like fork() return
      * @return int
      */
     public function multiProcess($number) {
@@ -395,7 +405,7 @@ class Process extends Object {
                 $this->wait($pid);
                 unset($this->processPool[$pid]);
                 if ($callable) {
-                    $pid = $callable();
+                    $pid = self::callFunc($callable);
                     if ($pid == 0) {
                         return;
                     }
@@ -407,6 +417,16 @@ class Process extends Object {
 
     /**
      * keep specil number process is runing
+     * 
+     * <code>
+     * $p = new Process();
+     * $status = $p->processPool(10);
+     * if($status) {
+     *      //your parent process
+     * } else {
+     *      //your child process
+     * }
+     * </code>
      * 
      * @param int $number
      * @return int
@@ -475,6 +495,43 @@ class Process extends Object {
             return pcntl_waitpid($pid, $status, WUNTRACED | $unblock);
         }
         return pcntl_wait($status, WUNTRACED | $unblock);
+    }
+
+    /**
+     * run a parent process and a child process, when a child process exit, start other child process
+     * when the method return 0, then process is child's thead, 1 is return is parent's thead, parent
+     * whill loop and call $exitLoopCallable until the function return $exitFlag value
+     * 
+     * <code>
+     * $p = new Process;
+     * $res = $p->guardFork(function() {
+     *      sleep(10);
+     *      return 'exit;
+     * });
+     * if($res >0) {
+     *  //your parent's thead
+     * } else {
+     *  //your child's thead
+     * }
+     * </code>
+     * 
+     * @param callable $exitLoopCallable
+     * @param mix $exitFlag
+     * @return int
+     */
+    public function guardFork($exitLoopCallable = null, $exitFlag = 'exit') {
+        do {
+            $pid = $this->fork();
+            if ($pid > 0) {
+                $this->wait($pid);
+            } else {
+                return 0;
+            }
+            if ($exitLoopCallable && self::callFunc($exitLoopCallable) == $exitFlag) {
+                break;
+            }
+        } while (true);
+        return 1;
     }
 
 }

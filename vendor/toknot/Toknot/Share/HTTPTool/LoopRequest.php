@@ -63,16 +63,6 @@ class LoopRequest extends Object {
         return $this->context;
     }
 
-    public function registerRetryEvent($ev, $callable) {
-        $this->retry = $ev;
-        $this->retryCallable = $callable;
-    }
-
-    public function registerLoopExitEvent($ev, $callable) {
-        $this->exit = $ev;
-        $this->exitCallable = $callable;
-    }
-
     protected function loopCall($queryFlag, $pn) {
         $url = "{$this->baseUrl}{$queryFlag}{$this->argName}=$pn";
         $t = new HttpRequest($url, $this->method, $this->header);
@@ -84,34 +74,72 @@ class LoopRequest extends Object {
         return [$content, $url];
     }
 
-    protected function callEvent($callRet) {
-        if ($callRet == $this->retry) {
-            if ($this->retryCallable) {
-                self::callFunc($this->retryCallable);
-            }
-            return 1;
-        }
-        if ($callRet == $this->exit) {
-            if ($this->exitCallable) {
-                self::callFunc($this->exitCallable);
-            }
-            return 2;
-        }
-        return 3;
-    }
-
-    public function loopGet($callable = null) {
+    /**
+     * loop get page
+     * 
+     * <code>
+     * //example 1
+     * $this->loopGet(function() {
+     *      //your code
+     *      if($retry) {
+     *          return 'retry';
+     *      } elseif($exit) {
+     *          return 'exit';
+     *      }
+     * }, 'retry', 'exit');
+     * 
+     * //example 2
+     * $this->loopGet(function() {
+     *      //your code
+     *      if($retry) {
+     *          return 'retry';
+     *      } elseif($exit) {
+     *          return 'exit';
+     *      }
+     * }, ['retry'=> functin() { 
+     *       //before retry code
+     *   }] , ['exit'=>function() { 
+     *      //before exit code
+     *  }]);
+     *
+     *
+     * </code>
+     * 
+     * @param callable $callable
+     * @param string|array $retry   if is array, key is flag,value is callable
+     * @param string|array $exit    if is array, key is flag,value is callable
+     * @return null
+     */
+    public function loopGet($callable, $retry = [], $exit = []) {
         $queryFlag = strpos($this->baseUrl, '?') === false ? '?' : '';
         $pn = $this->startIdx;
         while ($pn < $this->maxIdx) {
             $res = $this->loopCall($queryFlag, $pn);
-            $callRet = self::callFunc($callable, $res);
-            $ev = $this->callEvent($callRet);
 
-            if ($ev == 1) {
+            $callRet = self::callFunc($callable, $res);
+
+            if ($callRet == $retry) {
                 continue;
-            } elseif ($ev == 2) {
-                break;
+            }
+
+            if ($callRet == $exit) {
+                return;
+            }
+            if (is_array($retry)) {
+                reset($retry);
+                $retryFlag = current($retry);
+                if ($callRet == $retryFlag) {
+                    self::callFunc($retry[$retryFlag]);
+                    continue;
+                }
+            }
+            if (is_array($exit)) {
+                reset($exit);
+                $exitFlag = current($exit);
+                if ($callRet == $exitFlag) {
+                    self::callFunc($exit[$exitFlag]);
+                    return;
+                }
             }
             $this->lastUrl = $res[1];
             $pn++;
