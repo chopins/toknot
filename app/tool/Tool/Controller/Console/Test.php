@@ -10,6 +10,7 @@
 
 namespace Tool\Controller\Console;
 
+use Toknot\Exception\BaseException;
 use PDO;
 
 /**
@@ -18,7 +19,16 @@ use PDO;
  */
 class Test {
 
+    /**
+     *
+     * @var \Toknot\Share\CommandLine
+     */
     public $cmd;
+
+    /**
+     *
+     * @var \Toknot\Share\Process\Process 
+     */
     public $process;
 
     /**
@@ -31,22 +41,41 @@ class Test {
     }
 
     public function run() {
-        $pid = $this->process->bloodLock(1);
-        if ($pid > 0) {
+        $pid1 = $this->process->fork();
+        $local = '127.0.0.1';
+        $port = 98899;
+        if ($pid1 === 0) {
+            $this->process->taskQueue($local, $port, function($message, $time, $pid) {
+                $this->cmd->message("[$time][$pid]$message");
+            });
+            return;
+        }
+//        $this->process->wait($pid1);
+//        die;
+        $pid2 = $this->process->fork();
+        if ($pid2 > 0) {
+            $this->process->setProcessTitle('php:main');
+            $this->process->wait($pid1);
             exit;
         } else {
+            $pid = $this->process->multiProcess(1);
+            if ($pid > 0) {
+                $this->process->setProcessTitle('php:multi child');
+                exit;
+            }
             do {
-                $lk = $this->process->lock();
-                if ($lk) {
-                    $this->cmd->message($this->process->getpid() . '|hold lock', 'green');
-                } else {
-                    $this->cmd->message($this->process->getpid() . '|not hold lock', 'red');
-                    continue;
+                $this->cmd->message('add task', 'blue');
+                try {
+                    $re = $this->process->addTask($local, $port, 'message:');
+
+                    $this->cmd->message('add success', 'green');
+                } catch (BaseException $e) {
+                    $this->cmd->message('add error', 'red');
+                    $re = false;
                 }
+
                 sleep(1);
-                $this->process->unlock();
-                $this->cmd->message($this->process->getpid() . '|un-lock', 'blue');
-            } while (true);
+            } while (!$re);
         }
     }
 

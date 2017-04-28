@@ -61,7 +61,7 @@ class Logs {
         echo $message;
     }
 
-    public static function save($logs, $str) {
+    public static function save($str, $logs = 'logs', $suffix = '') {
         if (empty($logs)) {
             return false;
         }
@@ -72,10 +72,10 @@ class Logs {
             $day = date('Ymd');
             $logs = Tookit::getRealPath($logs, APPDIR);
             try {
-                file_put_contents("$logs/log.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
+                file_put_contents("$logs/log$suffix.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
             } catch (NoFileOrDirException $e) {
                 mkdir($logs, 0755, true);
-                file_put_contents("$logs/log.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
+                file_put_contents("$logs/log$suffix.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
             }
         }
     }

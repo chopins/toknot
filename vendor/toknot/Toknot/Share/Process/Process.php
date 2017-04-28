@@ -23,7 +23,6 @@ class Process extends Object {
 
     private $processPool = [];
     private $lock = null;
-    private $alock = null;
 
     const CMD_LOCK = 'LOCK';
     const CMD_UNLOCK = 'UNLOCK';
@@ -31,9 +30,11 @@ class Process extends Object {
     const CMD_SUCC = 'SUCCESS';
     const CMD_FAIL = 'FAIL';
     const CMD_ALREADY = 'ALREADY';
-    const ANY_LOCK_SOCK = 'udp://127.0.0.1:';
+    const CMD_UNKNOW = 'UNKOWN';
+    const ANY_LOCK_SOCK = 'tcp://127.0.0.1:';
     const QUEUE_ADD = 'QADD';
     const QUEUE_GET = 'QGET';
+    const QUEUE_EMPTY = 'EMPTY';
 
     public function __construct() {
         if (!extension_loaded('pcntl')) {
@@ -62,7 +63,7 @@ class Process extends Object {
 
     public function quit($pipe) {
         $pid = $this->getpid();
-        $this->send($pid, self::CMD_QUIT . "|$pid");
+        $this->send($pipe, self::CMD_QUIT . "|$pid");
         usleep(1000);
         fclose($pipe);
     }
@@ -89,17 +90,17 @@ class Process extends Object {
      * </code>
      * 
      * @param string $local
+     * @param string $port
+     * @param callable $taskCall
      */
-    public function taskQueue($local) {
-        $this->demon();
-
+    public function taskQueue($local, $port, $taskCall) {
         list($add, $addServer) = $this->pipe();
         list($get, $getServer) = $this->pipe();
 
         $mpid = $this->queueManager($addServer, $getServer);
-        $taskpid = $this->taskManager($get);
+        $taskpid = $this->taskManager($get, $taskCall);
 
-        $addpid = $this->recvTask($add, $local);
+        $addpid = $this->recvTask($add, $local, $port);
 
         while (true) {
             $pid = $this->wait(0, $status, 1);
@@ -108,31 +109,34 @@ class Process extends Object {
                     $mpid = $this->queueManager($addServer, $getServer);
                     break;
                 case $taskpid:
-                    $taskpid = $this->taskManager($get);
+                    $taskpid = $this->taskManager($get, $taskCall);
                     break;
                 case $addpid:
-                    $addpid = $this->recvTask($add, $local);
+                    $addpid = $this->recvTask($add, $local, $port);
             }
             usleep(200000);
         }
-        exit;
+        return 1;
     }
 
     /**
      * recvice other task message from other process
      * 
      * @param resource $add
-     * @param resource $local
+     * @param string $local
+     * @param string $port
      * @return int
      */
-    protected function recvTask($add, $local) {
+    protected function recvTask($add, $local, $port) {
         $addpid = $this->fork();
         if ($addpid > 0) {
             return $addpid;
         }
+
         $errno = $errstr = 0;
-        $recvSock = stream_socket_server($local, $errno, $errstr, STREAM_SERVER_BIND);
-        while (($acp = stream_socket_accept($recvSock, 0))) {
+        $recvSock = stream_socket_server("tcp://$local:$port", $errno, $errstr);
+
+        while (($acp = stream_socket_accept($recvSock, -1))) {
             $message = $this->read($acp);
             $this->send($add, self::QUEUE_ADD . $message);
             $res = $this->read($add);
@@ -144,14 +148,23 @@ class Process extends Object {
     /**
      * add a task message to queue
      * 
-     * @param string $socket
-     * @param string|array $function
+     * @param string $local
+     * @param string $port
+     * @param string|array $message
      * @param array $args
      * @return boolean
+     * @throws BaseException
      */
-    public function addTask($socket, $function, $args = []) {
-        $desc = serialize(['function' => $function, 'args' => $args]);
-        $sock = stream_socket_client($socket);
+    public function addTask($local, $port, $message) {
+        $desc = serialize([$message, time(), $this->getpid()]);
+
+        try {
+            $sock = stream_socket_client("tcp://$local:$port", $errno, $errstr, 2, STREAM_CLIENT_CONNECT);
+        } catch (BaseException $e) {
+            throw $e;
+        }
+
+        stream_set_blocking($sock, 1);
         $this->send($sock, $desc);
         if ($this->read($sock) == self::CMD_SUCC) {
             return true;
@@ -163,14 +176,16 @@ class Process extends Object {
      * opreate task message
      * 
      * @param resource $get
+     * @param callable $taskCall
      * @return int
      * @throws BaseException
      */
-    protected function taskManager($get) {
+    protected function taskManager($get, $taskCall) {
         $taskpid = $this->fork();
         if ($taskpid > 0) {
             return $taskpid;
         }
+
         while (true) {
             $r = [];
             $w = [$get];
@@ -179,8 +194,9 @@ class Process extends Object {
             if (false === $change) {
                 throw new BaseException('task queue select fail');
             }
+          
             if ($change > 0) {
-                $this->execTask($w);
+                $this->execTask($w, $taskCall);
             }
         }
         exit;
@@ -190,16 +206,21 @@ class Process extends Object {
      * exec task
      * 
      * @param resource $w
+     * @param callable $taskCall
      * @return int
      */
-    protected function execTask($w) {
+    protected function execTask($w, $taskCall) {
         $execpid = $this->fork();
         if ($execpid > 0) {
             return $this->wait($execpid);
         }
+
         foreach ($w as $rsock) {
             $this->send($rsock, self::QUEUE_GET);
             $line = $this->read($rsock);
+            if($line == self::QUEUE_EMPTY) {
+                exit;
+            }
             $taskInfo = unserialize($line);
             if ($taskInfo) {
                 $this->send($rsock, self::QUEUE_GET . self::CMD_SUCC);
@@ -208,7 +229,7 @@ class Process extends Object {
             }
             $callPid = $this->fork();
             if ($callPid === 0) {
-                self::callFunc($taskInfo['function'], $taskInfo['args']);
+                self::callFunc($taskCall, $taskInfo);
                 exit;
             } else {
                 $this->wait($callPid);
@@ -230,6 +251,7 @@ class Process extends Object {
         if ($mpid > 0) {
             return $mpid;
         }
+
         $taskQueue = new \SplQueue();
         while (true) {
             $r = [$addServer, $getServer];
@@ -240,6 +262,7 @@ class Process extends Object {
             if (false === $change) {
                 throw new BaseException('task queue select fail');
             }
+
             if ($change > 0) {
                 $this->queueRequest($r, $taskQueue);
             }
@@ -256,11 +279,11 @@ class Process extends Object {
     protected function queueRequest($r, $queue) {
         foreach ($r as $rsock) {
             $line = $this->read($rsock);
-            $flag = substr($line, 0, 3);
+            $flag = substr($line, 0, 4);
             if ($flag == self::QUEUE_GET) {
                 $this->readGet($rsock, $queue);
             } elseif ($flag == self::QUEUE_ADD) {
-                $message = substr($line, 3);
+                $message = substr($line, 4);
                 $queue->enqueue($message);
                 $this->send($rsock, self::CMD_SUCC);
             }
@@ -275,6 +298,12 @@ class Process extends Object {
      * @return boolean
      */
     protected function readGet($wsock, $queue) {
+
+        if ($queue->count() == 0) {
+            $this->send($wsock, self::QUEUE_EMPTY);
+            $res = $this->read($wsock);
+            return;
+        }
         $task = $queue->dequeue();
         $cnt = 5;
         do {
@@ -308,7 +337,6 @@ class Process extends Object {
      * @throws BaseException
      */
     public function anyLock($port = 9088) {
-        $this->demon();
         $errno = 0;
         $errstr = '';
 
@@ -320,52 +348,76 @@ class Process extends Object {
                 break;
             }
         }
-        $lock = stream_socket_server(self::ANY_LOCK_SOCK . $port, $errno, $errstr, STREAM_SERVER_BIND);
+        $lock = stream_socket_server(self::ANY_LOCK_SOCK . $port, $errno, $errstr);
         if (!$lock) {
             throw new BaseException($errstr, $errno);
         }
+        $lockpid = 0;
 
-        $this->lockAccept($lock);
+        while ($acp = stream_socket_accept($lock, -1)) {
+            $this->readAccept($acp, $lockpid);
+        }
     }
 
     public function aLock($port = 9088) {
         $errno = 0;
         $errstr = '';
-        $this->alock = stream_socket_client(self::ANY_LOCK_SOCK . $port, $errno, $errstr, 1);
-        if (!$this->lock) {
+        try {
+            $alock = stream_socket_client(self::ANY_LOCK_SOCK . $port, $errno, $errstr, 1, STREAM_CLIENT_ASYNC_CONNECT);
+        } catch (BaseException $e) {
             return false;
         }
-        return $this->sendLockMessage($this->lock, self::CMD_LOCK);
+        return $this->sendLockMessage($alock, self::CMD_LOCK);
     }
 
-    public function aUnlock() {
-        if (!is_resource($this->alock)) {
-            throw new BaseException('the lock handle not exists');
+    public function aUnlock($port = 9088) {
+        try {
+            $errno = 0;
+            $errstr = '';
+            $alock = stream_socket_client(self::ANY_LOCK_SOCK . $port, $errno, $errstr, 1, STREAM_CLIENT_ASYNC_CONNECT);
+        } catch (BaseException $e) {
+            return false;
         }
-        return $this->sendLockMessage($this->alock, self::CMD_UNLOCK);
+        return $this->sendLockMessage($alock, self::CMD_UNLOCK);
     }
 
-    protected function lockAccept($s, $option = null) {
+    protected function readAccept($rs, &$lockpid) {
+        $acp = $this->read($rs);
+
+        list($cmd, $pid) = explode('|', $acp);
+        if ($cmd == self::CMD_LOCK) {
+            if (!$lockpid) {
+                $lockpid = $pid;
+                $this->send($rs, self::CMD_SUCC);
+            } elseif ($pid != $lockpid) {
+                $this->send($rs, self::CMD_FAIL);
+            } else {
+                $this->send($rs, self::CMD_ALREADY);
+            }
+        } elseif ($cmd == self::CMD_UNLOCK) {
+
+            if ($pid == $lockpid) {
+                $lockpid = 0;
+                $this->send($rs, self::CMD_SUCC);
+            } else {
+                $this->send($rs, self::CMD_FAIL);
+            }
+        } else {
+            $this->send($rs, self::CMD_UNKNOW);
+        }
+    }
+
+    protected function lockAccept($s) {
         $lockpid = 0;
-        while (($acp = stream_socket_accept($s, 0))) {
-            list($cmd, $pid) = explode('|', $this->read($acp));
-            if ($cmd == self::CMD_LOCK) {
-                if (!$lockpid) {
-                    $lockpid = $pid;
-                    $this->send($acp, self::CMD_SUCC);
-                } elseif ($pid != $lockpid) {
-                    $this->send($acp, self::CMD_FAIL);
-                } else {
-                    $this->send($acp, self::CMD_ALREADY);
-                }
-            } elseif ($cmd == self::CMD_UNLOCK) {
-                if ($pid == $lockpid) {
-                    $this->send($acp, self::CMD_SUCC);
-                } else {
-                    $this->send($acp, self::CMD_FAIL);
-                }
-            } elseif ($option !== null) {
-                $option($cmd);
+        while (true) {
+            $write = $except = [];
+            $read = $s;
+            $num = stream_select($read, $write, $except, 100000);
+            if (!$num) {
+                continue;
+            }
+            foreach ($read as $rs) {
+                $this->readAccept($rs, $lockpid);
             }
         }
     }
@@ -389,16 +441,17 @@ class Process extends Object {
      * @return type
      */
     public function bloodLock($childnum = 1) {
-        list($lock, $s) = $this->pipe();
-        $this->lock = $lock;
+        $s = [];
         for ($i = 0; $i < $childnum; $i++) {
-            if (($cpid = $this->fork()) == 0) {
-                fclose($s);
+            list($lock, $s[]) = $this->pipe();
+            if (($cpid = $this->fork()) === 0) {
+                $this->lock = $lock;
                 return 0;
             }
         }
-        fclose($lock);
-        $this->lockAccept($s);
+
+        $this->lockAccept($s, 'readAccept');
+
         return 1;
     }
 
@@ -407,10 +460,11 @@ class Process extends Object {
         $pid = $this->getpid();
         $this->send($lock, $type . "|$pid");
         $ret = $this->read($lock);
-        if ($ret == self::CMD_FAIL) {
-            return false;
+
+        if ($ret == self::CMD_SUCC || $ret == self::CMD_ALREADY) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -419,6 +473,9 @@ class Process extends Object {
      * @return boolean
      */
     public function lock() {
+        if (!is_resource($this->lock)) {
+            throw new BaseException('blood lock server not runing');
+        }
         return $this->sendLockMessage($this->lock, self::CMD_LOCK);
     }
 
@@ -428,6 +485,9 @@ class Process extends Object {
      * @return boolean
      */
     public function unlock() {
+        if (!is_resource($this->lock)) {
+            throw new BaseException('blood lock server not runing');
+        }
         return $this->sendLockMessage($this->lock, self::CMD_UNLOCK);
     }
 
@@ -451,16 +511,16 @@ class Process extends Object {
      * @param resource $cport
      * @return boolean|int
      */
-    protected function initMutiProcess($number, $mport, $cport) {
+    protected function initMutiProcess($number, &$mport) {
         for ($i = 0; $i < $number; $i++) {
+            list($mport[], $cport) = $this->pipe();
             $pid = $this->fork();
             if ($pid > 0) {
                 $this->processPool[$pid] = 1;
                 continue;
             } else {
-                fclose($mport);
                 $this->childClean($cport);
-                return 0;
+                return false;
             }
         }
         return true;
@@ -483,32 +543,44 @@ class Process extends Object {
      * @return int
      */
     public function multiProcess($number) {
-        list($mport, $cport) = $this->pipe();
-        if (!$this->initMutiProcess($number, $mport, $cport)) {
+        $mport = [];
+        if (!$this->initMutiProcess($number, $mport)) {
+
             return 0;
         }
-        fclose($cport);
+
         $this->processLoop($mport);
         $this->wait();
         return 1;
     }
 
+    protected function poolCall($mport, $callable = null) {
+        $acp = $this->read($mport);
+        if ($acp) {
+            list(, $pid) = explode('|', $acp);
+            $this->wait($pid);
+            unset($this->processPool[$pid]);
+            if ($callable) {
+                return self::callFunc($callable);
+            }
+        }
+        return true;
+    }
+
     private function processLoop($mport, $callable = null) {
-        $status = 0;
         while (true) {
-            $acp = stream_socket_accept($mport, 1);
-            if ($acp) {
-                list(, $pid) = explode('|', $this->read($acp));
-                $this->wait($pid);
-                unset($this->processPool[$pid]);
-                if ($callable) {
-                    $pid = self::callFunc($callable);
-                    if ($pid == 0) {
-                        return;
-                    }
+            $write = $except = [];
+            $read = $mport;
+            $num = stream_select($read, $write, $except, 100000);
+            if (!$num) {
+                continue;
+            }
+            foreach ($read as $rs) {
+                $pid = $this->poolCall($rs, $callable);
+                if ($pid === 0) {
+                    return 0;
                 }
             }
-            usleep(10000);
         }
     }
 
@@ -529,20 +601,23 @@ class Process extends Object {
      * @return int
      */
     public function processPool($number) {
-        list($mport, $cport) = $this->pipe();
-        if (!$this->initMutiProcess($number, $mport, $cport)) {
+        $mport = [];
+        if (!$this->initMutiProcess($number, $mport)) {
             return 0;
         }
-        $this->processLoop($mport, function() use($cport) {
-            $npid = $this->fork();
-            if ($npid > 0) {
-                $this->processPool[$npid] = 1;
-            } else {
-                $this->childClean($cport);
-                return 0;
-            }
-            return $npid;
-        });
+        if (!$this->processLoop($mport, function() use(&$mport) {
+                    list($mport[], $cport) = $this->pipe();
+                    $npid = $this->fork();
+                    if ($npid > 0) {
+                        $this->processPool[$npid] = 1;
+                    } else {
+                        $this->childClean($cport);
+                        return 0;
+                    }
+                    return $npid;
+                })) {
+            return 0;
+        }
         $this->wait();
         return 1;
     }

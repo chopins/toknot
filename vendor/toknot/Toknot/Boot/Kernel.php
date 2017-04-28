@@ -323,7 +323,7 @@ final class Kernel extends Object {
             $this->runResult['content'] = $this->trace ? $trace : '';
 
             if ($this->logEnable) {
-                Logs::save($this->logger, $trace);
+                Logs::save($trace, $this->logger);
             }
             //$this->runResult['option'][] = '';
         }
