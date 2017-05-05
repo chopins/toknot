@@ -255,8 +255,7 @@ class VieMessage extends Object {
             $mutexRow = $this->insertMutex($filter);
             $filter = QueryHelper::andX($filter, [$this->mutexMappingFeild, $mutexRow, 'in']);
         }
-        $this->tableInstance;
-        $this->tableInstance->filter()->andX();
+        
         $this->tableInstance->update($set, $filter, $this->limit);
 
         $where = QueryHelper::equal($this->lockFeild, $uniqid);
