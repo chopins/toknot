@@ -229,7 +229,7 @@ class VieMessage extends Object {
     }
 
     public function uniqid() {
-        $prefix = md5($this->lockPrefix, $this->lastId) . '-';
+        $prefix = md5($this->lockPrefix . $this->lastId) . '-';
         if (function_exists('hash')) {
             $uniqid = hash('sha256', uniqid($prefix, true));
         } else {
@@ -280,8 +280,10 @@ class VieMessage extends Object {
             $n = 1;
             $exist = [];
             $newfilter = $filter;
+            $cont = false;
             do {
                 try {
+                    $n++;
                     $this->tableInstance->setColumn($this->mutexMappingFeild);
                     $sql = $this->tableInstance->select($newfilter)->limit(1)->getLastSql();
                     $mutex->setColumn($this->mutexFeild);
@@ -292,7 +294,6 @@ class VieMessage extends Object {
                     $f = [$this->mutexMappingFeild, $exist, 'out'];
                     $newfilter = QueryHelper::andX($filter, $f);
                     $mutexRow[] = $mutex[$this->mutexMappingFeild];
-                    $n++;
                 } catch (\PDOException $e) {
                     $cont = stripos($e->getMessage(), 'Duplicate') !== false;
                 }

@@ -575,4 +575,26 @@ class Tookit extends Object {
         return Generator::iteration($start, $end, $step);
     }
 
+    public function arrayColumn($array, $key, $indexKey = null) {
+        if (function_exists('array_column')) {
+            return array_column($array, $key, $indexKey);
+        }
+        if ($key === null && $indexKey === null) {
+            return $array;
+        }
+        $res = array();
+        foreach ($array as $row) {
+            if ($key === null) {
+                $res[$row[$indexKey]] = $row;
+                continue;
+            }
+            if ($indexKey) {
+                $res[$row[$indexKey]] = $row[$key];
+            } else {
+                $res[] = $row[$key];
+            }
+        }
+        return $res;
+    }
+
 }
