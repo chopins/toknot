@@ -40,7 +40,7 @@ class Common extends Controller {
         $menuList = [];
         foreach ($menuConfig as $route => $title) {
             if (is_array($title)) {
-                $params = Tookit::coalesce($title, 2, []);
+                $params = Controller::coalesce($title, 2, []);
                 $url = $this->url($route, $params);
                 $menuList[$route] = [$title[0], $url, $title[1]];
             } else {

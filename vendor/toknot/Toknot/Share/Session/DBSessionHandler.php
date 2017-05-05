@@ -12,9 +12,11 @@ namespace Toknot\Share\Session;
 
 use Toknot\Share\DB\DBA;
 use Toknot\Boot\Tookit;
-use Toknot\Boot\Kernel;
+use Toknot\Exception\BaseException;
 
 class DBSessionHandler implements \SessionHandlerInterface {
+
+    use Tookit;
 
     /**
      *
@@ -30,9 +32,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
     private $expireCol = 'expire';
 
     public function echoException($e) {
-        //Kernel::single()->echoException($e);
-        //Kernel::single()->response();
-        echo $e;
+        throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
     }
 
     /**
@@ -41,10 +41,10 @@ class DBSessionHandler implements \SessionHandlerInterface {
      */
     public function __construct($table, $option = []) {
         $this->table = $table;
-        $this->sidCol = Tookit::coalesce($option, 'idCol', $this->sidCol);
-        $this->dataCol = Tookit::coalesce($option, 'dataCol', $this->dataCol);
-        $this->expireCol = Tookit::coalesce($option, 'expireCol', $this->expireCol);
-        $this->timeCol = Tookit::coalesce($option, 'timeCol', $this->timeCol);
+        $this->sidCol = self::coalesce($option, 'idCol', $this->sidCol);
+        $this->dataCol = self::coalesce($option, 'dataCol', $this->dataCol);
+        $this->expireCol = self::coalesce($option, 'expireCol', $this->expireCol);
+        $this->timeCol = self::coalesce($option, 'timeCol', $this->timeCol);
     }
 
     public function isSessionExpired() {

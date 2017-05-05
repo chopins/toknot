@@ -89,9 +89,9 @@ class DefaultLayout extends Layout {
     }
 
     public function addMenuItem($parent, $item) {
-        $text = Tookit::coalesce($item, 0);
-        $url = Tookit::coalesce($item, 1, '#');
-        $icon = Tookit::coalesce($item, 2);
+        $text = self::coalesce($item, 0);
+        $url = self::coalesce($item, 1, '#');
+        $icon = self::coalesce($item, 2);
 
         $li = Tag::li($parent, $this->menuItemAttr);
         $a = Tag::a($li, ['class' => 'pure-menu-link', 'href' => $url]);

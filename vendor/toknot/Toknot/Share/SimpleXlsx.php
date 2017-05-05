@@ -20,7 +20,6 @@ use Toknot\Share\File;
  * @author chopin
  */
 class SimpleXlsx {
-
     protected $rootPath = '/tmp';
     protected $relsFile = '/_rels/.rels';
     protected $appFile = '/docProps/app.xml';
@@ -246,7 +245,7 @@ class SimpleXlsx {
         $zipdir = $this->workspacedir;
         Kernel::single()->attachShutdownFunction(function() use($zipdir) {
             if (is_dir($zipdir)) {
-                Tookit::rmdir($zipdir, true);
+                Kernel::rmdir($zipdir, true);
             }
         });
         $this->createRels();
@@ -541,7 +540,7 @@ class SimpleXlsx {
 
     public function clean() {
         if (is_dir($this->workspacedir)) {
-            Tookit::rmdir($this->workspacedir, true);
+            Kernel::rmdir($this->workspacedir, true);
         }
         $this->xlsxInit = false;
     }

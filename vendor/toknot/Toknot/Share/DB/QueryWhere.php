@@ -63,8 +63,8 @@ class QueryWhere extends Object {
         return $this->andOr($args, 'OR');
     }
 
-    public function cols($cols, $table) {
-        return new QueryColumn($cols, $this->qr, $table);
+    public function cols($cols) {
+        return new QueryColumn($cols, $this->qr, $this->table);
     }
 
     public function __get($cols) {

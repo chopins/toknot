@@ -12,7 +12,6 @@ namespace Toknot\Share\DB;
 
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Object;
-use Toknot\Boot\Tookit;
 use Toknot\Share\DB\DBSchema as Schema;
 use Toknot\Boot\Configuration as TKConfig;
 use Toknot\Exception\BaseException;
@@ -84,12 +83,12 @@ class DBA extends Object {
 
         self::$cfg = $config;
 
-        Tookit::coalesce(self::$cfg, 'table_default', []);
-        Tookit::coalesce(self::$cfg, 'column_default', []);
+        self::coalesce(self::$cfg, 'table_default', []);
+        self::coalesce(self::$cfg, 'column_default', []);
 
         $appCfg = $allcfg->app;
-        self::$tableClassNs = Tookit::nsJoin($appCfg['app_ns'], $appCfg->find('db_table_ns'));
-        self::$modelDir = Tookit::realpath($allcfg->find('app.model_dir'), self::$appDir);
+        self::$tableClassNs = self::nsJoin($appCfg['app_ns'], $appCfg->find('db_table_ns'));
+        self::$modelDir = self::realpath($allcfg->find('app.model_dir'), self::$appDir);
     }
 
     public static function getUseDB() {
@@ -183,7 +182,7 @@ class DBA extends Object {
         } else {
             $params->driver = self::$cfg->type;
         }
-        Tookit::arrayRemove($params, 'type', 'tables');
+        self::arrayRemove($params, 'type', 'tables');
         return $params;
     }
 
@@ -258,13 +257,13 @@ class DBA extends Object {
      * 
      * @param string $table
      * @param string $dbconfig
-     * @return \Toknot\Share\DB\DBTable
+     * @return \Toknot\Share\DB\Table
      */
     public static function table($table, $dbconfig = '', $newConn = false) {
         $db = self::decideIns($dbconfig);
         $conn = $db->connect($newConn);
-        $tableClass = Tookit::nsJoin(self::$tableClassNs, self::table2Class($table));
-        $tableClass = Tookit::dotNS($tableClass);
+        $tableClass = self::nsJoin(self::$tableClassNs, self::table2Class($table));
+        $tableClass = self::dotNS($tableClass);
 
         if (empty(self::$cfg->tables)) {
             self::$cfg->tables = $db->loadConfig(self::$cfg['table_config']);
@@ -351,7 +350,7 @@ class DBA extends Object {
     }
 
     public function addType($string) {
-        $className = Tookit::nsJoin(__NAMESPACE__, ucwords($string) . 'Type');
+        $className = self::nsJoin(__NAMESPACE__, ucwords($string) . 'Type');
         Type::addType($string, $className);
     }
 
@@ -460,7 +459,7 @@ class DBA extends Object {
                     throw new BaseException("table '$table' of column '$column' missed type");
                 }
                 $this->columnTextLength($cinfo);
-                $option = array_merge(iterator_to_array($columnDefault), Tookit::arrayRemove($cinfo, 'type'));
+                $option = array_merge(iterator_to_array($columnDefault), self::arrayRemove($cinfo, 'type'));
                 if ($cinfo['type'] == 'char') {
                     $option['fixed'] = true;
                     $cinfo['type'] = 'string';

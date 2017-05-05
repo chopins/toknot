@@ -22,7 +22,7 @@ class Select extends TagBulid {
     public function __construct($attr) {
         $this->tagName = 'select';
 
-        $option = \Toknot\Boot\Tookit::arrayDelete($attr, 'option');
+        $option = self::arrayDelete($attr, 'option');
         if ($option && is_array($option)) {
             $this->option = $option;
         }

@@ -10,12 +10,17 @@
 
 namespace Toknot\Share\DB;
 
+use Toknot\Boot\Tookit;
+use Toknot\Exception\BaseException;
+
 /**
  * Column
  *
  * @author chopin
  */
 class QueryColumn {
+
+    use Tookit;
 
     protected $columnName = '';
     protected $conn = '';
@@ -29,10 +34,70 @@ class QueryColumn {
     protected $subColumn = null;
     protected $table;
 
+    /**
+     *
+     * @var string
+     * @readonly
+     */
+    private $type = '';
+
+    /**
+     *
+     * @var boolean
+     * @readonly
+     */
+    private $isPk = false;
+
+    /**
+     *
+     * @var boolean
+     * @readonly 
+     */
+    private $isIndex = false;
+
+    /**
+     *
+     * @var boolean
+     * @readonly 
+     */
+    private $isUnique = false;
+
+    /**
+     *
+     * @var int
+     * @readonly
+     */
+    private $length = 0;
+
     public function __construct($columnName, QueryBulider $qr, Table $table) {
         $this->columnName = $columnName;
         $this->qr = $qr;
         $this->table = $table;
+        $this->isPk = ($this->table->pk() == $this->columnName);
+        $this->setCol();
+    }
+
+    protected function setCol() {
+        $struct = $this->table->getTableStructure();
+        $colsAttrs = $struct['column'][$this->columnName];
+        $this->type = $colsAttrs['type'];
+        $this->length = isset($colsAttrs['length']) ? $colsAttrs['length'] : 0;
+        $this->checkIndex($struct['indexes']);
+    }
+
+    protected function checkIndex($indexes) {
+        foreach ($indexes as $idxs) {
+            if (!isset($idxs[$this->columnName])) {
+                continue;
+            }
+            if ($idxs['type'] == 'index') {
+                $this->isIndex = true;
+                return;
+            } elseif ($idxs['type'] == 'unique') {
+                $this->isUnique = true;
+                return;
+            }
+        }
     }
 
     public function getSQL() {

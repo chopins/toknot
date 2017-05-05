@@ -194,7 +194,7 @@ class Tag extends TagBulid {
         if (!isset($tag[0]) || !($tag[0] instanceof TagBulid)) {
             throw new BaseException(__CLASS__ . "::$name() expects parameter 1 to be " . __CLASS__ . " instance,null given");
         }
-        Tookit::coalesce($tag, 1, []);
+        self::coalesce($tag, 1, []);
 
         $tagView = new AnyTag(strtolower($name), $tag[1]);
 

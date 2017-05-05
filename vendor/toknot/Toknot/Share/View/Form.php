@@ -11,7 +11,6 @@
 namespace Toknot\Share\View;
 
 use Toknot\Exception\BaseException;
-use Toknot\Boot\Tookit;
 
 /**
  * Form
@@ -60,10 +59,10 @@ class Form extends TagBulid {
     public function input($attr, $labelHit = null) {
         $parent = $this;
         if ($labelHit !== null) {
-            $parent = $this->label(Tookit::coalesce($attr, 'id'), $labelHit);
+            $parent = $this->label(self::coalesce($attr, 'id'), $labelHit);
         }
-        Tookit::coalesce($attr, 'value');
-        $hit = Tookit::coalesce($attr, 'text', $attr['value']);
+        self::coalesce($attr, 'value');
+        $hit = self::coalesce($attr, 'text', $attr['value']);
         $tag = new Input($attr);
         $tag->pushText($hit);
         $parent->push($tag);
@@ -73,7 +72,7 @@ class Form extends TagBulid {
     public function select($attr = [], $labelHit = null) {
         $parent = $this;
         if ($labelHit !== null) {
-            $parent = $this->label(Tookit::coalesce($attr, 'id'), $labelHit);
+            $parent = $this->label(self::coalesce($attr, 'id'), $labelHit);
         }
         self::select($parent, $attr);
         return $this;
@@ -81,14 +80,14 @@ class Form extends TagBulid {
 
     public function inputs($inputs) {
         foreach ($inputs as $key => $input) {
-            Tookit::coalesce($input, 'label', null);
+            self::coalesce($input, 'label', null);
             $input['name'] = is_numeric($key) ? '' : $key;
             if ($input['type'] == 'select') {
                 $this->select($input, $input['label']);
             } elseif ($input['type'] == 'textarea') {
                 $this->textarea($input, $input['label']);
             } else {
-                Tookit::coalesce($input, 'label', null);
+                self::coalesce($input, 'label', null);
                 $this->input($input, $input['label']);
             }
         }
@@ -97,9 +96,9 @@ class Form extends TagBulid {
     public function textarea($attr = [], $labelHit = null) {
         $parent = $this;
         if ($labelHit !== null) {
-            $parent = $this->label(Tookit::coalesce($attr, 'id'), $labelHit);
+            $parent = $this->label(self::coalesce($attr, 'id'), $labelHit);
         }
-        $value = Tookit::arrayDelete($attr, 'value');
+        $value = self::arrayDelete($attr, 'value');
         $area = new AnyTag('textarea', $attr);
         $value && $area->pushText($value);
         $parent->push($area);

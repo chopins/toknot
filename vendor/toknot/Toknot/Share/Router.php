@@ -10,7 +10,6 @@
 
 namespace Toknot\Share;
 
-use Toknot\Boot\Tookit;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Configuration;
 use Toknot\Boot\Object;
@@ -116,12 +115,12 @@ class Router extends Object implements SystemCallWrapper {
                 if (empty($name)) {
                     continue;
                 }
-                $class = Tookit::nsJoin($ns, $name);
+                $class = self::nsJoin($ns, $name);
                 $this->call[$type] = $name;
                 $this->invoke($class, $requireParams);
             }
         } else {
-            $class = Tookit::nsJoin($ns, $parameters[$type]);
+            $class = self::nsJoin($ns, $parameters[$type]);
             $this->call[$type] = $parameters[$type];
             $this->invoke($class, $requireParams);
         }
@@ -154,13 +153,13 @@ class Router extends Object implements SystemCallWrapper {
 
     public static function to($n, $param) {
         if (isset($param['prefix'])) {
-            Tookit::coalesce($param['prefix'], 'controller', '');
-            Tookit::splitStr($param['prefix'], 'option', ',', $param['option']);
-            Tookit::coalesce($param['prefix'], 'host', $param['host']);
-            Tookit::splitStr($param['prefix'], 'schemes', ',', $param['schemes']);
-            Tookit::coalesce($param['prefix'], 'condition', ',', $param['condition']);
-            Tookit::splitStr($param['prefix'], 'method', ',', $param['method']);
-            Tookit::coalesce($param['prefix'], 'require', $param['require']);
+            self::coalesce($param['prefix'], 'controller', '');
+            self::splitStr($param['prefix'], 'option', ',', $param['option']);
+            self::coalesce($param['prefix'], 'host', $param['host']);
+            self::splitStr($param['prefix'], 'schemes', ',', $param['schemes']);
+            self::coalesce($param['prefix'], 'condition', ',', $param['condition']);
+            self::splitStr($param['prefix'], 'method', ',', $param['method']);
+            self::coalesce($param['prefix'], 'require', $param['require']);
             $param['prefix']['defaults'] = ['group' => $param['prefix']['controller']];
             self::single()->addCollection($n, $param);
         } else {
@@ -169,12 +168,12 @@ class Router extends Object implements SystemCallWrapper {
     }
 
     public static function checkParamOption(&$option) {
-        Tookit::splitStr($option, 'option');
-        Tookit::coalesce($option, 'host');
-        Tookit::splitStr($option, 'schemes');
-        Tookit::coalesce($option, 'condition');
-        Tookit::splitStr($option, 'method', ',', ['GET']);
-        Tookit::coalesce($option, 'require', []);
+        self::splitStr($option, 'option');
+        self::coalesce($option, 'host');
+        self::splitStr($option, 'schemes');
+        self::coalesce($option, 'condition');
+        self::splitStr($option, 'method', ',', ['GET']);
+        self::coalesce($option, 'require', []);
     }
 
     public function url($action, $parameters = []) {
@@ -228,7 +227,7 @@ class Router extends Object implements SystemCallWrapper {
         } catch (MethodNotAllowedException $e) {
             throw new MethodNotAllowed($e);
         }
-        $tparams = Tookit::arrayRemove($parameters, 'controller', 'before', 'after', 'group', '_route');
+        $tparams = self::arrayRemove($parameters, 'controller', 'before', 'after', 'group', '_route');
 
         $this->request->attributes = new ParameterBag($tparams);
 
@@ -236,19 +235,19 @@ class Router extends Object implements SystemCallWrapper {
     }
 
     public function middlewareNamespace($appCfg) {
-        $ctlns = Tookit::nsJoin($appCfg['app_ns'], $appCfg['ctl_ns']);
-        $middlens = Tookit::nsJoin($appCfg['app_ns'], $appCfg['middleware_ns']);
+        $ctlns = self::nsJoin($appCfg['app_ns'], $appCfg['ctl_ns']);
+        $middlens = self::nsJoin($appCfg['app_ns'], $appCfg['middleware_ns']);
         return ['group' => $middlens, 'before' => $middlens, 'controller' => $ctlns, 'after' => $middlens];
     }
 
     public function add($name, $option) {
         self::checkParamOption($option);
-        Tookit::coalesce($option, 'before');
-        Tookit::coalesce($option, 'after');
+        self::coalesce($option, 'before');
+        self::coalesce($option, 'after');
 
-        $option['defaults'] = ['controller' => Tookit::dotNS($option['controller']),
-            'before' => explode('|', Tookit::dotNS($option['before'])),
-            'after' => explode('|', Tookit::dotNS($option['after']))];
+        $option['defaults'] = ['controller' => self::dotNS($option['controller']),
+            'before' => explode('|', self::dotNS($option['before'])),
+            'after' => explode('|', self::dotNS($option['after']))];
 
         if (isset($option['prefix']) && isset($option['prefix']['controller'])) {
             $option['prefix']['controller'] = str_replace('.', PHP_NS, $option['prefix']['controller']);

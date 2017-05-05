@@ -9,7 +9,6 @@
  */
 use Toknot\Boot\Kernel;
 use Toknot\Share\CommandLine;
-use Toknot\Boot\Tookit;
 use Toknot\Boot\Logs;
 
 class InitApp {
@@ -138,7 +137,7 @@ EOF;
     }
 
     public function checkPath($path) {
-        $this->appPath = Tookit::getRealPath($path);
+        $this->appPath = Kernel::getRealPath($path);
         if (file_exists($this->appPath)) {
             $msg = 'path is exist, whether enter new path (y/n,default n):';
             $ask = $this->cmd->readline($msg);

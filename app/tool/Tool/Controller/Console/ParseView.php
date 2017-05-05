@@ -18,7 +18,7 @@ use Toknot\Boot\Tookit;
  *  ParseView
  */
 class ParseView {
-
+    use Tookit;
     private $dom;
     private $nodes;
 
@@ -53,7 +53,7 @@ class ParseView {
         $apppath = realpath($app);
         $appTopNs = ucwords(basename($apppath));
         $view = $apppath . DIRECTORY_SEPARATOR . $appTopNs . DIRECTORY_SEPARATOR . 'View';
-        Tookit::dirWalk($dir, function($html) use($view) {
+        self::dirWalk($dir, function($html) use($view) {
             $tagList = '';
             $this->init($html);
             $this->findBody($tagList);

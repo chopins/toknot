@@ -45,9 +45,9 @@ function main($appdir = '', $confType = 'ini', $parseClass = null) {
     }
     define('APPDIR', realpath($appdir));
     define('TKROOT', __DIR__);
+    include __DIR__ . "/Toknot/Boot/Tookit.php";
     include_once __DIR__ . '/Toknot/Boot/ParseConfig.php';
     include __DIR__ . '/Toknot/Boot/Object.php';
-    include __DIR__ . "/Toknot/Boot/Tookit.php";
     include __DIR__ . "/Toknot/Boot/Kernel.php";
     return Kernel::single($argc, $argv)->run($confType, $parseClass);
 }

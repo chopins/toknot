@@ -13,7 +13,6 @@ namespace Toknot\Share\DB;
 use Toknot\Share\DB\DBA;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
-use Toknot\Boot\Tookit;
 
 abstract class DBTable extends Object {
 
@@ -190,7 +189,7 @@ abstract class DBTable extends Object {
 
         $config = DBA::getDBConfig();
         $def = $config->find('column_default.unsigned');
-        Tookit::coalesce($this->tableInfo['column'][$feild], 'unsigned', $def);
+        self::coalesce($this->tableInfo['column'][$feild], 'unsigned', $def);
 
         if ($this->tableInfo['column'][$feild]['unsigned'] == 1) {
             return [true, "$type"];
@@ -566,7 +565,7 @@ abstract class DBTable extends Object {
     public function isUnsigned($column) {
         $config = DBA::getDBConfig();
         $def = $config->find('column_default.unsigned');
-        Tookit::coalesce($this->tableInfo['column'][$column], 'unsigned', $def);
+        self::coalesce($this->tableInfo['column'][$column], 'unsigned', $def);
 
         if (isset($this->tableInfo['column'][$column]['unsigned'])) {
             return $this->tableInfo['column'][$column]['unsigned'];

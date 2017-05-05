@@ -17,7 +17,7 @@ use Toknot\Boot\Logs;
 use Toknot\Boot\Configuration;
 
 class DB {
-
+    use Tookit;
     /**
      *
      * @var Toknot\Share\DB
@@ -112,13 +112,13 @@ class DB {
      */
     public function update() {
         $tablefile = $this->tableOption['table_config'];
-        $confType = Tookit::coalesce($this->tableOption, 'config_type', 'ini');
+        $confType = self::coalesce($this->tableOption, 'config_type', 'ini');
         $ini = "{$this->appdir}/config/{$tablefile}.{$confType}";
         $link = "{$this->appdir}/runtime/config/{$tablefile}.php";
 
-        $ret = Tookit::createCache($ini, $link, function($ini, $php) {
+        $ret = self::createCache($ini, $link, function($ini, $php) {
                     $from = $this->tkdb->getAllTableStructureCacheArray();
-                    $to = Tookit::parseConf($ini);
+                    $to = self::parseConf($ini);
                     $this->tkdb->initModel($to, $this->usedb);
                     $sql = $this->tkdb->updateSchema($from, $to);
                     Logs::colorMessage('update database:', 'green');

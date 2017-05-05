@@ -20,7 +20,7 @@ use Toknot\Boot\Tookit;
  * @author chopin
  */
 class CommandLine {
-
+    use Tookit;
     private $progMsgStart = 0;
     private static $autoHistory = false;
 
@@ -86,10 +86,10 @@ class CommandLine {
 
         ($percent > 100) && ($percent = 100);
         $cols = $this->getcols();
-        $allMsgLen = Tookit::strlen($message);
+        $allMsgLen = self::strlen($message);
         $msglen = $allMsgLen;
         $space = $cols - $allMsgLen;
-        $speedlen = Tookit::strlen($speed);
+        $speedlen = self::strlen($speed);
 
         if ($space >= 102 + $speedlen) {
             $flag = $percent;
@@ -103,7 +103,7 @@ class CommandLine {
         } else {
             if ($space < 12 + $speedlen) {
                 $msglen = $allMsgLen - ($space > 0 ? 12 + $speedlen - $space : abs($space) + 12 + $speedlen);
-                $message = Tookit::substr($message, $this->progMsgStart, $msglen);
+                $message = self::substr($message, $this->progMsgStart, $msglen);
                 $this->progMsgStart = ($this->progMsgStart + $msglen < $allMsgLen) ?
                         ($this->progMsgStart + 1) : 0;
             }
@@ -188,7 +188,7 @@ class CommandLine {
      */
     public function interactive($callable, $prompt = null) {
         $this->message('Toknot interactive shell, ( Ctrl+C exit)');
-        $prompt = Tookit::coal($prompt, '>>>');
+        $prompt = self::coal($prompt, '>>>');
         do {
             $enter = $this->readline($prompt, 'green');
             if (!self::$autoHistory) {

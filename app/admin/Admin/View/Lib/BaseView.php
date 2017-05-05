@@ -41,8 +41,8 @@ abstract class BaseView extends View {
         $this->layout->head();
         $this->buildFrame();
         Input::addType('email');
-        Tookit::coalesce($this->param, 'leftMenuSelected');
-        Tookit::coalesce($this->param, 'headerMenuSelected');
+        self::coalesce($this->param, 'leftMenuSelected');
+        self::coalesce($this->param, 'headerMenuSelected');
 
         $this->contanier();
         $this->showExecTime();

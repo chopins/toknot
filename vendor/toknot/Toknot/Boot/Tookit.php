@@ -14,7 +14,6 @@
 namespace Toknot\Boot;
 
 use Toknot\Exception\BaseException;
-use Toknot\Boot\Object;
 use Toknot\Share\Generator;
 
 /**
@@ -22,7 +21,7 @@ use Toknot\Share\Generator;
  *
  * @author chopin
  */
-class Tookit extends Object {
+trait Tookit {
 
     /**
      * Uppercase the first character of each word in a string
@@ -233,7 +232,7 @@ class Tookit extends Object {
      * @param string $key1,$key2....
      * @return string
      */
-    public static function join(array $arr, $glue /* ,...$params */) {
+    public static function arrayJoin(array $arr, $glue /* ,...$params */) {
         $argv = func_get_args();
         self::arrayUnset($argv, 0, 1);
         $intersect = array_intersect_key($arr, array_flip($argv));
@@ -246,7 +245,7 @@ class Tookit extends Object {
      * @param array $arr
      * @param int $c
      */
-    public static function shift(array &$arr, $c) {
+    public static function arrayShift(array &$arr, $c) {
         for ($i = 0; $i < $c; $i++) {
             array_shift($arr);
         }
@@ -595,6 +594,118 @@ class Tookit extends Object {
             }
         }
         return $res;
+    }
+
+    /**
+     * 
+     * @param callable $callable
+     * @param array $argv
+     * @return mixed
+     */
+    public static function callFunc($callable, $argv = []) {
+        $argc = count($argv);
+        if (is_array($callable)) {
+            return self::callMethod($argc, $callable[1], $argv, $callable[0]);
+        }
+        switch ($argc) {
+            case 0:
+                return $callable();
+            case 1:
+                return $callable($argv[0]);
+            case 2:
+                return $callable($argv[0], $argv[1]);
+            case 3:
+                return $callable($argv[0], $argv[1], $argv[2]);
+            case 4:
+                return $callable($argv[0], $argv[1], $argv[2], $argv[3]);
+            case 5:
+                return $callable($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
+            default:
+                return call_user_func_array($callable, $argv);
+        }
+    }
+
+    /**
+     * dynamic call a static method of a class and pass any params
+     * 
+     * @param int $argc
+     * @param string $method
+     * @param array $argv
+     * @param string $className
+     * @return mix
+     */
+    public static function invokeStatic($argc, $method, $argv, $className) {
+        switch ($argc) {
+            case 0:
+                return $className::$method();
+            case 1:
+                return $className::$method($argv[0]);
+            case 2:
+                return $className::$method($argv[0], $argv[1]);
+            case 3:
+                return $className::$method($argv[0], $argv[1], $argv[2]);
+            case 4:
+                return $className::$method($argv[0], $argv[1], $argv[2], $argv[3]);
+            case 5:
+                return $className::$method($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
+            default:
+                $ref = new \ReflectionMethod($className, $method);
+                $closure = $ref->getClosure(null);
+                return call_user_func_array($closure, $argv);
+        }
+    }
+
+    /**
+     * dynamic call a method of a class use any params
+     * 
+     * @param int $argc
+     * @param string $method
+     * @param array $argv
+     * @return mix
+     */
+    public function invokeMethod($argc, $method, $argv) {
+        return self::callMethod($argc, $method, $argv, $this);
+    }
+
+    public static function callMethod($argc, $method, $argv, $obj) {
+        switch ($argc) {
+            case 0:
+                return $obj->$method();
+            case 1:
+                return $obj->$method($argv[0]);
+            case 2:
+                return $obj->$method($argv[0], $argv[1]);
+            case 3:
+                return $obj->$method($argv[0], $argv[1], $argv[2]);
+            case 4:
+                return $obj->$method($argv[0], $argv[1], $argv[2], $argv[3]);
+            case 5:
+                return $obj->$method($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
+            default:
+                $ref = new \ReflectionMethod($obj, $method);
+                $closure = $ref->getClosure($obj);
+                return call_user_func_array($closure, $argv);
+        }
+    }
+
+    public static function argStr($argc) {
+        return trim(vsprintf(str_repeat('$argv[%d],', $argc), range(0, $argc - 1)), ',');
+    }
+
+    public function __isReadonlyProperty($name) {
+        $ref = new \ReflectionObject($this);
+        $doc = $ref->getProperty($name)->getDocComment();
+        if (preg_match('/^[\s]*\*[\s]*@readonly[\s]*$/m', $doc)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function __get($name) {
+        if ($this->__isReadonlyProperty($name)) {
+            return $this->{$name};
+        }
+        throw BaseException::undefineProperty($this, $name);
     }
 
 }

@@ -27,6 +27,8 @@ use Toknot\Boot\Decorator;
 
 final class Kernel extends Object {
 
+    use Tookit;
+
     /**
      *
      * @var int 
@@ -305,7 +307,7 @@ final class Kernel extends Object {
         $_SERVER['SERVER_PROTOCOL'] = 'cli';
         $_SERVER['HTTP_HOST'] = '127.0.0.1';
         $_SERVER['REQUEST_METHOD'] = 'CLI';
-        $_SERVER['REQUEST_URI'] = '/' . str_replace('.', '/', Tookit::coalesce($this->argv, 1));
+        $_SERVER['REQUEST_URI'] = '/' . str_replace('.', '/', $this->coalesce($this->argv, 1));
     }
 
     public function echoException($e) {
@@ -379,7 +381,7 @@ final class Kernel extends Object {
             $this->cmdOption = $this->walkOption();
         }
         if ($key !== null) {
-            return Tookit::coalesce($this->cmdOption, $key, '');
+            return $this->coalesce($this->cmdOption, $key, '');
         } else {
             return $this->cmdOption;
         }
@@ -412,13 +414,6 @@ final class Kernel extends Object {
         }
         $appname = ucfirst(basename(APPDIR));
         $this->import->addPath(APPDIR . "/$appname");
-    }
-
-    public function __get($name) {
-        if ($this->__isReadonlyProperty($name)) {
-            return $this->{$name};
-        }
-        throw BaseException::undefineProperty($this, $name);
     }
 
     private function loadMainConfig() {

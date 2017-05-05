@@ -14,7 +14,7 @@ use Toknot\Boot\Kernel;
 use Toknot\Share\CommandLine;
 use Toknot\Boot\Import;
 use Zend\Reflection\Docblock;
-use Toknot\Boot\Tookit;
+
 
 /**
  * Route
@@ -76,7 +76,7 @@ EOF;
         }
         $configTpl .= PHP_EOL;
  
-        Tookit::dirWalk($path, function($file) use($appNs, $configTpl, &$ini) {
+        Kernel::dirWalk($path, function($file) use($appNs, $configTpl, &$ini) {
             $class = $appNs . basename($file, '.php');
 
             $rf = new \ReflectionClass($class);

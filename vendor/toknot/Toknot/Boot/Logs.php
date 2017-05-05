@@ -19,7 +19,7 @@ use Toknot\Boot\Logger;
 use Toknot\Exception\NoFileOrDirException;
 
 class Logs {
-
+    use Tookit;
     public static $shortPath = 0;
     private static $supportColor = null;
 
@@ -70,7 +70,7 @@ class Logs {
             $logs->save($str);
         } else {
             $day = date('Ymd');
-            $logs = Tookit::getRealPath($logs, APPDIR);
+            $logs = self::getRealPath($logs, APPDIR);
             try {
                 file_put_contents("$logs/log$suffix.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
             } catch (NoFileOrDirException $e) {
@@ -250,20 +250,20 @@ class Logs {
                 . '<ul class="tk-ds-li">';
         $str = PHP_SAPI == 'cli' ? '' : $str;
         foreach ($traceArr as $key => $value) {
-            $function = Tookit::coalesce($value, 'function');
+            $function = self::coalesce($value, 'function');
             if ($value['function'] == 'errorReportHandler') {
                 continue;
             }
 
             $str .= "<li>#{$key} ";
-            $file = Tookit::coalesce($value, 'file');
+            $file = self::coalesce($value, 'file');
             if (self::$shortPath) {
                 $file = '...' . substr($file, self::$shortPath);
             }
             $str .= $file;
-            $str .= '(' . Tookit::coalesce($value, 'line') . '):';
-            $str .= Tookit::coalesce($value, 'class');
-            $str .= Tookit::coalesce($value, 'type');
+            $str .= '(' . self::coalesce($value, 'line') . '):';
+            $str .= self::coalesce($value, 'class');
+            $str .= self::coalesce($value, 'type');
 
             if ($function == 'unknown') {
                 $function = 'main';

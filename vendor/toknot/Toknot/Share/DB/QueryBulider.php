@@ -68,7 +68,7 @@ class QueryBulider extends Object {
     public function setParamter($cols, $value, $type = null) {
         $type = $type ? $type : $this->checkParamType($value);
         $idx = self::$paramIndex++;
-        $placeholder = ":w{$idx}{$cols}";
+        $placeholder = ":w{$idx}" . crc32($cols);
         $this->builder->setParameter($placeholder, $value, $type);
         return $placeholder;
     }

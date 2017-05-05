@@ -58,11 +58,16 @@ class Table extends TableIterator {
     protected $statement = null;
     protected $where = null;
     protected $lastSql = '';
+    protected $joinTable = [];
 
     final public function __construct($conn, $alias = '') {
         $this->dbconnect = $conn;
         $this->tableAlias = $alias;
         $this->checkCompositePrimaryKey();
+    }
+
+    final public function __get($name) {
+        return $this->cols($name);
     }
 
     public function setTableAlias($alias) {
@@ -71,11 +76,14 @@ class Table extends TableIterator {
     }
 
     public function getTableName() {
+        if ($this->namespace) {
+            return $this->namespace . '.' . $this->tableName;
+        }
         return $this->tableName;
     }
 
-    public function getTableAlias() {
-        return $this->tableAlias ? $this->tableAlias : '';
+    public function getTableAlias($require = true) {
+        return $this->tableAlias ? $this->tableAlias : ($require ? $this->getTableName() : '');
     }
 
     public function alias($alias = '') {
@@ -132,9 +140,14 @@ class Table extends TableIterator {
         return $columnSql;
     }
 
-    public function setColumnSql($column, $tableName = '') {
-        $glue = !$tableName ? ', ' : ", $tableName.";
-        $this->tmpColumnSql = $tableName . (is_array($column) ? implode($glue, $column) : $column);
+    public function setColumnSql($column, $tableAlias = '') {
+        if (!$tableAlias && $this->tableAlias) {
+            $tableAlias = $this->tableAlias;
+        } else if ($tableAlias) {
+            $this->alias($tableAlias);
+        }
+        $glue = !$tableAlias ? ', ' : ", $tableAlias.";
+        $this->tmpColumnSql = $tableAlias . (is_array($column) ? implode($glue, $column) : $column);
         return $this;
     }
 
@@ -181,7 +194,7 @@ class Table extends TableIterator {
     }
 
     /**
-     * execute a sql and return result resources
+     * execute a sql from QueryBuilder and return result resources
      * 
      * @param int $limit
      * @param int $start
@@ -193,14 +206,22 @@ class Table extends TableIterator {
         return $this;
     }
 
+    /**
+     * set query offset
+     * 
+     * @param int $limit
+     * @param int $start
+     * @return $this
+     */
     public function limit($limit, $start = 0) {
         $this->qr->setFirstResult($start);
         $this->qr->setMaxResults($limit);
         return $this;
     }
 
-    public function exec($where, $limit, $offset) {
-        $this->select($where)->get($limit, $offset);
+    public function query($sql) {
+        $this->builder();
+        return $this->qr->executeQuery($sql);
     }
 
     public function get($limit = 100, $offset = 0, $fetchMode = \PDO::FETCH_ASSOC) {
@@ -222,6 +243,11 @@ class Table extends TableIterator {
         return $this->where;
     }
 
+    public function cols($columnName) {
+        $this->builder();
+        return new QueryColumn($columnName, $this->qr, $this);
+    }
+
     /**
      * select data
      * 
@@ -233,12 +259,19 @@ class Table extends TableIterator {
      */
     public function select($where = '') {
         $columnSql = $this->getColumnSql();
+        if ($this->joinTable) {
+            foreach ($this->joinTable as $table) {
+                $columnSql .= ',' . $table->getColumnSql();
+            }
+        }
+
         $this->builder()->initQuery(__FUNCTION__);
         $this->qr->select($columnSql);
         if ($where) {
             $this->qr->where($where);
         }
         $this->lastSql = $this->qr->getSQL();
+        $this->joinTable = [];
         return $this;
     }
 
@@ -281,7 +314,7 @@ class Table extends TableIterator {
             $this->limit($limit, $start);
         }
         $this->lastSql = $this->qr->getSQL();
-
+        $this->joinTable = [];
         return $this->qr->execute();
     }
 
@@ -488,11 +521,10 @@ class Table extends TableIterator {
      * @param Toknot\Share\DB\Table $table
      * @param array $on  the value smaliar 
      *                      [$column1,$column2,$expr] or mulit-dimensional-array
-     * @param array|string $where  where array
      * @return $this
      */
     public function rightJoin($table, $on) {
-        return $this->join($table, $on, $where, 'right');
+        return $this->join($table, $on, 'right');
     }
 
     /**
@@ -507,6 +539,10 @@ class Table extends TableIterator {
         return $this->join($table, $on, 'inner');
     }
 
+    public function getJoinTable() {
+        return $this->joinTable;
+    }
+
     /**
      * 
      * @param Toknot\Share\DB\Table $tables
@@ -518,7 +554,16 @@ class Table extends TableIterator {
     protected function join($table, $on, $type = 'left') {
         $this->builder();
         $join = $this->getJoinFunc($type);
+        $this->joinTable[] = $table;
         $this->qr->$join($this->getTableAlias(), $table->getTableName(), $table->getTableAlias(), $on);
+        $otherJoin = $table->getJoinTable();
+        if ($otherJoin) {
+            foreach ($otherJoin as $other) {
+                $queryPart = $other->getBuilder()->getQueryPart('join');
+                $this->qr->add('join', $queryPart);
+                $other->getBuilder()->getSQL();
+            }
+        }
         return $this;
     }
 

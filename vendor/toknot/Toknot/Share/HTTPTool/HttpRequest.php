@@ -10,7 +10,6 @@
 
 namespace Toknot\Share\HTTPTool;
 
-use Toknot\Boot\Tookit;
 use Toknot\Boot\GlobalFilter;
 use Toknot\Boot\Object;
 
@@ -90,7 +89,7 @@ class HttpRequest extends Object {
 
     public function getWrapper() {
         $fp = null;
-        $this->wrapper = Tookit::getStreamWrappersData($this->url, $this->option, $fp);
+        $this->wrapper = self::getStreamWrappersData($this->url, $this->option, $fp);
         $this->fp = $fp;
     }
 

@@ -22,6 +22,8 @@ use Toknot\Exception\BaseException;
 
 class Controller extends Object {
 
+    use Tookit;
+
     /**
      * @readonly
      */
@@ -80,9 +82,9 @@ class Controller extends Object {
      */
     public function getViewClass($view) {
         $appCfg = $this->config('app');
-        $view = Tookit::ucwords($view, '.');
-        $view = Tookit::dotNS($view);
-        return Tookit::nsJoin($appCfg['app_ns'], $appCfg['view_ns'], ucwords($view));
+        $view = self::ucwords($view, '.');
+        $view = self::dotNS($view);
+        return self::nsJoin($appCfg['app_ns'], $appCfg['view_ns'], ucwords($view));
     }
 
     /**
@@ -102,7 +104,7 @@ class Controller extends Object {
         $layout = new $this->layout(self::$viewParams);
         $layout->setController($this);
         $layout->setRoute($this->route());
-        
+
         $viewIns = new $viewClass($layout, self::$viewParams);
         $viewIns->title($this->title);
         $viewIns->setRoute($this->route());

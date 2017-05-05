@@ -14,7 +14,6 @@
 namespace Toknot\Boot;
 
 use Toknot\Boot\Object;
-use Toknot\Boot\Tookit;
 use Toknot\Exception\BaseException;
 
 /**
@@ -84,9 +83,9 @@ class Decorator extends Object {
     protected function call() {
         foreach ($this->decorators as $call) {
             if (strpos($call, '->') !== false) {
-                $calls = explode('->', Tookit::dotNS($call));
+                $calls = explode('->', self::dotNS($call));
             } elseif (strpos($call, '::') !== false) {
-                $calls = explode('::', Tookit::dotNS($call));
+                $calls = explode('::', self::dotNS($call));
                 $this->ret = self::invokeStatic(1, $calls[1], [$this->ret], $calls[0]);
                 continue;
             }

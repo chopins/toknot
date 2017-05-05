@@ -32,6 +32,6 @@ class ParameterBag extends Object {
     }
 
     public function offsetGet($offset) {
-        return Tookit::coalesce($this->iteratorArray, $offset);
+        return self::coalesce($this->iteratorArray, $offset);
     }
 }

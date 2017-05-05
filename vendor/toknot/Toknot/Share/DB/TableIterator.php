@@ -26,7 +26,15 @@ abstract class TableIterator extends Object {
 
     abstract public function execute($limit, $offset);
 
-    public function autoIterator($where = null, $limit = 50, $offset = 0) {
+    /**
+     * create iterator from query result
+     * 
+     * @param string $where
+     * @param int $limit
+     * @param int $offset
+     * @return $this
+     */
+    public function iterator($where = null, $limit = 50, $offset = 0) {
         if ($this->iteratorArray) {
             $this->iteratorArray->closeCursor();
             $this->currentResult = [];
