@@ -13,6 +13,7 @@ namespace Toknot\Share;
 use Toknot\Boot\Logs;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Tookit;
+use Toknot\Exception\ContinueException;
 
 /**
  *  CommandLine
@@ -20,12 +21,11 @@ use Toknot\Boot\Tookit;
  * @author chopin
  */
 class CommandLine {
+
     use Tookit;
+
     private $progMsgStart = 0;
     private static $autoHistory = false;
-
-    const RE_ENTER = -100;
-
     private static $readline = null;
 
     public function __construct($historyFile = null) {
@@ -123,9 +123,9 @@ class CommandLine {
     public function nl() {
         echo PHP_EOL;
     }
-    
+
     public function newline() {
-        if(self::$readline) {
+        if (self::$readline) {
             readline_on_new_line();
         } else {
             $this->nl();
@@ -209,33 +209,23 @@ class CommandLine {
     public function freadline($msg, $mismatch = '', $verifyEnter = null, $color = '') {
         do {
             $enter = $this->readline($msg, $color);
-            $ret = $this->checkInput($verifyEnter, $enter, $mismatch);
-            if ($ret === self::RE_ENTER) {
+            if ($enter == $mismatch) {
+                continue;
+            }
+            if (!is_callable($verifyEnter)) {
+                return $enter;
+            }
+            try {
+                $verifyEnter($enter, $this);
+            } catch (ContinueException $e) {
                 continue;
             }
             return $enter;
         } while (true);
     }
 
-    /**
-     * check input value
-     * 
-     * @param callable $callable    check input value function
-     * @param string $enter         input value
-     * @param string $mismatch      if this value must re-enter
-     * @return string               return re-enter state of input value
-     */
-    public function checkInput($callable, $enter, $mismatch) {
-        if ($enter == $mismatch) {
-            return self::RE_ENTER;
-        }
-        if (is_callable($callable)) {
-            $ret = $callable($enter);
-            if ($ret === self::RE_ENTER) {
-                return self::RE_ENTER;
-            }
-        }
-        return $enter;
+    public function cont() {
+        throw new ContinueException;
     }
 
     /**

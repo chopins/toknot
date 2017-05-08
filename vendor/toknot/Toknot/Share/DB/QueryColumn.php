@@ -11,7 +11,6 @@
 namespace Toknot\Share\DB;
 
 use Toknot\Boot\Tookit;
-use Toknot\Exception\BaseException;
 
 /**
  * Column

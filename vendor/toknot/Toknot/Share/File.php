@@ -165,8 +165,12 @@ class File extends \SplFileObject {
      * 
      * @param string $str
      */
-    public function yfwrite($str) {
-        $this->writer->send($str);
+    public function write($str) {
+        if ($this->writer) {
+            $this->writer->send($str);
+        } else {
+            $this->fwrite($str);
+        }
     }
 
     /**
@@ -175,7 +179,10 @@ class File extends \SplFileObject {
      * @param int $len
      * @return string
      */
-    public function yfread($len) {
+    public function read($len) {
+        if (!$this->reader) {
+            return $this->fread($len);
+        }
         $this->readerLen = $len;
         $res = $this->reader->current();
         $this->reader->next();

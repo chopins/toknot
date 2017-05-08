@@ -545,7 +545,6 @@ class Process extends Object {
     public function multiProcess($number) {
         $mport = [];
         if (!$this->initMutiProcess($number, $mport)) {
-
             return 0;
         }
 

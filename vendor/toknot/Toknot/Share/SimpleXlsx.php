@@ -46,7 +46,7 @@ class SimpleXlsx {
     private $xlsxInit = false;
     private $extractDir = null;
     private $sheetList = [];
-    private $xlFileObj = null;
+    private $xlFileObj = [];
     private $sharedFileObj = null;
     private $xlsxLoad = false;
 
@@ -130,7 +130,7 @@ class SimpleXlsx {
         $this->xlsxLoad = false;
         $this->extractDir = '';
         $this->workspacedir = '';
-        $this->xlFileObj = null;
+        $this->xlFileObj = [];
     }
 
     /**
@@ -159,11 +159,11 @@ class SimpleXlsx {
             throw new BaseException("sheet $index not exists");
         }
         $xl = sprintf($this->extractDir . $this->worksheetsFile, $id);
-        $this->xlFileObj = new File($xl, 'rb');
+        $this->xlFileObj[$id] = new File($xl, 'rb');
         $search = '<dimension';
-        $offs = $this->xlFileObj->strpos($search);
+        $offs = $this->xlFileObj[$id]->strpos($search);
 
-        $dimension = $this->xlFileObj->findRange('ref="', '"');
+        $dimension = $this->xlFileObj[$id]->findRange('ref="', '"');
 
         list(, $endPos) = explode(':', $dimension);
 
@@ -175,9 +175,9 @@ class SimpleXlsx {
         }
         $pos = ['col' => $columns, 'row' => $rows];
 
-        $this->xlFileObj->strpos('<sheetData>');
+        $this->xlFileObj[$id]->strpos('<sheetData>');
         $this->sharedFileObj = new File($this->extractDir . $this->sharedStringsFile, 'rb');
-        return $this;
+        return $id;
     }
 
     /**
@@ -185,11 +185,11 @@ class SimpleXlsx {
      * 
      * @return boolean|array
      */
-    public function row() {
-        if(!$this->xlFileObj) {
+    public function row($id) {
+        if(!$this->xlFileObj[$id]) {
             throw new BaseException('no read a sheet');
         }
-        $data = $this->xlFileObj->findRange('<row ', '</row>');
+        $data = $this->xlFileObj[$id]->findRange('<row ', '</row>');
         if (!$data) {
             return false;
         }
