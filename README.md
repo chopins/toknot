@@ -47,6 +47,3 @@ On command line exec: `php app/tool/index.php` show tool app help message
   ```
   php -S 127.0.0.1:8000 index.php
   ```
-
-### Todo
-* test Toknot\Share\Process\Process
