@@ -19,6 +19,7 @@ class InitApp {
 
     public function __construct($argc, $argv) {
         define('TKROOT', __DIR__);
+        include_once __DIR__.'/Toknot/Boot/Tookit.php';
         include __DIR__ . '/Toknot/Boot/Object.php';
         include __DIR__ . "/Toknot/Boot/Kernel.php";
         Kernel::single($argc, $argv);
