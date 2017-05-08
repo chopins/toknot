@@ -165,7 +165,7 @@ if($pid >0) {
 
 ```
 
-###人机验证题目相关 Toknot\Share\Security\OpenSSL
+### 人机验证题目相关 Toknot\Share\Security\OpenSSL
 本库会生成计算与顺序推导类题目用于人机验证
 用法：
 ```php
@@ -182,7 +182,7 @@ $askMessage = calculation(&$answer)
 $askMessage= findOrder(&$answer)
 ```
 
-###阿拉伯数字转中文数字 Toknot\Share\ChineseNumber
+### 阿拉伯数字转中文数字 Toknot\Share\ChineseNumber
 用法：
 ```php
 
@@ -191,7 +191,7 @@ echo $zhNum; //一万二千三百三十一
 echo $zhNum->getZhnum(); //一万二千三百三十一
 ```
 
-###文件操作相关 Toknot\Share\File
+### 文件操作相关 Toknot\Share\File
 用法：
 ```php
 $f = new File($filename, $mode = 'r', $useInclude = false, $context = null)

@@ -25,6 +25,7 @@ On command line exec: `php app/tool/index.php` show tool app help message
 * [router config](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/route-config.md)  
 * [table config](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/table-config.md)  
 * [view document](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/view.md) 
+* [相关库 document](https://github.com/chopins/toknot/blob/master/vendor/toknot/doc/tool.md) 
 
 ### Server Config
 将所有请求都定向到index.php入口文件，以下是nginx与apache服务器配置方法
