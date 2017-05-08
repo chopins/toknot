@@ -30,8 +30,8 @@ class DBA extends Object {
      *
      * @var array
      */
-    private static $cfg = [];
-    private static $modelDir;
+    private $cfg = [];
+    private $modelDir;
 
     /**
      *
@@ -40,14 +40,14 @@ class DBA extends Object {
     private $conn;
     private $nodbconn;
     private static $tableClassNs;
-    private static $usedb;
+    private $usedb;
     private $tableConfig;
     private $extType = [];
-    public static $confType = 'ini';
+    public $confType = 'ini';
     public static $fechStyle = \PDO::FETCH_ASSOC;
     public static $cursorOri = \PDO::FETCH_ORI_NEXT;
     private $transactionActive = false;
-    public static $appDir = APPDIR;
+    public $appDir = APPDIR;
 
     const T_OR = '||';
     const T_AND = '&&';
@@ -68,35 +68,44 @@ class DBA extends Object {
     protected function __construct($db = '', $cfg = '') {
         $allcfg = $cfg ? $cfg : Kernel::single()->cfg;
 
-        if (empty($db) && empty(self::$usedb)) {
-            self::$usedb = $allcfg->find('app.default_db_config_key');
+        if (empty($db) && empty($this->usedb)) {
+            $this->usedb = $allcfg->find('database.default');
         } elseif (isset($db)) {
-            self::$usedb = $db;
+            $this->usedb = $db;
         }
 
         $this->extType = explode(',', $allcfg->find('database.ext_type'));
-        $config = $allcfg->database[self::$usedb];
+        
+        $config = $allcfg->database[$this->usedb];
         if (isset($config['config_type'])) {
-            self::$confType = $config['config_type'];
+            $this->confType = $config['config_type'];
         }
         $this->tableConfig = $config['table_config'];
 
-        self::$cfg = $config;
+        $this->cfg = $config;
 
-        self::coalesce(self::$cfg, 'table_default', []);
-        self::coalesce(self::$cfg, 'column_default', []);
+        self::coalesce($this->cfg, 'table_default', []);
+        self::coalesce($this->cfg, 'column_default', []);
 
         $appCfg = $allcfg->app;
         self::$tableClassNs = self::nsJoin($appCfg['app_ns'], $appCfg->find('db_table_ns'));
-        self::$modelDir = self::realpath($allcfg->find('app.model_dir'), self::$appDir);
+        $this->modelDir = self::realpath($allcfg->find('app.model_dir'), $this->appDir);
     }
 
-    public static function getUseDB() {
-        return self::$usedb;
+    public function setConfType($type) {
+        $this->confType = $type;
     }
 
-    public static function getDBConfig() {
-        return self::$cfg;
+    public function setAppDir($dir) {
+        $this->appDir = $dir;
+    }
+
+    public function getUseDB() {
+        return $this->usedb;
+    }
+
+    public function getDBConfig() {
+        return $this->cfg;
     }
 
     public function getQuotedName($name) {
@@ -129,8 +138,10 @@ class DBA extends Object {
      * @return array
      */
     public function loadConfig($name) {
-        $cnf = self::$appDir . "/config/$name." . self::$confType;
-        return TKConfig::loadConfig($cnf);
+        $cnf = $this->appDir . "/config/$name." . $this->confType;
+        $cfg = new TKConfig([]);
+        $cfg->setAppDir($this->appDir);
+        return $cfg->load($cnf);
     }
 
     public function connect($newConn = false) {
@@ -169,30 +180,30 @@ class DBA extends Object {
     }
 
     public function getDatabase() {
-        return self::$cfg->dbname;
+        return $this->cfg->dbname;
     }
 
     public function dbconfig() {
-        $params = self::$cfg;
+        $params = $this->cfg;
 
-        if (class_exists('PDO', false) && strpos(self::$cfg->type, 'pdo_') === false) {
-            $params->driver = 'pdo_' . self::$cfg->type;
-        } elseif (class_exists('mysqli', false) && self::$cfg->type == 'mysql') {
+        if (class_exists('PDO', false) && strpos($this->cfg->type, 'pdo_') === false) {
+            $params->driver = 'pdo_' . $this->cfg->type;
+        } elseif (class_exists('mysqli', false) && $this->cfg->type == 'mysql') {
             $params->driver = 'mysqli';
         } else {
-            $params->driver = self::$cfg->type;
+            $params->driver = $this->cfg->type;
         }
         self::arrayRemove($params, 'type', 'tables');
         return $params;
     }
 
     public function loadModel() {
-        $modleFile = self::$modelDir . '/model.' . self::$usedb . '.php';
+        $modleFile = $this->modelDir . '/model.' . $this->usedb . '.php';
         if (!file_exists($modleFile)) {
             $tables = $this->loadConfig($this->tableConfig);
-            $this->initModel($tables, self::$usedb);
+            $this->initModel($tables, $this->usedb);
         }
-        include_once self::$modelDir . '/model.' . self::$usedb . '.php';
+        include_once $this->modelDir . '/model.' . $this->usedb . '.php';
     }
 
     public static function table2Class($table) {
@@ -200,15 +211,18 @@ class DBA extends Object {
     }
 
     public function initModel($tables, $db) {
-        if (!is_dir(self::$modelDir)) {
-            mkdir(self::$modelDir);
+        if (!is_dir($this->modelDir)) {
+            mkdir($this->modelDir);
         }
-
+       
         $code = '<?php' . PHP_EOL;
         $code .= 'namespace ' . self::$tableClassNs . ';' . PHP_EOL;
         $code .= 'use Toknot\Share\DB\Table;' . PHP_EOL;
 
         foreach ($tables as $table => $v) {
+            if(!isset($v['column'])) {
+                throw new BaseException("$table miss column list");
+            }
             $columnSQL = implode(',', array_keys($v['column']));
             $class = self::table2Class($table);
             $code .= "class $class extends Table {";
@@ -223,7 +237,7 @@ class DBA extends Object {
             $code .= "protected \$columnSql='$columnSQL';}" . PHP_EOL;
         }
 
-        $modelFile = self::$modelDir . '/model.' . $db . '.php';
+        $modelFile = $this->modelDir . '/model.' . $db . '.php';
         file_put_contents($modelFile, $code);
         //include_once $modelFile;
     }
@@ -264,11 +278,7 @@ class DBA extends Object {
         $conn = $db->connect($newConn);
         $tableClass = self::nsJoin(self::$tableClassNs, self::table2Class($table));
         $tableClass = self::dotNS($tableClass);
-
-        if (empty(self::$cfg->tables)) {
-            self::$cfg->tables = $db->loadConfig(self::$cfg['table_config']);
-            $db->iteratorArray = self::$cfg->tables;
-        }
+      
         $db->loadModel();
         $m = new $tableClass($conn);
         return $m;
@@ -442,8 +452,8 @@ class DBA extends Object {
      * @param array $tables
      */
     protected function createTable(Schema &$schema, $tables) {
-        $tableDefault = self::$cfg->find('table_default');
-        $columnDefault = self::$cfg->find('column_default');
+        $tableDefault = $this->cfg->find('table_default');
+        $columnDefault = $this->cfg->find('column_default');
 
         foreach ($tables as $table => $info) {
             $nt = $schema->createTable($table);

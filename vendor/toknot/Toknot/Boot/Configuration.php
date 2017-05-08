@@ -16,11 +16,15 @@ namespace Toknot\Boot;
 use Toknot\Boot\Object;
 use Toknot\Boot\ParseConfig;
 use Toknot\Exception\NoFileOrDirException;
+use Toknot\Exception\BaseException;
 
 class Configuration extends Object {
 
     private static $parseConfObject = null;
     private static $incData = [];
+    private $appDir = APPDIR;
+    private $cacheDir = '/runtime/config';
+    private static $yamlfile;
 
     public function __construct($cfg) {
         $this->iteratorArray = $cfg;
@@ -39,6 +43,7 @@ class Configuration extends Object {
     public function find($key) {
         $ks = explode('.', $key);
         $cur = $this->iteratorArray;
+
         foreach ($ks as $k) {
             if (array_key_exists($k, $cur)) {
                 $cur = $cur[$k];
@@ -84,7 +89,15 @@ class Configuration extends Object {
         }
     }
 
-    public function exceptionMkdir($e, $isfile = true) {
+    public function setAppDir($dir) {
+        $this->appDir = $dir;
+    }
+
+    public static function setCacheDir($dir) {
+        $this->cacheDir = $dir;
+    }
+
+    public static function exceptionMkdir($e, $isfile = true) {
         $f = $e->getExceptionFile();
         if ($isfile) {
             mkdir(dirname($f), 0755, true);
@@ -94,8 +107,14 @@ class Configuration extends Object {
     }
 
     public static function loadConfig($ini) {
-        $cfg = self::readCache($ini);
-        return new static($cfg);
+        $obj = new static([]);
+        return self::callMethod(1, 'load', [$ini], $obj);
+    }
+
+    public function load($ini) {
+        $cfg = $this->readCache($ini);
+        $this->iteratorArray = $cfg;
+        return $this;
     }
 
     /**
@@ -108,10 +127,10 @@ class Configuration extends Object {
      * @param boolean $force    force create cache
      * @return int
      */
-    public static function createCache($ini, $force = false) {
+    public function createCache($ini, $force = false) {
         clearstatcache();
         $filename = pathinfo($ini, PATHINFO_FILENAME);
-        $php = APPDIR . "/runtime/config/$filename.php";
+        $php = $this->appDir . $this->cacheDir . "/$filename.php";
         if (!$force && file_exists($php) && filemtime($ini) <= filemtime($php)) {
             return $php;
         }
@@ -122,20 +141,20 @@ class Configuration extends Object {
 
             file_put_contents($php, $str, LOCK_EX);
         } catch (NoFileOrDirException $e) {
-            $this->exceptionMkdir($e);
+            self::exceptionMkdir($e);
             file_put_contents($php, $str, LOCK_EX);
         }
         return $php;
     }
 
-    public static function readCache($ini) {
+    public function readCache($ini) {
         $key = md5($ini);
 
         if (isset(self::$incData[$key])) {
             return self::$incData[$key];
         }
 
-        $php = self::createCache($ini);
+        $php = $this->createCache($ini);
 
         if (!file_exists($php)) {
             self::$incData[$key] = self::parseConf($ini);
@@ -275,6 +294,7 @@ class Configuration extends Object {
             }
 
             $l = trim($s[$i]);
+
             if (empty($l)) {
                 $i++;
                 continue;
@@ -284,7 +304,7 @@ class Configuration extends Object {
                 continue;
             }
 
-            $indent = strspn($l, ' ');
+            $indent = strspn($s[$i], PHP_SP);
             if ($selfIndent !== false && $indent < $selfIndent) {
                 $i--;
                 break;
@@ -295,21 +315,24 @@ class Configuration extends Object {
                 $i--;
                 return '';
             }
+
             if ($selfIndent !== false && $selfIndent < $indent) {
-                throw new BaseException("line $i is not aligned");
+                throw new BaseException("line $i is not aligned in file " . self::$yamlfile);
             }
             $sub = explode(':', $l, 2);
             //数组
             $selfIndent = $indent;
             if (count($sub) == 1) {
                 if (strpos($l, '-') !== 0) {
-                    throw new BaseException("colon of key not found in line $i");
+                    throw new BaseException("colon of key not found in line $i in file" . self::$yamlfile);
                 }
                 $res[] = self::yamlType(trim(ltrim(trim($l), '-')));
             } else {
                 $key = trim($sub[0]);
-                $var = trim(trim($sub[1]), '\'');
+                $var = trim($sub[1], '\'" ');
+
                 $checkAnchor = (strpos($var, '&') === 0);
+ 
                 if (empty($var) || $checkAnchor === true) {
                     $i++;
                     $res[$key] = self::eachYaml($i, $s, $cn, $indent, $anchor);
@@ -318,9 +341,9 @@ class Configuration extends Object {
                         $anchor[$anchorKey] = &$res[$key];
                     }
                 } elseif ($key == '<<' && strpos($var, '*') === 0) {
-                    $alias = trim($var, '*');
+                    $alias = trim($var, '* ');
                     if (!isset($anchor[$alias])) {
-                        throw new BaseException("anchor $alias not found");
+                        throw new BaseException("line $i anchor '$alias' not found in file" . self::$yamlfile);
                     }
                     $res = array_merge($res, $anchor[$alias]);
                 } else {
@@ -337,6 +360,7 @@ class Configuration extends Object {
     }
 
     public static function parseSampleYaml($yaml) {
+        self::$yamlfile = $yaml;
         $content = file_get_contents($yaml);
         $s = explode("\n", $content);
         $cn = count($s);

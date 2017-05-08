@@ -121,6 +121,7 @@ final class Kernel extends Object {
      */
     protected function __construct($argc, $argv) {
         define('PHP_NS', '\\');
+        define('PHP_SP', ' ');
         $this->setArg($argc, $argv);
         $this->initGlobalEnv();
 

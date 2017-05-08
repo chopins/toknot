@@ -17,7 +17,9 @@ use Toknot\Boot\Logs;
 use Toknot\Boot\Configuration;
 
 class DB {
+
     use Tookit;
+
     /**
      *
      * @var Toknot\Share\DB
@@ -40,20 +42,21 @@ class DB {
             $this->appdir = realpath($this->appdir);
             $type || $type = 'ini';
             $config = "{$this->appdir}/config/config.$type";
-            $php = "{$this->appdir}/runtime/config/config.php";
-            $this->appcfg = Configuration::loadConfig($config, $php);
+            $cfg = new Configuration([]);
+            $cfg->setAppDir($this->appdir);
+            $this->appcfg = $cfg->load($config);
         } else {
             $this->appcfg = $this->kernel->cfg;
         }
 
         $this->dbcfg = $this->appcfg->database;
 
-        $this->usedb = $this->appcfg->app->default_db_config_key;
+        $this->usedb = $this->dbcfg->default;
         $this->setOption();
         $this->tableOption = $this->dbcfg[$this->usedb];
-        DBA::$appDir = $this->appdir;
 
         $this->tkdb = DBA::single($this->usedb, $this->appcfg);
+        $this->tkdb->setAppDir($this->appdir);
         $dbs = $this->tkdb->getDBList();
         $dbname = $this->dbcfg[$this->usedb]['dbname'];
         if (!in_array($dbname, $dbs)) {
