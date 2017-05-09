@@ -93,7 +93,7 @@ EOF;
                     $routepath = $routepath ? $routepath : strtolower('/' . str_replace(PHP_NS, '/', $cls));
                     $cont = str_replace(PHP_NS, '.', $cls);
                     $routename = strtolower(str_replace(PHP_NS, '-', $cls));
-                    $mp = $m->isConstructor() || $m->isDestructor() ? '' : ":$method";
+                    $mp = $m->isConstructor() || $m->isDestructor() ? '' : "::$method";
                     $ini .= sprintf($configTpl, $routename, $routepath, $cont, $mp, $rm);
                 }
             }
