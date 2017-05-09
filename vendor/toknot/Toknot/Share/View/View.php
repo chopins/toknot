@@ -54,12 +54,9 @@ abstract class View extends Object {
             throw new BaseException("$layoutClass must is sub of Toknot\Share\View\Layout");
         }
         $this->layoutIns = $layout;
-        $this->layoutIns->initPage();
         $this->head = $this->layoutIns->getHead();
         $this->body = $this->layoutIns->getBody();
     }
-
-    abstract public function page();
 
     final public function setControoler($controller) {
         $this->controler = $controller;
@@ -78,29 +75,11 @@ abstract class View extends Object {
     }
 
     /**
-     * set title
-     */
-    final public function title($title) {
-        $this->layoutIns->title($title);
-    }
-
-    /**
      * 
      * @return Toknot\Share\View\Layout
      */
     final public function getLayoutInstance() {
         return $this->layoutIns;
-    }
-
-    /**
-     * get html of page
-     * 
-     * @param array $param
-     * @return string
-     */
-    final public function render() {
-        $this->page();
-        return $this->layoutIns->getHtmlDoc();
     }
 
     /**
@@ -110,10 +89,10 @@ abstract class View extends Object {
      * @param array $argv   The tag attributes
      * @return Toknot\Share\View\TagBulid
      */
-    final public function __call($name, $argv) {
+    final public function __call($name, $argv = []) {
         $argc = count($argv);
         if ($argc == 0) {
-            return Tag::$name();
+                return Tag::$name();
         }
         return self::invokeStatic($argc, $name, $argv, 'Toknot\Share\View\Tag');
     }

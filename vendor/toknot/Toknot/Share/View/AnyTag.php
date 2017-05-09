@@ -21,5 +21,4 @@ class AnyTag extends TagBulid {
         $this->tagName = $tagName;
         $this->initTag($attr);
     }
-
 }

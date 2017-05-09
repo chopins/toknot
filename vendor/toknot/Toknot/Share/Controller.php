@@ -101,14 +101,11 @@ class Controller extends Object {
         if (empty($this->layout)) {
             $this->layout = $appCfg['default_layout'];
         }
-        $layout = new $this->layout(self::$viewParams);
-        $layout->setController($this);
-        $layout->setRoute($this->route());
+        $layout = new $this->layout($viewClass, $this, $this->route());
 
-        $viewIns = new $viewClass($layout, self::$viewParams);
-        $viewIns->title($this->title);
-        $viewIns->setRoute($this->route());
-        $html = $viewIns->render();
+        $layout->title($this->title);
+        $layout->view($viewClass);
+        $html = $layout->getHtmlDoc();
 
         if ($return) {
             return $html;

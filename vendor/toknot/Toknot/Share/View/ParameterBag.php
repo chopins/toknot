@@ -11,7 +11,6 @@
 namespace Toknot\Share\View;
 
 use Toknot\Boot\Object;
-use Toknot\Boot\Tookit;
 
 /**
  * ParamterBags

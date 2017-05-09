@@ -15,14 +15,17 @@ use Admin\View\Lib\BaseView;
 class Index extends BaseView {
 
     public function contanier() {
-        $this->button($this->rbox)->pushText('我的项目');
-        $this->button($this->rbox)->pushText('我关注的项目');
-        $this->button($this->rbox)->pushText('创建项目');
-        $p = $this->div($this->rbox);
-
-        $this->a($p, ['href' => $this->route('project')])->pushText('项目1');
-        $this->a($p)->pushText('项目2');
-        $this->a($p)->pushText('项目3');
+        $nodes = [];
+        $nodes[] = $this->button()->pushText('我的项目');
+        $nodes[] = $this->button()->pushText('我关注的项目');
+        $nodes[] = $this->button()->pushText('创建项目');
+        $nodes[] = $p = $this->div();
+        $this->rbox->batchPush($nodes);
+        $a = [];
+        $a[] = $this->a(['href' => $this->route('project')])->pushText('项目1');
+        $a[] = $this->a()->pushText('项目2');
+        $a[] = $this->a()->pushText('项目3');
+        $p->batchPush($a);
     }
 
 }

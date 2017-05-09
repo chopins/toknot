@@ -17,24 +17,29 @@ class Index extends BaseView {
     public $content;
 
     public function contanier() {
-        $this->title('index');
-        $rightTable = $this->table($this->rbox, ['class' => 'pure-table']);
-        $rightTableThead = $this->thead($rightTable);
-        $tr = $this->tr($rightTableThead);
+        $rightTable = $this->table(['class' => 'pure-table']);
+
+        $rightTableThead = $this->thead();
+        $rightTable->push($rightTableThead);
+        $tr = $this->tr();
+        $rightTableThead->push($tr);
         for ($i = 0; $i < 5; $i++) {
-            $this->td($tr)->pushText("#$i Title");
+            $td = $this->td()->pushText("#$i Title");
+            $tr->push($td);
         }
 
-        
-        $rightTableBody = $this->tbody($rightTable);
+
+        $rightTableBody = $this->tbody();
+        $rightTable->push($rightTableBody);
         for ($i = 0; $i < 5; $i++) {
-            $bodyTr = $this->tr($rightTableBody);
+            $bodyTr = $this->tr();
+            $rightTableBody->push($bodyTr);
             for ($d = 0; $d < 5; $d++) {
-                $this->td($bodyTr)->pushText("#$i-$d Title");
+                $td = $this->td()->pushText("#$i-$d Title");
+                $bodyTr->push($td);
             }
         }
+        $this->rbox->push($rightTable);
     }
-    
-   
 
 }

@@ -15,9 +15,11 @@ use Admin\View\Lib\BaseView;
 class Index extends BaseView {
 
     public function contanier() {
-        $this->button($this->rbox)->pushText('发起讨论');
-        $this->button($this->rbox)->pushText('我关注的项目');
-        $this->button($this->rbox)->pushText('讨论列表');
+        $nodes = [];
+        $nodes[] = $this->button()->pushText('发起讨论');
+        $nodes[] = $this->button()->pushText('我关注的项目');
+        $nodes[] = $this->button()->pushText('讨论列表');
+        $this->rbox->batchPush($nodes);
     }
 
 }

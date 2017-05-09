@@ -106,6 +106,7 @@ class QueryBulider extends Object {
 
         $params = [];
         $pk = $this->table->getPrimaryKeyName();
+
         $keyOn = $keyName = '';
         $iscopk = $this->table->isCompositePrimaryKey();
         if ($iscopk) {
@@ -120,6 +121,7 @@ class QueryBulider extends Object {
                 $keyName[] = $key;
             } elseif ($pk == $key) {
                 $keyOn = "$key=$hv";
+                $keyName = $pk;
             } else {
                 $update[$key] = $v;
             }
@@ -134,8 +136,11 @@ class QueryBulider extends Object {
 
         if ($iscopk) {
             $keyOn = implode(',', $keyOn);
+            $pkStr = implode(',', $pk);
+        } else {
+            $pkStr = $pk;
         }
-        $pkStr = implode(',', $pk);
+
         $updateHit = implode(',', $this->batchEq($update));
 
         $sqls = ['mysql' => "INSERT INTO $table ($insertKeyHit) VALUES ($insertHit) ON DUPLICATE KEY UPDATE $updateHit",
@@ -156,13 +161,13 @@ class QueryBulider extends Object {
 
     public function executeQuery($sql) {
         $res = $this->getConnection()->executeQuery($sql, $this->getParameters(), $this->getParameterTypes());
-        $this->qr->getSQL();
+        $this->builder->getSQL();
         return $res;
     }
 
     public function executeUpdate($sql) {
         $res = $this->getConnection()->executeUpdate($sql, $this->getParameters(), $this->getParameterTypes());
-        $this->qr->getSQL();
+        $this->builder->getSQL();
         return $res;
     }
 

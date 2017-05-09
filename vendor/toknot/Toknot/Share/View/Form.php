@@ -74,7 +74,8 @@ class Form extends TagBulid {
         if ($labelHit !== null) {
             $parent = $this->label(self::coalesce($attr, 'id'), $labelHit);
         }
-        self::select($parent, $attr);
+        $select = new Select($attr);
+        $parent->push($select);
         return $this;
     }
 

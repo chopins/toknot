@@ -15,9 +15,11 @@ use Admin\View\Lib\BaseView;
 class Index extends BaseView {
 
     public function contanier() {
-        $this->button($this->rbox)->pushText('我的组织');
-        $this->button($this->rbox)->pushText('组织架构');
-        $this->button($this->rbox)->pushText('创建组织');
+        $nodes = [];
+        $nodes[] = $this->button()->pushText('我的组织');
+        $nodes[] = $this->button()->pushText('组织架构');
+        $nodes[] = $this->button()->pushText('创建组织');
+        $this->rbox->batchPush($nodes);
     }
 
 }

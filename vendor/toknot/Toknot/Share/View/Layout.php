@@ -43,23 +43,28 @@ abstract class Layout extends Object {
      */
     private $head;
     private $title;
-    private $htmlAttr = [];
-    private $bodyAttr = [];
-    private $htmlVer = 5;
-    private $htmlMode = 'strict';
+    protected $htmlAttr = [];
+    protected $bodyAttr = [];
+    protected $htmlVer = 5;
+    protected $htmlMode = 'strict';
     private $controller = null;
     private $route = null;
+    protected $viewIns = null;
 
     /**
      * 
-     * @param \Event\View\Layout $tpl
+     * @param \Event\View\Layout $viewClass
      * @param array $param
      */
-    public function __construct($param = []) {
-        $this->param = $param;
+    public function __construct($viewClass, $contoller, $route) {
+        $this->param = $contoller->v();
+        $this->route = $route;
+        $this->constructHtml();
+        $this->view($viewClass);
+        
     }
 
-    final public function initPage() {
+    final private function constructHtml() {
         Tag::html($this->htmlAttr, ['version' => $this->htmlVer, 'mode' => $this->htmlMode]);
         $this->head = Tag::head();
         $this->setPageTitle();
@@ -70,8 +75,28 @@ abstract class Layout extends Object {
         $this->controller = $controller;
     }
 
+    final public function addHeadNode($tag, $attr = []) {
+        $node = Tag::$tag($attr);
+        $this->head->push($node);
+        return $node;
+    }
+
+    final public function addBodyNode($tag, $attr = []) {
+        if($tag instanceof TagBulid) {
+            $this->body->push($tag);
+            return $tag;
+        }
+        return Tag::$tag($this->body, $attr);
+    }
+
     final public function getController() {
         return $this->controller;
+    }
+
+    final public function view($viewClass) {
+        $this->viewIns = new $viewClass($this, $this->param);
+        $this->viewIns->setControoler($this->controller);
+        $this->viewIns->setRoute($this->route);
     }
 
     final public function setRoute($route) {
@@ -92,6 +117,8 @@ abstract class Layout extends Object {
      * @return string
      */
     final public function getHtmlDoc() {
+        $this->head();
+        $this->body();
         return Tag::getHtml();
     }
 
@@ -114,7 +141,7 @@ abstract class Layout extends Object {
     }
 
     final public function title($text) {
-        $this->title->pushText($text);
+        $this->title->setText($text);
     }
 
     /**
@@ -163,4 +190,7 @@ abstract class Layout extends Object {
         return $this->htmlMode;
     }
 
+    abstract public function body();
+
+    abstract public function head();
 }

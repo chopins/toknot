@@ -21,5 +21,9 @@ class Text {
     public function getTags() {
         return $this->textContent;
     }
+    
+    public function __toString() {
+        return $this->textContent;
+    }
 
 }

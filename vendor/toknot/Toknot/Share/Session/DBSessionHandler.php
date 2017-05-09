@@ -32,7 +32,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
     private $expireCol = 'expire';
 
     public function echoException($e) {
-        throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
+        throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(),$e);
     }
 
     /**

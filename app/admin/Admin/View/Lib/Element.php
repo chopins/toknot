@@ -18,7 +18,9 @@ use Toknot\Share\View\Tag;
  *
  */
 class Element {
+
     use Tookit;
+
     /**
      * create form
      * 
@@ -34,7 +36,7 @@ class Element {
      * @param array $data
      * @return Toknot\Share\View\TagBulid
      */
-    public static function postForm(TagBulid $parentNode, $data) {
+    public static function postForm($data) {
         $enctype = self::coalesce($data, 'type', 'form');
 
         $inputs = [];
@@ -55,7 +57,7 @@ class Element {
             }
             $inputs[$name] = $input;
         }
-        $form = Tag::form($parentNode)
+        $form = Tag::form()
                 ->addClass('pure-form pure-form-stacked')
                 ->setMethod()
                 ->setAction($data['action'])
@@ -64,25 +66,33 @@ class Element {
         return $form;
     }
 
-    public static function table($parentNode, $data) {
-        $rightTable = Tag::table($parentNode, ['class' => 'pure-table']);
+    public static function table($data) {
+        $rightTable = Tag::table(['class' => 'pure-table']);
         if (isset($data['title'])) {
-            $rightTableThead = $this->thead($rightTable);
-            $tr = $this->tr($rightTableThead);
+            $rightTableThead = $this->thead();
+            $rightTable->push($rightTableThead);
+            $tr = $this->tr();
+            $rightTableThead->push($tr);
             foreach ($data['title'] as $tname) {
-                $this->td($tr)->pushText($tname);
+                $td = $this->td()->pushText($tname);
+                $tr->push($td);
             }
         }
         if (isset($data['tbody'])) {
-            $rightTableBody = $this->tbody($rightTable);
+            $rightTableBody = $this->tbody();
+            $rightTable->push($rightTableBody);
             foreach ($data['tbody'] as $line) {
-                $bodyTr = $this->tr($rightTableBody);
+                $bodyTr = $this->tr();
+                $rightTableBody->push($bodyTr);
                 foreach ($line as $t => $column) {
                     if ($t == 'input') {
-                        $td = $this->td($bodyTr);
-                        Tag::input($td, $column);
+                        $td = $this->td();
+                        $bodyTr->push($td);
+                        $input = Tag::input($column);
+                        $td->push($input);
                     } else {
-                        $this->td($bodyTr)->pushText($column);
+                        $td = $this->td()->pushText($column);
+                        $bodyTr->push($td);
                     }
                 }
             }

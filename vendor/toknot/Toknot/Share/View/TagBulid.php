@@ -165,7 +165,7 @@ abstract class TagBulid extends Object {
                 }
                 $value = "$srcHost$value";
             }
-          
+
             $v = addcslashes($value, '\'\\');
             $this->html .= " $attr=\"$v\"";
         }
@@ -209,12 +209,33 @@ abstract class TagBulid extends Object {
         return $this;
     }
 
+    /**
+     * 
+     * @param type $text
+     * @return Toknot\Share\View\TagBulid
+     */
+    public function setText($text) {
+        foreach ($this->childStack as $tag) {
+            if ($tag instanceof Text) {
+                $this->delTag($tag);
+            }
+        }
+        return $this->pushText($text);
+    }
+
     public function push(TagBulid $tag) {
         $this->childStack->attach($tag);
         return $this;
     }
 
-    public function delTag(TagBulid $tag) {
+    public function batchPush($nodes) {
+        foreach ($nodes as $node) {
+            $this->push($node);
+        }
+        return $this;
+    }
+
+    public function delTag($tag) {
         $this->childStack->detach($tag);
         return $this;
     }

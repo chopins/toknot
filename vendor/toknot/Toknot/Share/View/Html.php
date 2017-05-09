@@ -21,6 +21,8 @@ class Html extends TagBulid {
 
     private $htmlVer = 5;
     private $htmlMode = 'strict';
+    private $bodyNodeCnt = 0;
+    private $headNodeCnt = 0;
 
     const STR4_01 = '"-//W3C//DTD HTML 4.01//EN" 
             "http://www.w3.org/TR/html4/strict.dtd"';
@@ -109,6 +111,21 @@ class Html extends TagBulid {
 
     public function getMode() {
         return $this->htmlMode;
+    }
+
+    public function push(TagBulid $tag) {
+        if ($tag->tagName == 'body') {
+            if ($this->bodyNodeCnt > 0) {
+                throw new BaseException('html only alowed 1 body tag');
+            }
+            $this->bodyNodeCnt++;
+        } elseif ($tag->tagName == 'head') {
+            if ($this->headNodeCnt > 0) {
+                throw new BaseException('html only alowed 1 head tag');
+            }
+            $this->headNodeCnt++;
+        }
+        return parent::push($tag);
     }
 
 }
