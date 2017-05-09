@@ -15,6 +15,7 @@ app :
     model_dir : runtime/model
     default_layout : Event\View\Layout\DefaultLayout
     session :
+        enable : true
         table : session
         name : sid
         cookie_httponly : 1

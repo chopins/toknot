@@ -15,7 +15,6 @@ use Toknot\Share\CommandLine;
 use Toknot\Boot\Import;
 use Zend\Reflection\Docblock;
 
-
 /**
  * Route
  *
@@ -51,7 +50,7 @@ class Route {
         Import::addPath($dir);
         $this->appNs = $appTopNs . PHP_NS . 'Controller' . PHP_NS;
         $ini = $this->dir($dir, $this->appNs);
-        $output = $output ? $output : "$apppath/config.router.ini";
+        $output = $output ? $output : "$apppath/config/router.{$this->confgType}";
         file_put_contents($output, $ini);
     }
 
@@ -75,15 +74,19 @@ method = %s
 EOF;
         }
         $configTpl .= PHP_EOL;
- 
+
         Kernel::dirWalk($path, function($file) use($appNs, $configTpl, &$ini) {
             $class = $appNs . basename($file, '.php');
 
             $rf = new \ReflectionClass($class);
-            $ms = $rf->getMethods();
+            $ms = $rf->getMethods(\ReflectionMethod::IS_PUBLIC);
             $rm = 'GET';
             foreach ($ms as $m) {
+                if($m->getFileName() != $rf->getFileName()) {
+                    continue;
+                }
                 $routepath = $this->parseDocComment($m, $rm);
+
                 if ($routepath !== false) {
                     $method = $m->getName();
                     $cls = str_replace($this->appNs, '', $class);
@@ -109,7 +112,7 @@ EOF;
      */
     public function parseDocComment($m, &$method = 'GET') {
         $docs = $m->getDocComment();
-        $tagType = ['GET' => 'route', 'CLI' => 'console', 'POST' => 'post', 'GET' => 'get'];
+        $tagType = ['GET' => 'route', 'CLI' => 'console', 'POST' => 'post'];
         if ($docs) {
             $docblock = new Docblock($docs);
             foreach ($tagType as $rm => $tag) {

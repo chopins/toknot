@@ -206,7 +206,6 @@ namespace Layout;
 
 use Toknot\Share\View\Layout;
 use Toknot\Share\View\Tag;
-use Toknot\Boot\Tookit;
 
 class $name extends Layout {
     public \$headTag;

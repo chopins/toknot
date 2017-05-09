@@ -34,6 +34,9 @@ class Session extends Object {
 
     public function __construct($hander = null) {
         $option = Kernel::single()->cfg->app->session;
+        if (!$option->find('enable')) {
+            return;
+        }
         $type = $option->find('type');
         if ($type == 'cache') {
             $class = $hander->getClass() . 'SessionHandler';
