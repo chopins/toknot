@@ -14,6 +14,7 @@ use SplObjectStorage;
 use Toknot\Boot\Object;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\GlobalFilter;
+use Toknot\Exception\UndefinedPropertyException;
 
 /**
  * View
@@ -56,7 +57,7 @@ abstract class TagBulid extends Object {
      *
      * @var SplObjectStorage
      */
-    protected $childStack;
+    protected $iteratorArray;
     protected static $singleTagList = ['br', 'meta', 'link', 'input', 'img',
         'base', 'param', 'source', 'track'];
     public static $srcDefaultHost = '';
@@ -66,7 +67,7 @@ abstract class TagBulid extends Object {
             $called = get_called_class();
             throw new BaseException("The $called::\$tagName of HTML tag name is empty");
         }
-        $this->childStack = new SplObjectStorage();
+        $this->iteratorArray = new SplObjectStorage();
         $this->singleTag = in_array($this->tagName, self::$singleTagList);
 
         $this->begin($attr);
@@ -205,7 +206,7 @@ abstract class TagBulid extends Object {
      */
     public function pushText($text) {
         $obj = new Text($text);
-        $this->childStack->attach($obj);
+        $this->iteratorArray->attach($obj);
         return $this;
     }
 
@@ -215,7 +216,7 @@ abstract class TagBulid extends Object {
      * @return Toknot\Share\View\TagBulid
      */
     public function setText($text) {
-        foreach ($this->childStack as $tag) {
+        foreach ($this->iteratorArray as $tag) {
             if ($tag instanceof Text) {
                 $this->delTag($tag);
             }
@@ -224,7 +225,7 @@ abstract class TagBulid extends Object {
     }
 
     public function push(TagBulid $tag) {
-        $this->childStack->attach($tag);
+        $this->iteratorArray->attach($tag);
         return $this;
     }
 
@@ -236,13 +237,13 @@ abstract class TagBulid extends Object {
     }
 
     public function delTag($tag) {
-        $this->childStack->detach($tag);
+        $this->iteratorArray->detach($tag);
         return $this;
     }
 
     public function innerHTML() {
         $html = '';
-        foreach ($this->childStack as $tag) {
+        foreach ($this->iteratorArray as $tag) {
             $html .= $tag->getTags();
         }
         return $html;
@@ -291,6 +292,20 @@ abstract class TagBulid extends Object {
             $this->resourceVer = $ver;
         }
         return $this;
+    }
+
+    final public function __get($name) {
+        if (isset($this->attr[$name])) {
+            return $this->attr[$name];
+        }
+        throw new UndefinedPropertyException($this, $name);
+    }
+
+    final public function __set($name, $value) {
+        if (!is_scalar($value)) {
+            throw new BaseException('tag of attributes must is scalar value');
+        }
+        $this->addAttr($name, $value);
     }
 
 }
