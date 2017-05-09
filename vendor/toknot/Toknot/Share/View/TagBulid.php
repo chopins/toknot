@@ -34,6 +34,7 @@ abstract class TagBulid extends Object {
      * @var boolean
      */
     protected $singleTag = false;
+    protected $innerHtml = '';
 
     /**
      *
@@ -88,7 +89,7 @@ abstract class TagBulid extends Object {
         if ($this->singleTag) {
             return $this->html .= '';
         }
-
+        $this->html .= $this->innerHtml;
         $this->html .= $this->innerHTML();
         $this->html .= "</{$this->tagName}>";
         return $this;
@@ -241,7 +242,12 @@ abstract class TagBulid extends Object {
         return $this;
     }
 
-    public function innerHTML() {
+    public function innerHTML($html = '') {
+        if ($html) {
+            $this->iteratorArray->removeAll($this->iteratorArray);
+            $this->innerHtml = $html;
+            return;
+        }
         $html = '';
         foreach ($this->iteratorArray as $tag) {
             $html .= $tag->getTags();
