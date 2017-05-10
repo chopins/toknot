@@ -33,7 +33,7 @@ class DB {
     public $force = false;
     public $dbconn;
     public $tableOption = [];
-
+    public $confObj = null;
     public function __construct() {
         $this->kernel = Kernel::single();
         $this->appdir = $this->kernel->getOption('-a');
@@ -42,9 +42,9 @@ class DB {
             $this->appdir = realpath($this->appdir);
             $type || $type = 'ini';
             $config = "{$this->appdir}/config/config.$type";
-            $cfg = new Configuration([]);
-            $cfg->setAppDir($this->appdir);
-            $this->appcfg = $cfg->load($config);
+            $this->confObj = new Configuration;
+            $this->confObj->setAppDir($this->appdir);
+            $this->appcfg = $this->confObj->load($config);
         } else {
             $this->appcfg = $this->kernel->cfg;
         }
@@ -56,9 +56,12 @@ class DB {
         $this->tableOption = $this->dbcfg[$this->usedb];
 
         $this->tkdb = DBA::single($this->usedb, $this->appcfg);
+        
         $this->tkdb->setAppDir($this->appdir);
         $dbs = $this->tkdb->getDBList();
+        
         $dbname = $this->dbcfg[$this->usedb]['dbname'];
+        
         if (!in_array($dbname, $dbs)) {
             Logs::colorMessage("Try Create database: $dbname", 'purple');
             $this->tkdb->createDatabase($dbname);
@@ -115,32 +118,19 @@ class DB {
      */
     public function update() {
         $tablefile = $this->tableOption['table_config'];
-        $confType = self::coalesce($this->tableOption, 'config_type', 'ini');
-        $ini = "{$this->appdir}/config/{$tablefile}.{$confType}";
-        $link = "{$this->appdir}/runtime/config/{$tablefile}.php";
-
-        $ret = self::createCache($ini, $link, function($ini, $php) {
-                    $from = $this->tkdb->getAllTableStructureCacheArray();
-                    $to = self::parseConf($ini);
-                    $this->tkdb->initModel($to, $this->usedb);
-                    $sql = $this->tkdb->updateSchema($from, $to);
-                    Logs::colorMessage('update database:', 'green');
-                    foreach ($sql as $t) {
-                        Logs::colorMessage('Exec: ', 'purple', false);
-                        Logs::colorMessage($t);
-                        $this->dbconn->executeUpdate($t);
-                    }
-
-                    $str = '<?php return ' . var_export($to, true) . ';';
-                    file_put_contents($php, $str);
-                }, $this->force);
-        if ($ret > 0) {
-            Logs::colorMessage('Update Success');
-        } elseif ($ret == 0) {
-            Logs::colorMessage('Update fail, have lock file', 'red');
-        } else {
-            Logs::colorMessage('config not modify');
+       
+        $from = $this->tkdb->getAllTableStructureCacheArray();
+        $to = $this->tkdb->loadConfig($tablefile);
+        $this->tkdb->initModel($to, $this->usedb);
+        $sql = $this->tkdb->updateSchema($from, $to);
+        Logs::colorMessage('update database:', 'green');
+        foreach ($sql as $t) {
+            Logs::colorMessage('Exec: ', 'purple', false);
+            Logs::colorMessage($t);
+            $this->dbconn->executeUpdate($t);
         }
+
+        Logs::colorMessage('Update Success');
     }
 
 }

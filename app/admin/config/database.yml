@@ -699,7 +699,7 @@ session :
             expire :  default
     option : 
         comment :  会话表
-        engine :  eemory
+        engine :  memory
 
 notify : 
     column : 

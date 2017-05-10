@@ -233,4 +233,8 @@ class QueryColumn {
         return $this;
     }
 
+    public function __toString() {
+        return $this->getSQL();
+    }
+
 }

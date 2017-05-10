@@ -22,6 +22,7 @@ class QueryWhere extends Object {
     protected $table = null;
     protected $qr = null;
     protected $andOrParts = [];
+    protected $lastSQL;
 
     public function __construct(Table $table, QueryBulider $qr) {
         $this->table = $table;
@@ -30,21 +31,41 @@ class QueryWhere extends Object {
 
     public function andX() {
         $args = func_get_args();
-        return $this->andOr($args, 'AND');
+        return ($this->lastSQL = $this->andOr($args, 'AND'));
     }
 
-    public function eq($k, $v) {
-        $cols = new QueryColumn($k, $this->qr, $this->table);
-        $cols->eq($v);
-        return $cols->getSQL();
+    public function orX() {
+        $args = func_get_args();
+        return ($this->lastSQL = $this->andOr($args, 'OR'));
+    }
+
+    public function eq($l, $r) {
+        return ($this->lastSQL = "$l = $r");
+    }
+
+    public function gt($l, $r) {
+        return ($this->lastSQL = "$l > $r");
+    }
+
+    public function lt($l, $r) {
+        return ($this->lastSQL = "$l < $r");
+    }
+
+    public function ge($l, $r) {
+        return ($this->lastSQL = "$l >= $r");
+    }
+
+    public function le($l, $r) {
+        return ($this->lastSQL = "$l <= $r");
+    }
+
+    public function ne($l, $r) {
+        return "$l <> $r";
     }
 
     protected function andOr($args, $type) {
         if (count($args) == 1 && is_array($args[0])) {
-            array_walk($args[0], function(&$v, $k) {
-                $v = $this->eq($k, $v);
-            });
-            return '(' . implode($type, $args[0]) . ')';
+            $args = $args[0];
         }
 
         $andList = array_map(function($expr) {
@@ -58,17 +79,16 @@ class QueryWhere extends Object {
         return '(' . implode($type, $andList) . ')';
     }
 
-    public function orX() {
-        $args = func_get_args();
-        return $this->andOr($args, 'OR');
-    }
-
     public function cols($cols) {
         return new QueryColumn($cols, $this->qr, $this->table);
     }
 
     public function __get($cols) {
         return $this->cols($cols, $this->qr, $this->table);
+    }
+
+    public function getWhereSQL() {
+        return $this->lastSQL;
     }
 
 }

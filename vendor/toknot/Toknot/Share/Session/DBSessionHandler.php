@@ -24,15 +24,32 @@ class DBSessionHandler implements \SessionHandlerInterface {
      */
     private $model;
     private $table;
+
+    /**
+     *
+     * @var boolean
+     */
     private $sessionExpired = false;
     private $gcCalled = false;
     private $sidCol = 'sid';
     private $dataCol = 'sess_data';
+
+    /**
+     * create time of column name
+     *
+     * @var string
+     */
     private $timeCol = 'create_time';
+
+    /**
+     * expire of column name
+     *
+     * @var string
+     */
     private $expireCol = 'expire';
 
     public function echoException($e) {
-        throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(),$e);
+        throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
     }
 
     /**
@@ -45,6 +62,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
         $this->dataCol = self::coalesce($option, 'dataCol', $this->dataCol);
         $this->expireCol = self::coalesce($option, 'expireCol', $this->expireCol);
         $this->timeCol = self::coalesce($option, 'timeCol', $this->timeCol);
+        $this->gcCalled = true;
     }
 
     public function isSessionExpired() {
@@ -69,7 +87,11 @@ class DBSessionHandler implements \SessionHandlerInterface {
     }
 
     public function gc($maxlifetime) {
-        $this->gcCalled = true;
+        $this->gcCalled = false;
+        $filter = $this->model->filter();
+        $col = $filter->cols($this->timeCol)->add($filter->cols($this->expireCol));
+        $filter->lt($col, time());
+        $this->model->delete($filter);
         return true;
     }
 
@@ -108,7 +130,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
                     return '';
                 }
 
-                return is_resource($sessionRow[$this->dataCol]) ? stream_get_contents($sessionRow[$this->dataCol]) : $sessionRow[$this->dataCol];
+                return $sessionRow[$this->dataCol];
             }
 
             $this->model->insert([$this->sidCol => $sessionId, $this->dataCol => '', $this->expireCol => 0, $this->timeCol => time()]);
@@ -129,7 +151,10 @@ class DBSessionHandler implements \SessionHandlerInterface {
         }
         if ($this->gcCalled) {
             $this->gcCalled = false;
-            $this->model->delete(["$this->expireCol + $this->timeCol", time(), '<']);
+            $filter = $this->model->filter();
+            $col = $filter->cols($this->timeCol)->add($filter->cols($this->expireCol));
+            $filter->lt($col, time());
+            $this->model->delete($filter);
         }
         return true;
     }

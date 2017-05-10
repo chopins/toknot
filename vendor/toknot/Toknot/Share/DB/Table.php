@@ -342,9 +342,14 @@ class Table extends TableIterator {
         if (is_array($keyValue)) {
             $where = $this->filter()->andX($keyValue);
         } else if ($this->isCompositePrimaryKey()) {
-            $where = $this->filter()->andX(array_combine($this->$this->primaryKeyName, func_get_args()));
+            $pkFilter = [];
+            $args = func_get_args();
+            foreach ($this->primaryKeyName as $i => $k) {
+                $pkFilter[] = $this->filter()->cols($k)->eq($args[$i]);
+            }
+            $where = $this->filter()->andX($pkFilter);
         } else {
-            $where = $this->filter()->eq($this->primaryKeyName, $keyValue);
+            $where = $this->filter()->cols($this->primaryKeyName)->eq($keyValue);
         }
         return $this->select($where)->execute(1)->getRow();
     }

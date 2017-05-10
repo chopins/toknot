@@ -26,7 +26,7 @@ class Configuration extends Object {
     private $cacheDir = '/runtime/config';
     private static $yamlfile;
 
-    public function __construct($cfg) {
+    public function __construct($cfg = []) {
         $this->iteratorArray = $cfg;
     }
 
@@ -332,7 +332,7 @@ class Configuration extends Object {
                 $var = trim($sub[1], '\'" ');
 
                 $checkAnchor = (strpos($var, '&') === 0);
- 
+
                 if (empty($var) || $checkAnchor === true) {
                     $i++;
                     $res[$key] = self::eachYaml($i, $s, $cn, $indent, $anchor);

@@ -75,7 +75,7 @@ class DBA extends Object {
         }
 
         $this->extType = explode(',', $allcfg->find('database.ext_type'));
-        
+
         $config = $allcfg->database[$this->usedb];
         if (isset($config['config_type'])) {
             $this->confType = $config['config_type'];
@@ -89,7 +89,6 @@ class DBA extends Object {
 
         $appCfg = $allcfg->app;
         self::$tableClassNs = self::nsJoin($appCfg['app_ns'], $appCfg->find('db_table_ns'));
-        $this->modelDir = self::realpath($allcfg->find('app.model_dir'), $this->appDir);
     }
 
     public function setConfType($type) {
@@ -106,6 +105,10 @@ class DBA extends Object {
 
     public function getDBConfig() {
         return $this->cfg;
+    }
+
+    public function initModelDir() {
+        $this->modelDir = self::realpath(Kernel::single()->cfg->find('app.model_dir'), $this->appDir);
     }
 
     public function getQuotedName($name) {
@@ -198,6 +201,7 @@ class DBA extends Object {
     }
 
     public function loadModel() {
+        $this->initModelDir();
         $modleFile = $this->modelDir . '/model.' . $this->usedb . '.php';
         if (!file_exists($modleFile)) {
             $tables = $this->loadConfig($this->tableConfig);
@@ -211,16 +215,17 @@ class DBA extends Object {
     }
 
     public function initModel($tables, $db) {
+        $this->initModelDir();
         if (!is_dir($this->modelDir)) {
             mkdir($this->modelDir);
         }
-       
+
         $code = '<?php' . PHP_EOL;
-        $code .= 'namespace ' . self::$tableClassNs . ';' . PHP_EOL;
+        $code .= 'namespace ' . self::$tableClassNs . PHP_NS . ucfirst($db) . ';' . PHP_EOL;
         $code .= 'use Toknot\Share\DB\Table;' . PHP_EOL;
 
         foreach ($tables as $table => $v) {
-            if(!isset($v['column'])) {
+            if (!isset($v['column'])) {
                 throw new BaseException("$table miss column list");
             }
             $columnSQL = implode(',', array_keys($v['column']));
@@ -276,9 +281,9 @@ class DBA extends Object {
     public static function table($table, $dbconfig = '', $newConn = false) {
         $db = self::decideIns($dbconfig);
         $conn = $db->connect($newConn);
-        $tableClass = self::nsJoin(self::$tableClassNs, self::table2Class($table));
+        $tableClass = self::nsJoin(self::$tableClassNs, ucfirst($db->getUseDB()), self::table2Class($table));
         $tableClass = self::dotNS($tableClass);
-      
+
         $db->loadModel();
         $m = new $tableClass($conn);
         return $m;

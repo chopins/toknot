@@ -232,6 +232,13 @@ abstract class TagBulid extends Object {
         return $this;
     }
 
+    public function unshift(TagBulid $tag) {
+        $st = new \SplObjectStorage;
+        $st->attach($tag);
+        $st->addAll($this->iteratorArray);
+        $this->iteratorArray = $st;
+    }
+
     public function batchPush($nodes) {
         foreach ($nodes as $node) {
             $this->push($node);
@@ -347,6 +354,18 @@ abstract class TagBulid extends Object {
             $arr->attach(clone $obj);
         }
         $this->iteratorArray = $arr;
+    }
+
+    public function serialize() {
+        return $this->getTags();
+    }
+
+    public function __toString() {
+        return $this->getTags();
+    }
+
+    public function unserialize($html) {
+        $this->innerHtml = $html;
     }
 
 }
