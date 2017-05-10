@@ -271,6 +271,20 @@ abstract class TagBulid extends Object {
         return $this;
     }
 
+    public function attr($attr, $value = null) {
+        if ($value === null) {
+            return $this->getAttr($attr);
+        }
+        return $this->addAttr($attr, $value);
+    }
+
+    public function getAttr($attr) {
+        if (isset($this->attr[$attr])) {
+            return $this->attr[$attr];
+        }
+        return false;
+    }
+
     public function addId($value) {
         $this->addAttr('id', $value);
         return $this;

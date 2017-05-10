@@ -25,7 +25,7 @@ class Input extends TagBulid {
 
     public function __construct($attr = []) {
         if (isset($attr['type']) && !self::hasType($attr['type'])) {
-            throw new BaseException("input tag unsupport type {$attr['type']}");
+            throw new BaseException("input tag unsupport {$attr['type']} type ");
         }
         if (version_compare(self::$page->getVer(), 4) === 1 &&
                 $attr['type'] == 'button' || $attr['type'] == 'submit') {

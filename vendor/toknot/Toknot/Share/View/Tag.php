@@ -112,11 +112,13 @@ class Tag extends TagBulid {
      * @return Toknot\Share\View\AnyTag
      */
     public static function form($attr = []) {
-        if (isset($attr['input']) && is_array($attr['input'])) {
-            $inputs = $attr['input'];
-            unset($attr['input']);
+        if (isset($attr['inputs']) && is_array($attr['inputs'])) {
+            $inputs = $attr['inputs'];
+            unset($attr['inputs']);
+        } else {
+            $inputs = [];
         }
-
+       
         $form = new Form($attr);
         $form->inputs($inputs);
         return $form;
