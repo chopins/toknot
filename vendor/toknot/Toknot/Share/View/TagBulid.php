@@ -153,6 +153,8 @@ abstract class TagBulid extends Object {
         foreach ($this->attr as $attr => $value) {
             if (is_bool($value)) {
                 $value = $value ? 'true' : 'false';
+            } elseif (!is_scalar($value)) {
+                continue;
             }
 
             if ($this->srckey == $attr && $this->resourceVer !== null) {
@@ -326,6 +328,25 @@ abstract class TagBulid extends Object {
             throw new BaseException('tag of attributes must is scalar value');
         }
         $this->addAttr($name, $value);
+    }
+
+    public function copy($num = 1) {
+        if ($num == 1) {
+            return clone $this;
+        }
+        $res = [];
+        for ($i = 0; $i < $num; $i++) {
+            $res[] = clone $this;
+        }
+        return $res;
+    }
+
+    public function __clone() {
+        $arr = new \SplObjectStorage();
+        foreach ($this->iteratorArray as $obj) {
+            $arr->attach(clone $obj);
+        }
+        $this->iteratorArray = $arr;
     }
 
 }

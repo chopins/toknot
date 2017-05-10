@@ -157,5 +157,9 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
         $obj->iteratorArray = $properties;
         return $obj;
     }
+    
+    public function __clone() {
+        $this->iteratorArray = clone $this->iteratorArray;
+    }
 
 }

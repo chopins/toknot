@@ -48,29 +48,39 @@ class Form extends TagBulid {
         $this->addAttr('enctype', $enctypeArr[$value]);
     }
 
-    public function label($id = '', $labelHit = '') {
+    public function label($id = '', $labelHit = '', $parent = null) {
         $labelAttr = $id ? ['for' => $id] : [];
         $label = new AnyTag('label', $labelAttr);
         $label->pushText($labelHit);
-        $this->push($label);
+        $parent->push($label);
         return $label;
     }
 
-    public function input($attr, $labelHit = null) {
-        $parent = $this;
+    public function input($attr, $labelHit = null, $parent = null) {
+        if ($parent) {
+            $this->push($parent);
+        } else {
+            $parent = $this;
+        }
+
         if ($labelHit !== null) {
-            $parent = $this->label(self::coalesce($attr, 'id'), $labelHit);
+            $parent = $this->label(self::coalesce($attr, 'id'), $labelHit, $parent);
         }
         self::coalesce($attr, 'value');
-        $hit = self::coalesce($attr, 'text', $attr['value']);
         $tag = new Input($attr);
+        $hit = self::coalesce($attr, 'text', $attr['value']);
         $tag->pushText($hit);
+        $tag->setHit($hit);
         $parent->push($tag);
         return $this;
     }
 
-    public function select($attr = [], $labelHit = null) {
-        $parent = $this;
+    public function select($attr = [], $labelHit = null, $parent = null) {
+        if ($parent) {
+            $this->push($parent);
+        } else {
+            $parent = $this;
+        }
         if ($labelHit !== null) {
             $parent = $this->label(self::coalesce($attr, 'id'), $labelHit);
         }
@@ -83,19 +93,24 @@ class Form extends TagBulid {
         foreach ($inputs as $key => $input) {
             self::coalesce($input, 'label', null);
             $input['name'] = is_numeric($key) ? '' : $key;
+            $parent = isset($input['parent']) && $input['parent'] instanceof TagBulid ? $input['parent'] : null;
             if ($input['type'] == 'select') {
-                $this->select($input, $input['label']);
+                $this->select($input, $input['label'], $parent);
             } elseif ($input['type'] == 'textarea') {
-                $this->textarea($input, $input['label']);
+                $this->textarea($input, $input['label'], $parent);
             } else {
                 self::coalesce($input, 'label', null);
-                $this->input($input, $input['label']);
+                $this->input($input, $input['label'], $parent);
             }
         }
     }
 
-    public function textarea($attr = [], $labelHit = null) {
-        $parent = $this;
+    public function textarea($attr = [], $labelHit = null, $parent = null) {
+        if ($parent) {
+            $this->push($parent);
+        } else {
+            $parent = $this;
+        }
         if ($labelHit !== null) {
             $parent = $this->label(self::coalesce($attr, 'id'), $labelHit);
         }
