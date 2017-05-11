@@ -21,6 +21,7 @@ class Common extends Controller {
 
     public function __construct() {
         $this->setMenu();
+        $this->startSession();
     }
 
     public function setMenu() {

@@ -11,6 +11,7 @@
 namespace Toknot\Share\DB;
 
 use Toknot\Boot\Object;
+use Toknot\Exception\BaseException;
 
 /**
  * QueryWhere
@@ -31,36 +32,68 @@ class QueryWhere extends Object {
 
     public function andX() {
         $args = func_get_args();
-        return ($this->lastSQL = $this->andOr($args, 'AND'));
+        $this->lastSQL = $this->andOr($args, 'AND');
+        return $this;
     }
 
     public function orX() {
         $args = func_get_args();
-        return ($this->lastSQL = $this->andOr($args, 'OR'));
+        $this->lastSQL = $this->andOr($args, 'OR');
+        return $this;
+    }
+
+    protected function checkType($value) {
+        if ($value instanceof QueryColumn) {
+            return true;
+        } elseif ($value instanceof QueryWhere) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected function expression($l, $r, $expr) {
+        if ($this->checkType($l) && !$this->checkType($r)) {
+            $hold = $this->qr->setParamter($l, $r);
+            $this->lastSQL = "$l $expr $hold";
+        } elseif ($this->checkType($r) && !$this->checkType($l)) {
+            $hold = $this->qr->setParamter($r, $l);
+            $this->lastSQL = "$hold $expr $l";
+        } elseif ($this->checkType($l) && $this->checkType($r)) {
+            $this->lastSQL = "$l $expr $r";
+        } else {
+            throw BaseException('at least one expr is be instance of QueryColumn or QueryWhere ');
+        }
     }
 
     public function eq($l, $r) {
-        return ($this->lastSQL = "$l = $r");
+        $this->expression($l, $r, '=');
+        return $this;
     }
 
     public function gt($l, $r) {
-        return ($this->lastSQL = "$l > $r");
+        $this->expression($l, $r, '>');
+        return $this;
     }
 
     public function lt($l, $r) {
-        return ($this->lastSQL = "$l < $r");
+        $this->expression($l, $r, '<');
+        return $this;
     }
 
     public function ge($l, $r) {
-        return ($this->lastSQL = "$l >= $r");
+        $this->expression($l, $r, '>=');
+        return $this;
     }
 
     public function le($l, $r) {
-        return ($this->lastSQL = "$l <= $r");
+        $this->expression($l, $r, '<=');
+        return $this;
     }
 
     public function ne($l, $r) {
-        return "$l <> $r";
+        $this->expression($l, $r, '<>');
+        return $this;
     }
 
     protected function andOr($args, $type) {
@@ -71,8 +104,10 @@ class QueryWhere extends Object {
         $andList = array_map(function($expr) {
             if ($expr instanceof QueryColumn) {
                 return $expr->getSQL();
+            } elseif ($expr instanceof QueryWhere) {
+                return $expr->getSQL();
             } else {
-                return $expr;
+                throw new BaseException('AND OR expr must be instanceof QueryColumn or QueryWhere');
             }
         }, $args);
 
@@ -87,7 +122,11 @@ class QueryWhere extends Object {
         return $this->cols($cols, $this->qr, $this->table);
     }
 
-    public function getWhereSQL() {
+    public function getSQL() {
+        return $this->lastSQL;
+    }
+
+    public function __toString() {
         return $this->lastSQL;
     }
 

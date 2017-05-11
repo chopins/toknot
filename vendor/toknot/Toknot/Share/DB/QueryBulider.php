@@ -47,7 +47,7 @@ class QueryBulider extends Object {
 
     public function where($where) {
         if ($where instanceof QueryWhere) {
-            $where = $where->getWhereSQL();
+            $where = $where->getSQL();
         }
         $this->builder->where($where);
     }
@@ -66,9 +66,10 @@ class QueryBulider extends Object {
     }
 
     public function setParamter($cols, $value, $type = null) {
+        $c = explode('.', $cols);
         $type = $type ? $type : $this->checkParamType($value);
         $idx = self::$paramIndex++;
-        $placeholder = ":pws{$idx}";
+        $placeholder = ":pws{$idx}" . end($c);
         $this->builder->setParameter($placeholder, $value, $type);
         return $placeholder;
     }

@@ -114,6 +114,8 @@ class QueryColumn {
     public function leftConvert($value) {
         if ($value instanceof QueryColumn) {
             return $value->getAllColumnName();
+        } elseif ($value instanceof QueryWhere) {
+            return $value;
         } else {
             return $this->qr->setParamter($this->getAllColumnName(), $value);
         }
@@ -209,6 +211,46 @@ class QueryColumn {
 
     public function div($value) {
         $this->sql = $this->getAllColumnName() . ' / ' . $this->leftConvert($value);
+        return $this;
+    }
+
+    public function leftLike($value) {
+        $this->sql = $this->getAllColumnName() . ' LIKE ' . $this->leftConvert('%' . $value);
+        return $this;
+    }
+
+    public function rightLike($value) {
+        $this->sql = $this->getAllColumnName() . ' LIKE ' . $this->leftConvert($value . '%');
+        return $this;
+    }
+
+    public function like($value) {
+        $this->sql = $this->getAllColumnName() . ' LIKE ' . $this->leftConvert('%' . $value . '%');
+        return $this;
+    }
+
+    public function eqLike($value) {
+        $this->sql = $this->getAllColumnName() . ' LIKE ' . $this->leftConvert($value);
+        return $this;
+    }
+    
+    public function notLeftLike($value) {
+        $this->sql = $this->getAllColumnName() . ' NOT LIKE ' . $this->leftConvert('%' . $value);
+        return $this;
+    }
+
+    public function notRightLike($value) {
+        $this->sql = $this->getAllColumnName() . ' NOT LIKE ' . $this->leftConvert($value . '%');
+        return $this;
+    }
+
+    public function notLike($value) {
+        $this->sql = $this->getAllColumnName() . ' NOT LIKE ' . $this->leftConvert('%' . $value . '%');
+        return $this;
+    }
+
+    public function notEqLike($value) {
+        $this->sql = $this->getAllColumnName() . ' NOT LIKE ' . $this->leftConvert($value);
         return $this;
     }
 
