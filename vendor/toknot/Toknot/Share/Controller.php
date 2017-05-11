@@ -227,8 +227,7 @@ class Controller extends Object {
      * @return string
      */
     public function get($key = '') {
-        $request = $this->kernel()->request;
-        return $request->get($key);
+        return $this->kernel()->getArg($key);
     }
 
     /**

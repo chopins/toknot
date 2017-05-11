@@ -34,9 +34,9 @@ class Route {
      * @console route
      */
     public function __construct() {
-        $path = Kernel::single()->getOption('-a');
-        $output = Kernel::single()->getOption('-o');
-        $confgType = Kernel::single()->getOption('-t');
+        $path = Kernel::single()->getArg('-a');
+        $output = Kernel::single()->getArg('-o');
+        $confgType = Kernel::single()->getArg('-t');
         if ($confgType == 'yml') {
             $this->confgType = 'yml';
         }

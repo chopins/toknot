@@ -29,7 +29,7 @@ class Help {
      */
     public function __construct() {
         $ns = 'Admin\Controller\Console\\';
-        $script = Kernel::single()->getOption(0);
+        $script = Kernel::single()->getArg(0);
         $message = [];
         $maxlength = 0;
 

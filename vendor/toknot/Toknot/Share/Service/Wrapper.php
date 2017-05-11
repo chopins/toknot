@@ -28,7 +28,7 @@ class Wrapper extends Object implements SystemCallWrapper {
     }
 
     public function call() {
-       
+        
     }
 
     public function init($path = '') {
@@ -45,6 +45,14 @@ class Wrapper extends Object implements SystemCallWrapper {
 
     public function stream_open($path) {
         return true;
+    }
+
+    public function response($runReuslt) {
+        var_dump($runReuslt);
+    }
+
+    public function getArg($key) {
+        return $key;
     }
 
 }

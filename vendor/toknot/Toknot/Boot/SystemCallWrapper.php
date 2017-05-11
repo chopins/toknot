@@ -39,4 +39,8 @@ interface SystemCallWrapper {
      * register the wrapper
      */
     public static function register();
+
+    public function response($runResult);
+
+    public function getArg($key);
 }

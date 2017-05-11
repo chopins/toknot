@@ -36,8 +36,8 @@ class DB {
     public $confObj = null;
     public function __construct() {
         $this->kernel = Kernel::single();
-        $this->appdir = $this->kernel->getOption('-a');
-        $type = $this->kernel->getOption('-t');
+        $this->appdir = $this->kernel->getArg('-a');
+        $type = $this->kernel->getArg('-t');
         if ($this->appdir) {
             $this->appdir = realpath($this->appdir);
             $type || $type = 'ini';
@@ -76,8 +76,8 @@ class DB {
         } else {
             $this->force = false;
         }
-        if ($this->kernel->getOption('-d')) {
-            $passdb = $this->kernel->getOption('-d');
+        if ($this->kernel->getArg('-d')) {
+            $passdb = $this->kernel->getArg('-d');
         }
 
         if (isset($passdb) && isset($this->dbcfg[$passdb])) {

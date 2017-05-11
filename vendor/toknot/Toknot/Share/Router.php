@@ -17,12 +17,10 @@ use Toknot\Boot\SystemCallWrapper;
 use Toknot\Exception\NotFoundException;
 use Toknot\Share\Request;
 use Toknot\Exception\MethodNotAllowedException as MethodNotAllowed;
-
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
-
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -79,8 +77,27 @@ class Router extends Object implements SystemCallWrapper {
         }
     }
 
+    public function response($runResult) {
+        if ($this->kernel->isCLI) {
+            echo $runResult['content'];
+            exit($this->runResult['code']);
+        }
+        header($runResult['message'], true, $runResult['code']);
+        if (!empty($runResult['option'])) {
+            foreach ($runResult['option'] as $op) {
+                header($op);
+            }
+        } else {
+            echo $runResult['content'];
+        }
+    }
+
     public function init($path = '') {
         $this->load();
+    }
+
+    public function getArg($key = '') {
+        return $this->request->get($key);
     }
 
     public static function register() {

@@ -31,8 +31,8 @@ class ParseView {
      * @console view.gen
      */
     public function createView() {
-        $file = Kernel::single()->getOption('-h');
-        $out = Kernel::single()->getOption('-o');
+        $file = Kernel::single()->getArg('-h');
+        $out = Kernel::single()->getArg('-o');
         $tagList = '';
         $this->init($file);
         $this->findBody($tagList);
@@ -48,8 +48,8 @@ class ParseView {
      * @console view.allgen
      */
     public function scan() {
-        $dir = Kernel::single()->getOption('-d');
-        $app = Kernel::single()->getOption('-a');
+        $dir = Kernel::single()->getArg('-d');
+        $app = Kernel::single()->getArg('-a');
         $apppath = realpath($app);
         $appTopNs = ucwords(basename($apppath));
         $view = $apppath . DIRECTORY_SEPARATOR . $appTopNs . DIRECTORY_SEPARATOR . 'View';
@@ -186,7 +186,7 @@ EOF;
      * @console layout
      */
     public function generationLayout() {
-        $file = Kernel::single()->getOption(2);
+        $file = Kernel::single()->getArg(2);
         if (!$file) {
             throw new BaseException('must give a file path');
         }

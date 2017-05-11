@@ -107,14 +107,6 @@ final class Kernel extends Object {
     const PASS_STATE = 0;
 
     /**
-     *
-     * @var \Toknot\Share\Request
-     * @access public
-     * @readonly
-     * @after Kernel::router()
-     */
-
-    /**
      * 
      * @param array $argc
      * @param int $argv
@@ -263,18 +255,7 @@ final class Kernel extends Object {
     }
 
     protected function response() {
-        if ($this->isCLI) {
-            echo $this->runResult['content'];
-            exit($this->runResult['code']);
-        }
-        header($this->runResult['message'], true, $this->runResult['code']);
-        if (!empty($this->runResult['option'])) {
-            foreach ($this->runResult['option'] as $op) {
-                header($op);
-            }
-        } else {
-            echo $this->runResult['content'];
-        }
+        $this->callInstance->response($this->runResult);
         return $this->runResult['code'];
     }
 
@@ -377,7 +358,10 @@ final class Kernel extends Object {
      * @param string $key
      * @return string
      */
-    public function getOption($key = null) {
+    public function getArg($key = null) {
+        if ($this->callInstance && ($arg = $this->callInstance->getArg($key))) {
+            return $arg;
+        }
         if (empty($this->cmdOption)) {
             $this->cmdOption = $this->walkOption();
         }
