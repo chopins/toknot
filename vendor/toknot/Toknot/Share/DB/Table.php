@@ -56,7 +56,6 @@ class Table extends TableIterator {
      */
     protected $qr = null;
     protected $statement = null;
-    protected $where = null;
     protected $lastSql = '';
     protected $joinTable = [];
 
@@ -239,8 +238,7 @@ class Table extends TableIterator {
      */
     public function filter() {
         $this->builder();
-        $this->where = new QueryWhere($this, $this->qr);
-        return $this->where;
+        return new QueryWhere($this, $this->qr);
     }
 
     public function cols($columnName) {

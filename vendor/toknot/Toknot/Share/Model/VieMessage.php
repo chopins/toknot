@@ -123,7 +123,7 @@ class VieMessage extends Object {
     public function __construct($messageTable) {
         $this->tableName = $messageTable;
         $this->tableInstance = DBA::table($this->tableName);
-        $this->pk = $this->tableInstance->primaryKey();
+        $this->pk = $this->tableInstance->pk();
         $this->kernel = Kernel::single();
         if ($this->kernel->isCLI) {
             $this->lockPrefix = $this->kernel->pid . $this->kernel->tid;
@@ -247,18 +247,19 @@ class VieMessage extends Object {
     public function receiveMessage($receiver, $rollback = true) {
         $uniqid = $this->uniqid();
 
-        $filter = QueryHelper::equal($this->lockFeild, $this->unprocessedFlag);
+        $filter = $this->tableInstance->cols($this->lockFeild)->eq($this->unprocessedFlag);
 
-        $set = QueryHelper::set($this->lockFeild, $uniqid);
+        $set = $this->tableInstance->cols($this->lockFeild)->set($uniqid);
         $mutexRow = [];
         if ($this->mutexMappingFeild) {
-            $mutexRow = $this->insertMutex($filter);
-            $filter = QueryHelper::andX($filter, [$this->mutexMappingFeild, $mutexRow, 'in']);
+            $mutexRow = $this->insertMutex();
+            $inRow = $this->tableInstance->cols($this->mutexMappingFeild)->in($mutexRow);
+            $filter = $this->tableInstance->filter()->andX($filter, $inRow);
         }
-        
+
         $this->tableInstance->update($set, $filter, $this->limit);
 
-        $where = QueryHelper::equal($this->lockFeild, $uniqid);
+        $where = $this->tableInstance->cols($this->lockFeild)->eq($uniqid);
         $res = $this->tableInstance->iterator($where, $this->limit);
         foreach ($res as $row) {
             $pkv = $row[$this->pk];
@@ -268,14 +269,18 @@ class VieMessage extends Object {
                 $rollbackMsg = $this->rollback($rollback, $uniqid, $mutexRow);
                 throw new VieMessageException($pkv, $uniqid, $e, $rollbackMsg);
             }
-            $where = QueryHelper::andX(QueryHelper::equal($this->pk, $pkv), QueryHelper::equal($this->lockFeild, $uniqid));
-            $this->tableInstance->update(QueryHelper::set($this->lockFeild, $this->processedFlag), $where, 1);
+            $lock = $this->tableInstance->cols($this->lockFeild)->eq($uniqid);
+            $pk = $this->tableInstance->cols($this->pk)->eq($pkv);
+            $where = $this->tableInstance->filter()->andX($pk, $lock);
+            $set = $this->tableInstance->cols($this->lockFeild)->set($this->processedFlag);
+            $this->tableInstance->update($set, $where, 1);
         }
         $this->deleteMutex($mutexRow);
     }
 
     protected function insertMutex($filter) {
         $mutex = DBA::table($this->mutexTable);
+
         $mutexRow = [];
         DBA::transaction(function() use($mutex, &$mutexRow, $filter) {
             $n = 1;
@@ -292,8 +297,10 @@ class VieMessage extends Object {
                     $id = $mutex->lastId();
                     $mutex = $mutex->select(['id', $id]);
                     $exist[] = $mutex[$this->mutexMappingFeild];
-                    $f = [$this->mutexMappingFeild, $exist, 'out'];
-                    $newfilter = QueryHelper::andX($filter, $f);
+
+                    $f = $this->tableInstance->cols($this->mutexMappingFeild)->out($exist);
+
+                    $newfilter = $this->tableInstance->filter()->andX($filter, $f);
                     $mutexRow[] = $mutex[$this->mutexMappingFeild];
                 } catch (\PDOException $e) {
                     $cont = stripos($e->getMessage(), 'Duplicate') !== false;
@@ -309,7 +316,8 @@ class VieMessage extends Object {
 
     protected function deleteMutex($mutexRow) {
         $mutex = DBA::table($this->mutexTable);
-        $mutex->delete([$this->mutexMappingFeild, $mutexRow, 'in']);
+        $filter = $mutex->cols($this->mutexMappingFeild)->in($mutexRow);
+        $mutex->delete($filter);
     }
 
     /**
@@ -334,8 +342,8 @@ class VieMessage extends Object {
     protected function rollback($rollback, $uniqid, $mutexRow) {
         if ($rollback) {
             try {
-                $set = QueryHelper::set($this->lockFeild, $this->unprocessedFlag);
-                $filter = QueryHelper::equal($this->lockFeild, $uniqid);
+                $set = $this->tableInstance->cols($this->lockFeild)->set($this->unprocessedFlag);
+                $filter = $this->tableInstance->cols($this->lockFeild)->eq($uniqid);
                 $this->tableInstance->update($set, $filter, $this->limit);
                 $this->deleteMutex($mutexRow);
                 return 'Has been rollback unprocess message';
