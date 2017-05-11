@@ -29,9 +29,11 @@ class Controller extends Object {
      */
     private static $viewParams = null;
     private $title = '';
-    private $layout = null;
+    private $layoutName = '';
     private static $sessionStarted = false;
     private $header = [];
+    private $layoutInstance = null;
+    private $output = true;
 
     /**
      * 
@@ -43,6 +45,22 @@ class Controller extends Object {
 
     public function route() {
         return $this->kernel()->callInstance;
+    }
+
+    public function getMianController() {
+        return $this->route()->getController('controller');
+    }
+
+    public function getController($key = '') {
+        return $this->route()->getController($key);
+    }
+
+    public function getCalled($key = '') {
+        return $this->route()->getCalled($key);
+    }
+
+    public function getMainCalled() {
+        return $this->route()->getCalled('controller');
     }
 
     /**
@@ -70,8 +88,16 @@ class Controller extends Object {
      * 
      * @param string $layout    The view layout of class name
      */
-    final public function setLayout($layout) {
-        $this->layout = $layout;
+    final public function setLayoutName($layout) {
+        $this->layoutName = $layout;
+    }
+
+    final public function getLayoutName() {
+        return $this->layoutName;
+    }
+
+    final public function getViewInstance() {
+        return $this->layoutInstance->getViewInstance();
     }
 
     /**
@@ -91,23 +117,32 @@ class Controller extends Object {
      * convert view to html and set response content
      * 
      * @param string $view  without namespace class name
-     * @param boolean $return   if true,the method will return the view of html
+     * @param boolean $output   if false,can be call responsePage() get the view of html
      * @return string
      */
-    public function view($view, $return = false) {
+    public function view($view, $output = true) {
         $appCfg = $this->config('app');
         $viewClass = $this->getViewClass($view);
 
-        if (empty($this->layout)) {
-            $this->layout = $appCfg['default_layout'];
+        if (empty($this->layoutName)) {
+            $this->layoutName = $appCfg['default_layout'];
         }
-        $layout = new $this->layout($viewClass, $this, $this->route());
 
-        $layout->title($this->title);
-        $layout->view($viewClass);
-        $html = $layout->getHtmlDoc();
+        $layoutName = $this->layoutName;
+        $this->layoutInstance = new $layoutName($viewClass, $this, $this->route());
 
-        if ($return) {
+        $this->layoutInstance->title($this->title);
+        $this->layoutInstance->view($viewClass);
+        $this->layoutInstance->build();
+        $this->output = $output;
+    }
+
+    public function responsePage() {
+        if (!$this->layoutInstance) {
+            return;
+        }
+        $html = $this->layoutInstance->getHtmlDoc();
+        if (!$this->output) {
             return $html;
         }
         $this->setResponse(200, $html);
@@ -247,6 +282,9 @@ class Controller extends Object {
      * @return Session
      */
     public function startSession() {
+        if(session_status() == PHP_SESSION_ACTIVE) {
+            return true;
+        }
         if (self::$sessionStarted) {
             return true;
         }

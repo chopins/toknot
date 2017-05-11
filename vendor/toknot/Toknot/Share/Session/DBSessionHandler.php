@@ -39,7 +39,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
      *
      * @var string
      */
-    private $timeCol = 'create_time';
+    private $createTimeCol = 'create_time';
 
     /**
      * expire of column name
@@ -61,8 +61,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
         $this->sidCol = self::coalesce($option, 'idCol', $this->sidCol);
         $this->dataCol = self::coalesce($option, 'dataCol', $this->dataCol);
         $this->expireCol = self::coalesce($option, 'expireCol', $this->expireCol);
-        $this->timeCol = self::coalesce($option, 'timeCol', $this->timeCol);
-        $this->gcCalled = true;
+        $this->createTimeCol = self::coalesce($option, 'timeCol', $this->createTimeCol);
     }
 
     public function isSessionExpired() {
@@ -87,16 +86,12 @@ class DBSessionHandler implements \SessionHandlerInterface {
     }
 
     public function gc($maxlifetime) {
-        $this->gcCalled = false;
-        $filter = $this->model->filter();
-        $col = $filter->cols($this->timeCol)->add($filter->cols($this->expireCol));
-        $filter->lt($col, time());
-        $this->model->delete($filter);
+        $this->gcCalled = true;
         return true;
     }
 
     public function destroy($sessionId) {
-        $this->model->delete(['sid' => $sessionId]);
+        $this->model->delete($this->model->cols($this->sidCol)->eq($sessionId));
         return true;
     }
 
@@ -108,7 +103,15 @@ class DBSessionHandler implements \SessionHandlerInterface {
             return false;
         }
         try {
-            $this->model->save([$this->sidCol => $sesssionId, $this->dataCol => $data, $this->expireCol => $maxlifetime, $this->timeCol => time()]);
+            $dataCol = $this->model->getTableStructure()['column'][$this->dataCol];
+            if (!isset($dataCol['length'])) {
+                $dataCol['length'] = DBA::single()->getColumnTypeDefaultLength($dataCol['type']);
+            }
+            $dataLen = strlen($data);
+            if ($dataLen > $dataCol['length']) {
+                throw new BaseException("the maximun length of the data column of session table is {$dataCol['length']}, $dataLen be given");
+            }
+            $this->model->save([$this->sidCol => $sesssionId, $this->dataCol => $data, $this->expireCol => $maxlifetime, $this->createTimeCol => time()]);
         } catch (\Exception $e) {
             DBA::single()->rollBack();
             DBA::single()->beginTransaction();
@@ -125,15 +128,14 @@ class DBSessionHandler implements \SessionHandlerInterface {
             $sessionRow = $this->model->findKeyRow($sessionId);
 
             if ($sessionRow) {
-                if ($sessionRow[$this->expireCol] + $sessionRow[$this->timeCol] < time()) {
+                if ($sessionRow[$this->expireCol] + $sessionRow[$this->createTimeCol] < time()) {
                     $this->sessionExpired = true;
                     return '';
                 }
-
                 return $sessionRow[$this->dataCol];
             }
 
-            $this->model->insert([$this->sidCol => $sessionId, $this->dataCol => '', $this->expireCol => 0, $this->timeCol => time()]);
+            $this->model->insert([$this->sidCol => $sessionId, $this->dataCol => '', $this->expireCol => 0, $this->createTimeCol => time()]);
         } catch (\Exception $e) {
             DBA::single()->rollBack();
 
@@ -152,7 +154,7 @@ class DBSessionHandler implements \SessionHandlerInterface {
         if ($this->gcCalled) {
             $this->gcCalled = false;
             $filter = $this->model->filter();
-            $col = $filter->cols($this->timeCol)->add($filter->cols($this->expireCol));
+            $col = $filter->cols($this->createTimeCol)->add($filter->cols($this->expireCol));
             $filter->lt($col, time());
             $this->model->delete($filter);
         }

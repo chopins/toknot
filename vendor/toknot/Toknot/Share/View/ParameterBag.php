@@ -33,4 +33,13 @@ class ParameterBag extends Object {
     public function offsetGet($offset) {
         return self::coalesce($this->iteratorArray, $offset);
     }
+
+    public function set($name, $value) {
+        $this->iteratorArray[$name] = $value;
+    }
+
+    public function get($name) {
+        $this->iteratorArray[$name];
+    }
+
 }

@@ -22,10 +22,8 @@ use Toknot\Exception\BaseException;
  */
 class NotFoundException extends BaseException {
 
-    public function __construct($exception) {
-        parent::__construct($exception->getMessage(), $exception->getCode(), $exception->getFile(), $exception->getLine(), $exception);
-        $this->httpStatusCode = 404;
-        $this->httpMessage = 'Resource Not Found';
+    public function __construct($exception = null) {
+        parent::__construct(404, 'Resource Not Found', $exception);
     }
 
 }

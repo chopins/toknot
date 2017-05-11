@@ -61,7 +61,6 @@ abstract class Layout extends Object {
         $this->route = $route;
         $this->constructHtml();
         $this->view($viewClass);
-        
     }
 
     final private function constructHtml() {
@@ -82,7 +81,7 @@ abstract class Layout extends Object {
     }
 
     final public function addBodyNode($tag, $attr = []) {
-        if($tag instanceof TagBulid) {
+        if ($tag instanceof TagBulid) {
             $this->body->push($tag);
             return $tag;
         }
@@ -99,6 +98,10 @@ abstract class Layout extends Object {
         $this->viewIns->setRoute($this->route);
     }
 
+    final public function getViewInstance() {
+        return $this->viewIns;
+    }
+
     final public function setRoute($route) {
         $this->route = $route;
     }
@@ -111,14 +114,17 @@ abstract class Layout extends Object {
         $this->title = Tag::title('');
     }
 
+    final public function build() {
+        $this->head();
+        $this->body();
+    }
+
     /**
      * return all html of page
      * 
      * @return string
      */
     final public function getHtmlDoc() {
-        $this->head();
-        $this->body();
         return Tag::getHtml();
     }
 

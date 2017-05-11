@@ -589,4 +589,9 @@ class DBA extends Object {
         return [$query, $dropSql];
     }
 
+    public function getColumnTypeDefaultLength($type) {
+        $cls = Type::getType($type);
+        return $cls->getDefaultLength($this->conn->getDatabasePlatform());
+    }
+
 }

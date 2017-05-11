@@ -13,7 +13,6 @@ namespace Toknot\Share\View;
 use Toknot\Boot\Object;
 use Toknot\Share\View\Layout;
 use Toknot\Share\View\Tag;
-
 use Toknot\Exception\BaseException;
 
 /**
@@ -42,9 +41,10 @@ abstract class View extends Object {
      * @var Toknot\Share\View\AnyTag
      */
     protected $head;
-    private static $title = '';
-    private $controler = null;
-    private $router = null;
+    protected $controler = null;
+    protected $router = null;
+    protected $routeStorage = [];
+    protected $formStorage = [];
 
     final public function __construct(Layout $layout, $param = []) {
         $this->param = $param;
@@ -90,15 +90,30 @@ abstract class View extends Object {
      * @return Toknot\Share\View\TagBulid
      */
     final public function __call($name, $argv = []) {
+        $name = strtolower($name);
         $argc = count($argv);
-        if ($argc == 0) {
-                return Tag::$name();
+        $node = $argc == 0 ? Tag::$name() : self::invokeStatic($argc, $name, $argv, 'Toknot\Share\View\Tag');
+        if ($name == 'form') {
+            $this->formStorage[] = $node;
         }
-        return self::invokeStatic($argc, $name, $argv, 'Toknot\Share\View\Tag');
+    
+        return $node;
     }
 
     final public function route($route, $params = []) {
-        return $this->router->url($route, $params);
+        $url = $this->router->url($route, $params);
+        $method = $this->router->getMethods($route);
+
+        $this->routeStorage[$route] = ['url' => $url, 'methods' => $method];
+        return $url;
+    }
+
+    final public function getRouteStorage() {
+        return $this->routeStorage;
+    }
+
+    final public function getFormStorage() {
+        return $this->formStorage;
     }
 
 }

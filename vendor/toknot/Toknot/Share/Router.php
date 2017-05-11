@@ -17,6 +17,7 @@ use Toknot\Boot\SystemCallWrapper;
 use Toknot\Exception\NotFoundException;
 use Toknot\Share\Request;
 use Toknot\Exception\MethodNotAllowedException as MethodNotAllowed;
+use Toknot\Exception\BaseException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -51,7 +52,8 @@ class Router extends Object implements SystemCallWrapper {
     private $request;
     private $appCfg = null;
     private $kernel = null;
-    private $call = [];
+    private $callController = [];
+    private $lastCall = [];
 
     protected function __construct() {
         $this->topRoutes = new RouteCollection();
@@ -68,19 +70,27 @@ class Router extends Object implements SystemCallWrapper {
 
     public function call() {
         $parameters = $this->match();
-
         $this->request = $this->getRequest();
         $requireParams = $this->request->attributes;
-        $exec = $this->middlewareNamespace($this->appCfg);
+        $exec = $this->getNamespace($this->appCfg);
+        $this->callController = $parameters;
         foreach ($exec as $key => $ns) {
             $this->launch($parameters, $ns, $key, $requireParams);
+        }
+        
+        foreach ($this->lastCall as $call) {
+            if (method_exists($call, 'responsePage')) {
+                $call->responsePage();
+            }
         }
     }
 
     public function response($runResult) {
+        
+        
         if ($this->kernel->isCLI) {
             echo $runResult['content'];
-            exit($this->runResult['code']);
+            exit($runResult['code']);
         }
         header($runResult['message'], true, $runResult['code']);
         if (!empty($runResult['option'])) {
@@ -118,8 +128,24 @@ class Router extends Object implements SystemCallWrapper {
         return $this->call();
     }
 
-    public function getInvoke($key = null) {
-        return $key ? $this->call[$key] : $this->call;
+    public function getController($key = null) {
+        if (isset($this->callController[$key])) {
+            return $this->callController[$key];
+        } else {
+            foreach ($this->callController as $c) {
+                if (is_array($c) && isset($c[$key])) {
+                    return $c[$key];
+                }
+            }
+        }
+        return $this->callController;
+    }
+
+    public function getCalled($key) {
+        if (isset($this->lastCall[$key])) {
+            return $this->lastCall[$key];
+        }
+        return $this->lastCall;
     }
 
     private function launch($parameters, $ns, $type, $requireParams) {
@@ -128,18 +154,17 @@ class Router extends Object implements SystemCallWrapper {
         }
 
         if (is_array($parameters[$type])) {
+            $this->lastCall[$type] = [];
             foreach ($parameters[$type] as $name) {
                 if (empty($name)) {
                     continue;
                 }
                 $class = self::nsJoin($ns, $name);
-                $this->call[$type] = $name;
-                $this->invoke($class, $requireParams);
+                $this->lastCall[$type][] = $this->invoke($class, $requireParams);
             }
         } else {
             $class = self::nsJoin($ns, $parameters[$type]);
-            $this->call[$type] = $parameters[$type];
-            $this->invoke($class, $requireParams);
+            $this->lastCall[$type] = $this->invoke($class, $requireParams);
         }
     }
 
@@ -166,6 +191,7 @@ class Router extends Object implements SystemCallWrapper {
                 $groupins->{$calls[1]}();
             }
         }
+        return $groupins;
     }
 
     public static function to($n, $param) {
@@ -198,11 +224,18 @@ class Router extends Object implements SystemCallWrapper {
         return $g->generate($action, $parameters);
     }
 
+    public function getMethods($action) {
+        if (null !== $route = $this->topRoutes->get($action)) {
+            return $route->getMethods();
+        }
+        throw new BaseException("the named route '$action' as such route does not exist.");
+    }
+
     public function findRouteByController($controller) {
-        foreach ($this->topRoutes as $route) {
+        foreach ($this->topRoutes as $n => $route) {
             $def = $route->getDefaults();
             if ($def['controller'] == $controller) {
-                return $route;
+                return [$n => $route];
             }
         }
         return null;
@@ -251,7 +284,7 @@ class Router extends Object implements SystemCallWrapper {
         return $parameters;
     }
 
-    public function middlewareNamespace($appCfg) {
+    public function getNamespace($appCfg) {
         $ctlns = self::nsJoin($appCfg['app_ns'], $appCfg['ctl_ns']);
         $middlens = self::nsJoin($appCfg['app_ns'], $appCfg['middleware_ns']);
         return ['group' => $middlens, 'before' => $middlens, 'controller' => $ctlns, 'after' => $middlens];

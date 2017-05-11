@@ -17,12 +17,10 @@ namespace Toknot\Exception;
  * NotAllowedMethodException
  * 
  */
-class MethodNotAllowedException extends BaseException {
+class MethodNotAllowedException extends HttpResponseExcetion {
 
     public function __construct($exception) {
-        parent::__construct($exception->getMessage(), $exception->getCode(), $exception->getFile(), $exception->getLine(), $exception);
-        $this->httpStatusCode = 405;
-        $this->httpMessage = 'Method Not Allowed';
+        parent::__construct(405, 'Method Not Allowed', $exception);
     }
 
 }

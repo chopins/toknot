@@ -32,6 +32,7 @@ abstract class TagBulid extends Object {
     /**
      *
      * @var boolean
+     * @readonly
      */
     protected $singleTag = false;
     protected $innerHtml = '';
@@ -39,6 +40,7 @@ abstract class TagBulid extends Object {
     /**
      *
      * @var string
+     * @readonly
      */
     protected $tagName = '';
     protected $tagStyle = [];
@@ -165,9 +167,9 @@ abstract class TagBulid extends Object {
                 $srcHost = $this->host ? $this->host : (self::$srcDefaultHost ? self::$srcDefaultHost : false);
                 if (!$srcHost) {
                     list($pro) = explode('/', GlobalFilter::env('SERVER_PROTOCOL'));
-                    $value = strtolower($pro) . "://" . GlobalFilter::env('HTTP_HOST') . $value;
+                    $value = strtolower($pro) . '://' . GlobalFilter::env('HTTP_HOST') . $value;
                 }
-                $value = "$srcHost$value";
+                $value = "{$srcHost}{$value}";
             }
 
             $v = addcslashes($value, '\'\\');
@@ -255,7 +257,7 @@ abstract class TagBulid extends Object {
         if ($html) {
             $this->iteratorArray->removeAll($this->iteratorArray);
             $this->innerHtml = $html;
-            return;
+            return $this;
         }
         $html = '';
         foreach ($this->iteratorArray as $tag) {
@@ -324,10 +326,14 @@ abstract class TagBulid extends Object {
     }
 
     final public function __get($name) {
-        if (isset($this->attr[$name])) {
-            return $this->attr[$name];
+        try {
+            return parent::__get($name);
+        } catch (UndefinedPropertyException $ex) {
+            if (isset($this->attr[$name])) {
+                return $this->attr[$name];
+            }
+            throw new UndefinedPropertyException($this, $name);
         }
-        throw new UndefinedPropertyException($this, $name);
     }
 
     final public function __set($name, $value) {
