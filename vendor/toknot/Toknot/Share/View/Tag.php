@@ -11,6 +11,7 @@
 namespace Toknot\Share\View;
 
 use Toknot\Exception\BaseException;
+use Toknot\Boot\Tookit;
 
 /**
  * html of Tag
@@ -195,7 +196,7 @@ class Tag extends TagBulid {
      * @throws BaseException
      */
     public static function __callStatic($name, $attr) {
-        self::coalesce($attr, 0, []);
+        Tookit::coalesce($attr, 0, []);
         $tagView = new AnyTag(strtolower($name), $attr[0]);
         return $tagView;
     }

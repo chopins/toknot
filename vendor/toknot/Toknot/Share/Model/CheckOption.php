@@ -13,6 +13,7 @@ namespace Toknot\Share\Model;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
 use Toknot\Boot\Kernel;
+use Toknot\Boot\Tookit;
 
 /**
  * CheckValue
@@ -187,7 +188,7 @@ class CheckOption extends Object {
 
     public function checkOption() {
         foreach ($this->option as $k => $t) {
-            self::coalesce($this->iteratorArray, $k, $t);
+            Tookit::coalesce($this->iteratorArray, $k, $t);
         }
         return true;
     }

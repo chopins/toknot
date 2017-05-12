@@ -10,6 +10,8 @@
 
 namespace Toknot\Share\View;
 
+use Toknot\Boot\Tookit;
+
 /**
  * Select
  *
@@ -22,7 +24,7 @@ class Select extends TagBulid {
     public function __construct($attr) {
         $this->tagName = 'select';
 
-        $option = self::arrayDelete($attr, 'option');
+        $option = Tookit::arrayDelete($attr, 'option');
         if ($option && is_array($option)) {
             $this->option = $option;
         }

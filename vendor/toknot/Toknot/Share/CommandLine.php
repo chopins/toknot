@@ -14,6 +14,7 @@ use Toknot\Boot\Logs;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Tookit;
 use Toknot\Exception\ContinueException;
+use Toknot\Boot\ObjectAssistant;
 
 /**
  *  CommandLine
@@ -22,7 +23,7 @@ use Toknot\Exception\ContinueException;
  */
 class CommandLine {
 
-    use Tookit;
+    use ObjectAssistant;
 
     private $progMsgStart = 0;
     private static $autoHistory = false;
@@ -86,10 +87,10 @@ class CommandLine {
 
         ($percent > 100) && ($percent = 100);
         $cols = $this->getcols();
-        $allMsgLen = self::strlen($message);
+        $allMsgLen = Tookit::strlen($message);
         $msglen = $allMsgLen;
         $space = $cols - $allMsgLen;
-        $speedlen = self::strlen($speed);
+        $speedlen = Tookit::strlen($speed);
 
         if ($space >= 102 + $speedlen) {
             $flag = $percent;
@@ -103,7 +104,7 @@ class CommandLine {
         } else {
             if ($space < 12 + $speedlen) {
                 $msglen = $allMsgLen - ($space > 0 ? 12 + $speedlen - $space : abs($space) + 12 + $speedlen);
-                $message = self::substr($message, $this->progMsgStart, $msglen);
+                $message = Tookit::substr($message, $this->progMsgStart, $msglen);
                 $this->progMsgStart = ($this->progMsgStart + $msglen < $allMsgLen) ?
                         ($this->progMsgStart + 1) : 0;
             }
@@ -188,7 +189,7 @@ class CommandLine {
      */
     public function interactive($callable, $prompt = null) {
         $this->message('Toknot interactive shell, ( Ctrl+C exit)');
-        $prompt = self::coal($prompt, '>>>');
+        $prompt = Tookit::coal($prompt, '>>>');
         do {
             $enter = $this->readline($prompt, 'green');
             if (!self::$autoHistory) {

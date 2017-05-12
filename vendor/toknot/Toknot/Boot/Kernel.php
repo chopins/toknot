@@ -13,7 +13,6 @@
 
 namespace Toknot\Boot;
 
-use Toknot\Boot\Tookit;
 use Toknot\Boot\Import;
 use Toknot\Boot\Object;
 use Toknot\Boot\Configuration;
@@ -27,7 +26,7 @@ use Toknot\Boot\Decorator;
 
 final class Kernel extends Object {
 
-    use Tookit;
+    use ObjectAssistant;
 
     /**
      *
@@ -164,6 +163,17 @@ final class Kernel extends Object {
         }
     }
 
+    public function propertySetList() {
+        return ['trace' => 'app.trace',
+            'loggerClass' => 'app.log.logger',
+            'logEnable' => 'app.log.enable',
+            'logCfg' => 'app.log',
+            'enableShortPath' => 'app.short_except_path',
+            'wrapperList' => 'wrapper',
+            'defaultCall' => 'app.default_call',
+            'vendor' => 'vendor'];
+    }
+
     private function setRuntimeEnv($parseClass = null) {
         if (!extension_loaded('filter')) {
             GlobalFilter::unavailablePHPFilter();
@@ -173,20 +183,17 @@ final class Kernel extends Object {
         list($this->schemes) = GlobalFilter::env('SERVER_PROTOCOL', '/');
         $this->schemes = strtolower($this->schemes);
         $this->cfg = $this->loadMainConfig();
+        
+        $this->autoConfigProperty($this->propertySetList(), $this->cfg);
 
-        $this->trace = $this->cfg->find('app.trace');
-
-        $loggerClass = $this->cfg->find('app.log.logger');
-
-        $this->logEnable = $this->cfg->find('app.log.enable');
-        if ($this->logEnable && is_subclass_of($loggerClass, 'Toknot\Boot\Logger')) {
-            $this->logger = new $loggerClass($this->cfg->find('app.log'));
+        if ($this->logEnable && is_subclass_of($this->loggerClass, 'Toknot\Boot\Logger')) {
+            $this->logger = new $this->loggerClass($this->logCfg);
         } else {
-            $this->logger = $this->cfg->find('app.log.logger');
+            $this->logger = $this->loggerClass;
         }
 
 
-        if ($this->cfg->find('app.short_except_path')) {
+        if ($this->enableShortPath) {
             Logs::$shortPath = strlen(dirname(dirname(TKROOT)));
         }
 
@@ -199,7 +206,6 @@ final class Kernel extends Object {
     }
 
     public function registerWrapper() {
-        $this->wrapperList = $this->cfg->find('wrapper');
         foreach ($this->wrapperList as $cls) {
             if (is_subclass_of($cls, 'Toknot\Boot\SystemCallWrapper', true)) {
                 $cls::register();
@@ -210,11 +216,9 @@ final class Kernel extends Object {
     }
 
     public function init() {
-        $def = $this->cfg->find('app.default_call');
-
         $scheme = parse_url(ltrim($this->requestUri, '/'), PHP_URL_SCHEME);
         if (!$scheme) {
-            $this->callWrapper = $this->wrapperList[$def];
+            $this->callWrapper = $this->wrapperList[$this->defaultCall];
         } else {
             foreach ($this->wrapperList as $pro => $cls) {
                 if ($pro == $scheme) {
@@ -255,7 +259,12 @@ final class Kernel extends Object {
     }
 
     protected function response() {
-        $this->callInstance->response($this->runResult);
+        if (!$this->callInstance instanceof SystemCallWrapper) {
+            echo $this->runResult['message'];
+            echo $this->runResult['content'];
+        } else {
+            $this->callInstance->response($this->runResult);
+        }
         return $this->runResult['code'];
     }
 
@@ -394,7 +403,7 @@ final class Kernel extends Object {
     private function importVendor() {
         $vendor = dirname(TKROOT);
 
-        foreach ($this->cfg->vendor as $v) {
+        foreach ($this->vendor as $v) {
             $this->import->addPath("$vendor/$v");
         }
         $appname = ucfirst(basename(APPDIR));
@@ -426,7 +435,7 @@ final class Kernel extends Object {
     }
 
     public function __destruct() {
-        self::releaseShutdownHandler();
+        $this->releaseShutdownHandler();
     }
 
     /**

@@ -12,14 +12,12 @@ namespace Tool\Controller\Console;
 
 use Toknot\Share\DB\DBA;
 use Toknot\Boot\Kernel;
-use Toknot\Boot\Tookit;
+
 use Toknot\Boot\Logs;
 use Toknot\Boot\Configuration;
 
 class DB {
-
-    use Tookit;
-
+    
     /**
      *
      * @var Toknot\Share\DB

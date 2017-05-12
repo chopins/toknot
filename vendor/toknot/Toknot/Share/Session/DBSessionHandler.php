@@ -16,8 +16,6 @@ use Toknot\Exception\BaseException;
 
 class DBSessionHandler implements \SessionHandlerInterface {
 
-    use Tookit;
-
     /**
      *
      * @var \Toknot\Share\DBTable
@@ -58,10 +56,10 @@ class DBSessionHandler implements \SessionHandlerInterface {
      */
     public function __construct($table, $option = []) {
         $this->table = $table;
-        $this->sidCol = self::coalesce($option, 'idCol', $this->sidCol);
-        $this->dataCol = self::coalesce($option, 'dataCol', $this->dataCol);
-        $this->expireCol = self::coalesce($option, 'expireCol', $this->expireCol);
-        $this->createTimeCol = self::coalesce($option, 'timeCol', $this->createTimeCol);
+        $this->sidCol = Tookit::coalesce($option, 'idCol', $this->sidCol);
+        $this->dataCol = Tookit::coalesce($option, 'dataCol', $this->dataCol);
+        $this->expireCol = Tookit::coalesce($option, 'expireCol', $this->expireCol);
+        $this->createTimeCol = Tookit::coalesce($option, 'timeCol', $this->createTimeCol);
     }
 
     public function isSessionExpired() {

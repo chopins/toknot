@@ -19,8 +19,6 @@ use Toknot\Share\View\Tag;
  */
 class Element {
 
-    use Tookit;
-
     /**
      * create form
      * 
@@ -37,23 +35,23 @@ class Element {
      * @return Toknot\Share\View\TagBulid
      */
     public static function postForm($data) {
-        $enctype = self::coalesce($data, 'type', 'form');
+        $enctype = Tookit::coalesce($data, 'type', 'form');
 
         $inputs = [];
         $select = [];
         foreach ($data['input'] as $name => $input) {
-            $type = self::coalesce($input, 'type', 'text');
+            $type = Tookit::coalesce($input, 'type', 'text');
             if ($type == 'checkbox' || $type == 'radio') {
                 $select[$name] = isset($select[$name]) ? $select[$name] + 1 : 0;
                 $select[$name] > 0 && ($name .= $select[$name]);
             }
-            self::coalesce($input, 'id', $name);
-            $label = self::coalesce($input, 'label', '');
-            self::coalesce($input, 'placeholder', $label);
+            Tookit::coalesce($input, 'id', $name);
+            $label = Tookit::coalesce($input, 'label', '');
+            Tookit::coalesce($input, 'placeholder', $label);
             if ($input['type'] == 'submit') {
-                self::coalesce($input, 'class', 'pure-button pure-button-primary');
+                Tookit::coalesce($input, 'class', 'pure-button pure-button-primary');
             } elseif ($input['type'] == 'button') {
-                self::coalesce($input, 'class', 'pure-button');
+                Tookit::coalesce($input, 'class', 'pure-button');
             }
             $inputs[$name] = $input;
         }

@@ -12,7 +12,7 @@ namespace Admin\View\Layout;
 
 use Toknot\Share\View\Layout;
 use Toknot\Share\View\Tag;
-
+use Toknot\Boot\Tookit;
 /**
  * Default of layout
  *
@@ -99,9 +99,9 @@ class DefaultLayout extends Layout {
     }
 
     public function addMenuItem($parent, $item) {
-        $text = self::coalesce($item, 0);
-        $url = self::coalesce($item, 1, '#');
-        $icon = self::coalesce($item, 2);
+        $text = Tookit::coalesce($item, 0);
+        $url = Tookit::coalesce($item, 1, '#');
+        $icon = Tookit::coalesce($item, 2);
 
         $li = Tag::li($this->menuItemAttr);
         $parent->push($li);

@@ -11,14 +11,14 @@
 namespace Toknot\Share\HTTPTool;
 
 use Toknot\Boot\GlobalFilter;
-use Toknot\Boot\Object;
+use Toknot\Boot\Tookit;
 
 /**
  * HttpTool
  *
  * @author chopin
  */
-class HttpRequest extends Object {
+class HttpRequest {
 
     protected $wrapper = null;
     protected $option = [];
@@ -89,7 +89,7 @@ class HttpRequest extends Object {
 
     public function getWrapper() {
         $fp = null;
-        $this->wrapper = self::getStreamWrappersData($this->url, $this->option, $fp);
+        $this->wrapper = Tookit::getStreamWrappersData($this->url, $this->option, $fp);
         $this->fp = $fp;
     }
 

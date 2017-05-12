@@ -13,6 +13,7 @@ namespace Toknot\Share;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Configuration;
 use Toknot\Boot\Object;
+use Toknot\Boot\Tookit;
 use Toknot\Boot\SystemCallWrapper;
 use Toknot\Exception\NotFoundException;
 use Toknot\Share\Request;
@@ -42,15 +43,19 @@ class Router extends Object implements SystemCallWrapper {
     private $routeDeclare = '';
     private $subCollection = [];
     private $subCollectionParams = [];
-    private $confType = 'ini';
+    protected $confType = 'ini';
     public $appDIr = APPDIR;
+    public $methodSeparator = '@';
+    public $staticMethodSeparator = ':';
+    protected $appns = '';
+    protected $ctlns = '';
+    protected $middens = '';
 
     /**
      *
      * @var \Toknot\Share\Request
      */
     private $request;
-    private $appCfg = null;
     private $kernel = null;
     private $callController = [];
     private $lastCall = [];
@@ -58,10 +63,16 @@ class Router extends Object implements SystemCallWrapper {
     protected function __construct() {
         $this->topRoutes = new RouteCollection();
         $this->kernel = Kernel::single();
-        $this->appCfg = $this->kernel->cfg->app;
-        if (!empty($this->appCfg['route_conf_type'])) {
-            $this->confType = $this->appCfg['route_conf_type'];
-        }
+        $this->autoConfigProperty($this->propertySetList(), $this->kernel->cfg);
+    }
+
+    public function propertySetList() {
+        return ['confType' => 'app.route_conf_type',
+            'methodSeparator' => 'app.route_method_sp',
+            'staticMethodSeparator' => 'app.route_static_method_sp',
+            'appns' => 'app.app_ns',
+            'ctlns' => 'app.ctl_ns',
+            'middens' => 'app.middleware_ns'];
     }
 
     public static function getInstance() {
@@ -72,12 +83,12 @@ class Router extends Object implements SystemCallWrapper {
         $parameters = $this->match();
         $this->request = $this->getRequest();
         $requireParams = $this->request->attributes;
-        $exec = $this->getNamespace($this->appCfg);
+        $exec = $this->getNamespace();
         $this->callController = $parameters;
         foreach ($exec as $key => $ns) {
             $this->launch($parameters, $ns, $key, $requireParams);
         }
-        
+
         foreach ($this->lastCall as $call) {
             if (method_exists($call, 'responsePage')) {
                 $call->responsePage();
@@ -86,8 +97,8 @@ class Router extends Object implements SystemCallWrapper {
     }
 
     public function response($runResult) {
-        
-        
+
+
         if ($this->kernel->isCLI) {
             echo $runResult['content'];
             exit($runResult['code']);
@@ -159,11 +170,11 @@ class Router extends Object implements SystemCallWrapper {
                 if (empty($name)) {
                     continue;
                 }
-                $class = self::nsJoin($ns, $name);
+                $class = Tookit::nsJoin($ns, $name);
                 $this->lastCall[$type][] = $this->invoke($class, $requireParams);
             }
         } else {
-            $class = self::nsJoin($ns, $parameters[$type]);
+            $class = Tookit::nsJoin($ns, $parameters[$type]);
             $this->lastCall[$type] = $this->invoke($class, $requireParams);
         }
     }
@@ -173,8 +184,19 @@ class Router extends Object implements SystemCallWrapper {
             return false;
         }
 
-        $calls = explode('::', $call);
+        if (strpos($call, $this->staticMethodSeparator) !== false) {
+            $calls = explode($this->staticMethodSeparator, $call);
+            if (empty($calls[0])) {
+                return self::callFunc($calls[1]);
+            } else {
+                return self::invokeStatic(0, $calls[1], [], $calls[0]);
+            }
+        } else {
+            $calls = explode($this->methodSeparator, $call);
+        }
+
         $class = $calls[0];
+
         $paramsCount = $requireParams->count();
 
         $params = iterator_to_array($requireParams, false);
@@ -196,13 +218,13 @@ class Router extends Object implements SystemCallWrapper {
 
     public static function to($n, $param) {
         if (isset($param['prefix'])) {
-            self::coalesce($param['prefix'], 'controller', '');
-            self::splitStr($param['prefix'], 'option', ',', $param['option']);
-            self::coalesce($param['prefix'], 'host', $param['host']);
-            self::splitStr($param['prefix'], 'schemes', ',', $param['schemes']);
-            self::coalesce($param['prefix'], 'condition', ',', $param['condition']);
-            self::splitStr($param['prefix'], 'method', ',', $param['method']);
-            self::coalesce($param['prefix'], 'require', $param['require']);
+            Tookit::coalesce($param['prefix'], 'controller', '');
+            Tookit::splitStr($param['prefix'], 'option', ',', $param['option']);
+            Tookit::coalesce($param['prefix'], 'host', $param['host']);
+            Tookit::splitStr($param['prefix'], 'schemes', ',', $param['schemes']);
+            Tookit::coalesce($param['prefix'], 'condition', ',', $param['condition']);
+            Tookit::splitStr($param['prefix'], 'method', ',', $param['method']);
+            Tookit::coalesce($param['prefix'], 'require', $param['require']);
             $param['prefix']['defaults'] = ['group' => $param['prefix']['controller']];
             self::single()->addCollection($n, $param);
         } else {
@@ -211,12 +233,12 @@ class Router extends Object implements SystemCallWrapper {
     }
 
     public static function checkParamOption(&$option) {
-        self::splitStr($option, 'option');
-        self::coalesce($option, 'host');
-        self::splitStr($option, 'schemes');
-        self::coalesce($option, 'condition');
-        self::splitStr($option, 'method', ',', ['GET']);
-        self::coalesce($option, 'require', []);
+        Tookit::splitStr($option, 'option');
+        Tookit::coalesce($option, 'host');
+        Tookit::splitStr($option, 'schemes');
+        Tookit::coalesce($option, 'condition');
+        Tookit::splitStr($option, 'method', ',', ['GET']);
+        Tookit::coalesce($option, 'require', []);
     }
 
     public function url($action, $parameters = []) {
@@ -277,27 +299,27 @@ class Router extends Object implements SystemCallWrapper {
         } catch (MethodNotAllowedException $e) {
             throw new MethodNotAllowed($e);
         }
-        $tparams = self::arrayRemove($parameters, 'controller', 'before', 'after', 'group', '_route');
+        $tparams = Tookit::arrayRemove($parameters, 'controller', 'before', 'after', 'group', '_route');
 
         $this->request->attributes = new ParameterBag($tparams);
 
         return $parameters;
     }
 
-    public function getNamespace($appCfg) {
-        $ctlns = self::nsJoin($appCfg['app_ns'], $appCfg['ctl_ns']);
-        $middlens = self::nsJoin($appCfg['app_ns'], $appCfg['middleware_ns']);
+    public function getNamespace() {
+        $ctlns = Tookit::nsJoin($this->appns, $this->ctlns);
+        $middlens = Tookit::nsJoin($this->appns, $this->middens);
         return ['group' => $middlens, 'before' => $middlens, 'controller' => $ctlns, 'after' => $middlens];
     }
 
     public function add($name, $option) {
         self::checkParamOption($option);
-        self::coalesce($option, 'before');
-        self::coalesce($option, 'after');
+        Tookit::coalesce($option, 'before');
+        Tookit::coalesce($option, 'after');
 
-        $option['defaults'] = ['controller' => self::dotNS($option['controller']),
-            'before' => explode('|', self::dotNS($option['before'])),
-            'after' => explode('|', self::dotNS($option['after']))];
+        $option['defaults'] = ['controller' => Tookit::dotNS($option['controller']),
+            'before' => explode('|', Tookit::dotNS($option['before'])),
+            'after' => explode('|', Tookit::dotNS($option['after']))];
 
         if (isset($option['prefix']) && isset($option['prefix']['controller'])) {
             $option['prefix']['controller'] = str_replace('.', PHP_NS, $option['prefix']['controller']);

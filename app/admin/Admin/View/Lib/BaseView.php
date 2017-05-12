@@ -13,6 +13,7 @@ namespace Admin\View\Lib;
 use Toknot\Share\View\View;
 use Toknot\Share\View\Input;
 use Toknot\Boot\GlobalFilter;
+use Toknot\Boot\Tookit;
 
 abstract class BaseView extends View {
 
@@ -39,8 +40,8 @@ abstract class BaseView extends View {
         $this->init();
         $this->buildFrame();
         Input::addType('email');
-        self::coalesce($this->param, 'leftMenuSelected');
-        self::coalesce($this->param, 'headerMenuSelected');
+        Tookit::coalesce($this->param, 'leftMenuSelected');
+        Tookit::coalesce($this->param, 'headerMenuSelected');
 
         $this->contanier();
         $this->showExecTime();

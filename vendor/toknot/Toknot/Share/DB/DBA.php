@@ -12,6 +12,8 @@ namespace Toknot\Share\DB;
 
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Object;
+use Toknot\Boot\ObjectAssistant;
+use Toknot\Boot\Tookit;
 use Toknot\Share\DB\DBSchema as Schema;
 use Toknot\Boot\Configuration as TKConfig;
 use Toknot\Exception\BaseException;
@@ -24,7 +26,7 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Query\QueryBuilder;
 
 class DBA extends Object {
-
+    use ObjectAssistant;
     /**
      * config.ini database db config, inculude table struct
      *
@@ -48,6 +50,10 @@ class DBA extends Object {
     public static $cursorOri = \PDO::FETCH_ORI_NEXT;
     private $transactionActive = false;
     public $appDir = APPDIR;
+    private $columnDefaultOption = [];
+    private $tableDefaultOption = [];
+    private $dbns = '';
+    private $appns = '';
 
     const T_OR = '||';
     const T_AND = '&&';
@@ -63,32 +69,40 @@ class DBA extends Object {
 
     /**
      * 
-     * @param array $db The database config key
+     * @param array $dbkey The database config key
      */
-    protected function __construct($db = '', $cfg = '') {
-        $allcfg = $cfg ? $cfg : Kernel::single()->cfg;
+    protected function __construct($dbkey = '') {
+        $mainConfig = Kernel::single()->cfg;
 
-        if (empty($db) && empty($this->usedb)) {
-            $this->usedb = $allcfg->find('database.default');
-        } elseif (isset($db)) {
-            $this->usedb = $db;
+        $this->autoConfigProperty($this->propertySetList(), $mainConfig);
+
+        if ($dbkey) {
+            $this->usedb = $dbkey;
         }
 
-        $this->extType = explode(',', $allcfg->find('database.ext_type'));
+        $this->extType = explode(',', $this->extType);
+        $this->autoConfigProperty($this->dbProperty($this->usedb), $mainConfig);
 
-        $config = $allcfg->database[$this->usedb];
-        if (isset($config['config_type'])) {
-            $this->confType = $config['config_type'];
-        }
-        $this->tableConfig = $config['table_config'];
+        self::$tableClassNs = Tookit::nsJoin($this->appns, $this->dbns);
+    }
 
-        $this->cfg = $config;
+    public function propertySetList() {
+        return ['usedb' => 'database.default',
+            'extType' => 'database.ext_type',
+            'appns' => 'app.app_ns',
+            'dbns' => 'app.db_table_ns',
+            'modelDir' => 'app.model_dir',
+            'cfg' => 'database'];
+    }
 
-        self::coalesce($this->cfg, 'table_default', []);
-        self::coalesce($this->cfg, 'column_default', []);
-
-        $appCfg = $allcfg->app;
-        self::$tableClassNs = self::nsJoin($appCfg['app_ns'], $appCfg->find('db_table_ns'));
+    public function dbProperty($db) {
+        return ['cfg' => "database.$db",
+            'confType' => "database.$db.config_type",
+            'tableConfig' => "database.$db.table_config",
+            'columnDefaultOption' => "database.$db.column_default",
+            'tableDefaultOption' => "database.$db.table_default",
+            'dbType' => "database.$db.type"
+        ];
     }
 
     public function setConfType($type) {
@@ -108,7 +122,7 @@ class DBA extends Object {
     }
 
     public function initModelDir() {
-        $this->modelDir = self::realpath(Kernel::single()->cfg->find('app.model_dir'), $this->appDir);
+        $this->modelDir = Tookit::realpath($this->modelDir, $this->appDir);
     }
 
     public function getQuotedName($name) {
@@ -189,14 +203,14 @@ class DBA extends Object {
     public function dbconfig() {
         $params = $this->cfg;
 
-        if (class_exists('PDO', false) && strpos($this->cfg->type, 'pdo_') === false) {
-            $params->driver = 'pdo_' . $this->cfg->type;
-        } elseif (class_exists('mysqli', false) && $this->cfg->type == 'mysql') {
+        if (class_exists('PDO', false) && strpos($this->dbType, 'pdo_') === false) {
+            $params->driver = 'pdo_' . $this->dbType;
+        } elseif (class_exists('mysqli', false) && $this->dbType == 'mysql') {
             $params->driver = 'mysqli';
         } else {
-            $params->driver = $this->cfg->type;
+            $params->driver = $this->dbType;
         }
-        self::arrayRemove($params, 'type', 'tables');
+        Tookit::arrayRemove($params, 'type', 'tables');
         return $params;
     }
 
@@ -275,14 +289,14 @@ class DBA extends Object {
     /**
      * 
      * @param string $table
-     * @param string $dbconfig
+     * @param string $dbkey
      * @return \Toknot\Share\DB\Table
      */
-    public static function table($table, $dbconfig = '', $newConn = false) {
-        $db = self::decideIns($dbconfig);
+    public static function table($table, $dbkey = '', $newConn = false) {
+        $db = self::decideIns($dbkey);
         $conn = $db->connect($newConn);
-        $tableClass = self::nsJoin(self::$tableClassNs, ucfirst($db->getUseDB()), self::table2Class($table));
-        $tableClass = self::dotNS($tableClass);
+        $tableClass = Tookit::nsJoin(self::$tableClassNs, ucfirst($db->getUseDB()), self::table2Class($table));
+        $tableClass = Tookit::dotNS($tableClass);
 
         $db->loadModel();
         $m = new $tableClass($conn);
@@ -295,15 +309,15 @@ class DBA extends Object {
 
     /**
      * 
-     * @param string $config
+     * @param string $db
      * @return $this
      */
-    public static function decideIns($config = '') {
-        return $config ? self::single($config) : self::single();
+    public static function decideIns($db = '') {
+        return $db ? self::single($db) : self::single();
     }
 
-    public static function transaction($callable, $dbconfig = '') {
-        $conn = self::decideIns($dbconfig)->connect();
+    public static function transaction($callable, $db = '') {
+        $conn = self::decideIns($db)->connect();
         $conn->beginTransaction();
         try {
             $callable();
@@ -365,7 +379,7 @@ class DBA extends Object {
     }
 
     public function addType($string) {
-        $className = self::nsJoin(__NAMESPACE__, ucwords($string) . 'Type');
+        $className = Tookit::nsJoin(__NAMESPACE__, ucwords($string) . 'Type');
         Type::addType($string, $className);
     }
 
@@ -457,15 +471,12 @@ class DBA extends Object {
      * @param array $tables
      */
     protected function createTable(Schema &$schema, $tables) {
-        $tableDefault = $this->cfg->find('table_default');
-        $columnDefault = $this->cfg->find('column_default');
-
         foreach ($tables as $table => $info) {
             $nt = $schema->createTable($table);
             if (empty($info['column'])) {
                 throw new BaseException('column of table not exists');
             }
-            $this->tableOptoin($nt, $tableDefault);
+            $this->tableOptoin($nt, $this->tableDefaultOption);
             if (isset($info['option'])) {
                 $this->tableOptoin($nt, $info['option']);
             }
@@ -474,7 +485,7 @@ class DBA extends Object {
                     throw new BaseException("table '$table' of column '$column' missed type");
                 }
                 $this->columnTextLength($cinfo);
-                $option = array_merge(iterator_to_array($columnDefault), self::arrayRemove($cinfo, 'type'));
+                $option = array_merge(iterator_to_array($this->columnDefaultOption), Tookit::arrayRemove($cinfo, 'type'));
                 if ($cinfo['type'] == 'char') {
                     $option['fixed'] = true;
                     $cinfo['type'] = 'string';
