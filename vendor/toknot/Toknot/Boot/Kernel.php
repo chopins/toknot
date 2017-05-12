@@ -195,7 +195,7 @@ final class Kernel extends Object {
 
 
         if ($this->enableShortPath) {
-            Logs::$shortPath = strlen(dirname(dirname(TKROOT)));
+            Logs::$shortPath = true;
         }
 
         $this->requestMethod = GlobalFilter::env('REQUEST_METHOD');

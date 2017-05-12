@@ -19,6 +19,7 @@ use Toknot\Boot\Logger;
 use Toknot\Exception\NoFileOrDirException;
 
 class Logs {
+
     public static $shortPath = 0;
     private static $supportColor = null;
 
@@ -257,7 +258,8 @@ class Logs {
             $str .= "<li>#{$key} ";
             $file = Tookit::coalesce($value, 'file');
             if (self::$shortPath) {
-                $file = '...' . substr($file, self::$shortPath);
+                $file = str_replace(TKROOT, '...', $file);
+                $file = str_replace(APPDIR, '...', $file);
             }
             $str .= $file;
             $str .= '(' . Tookit::coalesce($value, 'line') . '):';
