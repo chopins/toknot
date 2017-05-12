@@ -13,14 +13,12 @@
 
 namespace Toknot\Exception;
 
-use Toknot\Exception\BaseException;
-
 /**
  * NotFoundException
  *
  * @author chopin
  */
-class NotFoundException extends BaseException {
+class NotFoundException extends HttpResponseExcetion {
 
     public function __construct($exception = null) {
         parent::__construct(404, 'Resource Not Found', $exception);
