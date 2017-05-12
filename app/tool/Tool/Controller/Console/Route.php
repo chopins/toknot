@@ -14,6 +14,7 @@ use Toknot\Boot\Kernel;
 use Toknot\Share\CommandLine;
 use Toknot\Boot\Import;
 use Zend\Reflection\Docblock;
+use Toknot\Boot\Tookit;
 
 /**
  * Route
@@ -75,14 +76,14 @@ EOF;
         }
         $configTpl .= PHP_EOL;
 
-        Kernel::dirWalk($path, function($file) use($appNs, $configTpl, &$ini) {
+        Tookit::dirWalk($path, function($file) use($appNs, $configTpl, &$ini) {
             $class = $appNs . basename($file, '.php');
 
             $rf = new \ReflectionClass($class);
             $ms = $rf->getMethods(\ReflectionMethod::IS_PUBLIC);
             $rm = 'GET';
             foreach ($ms as $m) {
-                if($m->getFileName() != $rf->getFileName()) {
+                if ($m->getFileName() != $rf->getFileName()) {
                     continue;
                 }
                 $routepath = $this->parseDocComment($m, $rm);
@@ -92,7 +93,7 @@ EOF;
                     $cls = str_replace($this->appNs, '', $class);
                     $routepath = $routepath ? $routepath : strtolower('/' . str_replace(PHP_NS, '/', $cls));
                     $cont = str_replace(PHP_NS, '.', $cls);
-                    $routename = strtolower(str_replace(PHP_NS, '-', $cls));
+                    $routename = strtolower(str_replace(PHP_NS, '-', $cls) . '-' . $method);
                     $mp = $m->isConstructor() || $m->isDestructor() ? '' : "@$method";
                     $ini .= sprintf($configTpl, $routename, $routepath, $cont, $mp, $rm);
                 }

@@ -26,7 +26,9 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Query\QueryBuilder;
 
 class DBA extends Object {
+
     use ObjectAssistant;
+
     /**
      * config.ini database db config, inculude table struct
      *
@@ -71,8 +73,8 @@ class DBA extends Object {
      * 
      * @param array $dbkey The database config key
      */
-    protected function __construct($dbkey = '') {
-        $mainConfig = Kernel::single()->cfg;
+    protected function __construct($dbkey = '', $mainConfig = []) {
+        $mainConfig = $mainConfig ? $mainConfig : Kernel::single()->cfg;
 
         $this->autoConfigProperty($this->propertySetList(), $mainConfig);
 

@@ -23,6 +23,7 @@ use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
 use Toknot\Boot\Promise;
 use Toknot\Boot\Decorator;
+use Toknot\Boot\Tookit;
 
 final class Kernel extends Object {
 
@@ -298,7 +299,7 @@ final class Kernel extends Object {
         $_SERVER['SERVER_PROTOCOL'] = 'cli';
         $_SERVER['HTTP_HOST'] = '127.0.0.1';
         $_SERVER['REQUEST_METHOD'] = 'CLI';
-        $_SERVER['REQUEST_URI'] = '/' . str_replace('.', '/', $this->coalesce($this->argv, 1));
+        $_SERVER['REQUEST_URI'] = '/' . str_replace('.', '/', Tookit::coalesce($this->argv, 1));
     }
 
     public function echoException($e) {
@@ -375,7 +376,7 @@ final class Kernel extends Object {
             $this->cmdOption = $this->walkOption();
         }
         if ($key !== null) {
-            return $this->coalesce($this->cmdOption, $key, '');
+            return Tookit::coalesce($this->cmdOption, $key, '');
         } else {
             return $this->cmdOption;
         }
