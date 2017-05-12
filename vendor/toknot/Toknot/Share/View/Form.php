@@ -23,9 +23,19 @@ class Form extends TagBulid {
     const FILE = 1;
     const TEXT = 2;
 
+    private static $forms = [];
+
     public function __construct($attr) {
         $this->tagName = 'form';
         $this->initTag($attr);
+        self::$forms[] = $this;
+        if (isset($attr['name'])) {
+            self::$forms[$attr['name']] = $this;
+        }
+    }
+
+    public static function getForms() {
+        return self::$forms;
     }
 
     public function setAction($value) {

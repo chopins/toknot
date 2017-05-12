@@ -44,7 +44,6 @@ abstract class View extends Object {
     protected $controler = null;
     protected $router = null;
     protected $routeStorage = [];
-    protected $formStorage = [];
 
     final public function __construct(Layout $layout, $param = []) {
         $this->param = $param;
@@ -93,10 +92,6 @@ abstract class View extends Object {
         $name = strtolower($name);
         $argc = count($argv);
         $node = $argc == 0 ? Tag::$name() : self::invokeStatic($argc, $name, $argv, 'Toknot\Share\View\Tag');
-        if ($name == 'form') {
-            $this->formStorage[] = $node;
-        }
-    
         return $node;
     }
 
@@ -112,8 +107,16 @@ abstract class View extends Object {
         return $this->routeStorage;
     }
 
-    final public function getFormStorage() {
-        return $this->formStorage;
+    final public function getForms() {
+        return Tag::getForms();
+    }
+
+    final public function getImages() {
+        return Tag::getImages();
+    }
+
+    final public function getFrames() {
+        return Tag::getFrames();
     }
 
 }

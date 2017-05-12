@@ -118,10 +118,26 @@ class Tag extends TagBulid {
         } else {
             $inputs = [];
         }
-       
+
         $form = new Form($attr);
         $form->inputs($inputs);
         return $form;
+    }
+
+    public static function input($attr = []) {
+        return new Input($attr);
+    }
+
+    public static function getForms() {
+        return Form::getForms();
+    }
+
+    public static function getImages() {
+        return AnyTag::getImages();
+    }
+
+    public static function getFrames() {
+        return AnyTag::getFrames();
     }
 
     /**

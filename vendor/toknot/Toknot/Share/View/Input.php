@@ -34,6 +34,9 @@ class Input extends TagBulid {
             $this->tagName = 'input';
         }
         $this->initTag($attr);
+        if ($this->tagName == 'button' && isset($attr['value'])) {
+            $this->pushText($attr['value']);
+        }
     }
 
     public static function hasType($type) {
@@ -72,7 +75,7 @@ class Input extends TagBulid {
         $this->addAttr('readonly', 'readonly');
         return $this;
     }
-    
+
     public function disabled() {
         $this->addAttr('disabled', 'disabled');
         return $this;

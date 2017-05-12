@@ -34,7 +34,7 @@ class CsrfMiddleware extends Controller {
     public function setCsrf() {
         $this->mainCalled = $this->getMainCalled();
         $this->mainView = $this->mainCalled->getViewInstance();
-        $forms = $this->mainView->getFormStorage();
+        $forms = $this->mainView->getForms();
         $routes = $this->mainView->getRouteStorage();
 
         foreach ($forms as $node) {
