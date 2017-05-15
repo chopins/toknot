@@ -36,6 +36,7 @@ class DB {
         $this->kernel = Kernel::single();
         $this->appdir = $this->kernel->getArg('-a');
         $type = $this->kernel->getArg('-t');
+        
         if ($this->appdir) {
             $this->appdir = realpath($this->appdir);
             $type || $type = 'ini';
@@ -45,6 +46,7 @@ class DB {
             $this->appcfg = $this->confObj->load($config);
         } else {
             $this->appcfg = $this->kernel->cfg;
+            $this->appdir = APPDIR;
         }
 
         $this->dbcfg = $this->appcfg->database;

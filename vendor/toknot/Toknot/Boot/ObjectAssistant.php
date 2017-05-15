@@ -10,6 +10,8 @@
 
 namespace Toknot\Boot;
 
+use Toknot\Exception\BaseException;
+
 /**
  * ObjectAssistant
  *
@@ -114,8 +116,7 @@ trait ObjectAssistant {
         return trim(vsprintf(str_repeat('$argv[%d],', $argc), range(0, $argc - 1)), ',');
     }
 
-    public function __isReadonlyProperty($name) {
-        $ref = new \ReflectionObject($this);
+    protected function __isReadonlyProperty($ref, $name) {
         $doc = $ref->getProperty($name)->getDocComment();
         if (preg_match('/^[\s]*\*[\s]*@readonly[\s]*$/m', $doc)) {
             return true;
@@ -124,16 +125,19 @@ trait ObjectAssistant {
     }
 
     public function __get($name) {
-        if ($this->__isReadonlyProperty($name)) {
+        $ref = new \ReflectionObject($this);
+        $has = $ref->hasProperty($name);
+        if ($has && $this->__isReadonlyProperty($ref, $name)) {
             return $this->{$name};
         }
+
         throw BaseException::undefineProperty($this, $name);
     }
 
     public function autoConfigProperty($propertys, $cfg) {
         foreach ($propertys as $pro => $confg) {
-            $value = $cfg->find($confg);
-            if ($value) {
+            if ($cfg->has($confg)) {
+                $value = $cfg->find($confg);
                 $this->$pro = $value;
             }
         }

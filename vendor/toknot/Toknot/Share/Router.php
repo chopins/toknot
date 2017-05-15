@@ -14,6 +14,7 @@ use Toknot\Boot\Kernel;
 use Toknot\Boot\Configuration;
 use Toknot\Boot\Object;
 use Toknot\Boot\Tookit;
+use Toknot\Boot\ObjectAssistant;
 use Toknot\Boot\SystemCallWrapper;
 use Toknot\Exception\NotFoundException;
 use Toknot\Share\Request;
@@ -34,6 +35,8 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
  * @author chopin
  */
 class Router extends Object implements SystemCallWrapper {
+
+    use ObjectAssistant;
 
     /**
      *
@@ -59,11 +62,12 @@ class Router extends Object implements SystemCallWrapper {
     private $kernel = null;
     private $callController = [];
     private $lastCall = [];
+    private $rewrite = true;
 
     protected function __construct() {
-        $this->topRoutes = new RouteCollection();
         $this->kernel = Kernel::single();
         $this->autoConfigProperty($this->propertySetList(), $this->kernel->cfg);
+        $this->topRoutes = new RouteCollection();
     }
 
     public function propertySetList() {
@@ -72,7 +76,8 @@ class Router extends Object implements SystemCallWrapper {
             'staticMethodSeparator' => 'app.route_static_method_sp',
             'appns' => 'app.app_ns',
             'ctlns' => 'app.ctl_ns',
-            'middens' => 'app.middleware_ns'];
+            'middens' => 'app.middleware_ns',
+            'rewrite' => 'app.rewrite'];
     }
 
     public static function getInstance() {
@@ -85,6 +90,7 @@ class Router extends Object implements SystemCallWrapper {
         $requireParams = $this->request->attributes;
         $exec = $this->getNamespace();
         $this->callController = $parameters;
+        ob_start();
         foreach ($exec as $key => $ns) {
             $this->launch($parameters, $ns, $key, $requireParams);
         }
@@ -97,19 +103,23 @@ class Router extends Object implements SystemCallWrapper {
     }
 
     public function response($runResult) {
-
-
         if ($this->kernel->isCLI) {
             echo $runResult['content'];
             exit($runResult['code']);
         }
-        header($runResult['message'], true, $runResult['code']);
+        if ($runResult['code'] != 200) {
+            header($runResult['message'], true, $runResult['code']);
+        }
         if (!empty($runResult['option'])) {
             foreach ($runResult['option'] as $op) {
                 header($op);
             }
         } else {
+            if (ob_get_length()) {
+                ob_flush();
+            }
             echo $runResult['content'];
+            die;
         }
     }
 
@@ -287,6 +297,9 @@ class Router extends Object implements SystemCallWrapper {
             $this->topRoutes->addCollection($sub);
         }
 
+        if (!$this->rewrite) {
+            $_SERVER['REQUEST_URI'] = isset($_GET['_']) ? $_GET['_'] : '/';
+        }
         $this->request = Request::createFromGlobals();
 
         $context = new RequestContext();

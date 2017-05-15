@@ -66,7 +66,7 @@ final class Kernel extends Object {
      * @readonly
      */
     private $schemes = '';
-    private $trace = true;
+    private $displayTrace = true;
     private $logger = null;
     private $logEnable = false;
 
@@ -103,6 +103,11 @@ final class Kernel extends Object {
      * @readonly
      */
     private $requestUri = '';
+    
+    private $loggerClass = null;
+    
+    private $enableShortPath = false;
+    private $defaultCall = null;
 
     const PASS_STATE = 0;
 
@@ -165,7 +170,7 @@ final class Kernel extends Object {
     }
 
     public function propertySetList() {
-        return ['trace' => 'app.trace',
+        return ['displayTrace' => 'app.display_trace',
             'loggerClass' => 'app.log.logger',
             'logEnable' => 'app.log.enable',
             'logCfg' => 'app.log',
@@ -184,7 +189,7 @@ final class Kernel extends Object {
         list($this->schemes) = GlobalFilter::env('SERVER_PROTOCOL', '/');
         $this->schemes = strtolower($this->schemes);
         $this->cfg = $this->loadMainConfig();
-        
+
         $this->autoConfigProperty($this->propertySetList(), $this->cfg);
 
         if ($this->logEnable && is_subclass_of($this->loggerClass, 'Toknot\Boot\Logger')) {
@@ -311,13 +316,13 @@ final class Kernel extends Object {
             throw new BaseException($e->getMessage(), $e->getCode(), $e->getFile(), $e->getLine(), $e);
         } catch (BaseException $se) {
             $this->runResult = [];
-            $this->runResult['code'] = $e instanceof BaseException ? $e->getHttpCode() : 500;
-            $this->runResult['message'] = $e instanceof BaseException ? $e->getHttpMessage() : 'Internal Server Error';
+            $this->runResult['code'] = $this->displayTrace ? 200 : ($e instanceof BaseException ? $e->getHttpCode() : 500);
+            $this->runResult['message'] = $this->displayTrace ? 'OK' : ($e instanceof BaseException ? $e->getHttpMessage() : 'Internal Server Error');
             $trace = $se->getDebugTraceAsString();
-            $this->runResult['content'] = $this->trace ? $trace : '';
+            $this->runResult['content'] = $this->displayTrace ? $trace : '';
 
             if ($this->logEnable) {
-                Logs::save($trace, $this->logger);
+                Logs::save($se->getDebugTraceAsString(true), $this->logger);
             }
             //$this->runResult['option'][] = '';
         }
@@ -389,6 +394,9 @@ final class Kernel extends Object {
      * @return boolean
      */
     public function hasOption($key) {
+        if ($this->callInstance && ($arg = $this->callInstance->getArg($key))) {
+            return $arg;
+        }
         if (empty($this->cmdOption)) {
             $this->cmdOption = $this->walkOption();
         }

@@ -54,6 +54,20 @@ class Configuration extends Object {
         return is_array($cur) ? new static($cur) : $cur;
     }
 
+    public function has($key) {
+        $ks = explode('.', $key);
+        $cur = $this->iteratorArray;
+
+        foreach ($ks as $k) {
+            if (array_key_exists($k, $cur)) {
+                $cur = $cur[$k];
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function toArray() {
         return $this->iteratorArray;
     }

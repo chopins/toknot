@@ -206,35 +206,38 @@ class Logs {
         }
     }
 
-    public static function opeateArg($args, &$str) {
+    public static function opeateArg($args, &$str, $pure = false) {
         $argc = count($args) - 1;
+        $spans = $pure ? '' : '<span>';
+        $spane = $pure ? '' : '</span>';
 
         foreach ($args as $i => $arg) {
             if (is_null($arg)) {
                 continue;
             }
-            $str .= '<span>';
-
-            $title = is_scalar($arg) ? substr($arg, 0, 20) : substr(print_r($arg, true), 0, 500);
-            $title = htmlentities($title);
+            $str .= $spans;
+            if (!$pure) {
+                $title = is_scalar($arg) ? substr($arg, 0, 20) : substr(print_r($arg, true), 0, 500);
+                $title = htmlentities($title);
+            }
             if (is_scalar($arg)) {
                 $pad = strlen($arg) > 20 ? '...' : '';
                 $arg = substr($arg, 0, 500);
-                $str .= "<small><b title='$arg'>'$title$pad'</b></small>, ";
+                $str .= $pure ? substr($str, 0, 20) . $pad : "<small><b title='$arg'>'$title$pad'</b></small>, ";
             } elseif (is_array($arg)) {
                 $cnt = count($arg);
-                $str .= "<small title='$title'><b>Array($cnt)</b></small>, ";
+                $str .= $pure ? "Array($cnt)" : "<small title='$title'><b>Array($cnt)</b></small>, ";
             } elseif (is_object($arg)) {
                 $cls = get_class($arg);
-                $str .= "<small><b>Object(</b><i>$cls</i><b>)</b></small>, ";
+                $str .= $pure ? "Object($cls)" : "<small><b>Object(</b><i>$cls</i><b>)</b></small>, ";
             } elseif (is_resource($arg)) {
                 $title = get_resource_type($arg);
-                $str .= "<small><i>$title</i></small>, ";
+                $str .= $pure ? $title : "<small><i>$title</i></small>, ";
             }
             if ($argc == $i) {
                 $str = trim($str, ', ');
             }
-            $str .= '</span>';
+            $str .= $spane;
         }
     }
 
@@ -244,18 +247,22 @@ class Logs {
      * @param array $traceArr
      * @return string
      */
-    public static function formatTrace($traceArr) {
+    public static function formatTrace($traceArr, $pureText = false) {
         $str = '<style>.tk-ds-li li{color:#666 ;} '
                 . '.tk-ds-li span{display:inline-block;margin:5px;cursor:help;}</style>'
                 . '<ul class="tk-ds-li">';
-        $str = PHP_SAPI == 'cli' ? '' : $str;
+        $pure = (PHP_SAPI == 'cli' || $pureText);
+        $str = $pure ? '' : $str;
+        $lis = $pure ? '' : '<li>';
+        $lie = $pure ? '' : '</li>';
+
         foreach ($traceArr as $key => $value) {
             $function = Tookit::coalesce($value, 'function');
             if ($value['function'] == 'errorReportHandler') {
                 continue;
             }
 
-            $str .= "<li>#{$key} ";
+            $str .= "$lis#{$key} ";
             $file = Tookit::coalesce($value, 'file');
             if (self::$shortPath) {
                 $file = str_replace(TKROOT, '...', $file);
@@ -271,12 +278,12 @@ class Logs {
             }
             $str .= empty($function) ? '' : "$function(";
             if (isset($value['args'])) {
-                self::opeateArg($value['args'], $str);
+                self::opeateArg($value['args'], $str, $pure);
             }
             $str .= isset($value['function']) ? ")" : '';
-            $str .= '</li>' . PHP_EOL;
+            $str .= $lie . PHP_EOL;
         }
-        return $str . '</ul>';
+        return $str . ($pure ? '' : '</ul>');
     }
 
 }

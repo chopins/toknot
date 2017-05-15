@@ -124,9 +124,9 @@ class BaseException extends Exception {
         $this->message = "<b>$type : </b>" . $this->message;
     }
 
-    public function getDebugTraceAsString() {
+    public function getDebugTraceAsString($pureText = false) {
         $str = '';
-        if (PHP_SAPI == 'cli') {
+        if (PHP_SAPI == 'cli' || $pureText) {
             $str .= str_repeat('=', 20) . PHP_EOL;
         }
         $str .= '<div>';
@@ -139,7 +139,7 @@ class BaseException extends Exception {
 
         $str .= "<p>{$this->message}</p>" . PHP_EOL;
         $str .= "<div><b>Throw Exception in file {$this->file} line {$this->line}</b></div>" . PHP_EOL;
-        if (PHP_SAPI == 'cli') {
+        if (PHP_SAPI == 'cli' || $pureText) {
             $hostname = getenv('HOSTNAME');
             $ip = gethostbyname($hostname);
             $str .= "CLI on Server IP: $ip($hostname)  User:" . getenv('USERNAME') . PHP_EOL;
@@ -149,13 +149,13 @@ class BaseException extends Exception {
 
         if (empty($this->traceArr)) {
             $traceArr = array_reverse($this->getTrace());
-            $str .= $this->each($traceArr);
+            $str .= $this->each($traceArr, $pureText);
         } else {
-            $str .= $this->each($this->traceArr);
+            $str .= $this->each($this->traceArr, $pureText);
         }
         $str .= '</div>';
-
-        if (PHP_SAPI == 'cli') {
+  
+        if (PHP_SAPI == 'cli' || $pureText) {
             $str .= str_repeat('=', 20) . PHP_EOL;
             $nohtml = strip_tags($str);
             $nohtml = html_entity_decode($nohtml);
@@ -173,8 +173,8 @@ class BaseException extends Exception {
         }
     }
 
-    public function each($traceArr) {
-        return Logs::formatTrace($traceArr);
+    public function each($traceArr, $pureText = false) {
+        return Logs::formatTrace($traceArr, $pureText);
     }
 
 }
