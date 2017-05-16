@@ -299,7 +299,9 @@ class Router extends Object implements SystemCallWrapper {
 
         if (!$this->rewrite && !$this->kernel->isCLI) {
             $_SERVER['REQUEST_URI'] = isset($_GET['_']) ? $_GET['_'] : '/';
+            $_SERVER['REQUEST_URI'] = '/' . trim(str_replace('.', '/', $_SERVER['REQUEST_URI']), '/');
         }
+        
         $this->request = Request::createFromGlobals();
 
         $context = new RequestContext();
