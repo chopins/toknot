@@ -103,11 +103,15 @@ final class Kernel extends Object {
      * @readonly
      */
     private $requestUri = '';
-    
     private $loggerClass = null;
-    
     private $enableShortPath = false;
     private $defaultCall = null;
+
+    /**
+     *
+     * @readonly
+     */
+    private $charset = 'utf-8';
 
     const PASS_STATE = 0;
 
@@ -177,7 +181,8 @@ final class Kernel extends Object {
             'enableShortPath' => 'app.short_except_path',
             'wrapperList' => 'wrapper',
             'defaultCall' => 'app.default_call',
-            'vendor' => 'vendor'];
+            'vendor' => 'vendor',
+            'charset' => 'app.charset'];
     }
 
     private function setRuntimeEnv($parseClass = null) {
@@ -235,6 +240,10 @@ final class Kernel extends Object {
         }
         $this->callInstance = self::invokeStatic(0, 'getInstance', [], $this->callWrapper);
         $this->callInstance->init($this->requestUri);
+    }
+
+    public function addResultOption($option) {
+        $this->runResult[] = $option;
     }
 
     /**
@@ -320,7 +329,7 @@ final class Kernel extends Object {
             $this->runResult['message'] = $this->displayTrace ? 'OK' : ($e instanceof BaseException ? $e->getHttpMessage() : 'Internal Server Error');
             $trace = $se->getDebugTraceAsString();
             $this->runResult['content'] = $this->displayTrace ? $trace : '';
-
+            $this->addResultOption("Content-type: text/html; charset={$this->charset}");
             if ($this->logEnable) {
                 Logs::save($se->getDebugTraceAsString(true), $this->logger);
             }
