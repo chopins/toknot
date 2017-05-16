@@ -297,7 +297,7 @@ class Router extends Object implements SystemCallWrapper {
             $this->topRoutes->addCollection($sub);
         }
 
-        if (!$this->rewrite) {
+        if (!$this->rewrite && !$this->kernel->isCLI) {
             $_SERVER['REQUEST_URI'] = isset($_GET['_']) ? $_GET['_'] : '/';
         }
         $this->request = Request::createFromGlobals();
