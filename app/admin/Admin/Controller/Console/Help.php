@@ -33,7 +33,7 @@ class Help {
         $message = [];
         $maxlength = 0;
 
-        Kernel::dirWalk(__DIR__, function($f) use($ns, &$message, &$maxlength) {
+        Tookit::dirWalk(__DIR__, function($f) use($ns, &$message, &$maxlength) {
             $cn = basename($f, '.php');
             $rf = new \ReflectionClass("$ns$cn");
             $ms = $rf->getMethods();

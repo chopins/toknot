@@ -301,7 +301,7 @@ class Router extends Object implements SystemCallWrapper {
             $_SERVER['REQUEST_URI'] = isset($_GET['_']) ? $_GET['_'] : '/';
             $_SERVER['REQUEST_URI'] = '/' . trim(str_replace('.', '/', $_SERVER['REQUEST_URI']), '/');
         }
-        
+
         $this->request = Request::createFromGlobals();
 
         $context = new RequestContext();
@@ -337,7 +337,7 @@ class Router extends Object implements SystemCallWrapper {
             'after' => explode('|', Tookit::dotNS($option['after']))];
 
         if (isset($option['prefix']) && isset($option['prefix']['controller'])) {
-            $option['prefix']['controller'] = str_replace('.', PHP_NS, $option['prefix']['controller']);
+            $option['prefix']['controller'] = Tookit::dotNs($option['prefix']['controller']);
         }
         $params = var_export($option, true);
         $this->routeDeclare .= "Router::to('$name', $params);";
@@ -359,6 +359,7 @@ class Router extends Object implements SystemCallWrapper {
             $this->add($rn, $def);
         }
         $this->save($php);
+        return include $php;
     }
 
     public function save($target) {
