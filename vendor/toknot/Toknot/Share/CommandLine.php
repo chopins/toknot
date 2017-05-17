@@ -134,6 +134,48 @@ class CommandLine {
     }
 
     /**
+     * output table data
+     * 
+     * @param array $data
+     * @param array $title
+     * @param boolean $showLine
+     */
+    public function table($data, $title = null, $showLine = false) {
+        $numLen = $showLine ? strlen(count($data)) : 0;
+
+        $lenArr = [];
+        if ($title) {
+            array_unshift($data, $title);
+        }
+        array_walk_recursive($data, function($item, $key) use(&$lenArr) {
+            $itemLen = strlen($item);
+            if (!isset($lenArr[$key]) || $lenArr[$key] < $itemLen) {
+                $lenArr[$key] = $itemLen;
+            }
+        });
+        $border = $numLen ? str_pad('+', $numLen + 3, '-') : '';
+        array_map(function($cl) use(&$border) {
+            $border .= str_pad('+', $cl + 3, '-');
+        }, $lenArr);
+        $border .= '+';
+        array_walk($data, function($line, $l, $lenArr) use($numLen, $border) {
+            $tr = '';
+            if ($numLen) {
+                $tr = str_pad("| $l", $numLen + 3);
+            }
+            array_walk($line, function($td, $key, $lenArr) use(&$tr) {
+                $pad = (strlen($td) - Tookit::strlen($td))/2;
+                $tr .= str_pad("| $td", $lenArr[$key] + $pad + 3);
+            }, $lenArr);
+
+            $tr .= '|';
+            $this->message($border);
+            $this->message($tr);
+        }, $lenArr);
+        $this->message($border);
+    }
+
+    /**
      * print message on same line
      * 
      * @param string $msg       print message

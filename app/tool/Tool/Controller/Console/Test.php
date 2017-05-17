@@ -41,42 +41,15 @@ class Test {
     }
 
     public function run() {
-        $pid1 = $this->process->fork();
-        $local = '127.0.0.1';
-        $port = 98899;
-        if ($pid1 === 0) {
-            $this->process->taskQueue($local, $port, function($message, $time, $pid) {
-                $this->cmd->message("[$time][$pid]$message");
-            });
-            return;
-        }
-//        $this->process->wait($pid1);
-//        die;
-        $pid2 = $this->process->fork();
-        if ($pid2 > 0) {
-            $this->process->setProcessTitle('php:main');
-            $this->process->wait($pid1);
-            exit;
-        } else {
-            $pid = $this->process->multiProcess(1);
-            if ($pid > 0) {
-                $this->process->setProcessTitle('php:multi child');
-                exit;
-            }
-            do {
-                $this->cmd->message('add task', 'blue');
-                try {
-                    $re = $this->process->addTask($local, $port, 'message:');
-
-                    $this->cmd->message('add success', 'green');
-                } catch (BaseException $e) {
-                    $this->cmd->message('add error', 'red');
-                    $re = false;
-                }
-
-                sleep(1);
-            } while (!$re);
-        }
+        $title = ['FRFWR','ONGs','Pn22','fs'];
+        $data = [
+            ['aa', 'vvdss对方的反对', 'dfd的发发热土额', 'ssfewrtw45ts'],
+            ['aa', 'vvdss对21方的反对', 'dfd的发44发热土额', 'afertfrewtwe'],
+            ['aa', 'vvdss对e方的反对', 'dfd的发发热土额', 'fewrqrsss'],
+            ['aa', 'vvdss对方的33反对', 'dfd的发发热土额', 'ssfdfgwerts'],
+            ['aa', 'vvdss对sd23rwqr方的反对', 'dfd的发发热土33额', 'fsgwt5t4'],
+        ];
+        $this->cmd->table($data, $title, true);
     }
 
     public function loop() {
