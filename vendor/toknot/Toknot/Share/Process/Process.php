@@ -13,6 +13,7 @@ namespace Toknot\Share\Process;
 use Toknot\Boot\Object;
 use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
+use Toknot\Boot\Tookit;
 
 /**
  * Process
@@ -23,6 +24,9 @@ class Process extends Object {
 
     private $processPool = [];
     private $lock = null;
+    protected $mainSockPool = [];
+    protected $childSock = null;
+    protected $scheduleTable = [];
 
     const CMD_LOCK = 'LOCK';
     const CMD_UNLOCK = 'UNLOCK';
@@ -61,11 +65,14 @@ class Process extends Object {
         return stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
     }
 
-    public function quit($pipe) {
+    public function quit($pipe = null) {
+        $pipe = $pipe ? $pipe : $this->childSock;
+        stream_set_blocking($pipe, 1);
         $pid = $this->getpid();
         $this->send($pipe, self::CMD_QUIT . "|$pid");
-        usleep(1000);
+        $res = $this->read($pipe);
         fclose($pipe);
+        return $res;
     }
 
     public function send($sock, $data) {
@@ -194,7 +201,7 @@ class Process extends Object {
             if (false === $change) {
                 throw new BaseException('task queue select fail');
             }
-          
+
             if ($change > 0) {
                 $this->execTask($w, $taskCall);
             }
@@ -218,7 +225,7 @@ class Process extends Object {
         foreach ($w as $rsock) {
             $this->send($rsock, self::QUEUE_GET);
             $line = $this->read($rsock);
-            if($line == self::QUEUE_EMPTY) {
+            if ($line == self::QUEUE_EMPTY) {
                 exit;
             }
             $taskInfo = unserialize($line);
@@ -497,32 +504,48 @@ class Process extends Object {
      * @param resource $cport
      */
     protected function childClean($cport) {
+        $this->childSock = $cport;
         Kernel::single()->attachShutdownFunction(function() use($cport) {
-            stream_set_blocking($cport, 1);
             $this->quit($cport);
         });
     }
 
+    protected function waitMain($cport) {
+        $this->childSock = null;
+        $res = $this->read($cport);
+        if ($res == self::CMD_ALREADY) {
+            $this->childClean($cport);
+            return false;
+        }
+        return false;
+    }
+
     /**
-     * init specil number porcess
+     * init specil number porcess, child prcess return false, parent return true
      * 
      * @param int $number
      * @param resource $mport
      * @param resource $cport
      * @return boolean|int
      */
-    protected function initMutiProcess($number, &$mport) {
+    protected function initMutiProcess($number, $mainId) {
+
         for ($i = 0; $i < $number; $i++) {
-            list($mport[], $cport) = $this->pipe();
+            list($this->mainSockPool[$mainId][], $cport) = $this->pipe();
             $pid = $this->fork();
             if ($pid > 0) {
                 $this->processPool[$pid] = 1;
                 continue;
             } else {
-                $this->childClean($cport);
-                return false;
+                stream_set_blocking($cport, 1);
+                return $this->waitMain($cport);
             }
         }
+
+        foreach ($this->mainSockPool[$mainId] as $s) {
+            $this->send($s, self::CMD_ALREADY);
+        }
+
         return true;
     }
 
@@ -536,6 +559,7 @@ class Process extends Object {
      *      //your parent process
      * } else {
      *      //your child process
+     *      $p->quit();
      * }
      * </code>
      * 
@@ -543,12 +567,14 @@ class Process extends Object {
      * @return int
      */
     public function multiProcess($number) {
-        $mport = [];
-        if (!$this->initMutiProcess($number, $mport)) {
+        $mainSockPoolId = uniqid(__FUNCTION__);
+        $this->mainSockPool[$mainSockPoolId] = [];
+
+        if (!$this->initMutiProcess($number, $mainSockPoolId)) {
             return 0;
         }
 
-        $this->processLoop($mport);
+        $this->processLoop($mainSockPoolId);
         $this->wait();
         return 1;
     }
@@ -557,8 +583,13 @@ class Process extends Object {
         $acp = $this->read($mport);
         if ($acp) {
             list(, $pid) = explode('|', $acp);
-            $this->wait($pid);
-            unset($this->processPool[$pid]);
+
+            $this->send($mport, self::CMD_SUCC);
+            $res = $this->wait($pid);
+
+            if ($res == $pid) {
+                unset($this->processPool[$pid]);
+            }
             if ($callable) {
                 return self::callFunc($callable);
             }
@@ -566,11 +597,11 @@ class Process extends Object {
         return true;
     }
 
-    private function processLoop($mport, $callable = null) {
-        while (true) {
+    private function processLoop($mainId, $callable = null) {
+        while (count($this->processPool)) {
             $write = $except = [];
-            $read = $mport;
-            $num = stream_select($read, $write, $except, 100000);
+            $read = $this->mainSockPool[$mainId];
+            $num = stream_select($read, $write, $except, 10000);
             if (!$num) {
                 continue;
             }
@@ -593,6 +624,7 @@ class Process extends Object {
      *      //your parent process
      * } else {
      *      //your child process
+     *    $p->quit();
      * }
      * </code>
      * 
@@ -600,19 +632,23 @@ class Process extends Object {
      * @return int
      */
     public function processPool($number) {
-        $mport = [];
-        if (!$this->initMutiProcess($number, $mport)) {
+        $mainSockPoolId = uniqid(__FUNCTION__);
+        $this->mainSockPool[$mainSockPoolId] = [];
+        if (!$this->initMutiProcess($number, $mainSockPoolId)) {
             return 0;
         }
-        if (!$this->processLoop($mport, function() use(&$mport) {
-                    list($mport[], $cport) = $this->pipe();
+
+        if (!$this->processLoop($mainSockPoolId, function() use($mainSockPoolId) {
+                    list($nport, $cport) = $this->pipe();
                     $npid = $this->fork();
                     if ($npid > 0) {
                         $this->processPool[$npid] = 1;
                     } else {
-                        $this->childClean($cport);
+                        $this->waitMain($cport);
                         return 0;
                     }
+                    $this->send($nport, self::CMD_ALREADY);
+                    $this->mainSockPool[$mainSockPoolId][] = $nport;
                     return $npid;
                 })) {
             return 0;
@@ -675,7 +711,7 @@ class Process extends Object {
      * 
      * <code>
      * $p = new Process;
-     * $res = $p->guardFork(function() {
+     * $res = $p->guardFork(function($sock) {
      *      sleep(10);
      *      return 'exit;
      * });
@@ -693,16 +729,153 @@ class Process extends Object {
     public function guardFork($exitLoopCallable = null, $exitFlag = 'exit') {
         do {
             $pid = $this->fork();
-            if ($pid > 0) {
-                $this->wait($pid);
-            } else {
+            list($m, $c) = $this->pipe();
+            if ($pid == 0) {
+                $this->childSock = $c;
                 return 0;
             }
-            if ($exitLoopCallable && self::callFunc($exitLoopCallable) == $exitFlag) {
-                break;
-            }
+            do {
+                $res = $this->wait($pid, $status, 1);
+
+                if ($exitLoopCallable && self::callFunc($exitLoopCallable, [$m]) == $exitFlag) {
+                    break 2;
+                }
+                if ($res == $pid) {
+                    break;
+                }
+                usleep(50000);
+            } while (true);
         } while (true);
         return 1;
+    }
+
+    public function schedule() {
+        $status = $this->guardFork(function($sock) {
+            $res = $this->read($sock);
+            if ($res == self::CMD_QUIT) {
+                return 'exit';
+            }
+        });
+        if ($status) {
+            $this->wait();
+            return true;
+        }
+
+        $exculePool = [];
+        while (true) {
+            if (empty($this->scheduleTable)) {
+                $this->send($this->childSock, self::CMD_QUIT);
+                exit;
+            }
+
+            foreach ($this->scheduleTable as $k => $task) {
+                $pid = $this->execScheduleTask($task, $k);
+                if ($pid) {
+                    $exculePool[$pid] = 1;
+                }
+                $this->waitPool($exculePool);
+            }
+
+            $this->waitPool($exculePool);
+            Tookit::msleep(1);
+        }
+        $this->waitPool($exculePool, true);
+    }
+
+    public function waitPool(&$pool, $loop = false) {
+        do {
+            foreach ($pool as $pid => $c) {
+                $this->wait($pid, $status, 1);
+                unset($pool[$pid]);
+            }
+        } while ($loop && count($pool));
+    }
+
+    protected function execScheduleTask($task, $k) {
+        if (!is_numeric($task['startTime'])) {
+            $startTime = strtotime($task['startTime']);
+        } else {
+            $startTime = $task['startTime'];
+        }
+        if ($startTime != null && $startTime >= time()) {
+            return false;
+        }
+        if (!is_numeric($task['endTime'])) {
+            $endTime = strtotime($task['endTime']);
+        } else {
+            $endTime = $task['endTime'];
+        }
+        if ($endTime != null && $endTime <= time()) {
+            return false;
+        }
+        if ($task['execTimes'] > $task['times']) {
+            return false;
+        }
+
+        if ($task['interval'] > 0 && ($task['lastExecTime'] + $task['interval']) > Tookit::millisecond()) {
+            return false;
+        }
+        if (!is_numeric($task['interval'])) {
+            $execTime = strtotime($task['interval']) * 1000;
+            if ($execTime > Tookit::millisecond() || $task['lastExecTime'] > $execTime) {
+                return false;
+            }
+        }
+
+        $this->scheduleTable[$k]['execTimes'] ++;
+        $this->scheduleTable[$k]['lastExecTime'] = Tookit::millisecond();
+
+        $pid = $this->fork();
+        if ($pid > 0) {
+            return $pid;
+        }
+        self::callFunc($task['func']);
+        exit;
+    }
+
+    /**
+     * add a schedule task
+     * 
+     * @param callable $task    task function
+     * @param mix $interval     task run interval , the value is number, the iterval is $iterval millisecond,
+     *                           if the value is string and suffix s,m,h,d,w, iterval is one times run after $interval
+     *                           seconds, minutes, hours, days, weeks. other value will convert to current time of every day
+     *                           this time is the task whill run
+     * @param int $times        the task run times
+     * @param mix $start        the task first run time
+     * @param mix $end          the task last run time
+     */
+    public function addScheduleTask($task, $interval, $times = null, $start = null, $end = null) {
+        if (!is_numeric($interval)) {
+            $unit = strtolower(substr($interval, -1));
+            $number = substr($interval, 0, -1);
+            switch ($unit) {
+                case 's':
+                    $interval = $number * 1000;
+                    break;
+                case 'm':
+                    $interval = $number * 60000;
+                    break;
+                case 'h':
+                    $interval = $number * 3600000;
+                    break;
+                case 'd':
+                    $interval = $number * 86400000;
+                    break;
+                case 'w':
+                    $interval = $number * 604800000;
+                    break;
+            }
+        }
+        $taskInfo = [];
+        $taskInfo['func'] = $task;
+        $taskInfo['startTime'] = $start;
+        $taskInfo['endTime'] = $end;
+        $taskInfo['lastExecTime'] = 0;
+        $taskInfo['times'] = $times;
+        $taskInfo['execTimes'] = 0;
+        $taskInfo['interval'] = $interval;
+        $this->scheduleTable[] = $taskInfo;
     }
 
 }

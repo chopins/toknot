@@ -90,7 +90,7 @@ class Router extends Object implements SystemCallWrapper {
         $requireParams = $this->request->attributes;
         $exec = $this->getNamespace();
         $this->callController = $parameters;
-        ob_start();
+        $this->kernel->isCLI || ob_start();
         foreach ($exec as $key => $ns) {
             $this->launch($parameters, $ns, $key, $requireParams);
         }
@@ -115,7 +115,7 @@ class Router extends Object implements SystemCallWrapper {
                 header($op);
             }
         } else {
-            if (ob_get_length()) {
+            if (!$this->kernel->isCLI && ob_get_length()) {
                 ob_flush();
             }
             echo $runResult['content'];

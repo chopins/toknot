@@ -23,6 +23,8 @@ use Toknot\Share\Generator;
  */
 class Tookit {
 
+    use ObjectAssistant;
+
     /**
      * Uppercase the first character of each word in a string
      * 
@@ -342,7 +344,7 @@ class Tookit {
         return self::callFunc($func, $argv);
     }
 
-    public function strrpos($str, $needle, $offset = 0, $encoding = null) {
+    public static function strrpos($str, $needle, $offset = 0, $encoding = null) {
         $argv = func_get_args();
         if ($encoding === null) {
             unset($argv[3]);
@@ -574,7 +576,7 @@ class Tookit {
         return Generator::iteration($start, $end, $step);
     }
 
-    public function arrayColumn($array, $key, $indexKey = null) {
+    public static function arrayColumn($array, $key, $indexKey = null) {
         if (function_exists('array_column')) {
             return array_column($array, $key, $indexKey);
         }
@@ -596,5 +598,30 @@ class Tookit {
         return $res;
     }
 
+    public static function iter($number, $callable) {
+        $idx = 0;
+        while ($number > $idx) {
+            $idx++;
+            self::callFunc($callable, [$idx]);
+        }
+    }
+
+    /**
+     * return current unix timestamp with millisecond
+     * 
+     * @return float
+     */
+    public static function millisecond() {
+        return floor(microtime(true) * 1000);
+    }
+
+    /**
+     * sleep millisecond
+     * 
+     * @param int $int
+     */
+    public static function msleep($int) {
+        usleep($int * 1000);
+    }
 
 }
