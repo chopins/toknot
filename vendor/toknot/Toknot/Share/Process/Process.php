@@ -882,7 +882,7 @@ class Process extends Object {
             $this->wait($pid);
         }
         $args = Kernel::single()->getArg();
-        $path = $args[0];
+        $path = realpath($args[0]);
         array_shift($args);
         pcntl_exec($path, $args);
     }
