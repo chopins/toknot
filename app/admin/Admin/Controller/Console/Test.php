@@ -22,6 +22,7 @@ class Test {
    
         $status = $p->processPool(10);
         if ($status) {
+            $p->restart();
             exit;
         }
 

@@ -22,11 +22,11 @@ use Toknot\Boot\Tookit;
  */
 class Process extends Object {
 
-    private $processPool = [];
     private $lock = null;
     protected $mainSockPool = [];
     protected $childSock = null;
     protected $scheduleTable = [];
+    protected $myChildProcess = [];
 
     const CMD_LOCK = 'LOCK';
     const CMD_UNLOCK = 'UNLOCK';
@@ -534,7 +534,6 @@ class Process extends Object {
             list($this->mainSockPool[$mainId][], $cport) = $this->pipe();
             $pid = $this->fork();
             if ($pid > 0) {
-                $this->processPool[$pid] = 1;
                 continue;
             } else {
                 stream_set_blocking($cport, 1);
@@ -588,7 +587,7 @@ class Process extends Object {
             $res = $this->wait($pid);
 
             if ($res == $pid) {
-                unset($this->processPool[$pid]);
+                unset($this->myChildProcess[$pid]);
             }
             if ($callable) {
                 return self::callFunc($callable);
@@ -598,7 +597,7 @@ class Process extends Object {
     }
 
     private function processLoop($mainId, $callable = null) {
-        while (count($this->processPool)) {
+        while (count($this->myChildProcess)) {
             $write = $except = [];
             $read = $this->mainSockPool[$mainId];
             $num = stream_select($read, $write, $except, 10000);
@@ -641,9 +640,7 @@ class Process extends Object {
         if (!$this->processLoop($mainSockPoolId, function() use($mainSockPoolId) {
                     list($nport, $cport) = $this->pipe();
                     $npid = $this->fork();
-                    if ($npid > 0) {
-                        $this->processPool[$npid] = 1;
-                    } else {
+                    if ($npid == 0) {
                         $this->waitMain($cport);
                         return 0;
                     }
@@ -668,6 +665,7 @@ class Process extends Object {
         } elseif ($pid == 0) {
             return 0;
         }
+        $this->myChildProcess[$pid] = time();
         return $pid;
     }
 
@@ -876,6 +874,17 @@ class Process extends Object {
         $taskInfo['execTimes'] = 0;
         $taskInfo['interval'] = $interval;
         $this->scheduleTable[] = $taskInfo;
+    }
+
+    public function restart() {
+        foreach ($this->myChildProcess as $pid => $time) {
+            $this->kill($pid, SIGTERM);
+            $this->wait($pid);
+        }
+        $args = Kernel::single()->getArg();
+        $path = $args[0];
+        array_shift($args);
+        pcntl_exec($path, $args);
     }
 
 }
