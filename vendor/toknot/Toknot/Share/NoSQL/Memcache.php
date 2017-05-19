@@ -180,9 +180,9 @@ class Memcache extends Object {
         }
     }
 
-    public function __call($m, $argv = null) {
+    public function __call($m, $argv = []) {
         if ($this->oop) {
-            return self::callMethod(count($argv), $m, $argv, $this->cacheObj);
+            return self::callMethod($this->cacheObj, $m, $argv);
         } else {
             array_unshift($argv, $this->cacheObj);
             return self::callFunc("memcache_$m", $argv);

@@ -121,12 +121,10 @@ final class Kernel extends Object {
      * @param int $argv
      */
     protected function __construct($argc, $argv) {
-        define('PHP_NS', '\\');
+
         define('PHP_SP', ' ');
         $this->setArg($argc, $argv);
         $this->initGlobalEnv();
-
-        $this->initImport();
 
         if (PHP_SAPI == 'cli') {
             $this->isCLI = true;
@@ -238,7 +236,7 @@ final class Kernel extends Object {
                 }
             }
         }
-        $this->callInstance = self::invokeStatic(0, 'getInstance', [], $this->callWrapper);
+        $this->callInstance = self::invokeStatic($this->callWrapper, 'getInstance');
         $this->callInstance->init($this->requestUri);
     }
 
@@ -268,7 +266,7 @@ final class Kernel extends Object {
 
     public function call($path) {
         $scheme = parse_url($path, PHP_URL_SCHEME);
-        $ins = self::invokeStatic(0, 'getInstance', [], $this->wrapperList[$scheme]);
+        $ins = self::invokeStatic($this->wrapperList[$scheme], 'getInstance');
         $ins->init($path);
         return $ins->call();
     }
@@ -412,10 +410,8 @@ final class Kernel extends Object {
         return isset($this->cmdOption[$key]);
     }
 
-    private function initImport() {
-        include __DIR__ . '/Import.php';
-        $this->import = new Import();
-        $this->import->register();
+    public function setImport($import) {
+        $this->import = $import;
     }
 
     private function importVendor() {

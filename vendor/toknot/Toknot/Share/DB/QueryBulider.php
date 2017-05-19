@@ -172,8 +172,8 @@ class QueryBulider extends Object {
         return $res;
     }
 
-    public function __call($name, $argv) {
-        return self::callMethod(count($argv), $name, $argv, $this->builder);
+    public function __call($name, $argv = []) {
+        return self::callMethod($this->builder, $name, $argv);
     }
 
 }

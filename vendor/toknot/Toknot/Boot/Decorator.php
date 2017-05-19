@@ -87,7 +87,7 @@ class Decorator extends Object {
                 $calls = explode('->', Tookit::dotNS($call));
             } elseif (strpos($call, '::') !== false) {
                 $calls = explode('::', Tookit::dotNS($call));
-                $this->ret = self::invokeStatic(1, $calls[1], [$this->ret], $calls[0]);
+                $this->ret = self::invokeStatic($calls[0], $calls[1], [$this->ret]);
                 continue;
             }
             $this->ret = self::callFunc($call, [$this->ret]);

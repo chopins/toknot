@@ -90,8 +90,7 @@ abstract class View extends Object {
      */
     final public function __call($name, $argv = []) {
         $name = strtolower($name);
-        $argc = count($argv);
-        $node = $argc == 0 ? Tag::$name() : self::invokeStatic($argc, $name, $argv, 'Toknot\Share\View\Tag');
+        $node = $argv ? self::invokeStatic(Tag::__class(), $name, $argv) : Tag::$name();
         return $node;
     }
 

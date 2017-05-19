@@ -25,10 +25,10 @@ trait ObjectHelper {
      * @return mixed
      */
     public static function callFunc($callable, $argv = []) {
-        $argc = count($argv);
         if (is_array($callable)) {
-            return self::callMethod($argc, $callable[1], $argv, $callable[0]);
+            return self::callMethod($callable[0], $callable[1], $argv);
         }
+        $argc = count($argv);
         switch ($argc) {
             case 0:
                 return $callable();
@@ -49,6 +49,10 @@ trait ObjectHelper {
         }
     }
 
+    public static function __class() {
+        return __CLASS__;
+    }
+
     /**
      * dynamic call a static method of a class and pass any params
      * 
@@ -58,7 +62,8 @@ trait ObjectHelper {
      * @param string $className
      * @return mix
      */
-    public static function invokeStatic($argc, $method, $argv, $className) {
+    public static function invokeStatic($className, $method, $argv = []) {
+        $argc = count($argv);
         switch ($argc) {
             case 0:
                 return $className::$method();
@@ -87,11 +92,12 @@ trait ObjectHelper {
      * @param array $argv
      * @return mix
      */
-    public function invokeMethod($argc, $method, $argv) {
-        return self::callMethod($argc, $method, $argv, $this);
+    public function invokeMethod($method, $argv = []) {
+        return self::callMethod($this, $method, $argv);
     }
 
-    public static function callMethod($argc, $method, $argv, $obj) {
+    public static function callMethod($obj, $method, $argv = []) {
+        $argc = count($argv);
         switch ($argc) {
             case 0:
                 return $obj->$method();
@@ -107,7 +113,7 @@ trait ObjectHelper {
                 return $obj->$method($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
             default:
                 $argstr = $this->argStr($argc);
-                eval("\$res = $obj->$method($argstr);");
+                eval("\$res = \$obj->$method($argstr);");
                 return $res;
         }
     }

@@ -21,6 +21,7 @@ class Import {
     private static $includeList = [];
 
     public function __construct($path = '') {
+        define('PHP_NS', '\\');
         self::$toknotRoot = dirname(__DIR__);
         if ($path == '') {
             $path = dirname(__DIR__) . DIRECTORY_SEPARATOR;

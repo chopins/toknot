@@ -193,13 +193,14 @@ class Router extends Object implements SystemCallWrapper {
         if (!$this->kernel->isPassState()) {
             return false;
         }
+        $params = iterator_to_array($requireParams, false);
 
         if (strpos($call, $this->staticMethodSeparator) !== false) {
             $calls = explode($this->staticMethodSeparator, $call);
             if (empty($calls[0])) {
-                return self::callFunc($calls[1]);
+                return self::callFunc($calls[1], $params);
             } else {
-                return self::invokeStatic(0, $calls[1], [], $calls[0]);
+                return self::invokeStatic($calls[0], $calls[1], $params);
             }
         } else {
             $calls = explode($this->methodSeparator, $call);
@@ -209,7 +210,6 @@ class Router extends Object implements SystemCallWrapper {
 
         $paramsCount = $requireParams->count();
 
-        $params = iterator_to_array($requireParams, false);
         if ($paramsCount > 0) {
             $groupins = self::constructArgs($paramsCount, $params, $class);
         } else {
@@ -218,7 +218,7 @@ class Router extends Object implements SystemCallWrapper {
 
         if (isset($calls[1])) {
             if ($paramsCount > 0) {
-                self::callMethod($paramsCount, $calls[1], $params, $groupins);
+                self::callMethod($groupins, $calls[1], $params);
             } else {
                 $groupins->{$calls[1]}();
             }

@@ -122,7 +122,7 @@ class Configuration extends Object {
 
     public static function loadConfig($ini) {
         $obj = new static([]);
-        return self::callMethod(1, 'load', [$ini], $obj);
+        return self::callMethod($obj, 'load', [$ini]);
     }
 
     public function load($ini) {

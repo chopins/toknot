@@ -36,7 +36,7 @@ class Redis extends Object {
 
     public function __call($m, $argv = []) {
         if ($this->redisIns) {
-            self::callMethod(count($argv), $m, $argv, $this->redisIns);
+            self::callMethod($this->redisIns,$m, $argv);
         }
         return;
     }

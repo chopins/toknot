@@ -87,11 +87,11 @@ class QueryHelper extends Object {
         return [$key => [$feild]];
     }
 
-    public function __call($method, $args) {
-        self::invokeStatic(count($args), $method, $args, __CLASS__);
+    public function __call($method, $args = []) {
+        self::invokeStatic(__CLASS__, $method, $args);
     }
 
-    public function __callStatic($name, $args) {
+    public function __callStatic($name, $args = []) {
         return [$args[0], $args[1], $name];
     }
 
