@@ -85,6 +85,38 @@ trait ObjectHelper {
     }
 
     /**
+     * use factory dynamic create instance when the class is any name and any params
+     *
+     * @param array $className
+     * @param string $args
+     * @static
+     * @access public
+     * @final
+     * @return $this
+     */
+    public static function constructArgs($className, array $args = []) {
+        $argc = count($args);
+        switch ($argc) {
+            case 0:
+                return new $className;
+            case 1:
+                return new $className($args[0]);
+            case 2:
+                return new $className($args[0], $args[1]);
+            case 3:
+                return new $className($args[0], $args[1], $args[2]);
+            case 4:
+                return new $className($args[0], $args[1], $args[2], $args[3]);
+            case 5:
+                return new $className($args[0], $args[1], $args[2], $args[3], $args[4]);
+            default:
+                $argstr = $this->argStr($argc);
+                eval("\$res = new $className($argstr);");
+                return $res;
+        }
+    }
+
+    /**
      * dynamic call a method of a class use any params
      * 
      * @param int $argc

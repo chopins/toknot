@@ -211,9 +211,9 @@ class Router extends Object implements SystemCallWrapper {
         $paramsCount = $requireParams->count();
 
         if ($paramsCount > 0) {
-            $groupins = self::constructArgs($paramsCount, $params, $class);
+            $groupins = self::constructArgs($class, $params);
         } else {
-            $groupins = new $class();
+            $groupins = new $class;
         }
 
         if (isset($calls[1])) {

@@ -44,7 +44,7 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
         $attach = ['data' => $data];
 
         if ($argc > 0) {
-            $attach['obj'] = self::constructArgs($argc, $argv, $className);
+            $attach['obj'] = self::constructArgs($className, $argv);
         } else {
             $attach['obj'] = new $className;
         }
@@ -59,37 +59,6 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
 
     final private static function _argvSame($data, $className) {
         return empty($data) || $data == self::$singletonInstanceStorage[$className]['data'];
-    }
-
-    /**
-     * use factory dynamic create instance when the class is any name and any params
-     *
-     * @param int $argc
-     * @param array $args
-     * @param string $className
-     * @static
-     * @access public
-     * @final
-     * @return $this
-     */
-    final public static function constructArgs($argc, array $args, $className) {
-        switch ($argc) {
-            case 0:
-                return new $className;
-            case 1:
-                return new $className($args[0]);
-            case 2:
-                return new $className($args[0], $args[1]);
-            case 3:
-                return new $className($args[0], $args[1], $args[2]);
-            case 4:
-                return new $className($args[0], $args[1], $args[2], $args[3]);
-            case 5:
-                return new $className($args[0], $args[1], $args[2], $args[3], $args[4]);
-            default:
-                $ref = new \ReflectionClass($className);
-                return $ref->newInstanceArgs($args);
-        }
     }
 
     final public function setIteratorArray(array $data = []) {
