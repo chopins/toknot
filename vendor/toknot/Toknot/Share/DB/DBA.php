@@ -12,7 +12,7 @@ namespace Toknot\Share\DB;
 
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Object;
-use Toknot\Boot\ObjectAssistant;
+use Toknot\Boot\ObjectHelper;
 use Toknot\Boot\Tookit;
 use Toknot\Share\DB\DBSchema as Schema;
 use Toknot\Boot\Configuration as TKConfig;
@@ -27,7 +27,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 
 class DBA extends Object {
 
-    use ObjectAssistant;
+    use ObjectHelper;
 
     /**
      * config.ini database db config, inculude table struct

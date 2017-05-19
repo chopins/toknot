@@ -13,10 +13,10 @@ namespace Toknot\Boot;
 use Toknot\Exception\BaseException;
 
 /**
- * ObjectAssistant
+ * ObjectHelper
  *
  */
-trait ObjectAssistant {
+trait ObjectHelper {
 
     /**
      * 

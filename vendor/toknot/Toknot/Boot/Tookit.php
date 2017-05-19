@@ -23,7 +23,7 @@ use Toknot\Share\Generator;
  */
 class Tookit {
 
-    use ObjectAssistant;
+    use ObjectHelper;
 
     /**
      * Uppercase the first character of each word in a string

@@ -27,7 +27,7 @@ use Toknot\Boot\Tookit;
 
 final class Kernel extends Object {
 
-    use ObjectAssistant;
+    use ObjectHelper;
 
     /**
      *

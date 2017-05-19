@@ -14,7 +14,7 @@ use Toknot\Boot\Logs;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Tookit;
 use Toknot\Exception\ContinueException;
-use Toknot\Boot\ObjectAssistant;
+use Toknot\Boot\ObjectHelper;
 
 /**
  *  CommandLine
@@ -23,7 +23,7 @@ use Toknot\Boot\ObjectAssistant;
  */
 class CommandLine {
 
-    use ObjectAssistant;
+    use ObjectHelper;
 
     private $progMsgStart = 0;
     private static $autoHistory = false;

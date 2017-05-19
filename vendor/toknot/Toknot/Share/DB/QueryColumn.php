@@ -10,7 +10,7 @@
 
 namespace Toknot\Share\DB;
 
-use Toknot\Boot\ObjectAssistant;
+use Toknot\Boot\ObjectHelper;
 
 /**
  * Column
@@ -18,7 +18,7 @@ use Toknot\Boot\ObjectAssistant;
  * @author chopin
  */
 class QueryColumn {
-    use ObjectAssistant;
+    use ObjectHelper;
 
     protected $columnName = '';
     protected $conn = '';

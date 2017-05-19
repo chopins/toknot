@@ -14,7 +14,7 @@ use Toknot\Boot\Kernel;
 use Toknot\Boot\Configuration;
 use Toknot\Boot\Object;
 use Toknot\Boot\Tookit;
-use Toknot\Boot\ObjectAssistant;
+use Toknot\Boot\ObjectHelper;
 use Toknot\Boot\SystemCallWrapper;
 use Toknot\Exception\NotFoundException;
 use Toknot\Share\Request;
@@ -36,7 +36,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
  */
 class Router extends Object implements SystemCallWrapper {
 
-    use ObjectAssistant;
+    use ObjectHelper;
 
     /**
      *

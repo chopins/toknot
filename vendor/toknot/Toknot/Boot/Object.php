@@ -15,7 +15,7 @@ namespace Toknot\Boot;
 
 abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializable {
 
-    use ObjectAssistant;
+    use ObjectHelper;
 
     private static $singletonInstanceStorage = [];
     private $iteratorKey = null;
