@@ -377,7 +377,7 @@ class Process extends Object {
         return $this->sendLockMessage($alock, self::CMD_LOCK);
     }
 
-    public function aUnlock($port = 9088) {
+    public function aUnlock($unlockId, $port = 9088) {
         try {
             $errno = 0;
             $errstr = '';
@@ -385,25 +385,24 @@ class Process extends Object {
         } catch (BaseException $e) {
             return false;
         }
-        return $this->sendLockMessage($alock, self::CMD_UNLOCK);
+        return $this->sendLockMessage($alock, self::CMD_UNLOCK, $unlockId);
     }
 
     protected function readAccept($rs, &$lockpid) {
         $acp = $this->read($rs);
 
-        list($cmd, $pid) = explode('|', $acp);
+        list($cmd, $pid, $unlockId) = explode('|', $acp);
         if ($cmd == self::CMD_LOCK) {
             if (!$lockpid) {
-                $lockpid = $pid;
-                $this->send($rs, self::CMD_SUCC);
-            } elseif ($pid != $lockpid) {
+                $lockpid = uniqid($pid, true);
+                $this->send($rs, self::CMD_SUCC . "|$lockpid");
+            } elseif ($unlockId != $lockpid) {
                 $this->send($rs, self::CMD_FAIL);
             } else {
-                $this->send($rs, self::CMD_ALREADY);
+                $this->send($rs, self::CMD_ALREADY . "|$lockpid");
             }
         } elseif ($cmd == self::CMD_UNLOCK) {
-
-            if ($pid == $lockpid) {
+            if ($pid == $unlockId) {
                 $lockpid = 0;
                 $this->send($rs, self::CMD_SUCC);
             } else {
@@ -462,14 +461,14 @@ class Process extends Object {
         return 1;
     }
 
-    protected function sendLockMessage($lock, $type) {
+    protected function sendLockMessage($lock, $type, $unlockId = '') {
         stream_set_blocking($lock, 1);
         $pid = $this->getpid();
-        $this->send($lock, $type . "|$pid");
+        $this->send($lock, $type . "|$pid|$unlockId");
         $ret = $this->read($lock);
-
-        if ($ret == self::CMD_SUCC || $ret == self::CMD_ALREADY) {
-            return true;
+        $resArr = explode('|', $ret);
+        if ($resArr[0] == self::CMD_SUCC || $resArr[0] == self::CMD_ALREADY) {
+            return isset($resArr[1]) ? $resArr[1] : true;
         }
         return false;
     }
