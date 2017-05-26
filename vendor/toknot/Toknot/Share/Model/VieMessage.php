@@ -11,20 +11,20 @@
 namespace Toknot\Share\Model;
 
 use Toknot\Share\DB\DBA;
-use Toknot\Share\DB\QueryHelper;
 use Toknot\Exception\VieMessageException;
 use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\GlobalFilter;
-
+use Toknot\Boot\Tookit;
+use Toknot\Boot\ObjectHelper;
 /**
  * VieMessage
  *
  * @author chopin
  */
 class VieMessage extends Object {
-
+    use ObjectHelper;
     /**
      * message table
      *
@@ -115,6 +115,9 @@ class VieMessage extends Object {
      * @readonly 
      */
     protected $mutexMappingFeild = null;
+    protected $mutexRow = [];
+    protected $uniqid = '';
+    protected $enableRollback = true;
 
     /**
      * 
@@ -130,13 +133,6 @@ class VieMessage extends Object {
         } else {
             $this->lockPrefix = GlobalFilter::env('REMOTE_ADDR') . GlobalFilter::env('REMOTE_PORT');
         }
-    }
-
-    public function __get($name) {
-        if ($this->__isReadonlyProperty($name)) {
-            return $this->$name;
-        }
-        throw BaseException::undefineProperty($this, $name);
     }
 
     public function getLockPrefix() {
@@ -231,9 +227,9 @@ class VieMessage extends Object {
     public function uniqid() {
         $prefix = md5($this->lockPrefix . $this->lastId) . '-';
         if (function_exists('hash')) {
-            $uniqid = hash('sha256', uniqid($prefix, true));
+            $this->uniqid = hash('sha256', uniqid($prefix, true));
         } else {
-            $uniqid = sha1(uniqid($prefix, true));
+            $this->uniqid = sha1(uniqid($prefix, true));
         }
     }
 
@@ -245,79 +241,78 @@ class VieMessage extends Object {
      * @throws VieMessageException
      */
     public function receiveMessage($receiver, $rollback = true) {
-        $uniqid = $this->uniqid();
-
+        $this->uniqid();
+        $this->enableRollback = $rollback;
         $filter = $this->tableInstance->cols($this->lockFeild)->eq($this->unprocessedFlag);
 
-        $set = $this->tableInstance->cols($this->lockFeild)->set($uniqid);
-        $mutexRow = [];
+        $set = $this->tableInstance->cols($this->lockFeild)->set($this->uniqid);
+
         if ($this->mutexMappingFeild) {
-            $mutexRow = $this->insertMutex();
-            $inRow = $this->tableInstance->cols($this->mutexMappingFeild)->in($mutexRow);
+            Kernel::single()->attachShutdownFunction(function () {
+                $this->rollback();
+            });
+            $this->mutexRow = $this->insertMutex();
+            $inRow = $this->tableInstance->cols($this->mutexMappingFeild)->in($this->mutexRow);
             $filter = $this->tableInstance->filter()->andX($filter, $inRow);
         }
 
         $this->tableInstance->update($set, $filter, $this->limit);
+        $this->deleteMutex();
 
-        $where = $this->tableInstance->cols($this->lockFeild)->eq($uniqid);
+        $where = $this->tableInstance->cols($this->lockFeild)->eq($this->uniqid);
         $res = $this->tableInstance->iterator($where, $this->limit);
         foreach ($res as $row) {
             $pkv = $row[$this->pk];
             try {
                 self::callFunc($receiver, [$row]);
             } catch (\Exception $e) {
-                $rollbackMsg = $this->rollback($rollback, $uniqid, $mutexRow);
-                throw new VieMessageException($pkv, $uniqid, $e, $rollbackMsg);
+                $rollbackMsg = $this->rollback($rollback);
+                throw new VieMessageException($pkv, $this->uniqid, $e, $rollbackMsg);
             }
-            $lock = $this->tableInstance->cols($this->lockFeild)->eq($uniqid);
+            $lock = $this->tableInstance->cols($this->lockFeild)->eq($this->uniqid);
             $pk = $this->tableInstance->cols($this->pk)->eq($pkv);
             $where = $this->tableInstance->filter()->andX($pk, $lock);
             $set = $this->tableInstance->cols($this->lockFeild)->set($this->processedFlag);
             $this->tableInstance->update($set, $where, 1);
         }
-        $this->deleteMutex($mutexRow);
+        $this->deleteMutex();
     }
 
-    protected function insertMutex($filter) {
+    protected function insertMutex() {
         $mutex = DBA::table($this->mutexTable);
-
         $mutexRow = [];
-        DBA::transaction(function() use($mutex, &$mutexRow, $filter) {
-            $n = 1;
-            $exist = [];
-            $newfilter = $filter;
-            $cont = false;
-            do {
-                try {
-                    $n++;
-                    $this->tableInstance->setColumn($this->mutexMappingFeild);
-                    $sql = $this->tableInstance->select($newfilter)->limit(1)->getLastSql();
-                    $mutex->setColumn($this->mutexFeild);
-                    $mutex->insertSelect($sql);
-                    $id = $mutex->lastId();
-                    $mutex = $mutex->select(['id', $id]);
-                    $exist[] = $mutex[$this->mutexMappingFeild];
+        $n = 1;
+        $cont = false;
+        do {
+            try {
+                $n++;
+                $this->tableInstance->setColumn($this->mutexMappingFeild);
+                $sql = $this->tableInstance->select()->groupBy($this->mutexMappingFeild)->getLastSql();
 
-                    $f = $this->tableInstance->cols($this->mutexMappingFeild)->out($exist);
+                $mutex->setColumn($this->mutexFeild);
+                $mutex->insertSelect($sql);
+                $id = $mutex->lastId();
 
-                    $newfilter = $this->tableInstance->filter()->andX($filter, $f);
-                    $mutexRow[] = $mutex[$this->mutexMappingFeild];
-                } catch (\PDOException $e) {
-                    $cont = stripos($e->getMessage(), 'Duplicate') !== false;
-                }
-                if ($n >= $this->limit) {
-                    return;
-                }
-            } while ($cont);
-            throw $e;
-        });
+                $mutex = $mutex->getList($mutex->cols('id')->eq($id), $this->limit);
+                $mutexRow = Tookit::arrayColumn($mutex, $this->mutexFeild);
+            } catch (\PDOException $e) {
+                $cont = stripos($e->getMessage(), 'Duplicate') !== false;
+            }
+            if ($n >= $this->limit) {
+                break;
+            }
+        } while ($cont);
+
+
         return $mutexRow;
     }
 
-    protected function deleteMutex($mutexRow) {
-        $mutex = DBA::table($this->mutexTable);
-        $filter = $mutex->cols($this->mutexMappingFeild)->in($mutexRow);
-        $mutex->delete($filter);
+    protected function deleteMutex() {
+        if ($this->mutexRow) {
+            $mutex = DBA::table($this->mutexTable);
+            $filter = $mutex->cols($this->mutexMappingFeild)->in($this->mutexRow);
+            $mutex->delete($filter);
+        }
     }
 
     /**
@@ -335,22 +330,26 @@ class VieMessage extends Object {
 
     /**
      * 
-     * @param boolean $rollback
-     * @param string $uniqid
      * @return string
      */
-    protected function rollback($rollback, $uniqid, $mutexRow) {
-        if ($rollback) {
+    protected function rollback() {
+        if ($this->enableRollback) {
             try {
                 $set = $this->tableInstance->cols($this->lockFeild)->set($this->unprocessedFlag);
-                $filter = $this->tableInstance->cols($this->lockFeild)->eq($uniqid);
+                $filter = $this->tableInstance->cols($this->lockFeild)->eq($this->uniqid);
                 $this->tableInstance->update($set, $filter, $this->limit);
-                $this->deleteMutex($mutexRow);
+                $this->deleteMutex();
                 return 'Has been rollback unprocess message';
             } catch (\Exception $e) {
                 $err = $e->getMessage();
                 return "rollback failure,Message:$err";
             }
+        }
+    }
+
+    public function __destruct() {
+        if ($this->mutexMappingFeild) {
+            $this->rollback();
         }
     }
 

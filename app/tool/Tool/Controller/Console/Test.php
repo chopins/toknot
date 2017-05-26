@@ -5,7 +5,7 @@
  *
  * @copyright  Copyright (c) 2011 - 2017 Toknot.com
  * @license    http://toknot.com/LICENSE.txt New BSD License
- * @link       https://github.com/chopins/toknot
+ * @link https://github.com/chopins/toknot
  */
 
 namespace Tool\Controller\Console;
@@ -33,17 +33,19 @@ class Test {
      * @console test
      */
     public function __construct() {
-        $this->cmd = new \Toknot\Share\CommandLine;
-        //$this->process = new \Toknot\Share\Process\Process();
-        $this->run();
+  $this->cmd = new \Toknot\Share\CommandLine;
+  //$this->process = new \Toknot\Share\Process\Process();
+  $this->run();
     }
 
     public function run() {
-        echo 'etst';
+  echo 'etst';
     }
 
     public function loop() {
-        
+  
     }
 
 }
+
+?>

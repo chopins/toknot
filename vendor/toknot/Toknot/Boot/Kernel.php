@@ -13,7 +13,6 @@
 
 namespace Toknot\Boot;
 
-use Toknot\Boot\Import;
 use Toknot\Boot\Object;
 use Toknot\Boot\Configuration;
 use Toknot\Exception\BaseException;
