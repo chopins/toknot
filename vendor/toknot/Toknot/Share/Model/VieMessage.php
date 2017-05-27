@@ -251,7 +251,7 @@ class VieMessage extends Object {
             Kernel::single()->attachShutdownFunction(function () {
                 $this->rollback();
             });
-            $this->mutexRow = $this->insertMutex();
+            $this->mutexRow = $this->insertMutex($filter);
             $inRow = $this->tableInstance->cols($this->mutexMappingFeild)->in($this->mutexRow);
             $filter = $this->tableInstance->filter()->andX($filter, $inRow);
         }
@@ -278,23 +278,27 @@ class VieMessage extends Object {
         $this->deleteMutex();
     }
 
-    protected function insertMutex() {
+    protected function insertMutex($filter) {
         $mutex = DBA::table($this->mutexTable);
         $mutexRow = [];
         $n = 1;
         $cont = false;
+        $newfilter = $filter;
         do {
             try {
                 $n++;
                 $this->tableInstance->setColumn($this->mutexMappingFeild);
-                $sql = $this->tableInstance->select()->groupBy($this->mutexMappingFeild)->getLastSql();
-
+                $sql = $this->tableInstance->select($newfilter)->limit(1)->getLastSql();
                 $mutex->setColumn($this->mutexFeild);
                 $mutex->insertSelect($sql);
                 $id = $mutex->lastId();
+                    $mutex = $mutex->select(['id', $id]);
+                    $exist[] = $mutex[$this->mutexMappingFeild];
 
-                $mutex = $mutex->getList($mutex->cols('id')->eq($id), $this->limit);
-                $mutexRow = Tookit::arrayColumn($mutex, $this->mutexFeild);
+                    $f = $this->tableInstance->cols($this->mutexMappingFeild)->out($exist);
+
+                    $newfilter = $this->tableInstance->filter()->andX($filter, $f);
+                    $mutexRow[] = $mutex[$this->mutexMappingFeild];
             } catch (\PDOException $e) {
                 $cont = stripos($e->getMessage(), 'Duplicate') !== false;
             }
