@@ -20,6 +20,8 @@ namespace Toknot\Boot;
  */
 interface SystemCallWrapper {
 
+    const __class = __CLASS__;
+
     /**
      * invoke request method
      */

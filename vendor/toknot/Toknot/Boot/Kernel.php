@@ -196,7 +196,7 @@ final class Kernel extends Object {
 
         $this->autoConfigProperty($this->propertySetList(), $this->cfg);
 
-        if ($this->logEnable && is_subclass_of($this->loggerClass, 'Toknot\Boot\Logger')) {
+        if ($this->logEnable && is_subclass_of($this->loggerClass, Logger::__class)) {
             $this->logger = new $this->loggerClass($this->logCfg);
         } else {
             $this->logger = $this->loggerClass;
@@ -217,7 +217,7 @@ final class Kernel extends Object {
 
     public function registerWrapper() {
         foreach ($this->wrapperList as $cls) {
-            if (is_subclass_of($cls, 'Toknot\Boot\SystemCallWrapper', true)) {
+            if (is_subclass_of($cls, SystemCallWrapper::__class, true)) {
                 $cls::register();
             } else {
                 throw new BaseException("wrapper $cls must implements Toknot\Boot\SystemCallWrapper");

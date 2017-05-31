@@ -20,5 +20,7 @@ namespace Toknot\Boot;
  */
 interface Logger {
 
+    const __class = __CLASS__;
+
     public function save($message);
 }
