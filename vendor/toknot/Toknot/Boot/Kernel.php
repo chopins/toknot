@@ -133,9 +133,11 @@ final class Kernel extends Object {
             $this->runResult['option'] = [];
             $this->setResponse(self::PASS_STATE);
 
-            set_error_handler(array($this, 'errorReportHandler'));
-            set_exception_handler(array($this, 'uncaughtExceptionHandler'));
-            register_shutdown_function(array($this, '__destruct'));
+            set_error_handler($this->__callable()->errorReportHandler());
+
+            set_exception_handler($this->__callable()->uncaughtExceptionHandler());
+
+            register_shutdown_function($this->__callable()->__destruct());
         } catch (\Exception $e) {
             $this->echoException($e);
             $this->response();
@@ -235,7 +237,10 @@ final class Kernel extends Object {
                 }
             }
         }
-        $this->callInstance = self::invokeStatic($this->callWrapper, 'getInstance');
+
+        $callWrapper = $this->callWrapper;
+        $this->callInstance = self::invokeStatic($callWrapper, $callWrapper::__method()->getInstance);
+
         $this->callInstance->init($this->requestUri);
     }
 
@@ -265,7 +270,8 @@ final class Kernel extends Object {
 
     public function call($path) {
         $scheme = parse_url($path, PHP_URL_SCHEME);
-        $ins = self::invokeStatic($this->wrapperList[$scheme], 'getInstance');
+        $wrapperClass = $this->wrapperList[$scheme];
+        $ins = self::invokeStatic($wrapperClass, $wrapperClass::__method()->getInstance);
         $ins->init($path);
         return $ins->call();
     }

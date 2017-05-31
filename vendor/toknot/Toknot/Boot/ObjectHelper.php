@@ -50,7 +50,15 @@ trait ObjectHelper {
     }
 
     public static function __class() {
-        return __CLASS__;
+        return get_called_class();
+    }
+
+    public static function __method() {
+        return new MethodHelper();
+    }
+
+    public function __callable() {
+        return new MethodHelper($this);
     }
 
     /**
