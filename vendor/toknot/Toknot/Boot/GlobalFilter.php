@@ -11,6 +11,8 @@
 
 namespace Toknot\Boot;
 
+use Toknot\Boot\Tookit;
+
 /**
  * Description of GlobalFilter
  *
@@ -60,7 +62,7 @@ class GlobalFilter {
     public static function filter($type, $key, $filter = self::FILTER_DEFAULT) {
         if ($filter == self::FILTER_SANITIZE_XSS) {
             $value = self::filter($type, $key);
-            return self::filterXSS($value);
+            return Tookit::filterXSS($value);
         }
         if (self::$phpfilter) {
             $type = constant("INPUT_$type");
