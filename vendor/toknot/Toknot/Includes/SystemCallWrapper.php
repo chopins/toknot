@@ -11,7 +11,7 @@
  * @package Toknot.Boot
  */
 
-namespace Toknot\Boot;
+namespace Toknot\Includes;
 
 /**
  * SystemCallWrapper

@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Share;
+namespace Toknot\Share\Route;
 
 use Symfony\Component\HttpFoundation\Request as SRequest;
 

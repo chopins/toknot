@@ -8,7 +8,7 @@
  * @link       https://github.com/chopins/toknot
  */
 
-namespace Toknot\Share;
+namespace Toknot\Share\SimpleXlsx;
 
 use Toknot\Boot\Kernel;
 use Toknot\Exception\BaseException;
@@ -19,7 +19,7 @@ use Toknot\Share\File;
  *
  * @author chopin
  */
-class SimpleXlsx {
+class SimpleXlsxBak {
     protected $rootPath = '/tmp';
     protected $relsFile = '/_rels/.rels';
     protected $appFile = '/docProps/app.xml';
@@ -76,6 +76,9 @@ class SimpleXlsx {
         if (!class_exists('ZipArchive', false)) {
             throw new BaseException('xlsx need php zip extension');
         }
+        if(!class_exists('DOMDocument', false)) {
+            throw new BaseException('xlsx need php zip extension');
+        }
         $this->alphabetOrder();
         $this->getTmpDir();
     }
@@ -95,6 +98,7 @@ class SimpleXlsx {
         }
         $xlsx = realpath($xlsx);
         $xlsxName = basename($xlsx, '.xlsx');
+        
         $this->workspacedir = "$this->rootPath/$xlsxName";
         $this->extractDir = "$this->workspacedir/$xlsxName";
         mkdir($this->workspacedir);

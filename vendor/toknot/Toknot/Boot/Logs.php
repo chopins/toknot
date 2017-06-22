@@ -15,7 +15,7 @@ namespace Toknot\Boot;
 
 use Toknot\Boot\Tookit;
 use Toknot\Boot\GlobalFilter;
-use Toknot\Boot\Logger;
+use Toknot\Includes\Logger;
 use Toknot\Exception\NoFileOrDirException;
 
 class Logs {

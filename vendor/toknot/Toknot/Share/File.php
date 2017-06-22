@@ -21,10 +21,11 @@ class File extends \SplFileObject {
     private $writer = null;
     private $reader = null;
     private $readerLen = 1024;
+    private $filename = '';
 
     public function __construct($filename, $mode = 'r', $useInclude = false, $context = null) {
         $context ? parent::__construct($filename, $mode, $useInclude, $context) : parent::__construct($filename, $mode, $useInclude);
-
+        $this->filename = $filename;
         if (PHP_MIN_VERSION >= 5) {
             $this->gwrite();
             $this->greader();
@@ -187,6 +188,11 @@ class File extends \SplFileObject {
         $res = $this->reader->current();
         $this->reader->next();
         return $res;
+    }
+    
+    public function unlink() {
+        unlink($this->filename);
+        unset($this);
     }
 
 }

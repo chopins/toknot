@@ -14,7 +14,7 @@
 namespace Toknot\Boot;
 
 use Toknot\Boot\Object;
-use Toknot\Boot\ParseConfig;
+use Toknot\Includes\ParseConfig;
 use Toknot\Exception\NoFileOrDirException;
 use Toknot\Exception\BaseException;
 

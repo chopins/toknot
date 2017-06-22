@@ -132,7 +132,7 @@ routing = symfony/Symfony
 phpdoc = zend/Zend
 
 [wrapper]
-rt = Toknot\Share\Router
+rt = Toknot\Share\Route\Router
 ts = Toknot\Share\Service\Wrapper
 EOF;
         file_put_contents("{$this->appPath}/config/config.ini", $code);
