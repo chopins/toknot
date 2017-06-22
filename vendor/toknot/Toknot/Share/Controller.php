@@ -45,6 +45,10 @@ class Controller extends Object {
         return $this->kernel()->callInstance;
     }
 
+    public function getRequest() {
+        return $this->route()->getRequest();
+    }
+
     public function getMianController() {
         return $this->route()->getController('controller');
     }
@@ -59,6 +63,22 @@ class Controller extends Object {
 
     public function getMainCalled() {
         return $this->route()->getCalled('controller');
+    }
+
+    public function isXmlHttpRequest() {
+        return $this->getRequest()->isXmlHttpRequest();
+    }
+
+    public function isXHR() {
+        return $this->isXmlHttpRequest();
+    }
+
+    public function getPathInfo() {
+        return $this->getRequest()->getPathInfo();
+    }
+
+    public function getRequestResourceType() {
+        return pathinfo($this->getPathInfo(), PATHINFO_EXTENSION);
     }
 
     /**
@@ -280,7 +300,7 @@ class Controller extends Object {
      * @return Session
      */
     public function startSession() {
-        if(session_status() == PHP_SESSION_ACTIVE) {
+        if (session_status() == PHP_SESSION_ACTIVE) {
             return true;
         }
         if (self::$sessionStarted) {
