@@ -36,7 +36,7 @@ use Toknot\Boot\Import;
  * @param boolean $debug        whether enable debug info
  * @param string $confType      config type
  * @param string $parseClass    parse config class,must first include
- * @return Toknot\Boot\Kernel|int
+ * @return int
  */
 function main($appdir = '', $confType = 'ini', $parseClass = null) {
     global $argc, $argv;
@@ -53,5 +53,5 @@ function main($appdir = '', $confType = 'ini', $parseClass = null) {
 
     $k = Kernel::single($argc, $argv);
     $k->setImport($import);
-    $k->run($confType, $parseClass);
+    return $k->run($confType, $parseClass);
 }

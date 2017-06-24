@@ -237,7 +237,7 @@ class DBA extends Object {
         }
 
         $code = '<?php' . PHP_EOL;
-        $code .= 'namespace ' . self::$tableClassNs . PHP_NS . ucfirst($db) . ';' . PHP_EOL;
+        $code .= 'namespace ' . Tookit::nsJoin(self::$tableClassNs, ucfirst($db)) . ';' . PHP_EOL;
         $code .= 'use Toknot\Share\DB\Table;' . PHP_EOL;
 
         foreach ($tables as $table => $v) {

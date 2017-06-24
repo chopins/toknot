@@ -16,6 +16,7 @@ use Toknot\Boot\Configuration;
 use Toknot\Boot\Object;
 use Toknot\Boot\Tookit;
 use Toknot\Boot\ObjectHelper;
+use Toknot\Boot\GlobalFilter;
 use Toknot\Exception\NotFoundException;
 use Toknot\Exception\MethodNotAllowedException as MethodNotAllowed;
 use Toknot\Exception\BaseException;
@@ -110,6 +111,7 @@ class Router extends Object implements SystemCallWrapper {
         if ($runResult['code'] != 200) {
             header($runResult['message'], true, $runResult['code']);
         }
+        $this->execTime();
         if (!empty($runResult['option'])) {
             foreach ($runResult['option'] as $op) {
                 header($op);
@@ -121,6 +123,11 @@ class Router extends Object implements SystemCallWrapper {
             echo $runResult['content'];
             die;
         }
+    }
+
+    public function execTime() {
+        $execTime = microtime(true) - GlobalFilter::env('REQUEST_TIME_FLOAT');
+        header("X-Exec-Time: $execTime sec");
     }
 
     public function init($path = '') {
