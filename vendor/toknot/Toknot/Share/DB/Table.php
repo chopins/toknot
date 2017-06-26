@@ -66,7 +66,11 @@ class Table extends TableIterator {
     }
 
     final public function __get($name) {
-        return $this->cols($name);
+        if ($this->hasColumn($name)) {
+            $name = strtolower(preg_replace('/([A-Z])/', "_$1", lcfirst($name)));
+            return $this->cols($name);
+        }
+        throw BaseException::undefinedProperty($this, $name);
     }
 
     public function setTableAlias($alias) {

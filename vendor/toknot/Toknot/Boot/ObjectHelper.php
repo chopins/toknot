@@ -177,7 +177,7 @@ trait ObjectHelper {
             return $this->{$name};
         }
 
-        throw BaseException::undefineProperty($this, $name);
+        throw BaseException::undefinedProperty($this, $name);
     }
 
     public function autoConfigProperty($propertys, $cfg) {

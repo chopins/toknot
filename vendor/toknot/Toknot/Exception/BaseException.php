@@ -61,7 +61,7 @@ class BaseException extends Exception {
         return new BaseException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
-    public static function undefineProperty($obj, $property) {
+    public static function undefinedProperty($obj, $property) {
         return new UndefinedPropertyException($obj, $property);
     }
 

@@ -624,4 +624,41 @@ class Tookit {
         usleep($int * 1000);
     }
 
+    /**
+     * covert data size form bytes to other unit
+     * 
+     * <code>
+     * $number = 10440;
+     * Tookit::formatDataSize($number) //10.1953125 KB
+     * Tookit::formatDataSize($number, 'd') //10.44 KB
+     * Tookit::formatDataSize($number, 'i') //10.1953125 KiB
+     * Tookit::formatDataSize($number, 'd', 1) //10.4 KB
+     * Tookit::formatDataSize($number, 's', 1) //10.2 KB
+     * Tookit::formatDataSize($number, 3) //10.195 KB
+     * </code>
+     * 
+     * @param int $number           bytes
+     * @param boolean $format       format type, s,i is carry 1024, d is carry 1000
+     * @param boolean $precision    rounds the float number size
+     * @return string
+     */
+    public static function formatDataSize($number, $format = 's', $precision = null) {
+        $unit = ['K', 'M', 'G', 'T', 'P'];
+        $carry = $format == 'd' ? 1000 : 1024;
+        $iecPrefix = $format == 'i' ? 'i' : '';
+        if (is_numeric($format) && $precision === null) {
+            $precision = $format;
+        }
+        foreach ($unit as $u) {
+            $k = $number / $carry;
+            if ($k < $carry) {
+                break;
+            }
+        }
+        if ($precision !== null) {
+            $k = round($k, $precision);
+        }
+        return "{$k} {$u}{$iecPrefix}B";
+    }
+
 }

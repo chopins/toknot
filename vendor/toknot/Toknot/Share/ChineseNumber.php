@@ -10,7 +10,6 @@
 
 namespace Toknot\Share;
 
-use Toknot\Boot\Tookit;
 
 /**
  * ChineseNumber
