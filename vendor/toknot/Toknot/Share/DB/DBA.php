@@ -51,7 +51,7 @@ class DBA extends Object {
     public static $fechStyle = \PDO::FETCH_ASSOC;
     public static $cursorOri = \PDO::FETCH_ORI_NEXT;
     private $transactionActive = false;
-    public $appDir = APPDIR;
+    public $appDir = APP_DIR;
     private $columnDefaultOption = [];
     private $tableDefaultOption = [];
     private $dbns = '';

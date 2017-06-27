@@ -32,8 +32,8 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
      */
     final public static function single() {
         $argv = func_get_args();
-
-        $data = func_num_args() > 0 ? md5(serialize($argv)) : '';
+  
+        $data = func_num_args() > 1 ? md5(serialize($argv)) : '';
         $className = get_called_class();
 
         if (self::_has($className) && self::_argvSame($data, $className)) {

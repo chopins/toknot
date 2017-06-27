@@ -38,20 +38,26 @@ use Toknot\Boot\Import;
  * @param string $parseClass    parse config class,must first include
  * @return int
  */
-function main($appdir = '', $confType = 'ini', $parseClass = null) {
-    global $argc, $argv;
-    if (!is_dir($appdir)) {
-        echo "$appdir is not exist" . PHP_EOL;
-        return 1;
+if (!function_exists('main')) {
+
+    function main($appdir = '', $confType = 'ini', $parseClass = null) {
+        global $argc, $argv;
+        if (!is_dir($appdir)) {
+            echo "$appdir is not exist" . PHP_EOL;
+            return 1;
+        }
+
+        define('APP_DIR', realpath($appdir));
+
+        defined('TOKNOT_DIR') || define('TOKNOT_DIR', __DIR__);
+        include_once __DIR__ . '/Toknot/Boot/Import.php';
+
+        $import = new Import();
+        $import->register();
+        $k = Kernel::single($argc, $argv);
+        $k->setImport($import);
+        return $k->run($confType, $parseClass);
     }
-    define('APPDIR', realpath($appdir));
-    define('TKROOT', __DIR__);
-    include __DIR__ . '/Toknot/Boot/Import.php';
 
-    $import = new Import();
-    $import->register();
-
-    $k = Kernel::single($argc, $argv);
-    $k->setImport($import);
-    return $k->run($confType, $parseClass);
 }
+

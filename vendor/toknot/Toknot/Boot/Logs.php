@@ -70,7 +70,7 @@ class Logs {
             $logs->save($str);
         } else {
             $day = date('Ymd');
-            $logs = Tookit::getRealPath($logs, APPDIR);
+            $logs = Tookit::getRealPath($logs, APP_DIR);
             try {
                 file_put_contents("$logs/log$suffix.$day", $str . PHP_EOL, FILE_APPEND | LOCK_EX);
             } catch (NoFileOrDirException $e) {
@@ -265,8 +265,8 @@ class Logs {
             $str .= "$lis#{$key} ";
             $file = Tookit::coalesce($value, 'file');
             if (self::$shortPath) {
-                $file = str_replace(TKROOT, '...', $file);
-                $file = str_replace(APPDIR, '...', $file);
+                $file = str_replace(TOKNOT_DIR, '...', $file);
+                $file = str_replace(APP_DIR, '...', $file);
             }
             $str .= $file;
             $str .= '(' . Tookit::coalesce($value, 'line') . '):';

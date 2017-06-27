@@ -67,6 +67,12 @@ final class Kernel extends Object {
      * @readonly
      */
     private $schemes = '';
+
+    /**
+     *
+     * @readonly
+     */
+    private $schema = 'toknot';
     private $displayTrace = true;
     private $logger = null;
     private $logEnable = false;
@@ -123,7 +129,7 @@ final class Kernel extends Object {
      */
     protected function __construct($argc, $argv) {
 
-        define('PHP_SP', ' ');
+        defined('PHP_SP') || define('PHP_SP', ' ');
         $this->setArg($argc, $argv);
         $this->initGlobalEnv();
 
@@ -162,9 +168,9 @@ final class Kernel extends Object {
         }
         list($m, $r) = explode('.', PHP_VERSION);
         if ($m == 5) {
-            define('PHP_MIN_VERSION', $r);
+            defined('PHP_MIN_VERSION') || define('PHP_MIN_VERSION', $r);
         } else {
-            define('PHP_MIN_VERSION', $m);
+            defined('PHP_MIN_VERSION') || define('PHP_MIN_VERSION', $m);
         }
 
 
@@ -422,17 +428,17 @@ final class Kernel extends Object {
     }
 
     private function importVendor() {
-        $vendor = dirname(TKROOT);
+        $vendor = dirname(TOKNOT_DIR);
 
         foreach ($this->vendor as $v) {
             $this->import->addPath("$vendor/$v");
         }
-        $appname = ucfirst(basename(APPDIR));
-        $this->import->addPath(APPDIR . "/$appname");
+        $appname = ucfirst(basename(APP_DIR));
+        $this->import->addPath(APP_DIR . "/$appname");
     }
 
     private function loadMainConfig() {
-        $ini = APPDIR . "/config/config.{$this->confgType}";
+        $ini = APP_DIR . "/config/config.{$this->confgType}";
         return Configuration::loadConfig($ini);
     }
 

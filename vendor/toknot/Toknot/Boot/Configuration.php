@@ -22,7 +22,7 @@ class Configuration extends Object {
 
     private static $parseConfObject = null;
     private static $incData = [];
-    private $appDir = APPDIR;
+    private $appDir = APP_DIR;
     private $cacheDir = '/runtime/config';
     private static $yamlfile;
 

@@ -48,7 +48,7 @@ class Router extends Object implements SystemCallWrapper {
     private $subCollection = [];
     private $subCollectionParams = [];
     protected $confType = 'ini';
-    public $appDIr = APPDIR;
+    public $appDIr = APP_DIR;
     public $methodSeparator = '@';
     public $staticMethodSeparator = ':';
     protected $appns = '';
