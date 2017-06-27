@@ -21,6 +21,7 @@ use Toknot\Exception\NotFoundException;
 use Toknot\Exception\MethodNotAllowedException as MethodNotAllowed;
 use Toknot\Exception\BaseException;
 use Toknot\Share\Route\Request;
+use Toknot\Share\Controller;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -48,7 +49,7 @@ class Router extends Object implements SystemCallWrapper {
     private $subCollection = [];
     private $subCollectionParams = [];
     protected $confType = 'ini';
-    public $appDIr = APP_DIR;
+    public $appDir = '';
     public $methodSeparator = '@';
     public $staticMethodSeparator = ':';
     protected $appns = '';
@@ -65,8 +66,9 @@ class Router extends Object implements SystemCallWrapper {
     private $lastCall = [];
     private $rewrite = true;
 
-    protected function __construct() {
-        $this->kernel = Kernel::single();
+    protected function __construct($kernel) {
+        $this->kernel = $kernel;
+        $this->appDir = $this->kernel->appDir();
         $this->autoConfigProperty($this->propertySetList(), $this->kernel->cfg);
         $this->topRoutes = new RouteCollection();
     }
@@ -81,8 +83,8 @@ class Router extends Object implements SystemCallWrapper {
             'rewrite' => 'app.rewrite'];
     }
 
-    public static function getInstance() {
-        return self::single();
+    public static function getInstance($kernel) {
+        return self::single($kernel);
     }
 
     public function call() {
@@ -139,7 +141,7 @@ class Router extends Object implements SystemCallWrapper {
     }
 
     public static function register() {
-        stream_register_wrapper('rt', __CLASS__);
+        // stream_register_wrapper('rt', __CLASS__);
         return true;
     }
 
@@ -222,7 +224,9 @@ class Router extends Object implements SystemCallWrapper {
         } else {
             $groupins = new $class;
         }
-
+        if (is_subclass_of($groupins, Controller::__class())) {
+            $groupins->setKernel($this->kernel);
+        }
         if (isset($calls[1])) {
             if ($paramsCount > 0) {
                 self::callMethod($groupins, $calls[1], $params);
@@ -351,8 +355,8 @@ class Router extends Object implements SystemCallWrapper {
     }
 
     public function load() {
-        $ini = "{$this->appDIr}/config/router.{$this->confType}";
-        $php = "{$this->appDIr}/runtime/config/route.php";
+        $ini = "{$this->appDir}/config/router.{$this->confType}";
+        $php = "{$this->appDir}/runtime/config/route.php";
         return $this->createCache($ini, $php);
     }
 

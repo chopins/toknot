@@ -51,7 +51,7 @@ class DBA extends Object {
     public static $fechStyle = \PDO::FETCH_ASSOC;
     public static $cursorOri = \PDO::FETCH_ORI_NEXT;
     private $transactionActive = false;
-    public $appDir = APP_DIR;
+    public $appDir = '';
     private $columnDefaultOption = [];
     private $tableDefaultOption = [];
     private $dbns = '';
@@ -74,6 +74,7 @@ class DBA extends Object {
      * @param array $dbkey The database config key
      */
     protected function __construct($dbkey = '', $mainConfig = []) {
+        $this->appDir = Kernel::single()->appDir();
         $mainConfig = $mainConfig ? $mainConfig : Kernel::single()->cfg;
 
         $this->autoConfigProperty($this->propertySetList(), $mainConfig);

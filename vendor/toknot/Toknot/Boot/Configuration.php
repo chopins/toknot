@@ -22,11 +22,14 @@ class Configuration extends Object {
 
     private static $parseConfObject = null;
     private static $incData = [];
-    private $appDir = APP_DIR;
+    private $appDir = '';
     private $cacheDir = '/runtime/config';
     private static $yamlfile;
+    private $kernel;
 
-    public function __construct($cfg = []) {
+    public function __construct($kernel, $cfg = []) {
+        $this->appDir = $kernel->appDir();
+        $this->kernel = $kernel;
         $this->iteratorArray = $cfg;
     }
 
@@ -51,7 +54,7 @@ class Configuration extends Object {
                 return null;
             }
         }
-        return is_array($cur) ? new static($cur) : $cur;
+        return is_array($cur) ? new static($this->kernel, $cur) : $cur;
     }
 
     public function has($key) {
@@ -124,8 +127,8 @@ class Configuration extends Object {
         }
     }
 
-    public static function loadConfig($ini) {
-        $obj = new static([]);
+    public static function loadConfig($ini, $kernel) {
+        $obj = new static($kernel, []);
         return self::callMethod($obj, 'load', [$ini]);
     }
 

@@ -67,12 +67,6 @@ final class Kernel extends Object {
      * @readonly
      */
     private $schemes = '';
-
-    /**
-     *
-     * @readonly
-     */
-    private $schema = 'toknot';
     private $displayTrace = true;
     private $logger = null;
     private $logEnable = false;
@@ -113,6 +107,7 @@ final class Kernel extends Object {
     private $loggerClass = null;
     private $enableShortPath = false;
     private $defaultCall = null;
+    private $appDir = '';
 
     /**
      *
@@ -127,8 +122,8 @@ final class Kernel extends Object {
      * @param array $argc
      * @param int $argv
      */
-    protected function __construct($argc, $argv) {
-
+    protected function __construct($appdir, $argc, $argv) {
+        $this->appDir = $appdir;
         defined('PHP_SP') || define('PHP_SP', ' ');
         $this->setArg($argc, $argv);
         $this->initGlobalEnv();
@@ -154,6 +149,25 @@ final class Kernel extends Object {
             $this->echoException($e);
             $this->response();
         }
+    }
+
+    public function appDir() {
+        return $this->appDir;
+    }
+
+    public function loadApp($appdir, $configType = 'ini', $parseClass = null) {
+        if (!is_dir($appdir)) {
+            throw new BaseException("$appdir do not exists or not directory");
+        }
+        $hash = sha1($appdir);
+ 
+        main($appdir, $configType, $parseClass);
+        return $GLOBALS[$hash];
+    }
+
+    public function storeApp() {
+        $schema = sha1($this->appDir);
+        $GLOBALS[$schema] = $this;
     }
 
     private function initGlobalEnv() {
@@ -210,7 +224,6 @@ final class Kernel extends Object {
             $this->logger = $this->loggerClass;
         }
 
-
         if ($this->enableShortPath) {
             Logs::$shortPath = true;
         }
@@ -245,10 +258,8 @@ final class Kernel extends Object {
                 }
             }
         }
-
         $callWrapper = $this->callWrapper;
-        $this->callInstance = self::invokeStatic($callWrapper, $callWrapper::__method()->getInstance);
-
+        $this->callInstance = self::invokeStatic($callWrapper, $callWrapper::__method()->getInstance, [$this]);
         $this->callInstance->init($this->requestUri);
     }
 
@@ -279,7 +290,7 @@ final class Kernel extends Object {
     public function call($path) {
         $scheme = parse_url($path, PHP_URL_SCHEME);
         $wrapperClass = $this->wrapperList[$scheme];
-        $ins = self::invokeStatic($wrapperClass, $wrapperClass::__method()->getInstance);
+        $ins = self::invokeStatic($wrapperClass, $wrapperClass::__method()->getInstance, [$this]);
         $ins->init($path);
         return $ins->call();
     }
@@ -304,6 +315,19 @@ final class Kernel extends Object {
 
     public function isPassState() {
         return $this->runResult['code'] === self::PASS_STATE;
+    }
+
+    public function getKernelId() {
+        return $this->getObjHash();
+    }
+
+    public static function getKernelById($id) {
+        self::setObjHash(__CLASS__, $id);
+        return Kernel::single();
+    }
+
+    public static function setKernelId($id) {
+        self::setObjHash(__CLASS__, $id);
     }
 
     /**
@@ -349,8 +373,6 @@ final class Kernel extends Object {
     }
 
     private function setArg($argc, $argv) {
-        $GLOBALS['argc'] = 0;
-        $GLOBALS['argv'] = [];
         if (PHP_SAPI === 'cli') {
             $this->argc = $argc;
             $this->argv = $argv;
@@ -433,13 +455,13 @@ final class Kernel extends Object {
         foreach ($this->vendor as $v) {
             $this->import->addPath("$vendor/$v");
         }
-        $appname = ucfirst(basename(APP_DIR));
-        $this->import->addPath(APP_DIR . "/$appname");
+        $appname = ucfirst(basename($this->appDir));
+        $this->import->addPath($this->appDir . "/$appname");
     }
 
     private function loadMainConfig() {
-        $ini = APP_DIR . "/config/config.{$this->confgType}";
-        return Configuration::loadConfig($ini);
+        $ini = $this->appDir . "/config/config.{$this->confgType}";
+        return Configuration::loadConfig($ini, $this);
     }
 
     public function config($key) {

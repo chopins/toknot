@@ -23,7 +23,7 @@ class Wrapper extends Object implements SystemCallWrapper {
     protected $pathInfo = [];
 
     public static function register($protoName = 'ts') {
-        stream_register_wrapper($protoName, __CLASS__, STREAM_IS_URL);
+        //stream_register_wrapper($protoName, __CLASS__, STREAM_IS_URL);
     }
 
     public function call() {
@@ -34,8 +34,8 @@ class Wrapper extends Object implements SystemCallWrapper {
         $this->pathInfo = parse_url($path);
     }
 
-    public static function getInstance() {
-        return self::single();
+    public static function getInstance($kernel) {
+        return self::single($kernel);
     }
 
     public function stream_stat() {

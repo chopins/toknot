@@ -35,7 +35,7 @@ interface SystemCallWrapper {
     /**
      * get wrapper instance
      */
-    public static function getInstance();
+    public static function getInstance($kernel);
 
     /**
      * register the wrapper

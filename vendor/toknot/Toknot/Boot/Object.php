@@ -13,13 +13,15 @@
 
 namespace Toknot\Boot;
 
-abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializable {
+abstract class Object implements \Countable, \Iterator, \ArrayAccess {
 
     use ObjectHelper;
 
     private static $singletonInstanceStorage = [];
     private $iteratorKey = null;
     protected $iteratorArray = [];
+    private $objHash = '';
+    private static $lastObjHash = [];
 
     /**
      * when construct param same anywhere return same instance of the class
@@ -32,33 +34,65 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
      */
     final public static function single() {
         $argv = func_get_args();
-  
-        $data = func_num_args() > 1 ? md5(serialize($argv)) : '';
+        $data = func_num_args() > 0 ? self::paramsHash($argv) : '';
         $className = get_called_class();
+        $hash = md5($data . $className);
 
-        if (self::_has($className) && self::_argvSame($data, $className)) {
-            return self::$singletonInstanceStorage[$className]['obj'];
+        //if no param return last obj
+        if (self::_has($className) && empty($data)) {
+            return self::$singletonInstanceStorage[$className][self::$lastObjHash[$className]];
+        }
+
+        if (self::_has($className) && self::_hasHash($className, $hash)) {
+            return self::$singletonInstanceStorage[$className][$hash];
+        }
+
+        if (empty(self::$singletonInstanceStorage[$className])) {
+            self::$singletonInstanceStorage[$className] = [];
         }
 
         $argc = count($argv);
         $attach = ['data' => $data];
 
         if ($argc > 0) {
-            $attach['obj'] = self::constructArgs($className, $argv);
+            $attach = self::constructArgs($className, $argv);
         } else {
-            $attach['obj'] = new $className;
+            $attach = new $className;
         }
-        self::$singletonInstanceStorage[$className] = $attach;
 
-        return $attach['obj'];
+        $attach->objHash = $hash;
+        self::$lastObjHash[$className] = $hash;
+        self::$singletonInstanceStorage[$className][$hash] = $attach;
+        return $attach;
+    }
+
+    final public function getObjHash() {
+        return $this->objHash;
+    }
+
+    final static public function paramsHash($param) {
+        array_walk_recursive($param, function(&$item, $i) {
+            if (is_object($item)) {
+                $item = spl_object_hash($item);
+            } elseif (is_resource($item)) {
+                ob_start();
+                var_dump($item);
+                $item = ob_get_clean();
+            }
+        });
+        return sha1(serialize($param));
+    }
+
+    final public static function setObjHash($class, $id) {
+        self::$lastObjHash[$class] = $id;
+    }
+
+    final private static function _hasHash($className, $hash) {
+        return isset(self::$singletonInstanceStorage[$className][$hash]);
     }
 
     final private static function _has($className) {
         return isset(self::$singletonInstanceStorage[$className]);
-    }
-
-    final private static function _argvSame($data, $className) {
-        return empty($data) || $data == self::$singletonInstanceStorage[$className]['data'];
     }
 
     final public function setIteratorArray(array $data = []) {
@@ -111,14 +145,6 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
         unset($this->iteratorArray[$offset]);
     }
 
-    public function serialize() {
-        return serialize($this->iteratorArray);
-    }
-
-    public function unserialize($serialized) {
-        $this->iteratorArray = unserialize($serialized);
-    }
-
     public static function __set_state($properties) {
         $obj = new static();
         $obj->iteratorArray = $properties;
@@ -129,6 +155,10 @@ abstract class Object implements \Countable, \Iterator, \ArrayAccess, \Serializa
         if (is_object($this->iteratorArray)) {
             $this->iteratorArray = clone $this->iteratorArray;
         }
+    }
+
+    public function __toString() {
+        return get_called_class() . '(#' . spl_object_hash($this) . ')';
     }
 
 }

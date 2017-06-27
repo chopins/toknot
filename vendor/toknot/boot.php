@@ -13,48 +13,48 @@
 use Toknot\Boot\Kernel;
 use Toknot\Boot\Import;
 
-/**
- * main
- * 
- * toknot framework gateway
- * 
- * <code>
- * //example 1
- * main('app_path');
- * 
- * //or  example 2
- * main('app_path','yml');
- * 
- * //or example 3
- * $xmlparse = new YourXMLParse;
- * main('app_path','xml', $xmlparse);
- * </code>
- * 
- * @global int $argc
- * @global mix $argv
- * @param string $appdir        the APP root dir
- * @param boolean $debug        whether enable debug info
- * @param string $confType      config type
- * @param string $parseClass    parse config class,must first include
- * @return int
- */
 if (!function_exists('main')) {
 
+    /**
+     * main
+     * 
+     * toknot framework gateway
+     * 
+     * <code>
+     * //example 1
+     * main('app_path');
+     * 
+     * //or  example 2
+     * main('app_path','yml');
+     * 
+     * //or example 3
+     * $xmlparse = new YourXMLParse;
+     * main('app_path','xml', $xmlparse);
+     * </code>
+     * 
+     * @global int $argc
+     * @global mix $argv
+     * @param string $appdir        the APP root dir
+     * @param string $confType      config type
+     * @param string $parseClass    parse config class,must first include
+     * @return int
+     */
     function main($appdir = '', $confType = 'ini', $parseClass = null) {
         global $argc, $argv;
+        
         if (!is_dir($appdir)) {
             echo "$appdir is not exist" . PHP_EOL;
             return 1;
         }
-
-        define('APP_DIR', realpath($appdir));
+        $appdir = realpath($appdir);
 
         defined('TOKNOT_DIR') || define('TOKNOT_DIR', __DIR__);
         include_once __DIR__ . '/Toknot/Boot/Import.php';
 
         $import = new Import();
         $import->register();
-        $k = Kernel::single($argc, $argv);
+        $k = Kernel::single($appdir, $argc, $argv);
+        $k->storeApp();
         $k->setImport($import);
         return $k->run($confType, $parseClass);
     }

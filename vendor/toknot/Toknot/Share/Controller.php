@@ -32,13 +32,21 @@ class Controller extends Object {
     private $header = [];
     private $layoutInstance = null;
     private $output = true;
+    private $kernel = null;
 
     /**
      * 
      * @return \Toknot\Boot\Kernel
      */
     public function kernel() {
+        if ($this->kernel) {
+            return $this->kernel;
+        }
         return Kernel::single();
+    }
+
+    public function setKernel($kernel) {
+        $this->kernel = $kernel;
     }
 
     public function route() {

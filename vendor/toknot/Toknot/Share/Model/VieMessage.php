@@ -12,19 +12,20 @@ namespace Toknot\Share\Model;
 
 use Toknot\Share\DB\DBA;
 use Toknot\Exception\VieMessageException;
-use Toknot\Exception\BaseException;
 use Toknot\Boot\Object;
 use Toknot\Boot\Kernel;
 use Toknot\Boot\GlobalFilter;
-use Toknot\Boot\Tookit;
 use Toknot\Boot\ObjectHelper;
+
 /**
  * VieMessage
  *
  * @author chopin
  */
 class VieMessage extends Object {
+
     use ObjectHelper;
+
     /**
      * message table
      *
@@ -292,13 +293,13 @@ class VieMessage extends Object {
                 $mutex->setColumn($this->mutexFeild);
                 $mutex->insertSelect($sql);
                 $id = $mutex->lastId();
-                    $mutex = $mutex->select(['id', $id]);
-                    $exist[] = $mutex[$this->mutexMappingFeild];
+                $mutex = $mutex->select(['id', $id]);
+                $exist[] = $mutex[$this->mutexMappingFeild];
 
-                    $f = $this->tableInstance->cols($this->mutexMappingFeild)->out($exist);
+                $f = $this->tableInstance->cols($this->mutexMappingFeild)->out($exist);
 
-                    $newfilter = $this->tableInstance->filter()->andX($filter, $f);
-                    $mutexRow[] = $mutex[$this->mutexMappingFeild];
+                $newfilter = $this->tableInstance->filter()->andX($filter, $f);
+                $mutexRow[] = $mutex[$this->mutexMappingFeild];
             } catch (\PDOException $e) {
                 $cont = stripos($e->getMessage(), 'Duplicate') !== false;
             }
