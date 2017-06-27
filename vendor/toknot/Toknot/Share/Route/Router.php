@@ -127,6 +127,10 @@ class Router extends Object implements SystemCallWrapper {
         }
     }
 
+    public function returnResponse($runResult) {
+        return $runResult['content'];
+    }
+
     public function execTime() {
         $execTime = microtime(true) - GlobalFilter::env('REQUEST_TIME_FLOAT');
         header("X-Exec-Time: $execTime sec");
@@ -138,24 +142,6 @@ class Router extends Object implements SystemCallWrapper {
 
     public function getArg($key = '') {
         return $this->request->get($key);
-    }
-
-    public static function register() {
-        // stream_register_wrapper('rt', __CLASS__);
-        return true;
-    }
-
-    public function stream_stat() {
-        return $this->request ? true : false;
-    }
-
-    public function stream_open($path, $mode = 'GET') {
-        $this->request = Request::create($path, $mode);
-        return true;
-    }
-
-    public function steam_read() {
-        return $this->call();
     }
 
     public function getController($key = null) {

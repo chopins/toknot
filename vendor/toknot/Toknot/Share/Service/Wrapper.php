@@ -22,10 +22,6 @@ class Wrapper extends Object implements SystemCallWrapper {
 
     protected $pathInfo = [];
 
-    public static function register($protoName = 'ts') {
-        //stream_register_wrapper($protoName, __CLASS__, STREAM_IS_URL);
-    }
-
     public function call() {
         
     }
@@ -38,16 +34,12 @@ class Wrapper extends Object implements SystemCallWrapper {
         return self::single($kernel);
     }
 
-    public function stream_stat() {
-        return true;
+    public function response($runResult) {
+        var_dump($runResult);
     }
-
-    public function stream_open($path) {
-        return true;
-    }
-
-    public function response($runReuslt) {
-        var_dump($runReuslt);
+    
+    public function returnResponse($runResult) {
+        return $runResult['content'];
     }
 
     public function getArg($key) {

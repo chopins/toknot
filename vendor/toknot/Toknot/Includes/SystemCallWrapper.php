@@ -37,12 +37,9 @@ interface SystemCallWrapper {
      */
     public static function getInstance($kernel);
 
-    /**
-     * register the wrapper
-     */
-    public static function register();
-
     public function response($runResult);
+
+    public function returnResponse($runResult);
 
     public function getArg($key);
 }

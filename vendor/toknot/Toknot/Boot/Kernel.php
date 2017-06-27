@@ -160,7 +160,7 @@ final class Kernel extends Object {
             throw new BaseException("$appdir do not exists or not directory");
         }
         $hash = sha1($appdir);
- 
+
         main($appdir, $configType, $parseClass);
         return $GLOBALS[$hash];
     }
@@ -238,9 +238,7 @@ final class Kernel extends Object {
 
     public function registerWrapper() {
         foreach ($this->wrapperList as $cls) {
-            if (is_subclass_of($cls, SystemCallWrapper::__class, true)) {
-                $cls::register();
-            } else {
+            if (!is_subclass_of($cls, SystemCallWrapper::__class, true)) {
                 throw new BaseException("wrapper $cls must implements Toknot\Boot\SystemCallWrapper");
             }
         }
@@ -303,6 +301,10 @@ final class Kernel extends Object {
             $this->callInstance->response($this->runResult);
         }
         return $this->runResult['code'];
+    }
+
+    public function returnResponse() {
+        $this->callInstance->returnResponse($this->runResult);
     }
 
     public function shutdown() {
