@@ -18,22 +18,25 @@ class MethodHelper {
 
     private $prevObj = null;
 
-    public function __construct($obj = null) {
+    public function __construct($obj) {
         $this->prevObj = $obj;
     }
 
-    public function __call($name, $arg = []) {
-        if ($this->prevObj) {
-            return array($this->prevObj, $name);
+    protected function checkMethod($name) {
+        $ref = new \ReflectionClass($this->prevObj);
+        if (!$ref->hasMethod($name)) {
+            $class = get_class($this->prevObj);
+            throw new \BadMethodCallException("method $name not defined in class $class");
         }
-        return $name;
     }
 
-    public static function __callStatic($name, $arg = []) {
-        return $name;
+    public function __call($name, $arg = []) {
+        $this->checkMethod($name);
+        return array($this->prevObj, $name);
     }
 
     public function __get($name) {
+        $this->checkMethod($name);
         return $name;
     }
 

@@ -661,4 +661,12 @@ class Tookit {
         return "{$k} {$u}{$iecPrefix}B";
     }
 
+    public static function underline2Camel($str) {
+        return str_replace(' ', '', ucwords(str_replace('_', ' ', $str)));
+    }
+
+    public static function camel2Underline($token) {
+        return strtolower(preg_replace('/([A-Z])/', "_$1", lcfirst($token)));
+    }
+
 }

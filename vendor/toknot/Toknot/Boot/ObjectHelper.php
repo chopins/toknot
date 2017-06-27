@@ -54,7 +54,8 @@ trait ObjectHelper {
     }
 
     public static function __method() {
-        return new MethodHelper();
+        $class = get_called_class();
+        return new MethodHelper($class);
     }
 
     public function __callable() {

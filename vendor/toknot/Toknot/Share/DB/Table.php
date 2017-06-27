@@ -13,6 +13,7 @@ namespace Toknot\Share\DB;
 use Toknot\Share\DB\DBA;
 use Toknot\Exception\BaseException;
 use Toknot\Share\DB\TableIterator;
+use Toknot\Boot\Tookit;
 
 namespace Toknot\Share\DB;
 
@@ -67,7 +68,7 @@ class Table extends TableIterator {
 
     final public function __get($name) {
         if ($this->hasColumn($name)) {
-            $name = strtolower(preg_replace('/([A-Z])/', "_$1", lcfirst($name)));
+            $name = Tookit::camel2Underline($name);
             return $this->cols($name);
         }
         throw BaseException::undefinedProperty($this, $name);
@@ -340,7 +341,7 @@ class Table extends TableIterator {
         return $this->lastId();
     }
 
-    public function findKeyRow($keyValue) {
+    public function buildKeyWhere($keyValue) {
         if (is_array($keyValue)) {
             $where = $this->filter()->andX($keyValue);
         } else if ($this->isCompositePrimaryKey()) {
@@ -353,7 +354,17 @@ class Table extends TableIterator {
         } else {
             $where = $this->filter()->cols($this->primaryKeyName)->eq($keyValue);
         }
+        return $where;
+    }
+
+    public function findKeyRow($keyValue) {
+        $where = $this->buildKeyWhere($keyValue);
         return $this->select($where)->execute(1)->getRow();
+    }
+
+    public function deleteKeyRow($keyValue) {
+        $where = $this->buildKeyWhere($keyValue);
+        return $this->delete($where, 1);
     }
 
     /**

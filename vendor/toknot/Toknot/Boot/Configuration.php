@@ -73,6 +73,7 @@ class Configuration extends Object {
     }
 
     public function __get($key) {
+        $key = Tookit::camel2Underline($key);
         $v = $this->iteratorArray[$key];
 
         if (is_array($v)) {
@@ -83,14 +84,17 @@ class Configuration extends Object {
     }
 
     public function __set($name, $value) {
+        $name = Tookit::camel2Underline($name);
         $this->iteratorArray[$name] = $value;
     }
 
     public function __isset($name) {
+        $name = Tookit::camel2Underline($name);
         return array_key_exists($name, $this->iteratorArray);
     }
 
     public function __unset($name) {
+        $name = Tookit::camel2Underline($name);
         unset($this->iteratorArray[$name]);
     }
 

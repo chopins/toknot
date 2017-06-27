@@ -245,7 +245,7 @@ class DBA extends Object {
                 throw new BaseException("$table miss column list");
             }
             $columnSQL = implode(',', array_keys($v['column']));
-            $class = self::table2Class($table);
+            $class = Tookit::underline2Camel($table);
             $code .= "class $class extends Table {";
             $code .= "protected \$tableName = '$table';";
             $code .= 'protected $tableStructure=' . var_export($v, true) . ';';
