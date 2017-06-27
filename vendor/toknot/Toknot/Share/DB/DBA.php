@@ -301,6 +301,9 @@ class DBA extends Object {
         $tableClass = Tookit::dotNS($tableClass);
 
         $db->loadModel();
+        if(!class_exists($tableClass, false)) {
+            throw new BaseException("table '$table' of class '$tableClass' not exists");
+        }
         $m = new $tableClass($conn);
         return $m;
     }
