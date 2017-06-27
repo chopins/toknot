@@ -302,7 +302,7 @@ class DBA extends Object {
 
         $db->loadModel();
         if(!class_exists($tableClass, false)) {
-            throw new BaseException("table '$table' of class '$tableClass' not exists");
+            throw new BaseException("class '$tableClass of table '$table' of database does not exists, check the table '$table' whether it is exists");
         }
         $m = new $tableClass($conn);
         return $m;
