@@ -27,7 +27,7 @@ class Configuration extends Object {
     private static $yamlfile;
     private $kernel;
 
-    public function __construct($kernel, $cfg = []) {
+    public function __construct(Kernel $kernel, $cfg = []) {
         $this->appDir = $kernel->appDir();
         $this->kernel = $kernel;
         $this->iteratorArray = $cfg;
@@ -80,7 +80,7 @@ class Configuration extends Object {
         $v = $this->iteratorArray[$key];
 
         if (is_array($v)) {
-            return new static($v);
+            return new static($this->kernel, $v);
         } else {
             return $v;
         }
@@ -104,7 +104,7 @@ class Configuration extends Object {
     public function offsetGet($offset) {
         $v = parent::offsetGet($offset);
         if (is_array($v)) {
-            return new static($v);
+            return new static($this->kernel, $v);
         } else {
             return $v;
         }
