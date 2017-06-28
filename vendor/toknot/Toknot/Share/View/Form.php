@@ -40,15 +40,19 @@ class Form extends TagBulid {
     }
 
     public function setAction($value) {
-        $this->addAttr('action', $value);
+        return $this->addAttr('action', $value);
     }
 
     public function setPost() {
-        $this->addAttr('method', 'post');
+        return $this->addAttr('method', 'post');
     }
 
     public function setGet() {
-        $this->addAttr('method', 'get');
+        return $this->addAttr('method', 'get');
+    }
+
+    public function setMethod($method) {
+        return $this->addAttr('method', $method);
     }
 
     public function setType($value = self::FORM) {
@@ -56,10 +60,11 @@ class Form extends TagBulid {
         if (empty($enctypeArr[$value])) {
             throw new BaseException('unsupport give form type');
         }
-        $this->addAttr('enctype', $enctypeArr[$value]);
+        return $this->addAttr('enctype', $enctypeArr[$value]);
     }
 
     public function label($id = '', $labelHit = '', $parent = null) {
+        $parent = $parent ? $parent : $this;
         $labelAttr = $id ? ['for' => $id] : [];
         $label = new AnyTag('label', $labelAttr);
         $label->pushText($labelHit);
@@ -114,6 +119,7 @@ class Form extends TagBulid {
                 $this->input($input, $input['label'], $parent);
             }
         }
+        return $this;
     }
 
     public function textarea($attr = [], $labelHit = null, $parent = null) {
@@ -129,6 +135,7 @@ class Form extends TagBulid {
         $area = new AnyTag('textarea', $attr);
         $value && $area->pushText($value);
         $parent->push($area);
+        return $this;
     }
 
 }
