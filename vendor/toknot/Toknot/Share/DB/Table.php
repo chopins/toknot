@@ -337,8 +337,7 @@ class Table extends TableIterator {
         $this->qr->values($params);
 
         $this->lastSql = $this->qr->getSQL();
-        $this->qr->execute();
-        return $this->lastId();
+        return $this->qr->execute();
     }
 
     public function buildKeyWhere($keyValue) {

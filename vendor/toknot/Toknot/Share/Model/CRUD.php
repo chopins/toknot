@@ -18,26 +18,54 @@ use Toknot\Share\DB\DBA;
  */
 class CRUD {
 
+    /**
+     *
+     * @var Toknot\Share\DB\Table
+     */
     protected $table = null;
+    /**
+     *
+     * @var int
+     */
     protected $defaultLimt = 50;
+    /**
+     *
+     * @var string
+     */
     protected $casFieldName = 'ver';
 
     public function __construct($table) {
         $this->table = DBA::table($table);
     }
 
+    /**
+     * 
+     * @return Toknot\Share\DB\Table
+     */
     public function getTable() {
         return $this->table;
     }
 
+    /**
+     * 
+     * @param string $name
+     */
     public function setCasFieldName($name) {
         $this->casFieldName = $name;
     }
 
-    public function getCasFieldName($name) {
+    /**
+     * 
+     * @return string
+     */
+    public function getCasFieldName() {
         return $this->casFieldName;
     }
 
+    /**
+     * 
+     * @param int $limit
+     */
     public function setDefaultLimit($limit) {
         $this->defaultLimt = $limit;
     }
@@ -46,6 +74,11 @@ class CRUD {
         return $this->defaultLimt;
     }
 
+    /**
+     * 
+     * @param array $row
+     * @return int
+     */
     public function create($row) {
         return $this->table->insert($row);
     }
