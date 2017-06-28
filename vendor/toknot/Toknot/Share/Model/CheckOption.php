@@ -141,7 +141,7 @@ class CheckOption extends Object {
      */
     public function checkRequire() {
         foreach ($this->require as $k => $t) {
-            if (!isset($this->iteratorArray[$k])) {
+            if (!isset($this[$k])) {
                 return $k;
             }
         }
@@ -154,12 +154,12 @@ class CheckOption extends Object {
      */
     public function checkDepend() {
         foreach ($this->depend as $k => $t) {
-            if (!isset($this->iteratorArray[$k])) {
+            if (!isset($this[$k])) {
                 continue;
             }
 
             foreach ($t as $dk) {
-                if (!isset($this->iteratorArray[$dk])) {
+                if (!isset($this[$dk])) {
                     return [$k, $dk];
                 }
             }
@@ -175,7 +175,7 @@ class CheckOption extends Object {
         foreach ($this->group as $ks) {
             $unset = 0;
             foreach ($ks as $k) {
-                if (!isset($this->iteratorArray[$k])) {
+                if (!isset($this[$k])) {
                     $unset++;
                 }
             }
@@ -198,10 +198,10 @@ class CheckOption extends Object {
             $this->iteratorArray = $values;
         }
         return $this->kernel->promise()->addContext($this)
-                ->then('checkRequire')
-                ->then('checkDepend')
-                ->then('checkGroup')
-                ->then('checkOption')
+                ->then($this->__callable()->checkRequire)
+                ->then($this->__callable()->checkDepend)
+                ->then($this->__callable()->checkGroup)
+                ->then($this->__callable()->checkOption)
                 ->getLastState();
     }
 

@@ -10,7 +10,7 @@
 
 namespace Toknot\Share\Model;
 
-use Toknot\Share\DB\DBA;
+use Toknot\Share\Model\CRUD;
 
 /**
  * ActiveRecord
@@ -19,19 +19,26 @@ use Toknot\Share\DB\DBA;
  */
 class ActiveRecord {
 
-    protected $tableInstance = null;
+    protected $crud = null;
     protected $sets = [];
     protected $key = '';
-    protected $table = '';
+    protected $tableName = '';
+    protected $table = null;
+    protected $maxLimit = 50;
 
     /**
      * 
-     * @param string $table
+     * @param string $tableName
      */
-    public function __construct($table) {
-        $this->table = $table;
-        $this->tableInstance = DBA::table($this->table);
-        $this->tableInstance->primaryKey();
+    public function __construct($tableName) {
+        $this->tableName = $tableName;
+        $this->crud = new CRUD($this->table);
+        $this->table = $this->tableInstance->getTable();
+        $this->key = $this->table->pk();
+    }
+
+    public function setMaxLimit($limit) {
+        $this->maxLimit = $limit;
     }
 
     /**
@@ -43,6 +50,10 @@ class ActiveRecord {
         $this->sets[$name] = $value;
     }
 
+    public function cols($cols) {
+        return $this->table->cols($cols);
+    }
+
     /**
      * save or update data
      * 
@@ -50,9 +61,9 @@ class ActiveRecord {
      */
     public function save($key = null) {
         if (isset($key)) {
-            $this->tableInstance->update($this->sets, [$this->key, $key]);
+            $this->crud->updateByKey($this->sets, $key);
         } else {
-            $this->tableInstance->insert($this->sets);
+            $this->crud->create($this->sets);
         }
         $this->sets = [];
     }
@@ -61,11 +72,9 @@ class ActiveRecord {
      * exec a query
      * 
      * @param string $sql
-     * @param array $where
-     * @return Toknot\Share\DB\DBTable
      */
-    public function query($sql, $where) {
-        return $this->tableInstance->query($sql, $where);
+    public function query($sql) {
+        return $this->table->query($sql);
     }
 
     /**
@@ -74,7 +83,7 @@ class ActiveRecord {
      * @return string
      */
     public function tableName() {
-        return $this->table;
+        return $this->tableName;
     }
 
     /**
@@ -86,11 +95,12 @@ class ActiveRecord {
      * @return int
      */
     public function incrementOne($id, $feild, $step = 1) {
-        return $this->tableInstance->update([$feild => ['+', $feild, $step]], [$this->key, $id]);
+        $filter = $this->table->buildKeyWhere($id);
+        return $this->crud->update([$feild => $this->cols($feild)->add($step)], $filter, 1, 1);
     }
 
-    public function increment($filter, $feild, $step = 1) {
-        return $this->tableInstance->update([$feild => ['+', $feild, $step]], $filter);
+    public function increment($filter, $feild, $step = 1, $limit = 50, $start = 0) {
+        return $this->crud->update([$feild => $this->cols($feild)->add($step)], $filter, $limit, $start);
     }
 
     /**
@@ -102,11 +112,12 @@ class ActiveRecord {
      * @return int
      */
     public function decrementOne($id, $feild, $step = 1) {
-        return $this->tableInstance->update([$feild => ['-', $feild, $step]], [$this->key, $id]);
+        $filter = $this->table->buildKeyWhere($id);
+        return $this->crud->update([$feild => $this->cols($feild)->mins($step)], $filter, 1, 1);
     }
 
-    public function decrement($filter, $feild, $step = 1) {
-        return $this->tableInstance->update([$feild => ['-', $feild, $step]], $filter);
+    public function decrement($filter, $feild, $step = 1, $limit = 50, $start = 0) {
+        return $this->crud->update([$feild => $this->cols($feild)->mins($step)], $filter, $limit, $start);
     }
 
     /**
@@ -116,7 +127,7 @@ class ActiveRecord {
      * @return array
      */
     public function findOne($id) {
-        return $this->tableInstance->getKeyValue($id);
+        return $this->crud->findByKey($id);
     }
 
     /**
@@ -126,11 +137,11 @@ class ActiveRecord {
      * @return int
      */
     public function deleteOne($id) {
-        return $this->tableInstance->delete([$this->key, $id]);
+        return $this->crud->delByKey($id);
     }
 
-    public function delete($filter, $limit = 0) {
-        return $this->tableInstance->delete($filter, $limit);
+    public function delete($filter, $limit = 50, $start = 0) {
+        return $this->crud->delete($filter, $limit, $start);
     }
 
     /**
@@ -139,10 +150,10 @@ class ActiveRecord {
      * @param array $filter
      * @param int $limit
      * @param int $start
-     * @return Toknot\Share\DB\DBTable
+     * @return Toknot\Share\DB\Table
      */
     public function find($filter, $limit, $start = 0) {
-        return $this->tableInstance->iterator($filter, $limit, $start);
+        return $this->table->iterator($filter, $limit, $start);
     }
 
     /**
@@ -154,7 +165,7 @@ class ActiveRecord {
      * @return array
      */
     public function findAll($filter, $limit, $start = 0) {
-        return $this->tableInstance->getList($filter, $limit, $start);
+        return $this->crud->read($filter, $limit, $start);
     }
 
 }

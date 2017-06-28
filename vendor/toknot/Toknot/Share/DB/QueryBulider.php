@@ -75,6 +75,9 @@ class QueryBulider extends Object {
     }
 
     public function batchSet($values) {
+        if($values instanceof QueryColumn) {
+            return $this;
+        }
         foreach ($values as $cols => $value) {
             $c = new QueryColumn($cols, $this, $this->table);
             $c->set($value);

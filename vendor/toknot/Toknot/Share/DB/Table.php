@@ -300,7 +300,7 @@ class Table extends TableIterator {
     /**
      * update data
      * 
-     * @param array $values         
+     * @param array|QueryColumn $values         
      *                              
      * @param string $where  
      * @param int $limit
