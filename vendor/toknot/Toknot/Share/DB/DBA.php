@@ -159,7 +159,7 @@ class DBA extends Object {
      */
     public function loadConfig($name) {
         $cnf = $this->appDir . "/config/$name." . $this->confType;
-        $cfg = new TKConfig([]);
+        $cfg = new TKConfig(Kernel::single(), []);
         $cfg->setAppDir($this->appDir);
         return $cfg->load($cnf);
     }
@@ -302,7 +302,7 @@ class DBA extends Object {
         $tableClass = Tookit::dotNS($tableClass);
 
         $db->loadModel();
-        if(!class_exists($tableClass, false)) {
+        if (!class_exists($tableClass, false)) {
             throw new BaseException("class '$tableClass of table '$table' of database does not exists, check the table '$table' whether it is exists");
         }
         $m = new $tableClass($conn);

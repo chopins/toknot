@@ -41,7 +41,7 @@ class DB {
             $this->appdir = realpath($this->appdir);
             $type || $type = 'ini';
             $config = "{$this->appdir}/config/config.$type";
-            $this->confObj = new Configuration;
+            $this->confObj = new Configuration($this->kernel);
             $this->confObj->setAppDir($this->appdir);
             $this->appcfg = $this->confObj->load($config);
         } else {
