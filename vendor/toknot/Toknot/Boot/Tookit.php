@@ -164,8 +164,11 @@ class Tookit {
      * @return mix
      */
     public static function coalesce(&$arr, $key, $def = '') {
-        if (!is_array($arr) && !$arr instanceof \ArrayAccess) {
+        if (!is_array($arr) && !$arr instanceof \Iterator) {
             throw new BaseException('Argument 1 must be of array or can be array access');
+        }
+        if($arr instanceof \Iterator) {
+            $arr = iterator_to_array($arr);
         }
         $arr[$key] = array_key_exists($key, $arr) ? $arr[$key] : $def;
         return $arr[$key];

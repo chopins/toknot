@@ -20,27 +20,39 @@ use Toknot\Boot\Tookit;
 class ParameterBag extends Object {
 
     public function __get($name) {
-        $this->iteratorArray[$name];
+        return $this->get($name);
     }
 
     public function __set($name, $value) {
-        $this->iteratorArray[$name] = $value;
+        $this->set($name, $value);
     }
 
     public function __isset($name) {
         return array_key_exists($name, $this->iteratorArray);
     }
 
+    public function offsetSet($offset, $value) {
+        $this->set($offset, $value);
+    }
+
     public function offsetGet($offset) {
-        return Tookit::coalesce($this->iteratorArray, $offset);
+        return $this->get($offset);
     }
 
     public function set($name, $value) {
-        $this->iteratorArray[$name] = $value;
+        if (is_array($value)) {
+            $p = new ParameterBag();
+            foreach ($value as $k => $v) {
+                $p->set($k, $v);
+            }
+            $this->iteratorArray[$name] = $p;
+        } else {
+            $this->iteratorArray[$name] = $value;
+        }
     }
 
     public function get($name) {
-        $this->iteratorArray[$name];
+        return Tookit::coalesce($this->iteratorArray, $name);
     }
 
 }
