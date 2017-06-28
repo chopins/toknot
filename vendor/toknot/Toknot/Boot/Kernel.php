@@ -477,6 +477,12 @@ final class Kernel extends Object {
      */
     public function errorReportHandler() {
         $argv = func_get_args();
+        if (strpos($argv[1], 'Use of undefined constant') !== false) {
+            list(, $name) = explode('\'', $argv[1]);
+            if (function_exists($name)) {
+                return true;
+            }
+        }
         throw BaseException::errorReportHandler($argv);
     }
 

@@ -58,6 +58,7 @@ class BaseException extends Exception {
         if (strpos($argv[1], 'No such file or directory') > 0) {
             return new NoFileOrDirException($argv[1], $argv[0], $argv[2], $argv[3]);
         }
+        
         return new BaseException($argv[1], $argv[0], $argv[2], $argv[3]);
     }
 
@@ -154,7 +155,7 @@ class BaseException extends Exception {
             $str .= $this->each($this->traceArr, $pureText);
         }
         $str .= '</div>';
-  
+
         if (PHP_SAPI == 'cli' || $pureText) {
             $str .= str_repeat('=', 20) . PHP_EOL;
             $nohtml = strip_tags($str);

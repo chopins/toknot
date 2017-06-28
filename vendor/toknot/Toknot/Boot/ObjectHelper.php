@@ -11,6 +11,7 @@
 namespace Toknot\Boot;
 
 use Toknot\Exception\BaseException;
+use Toknot\Boot\ReflectionMethod;
 
 /**
  * ObjectHelper
@@ -176,6 +177,10 @@ trait ObjectHelper {
         $has = $ref->hasProperty($name);
         if ($has && $this->__isReadonlyProperty($ref, $name)) {
             return $this->{$name};
+        }
+
+        if (!$has && $ref->hasMethod($name)) {
+            return new ReflectionMethod($this, $name);
         }
 
         throw BaseException::undefinedProperty($this, $name);

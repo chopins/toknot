@@ -136,6 +136,7 @@ class Controller extends Object {
         $appCfg = $this->config('app');
         $view = Tookit::ucwords($view, '.');
         $view = Tookit::dotNS($view);
+        $view = Tookit::underline2Camel($view);
         return Tookit::nsJoin($appCfg['app_ns'], $appCfg['view_ns'], ucwords($view));
     }
 
