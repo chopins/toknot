@@ -44,9 +44,7 @@ trait ObjectHelper {
             case 5:
                 return $callable($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
             default:
-                $argstr = $this->argStr($argc);
-                eval("\$res = $callable($argstr);");
-                return $res;
+                return call_user_func_array($callable, $argv);
         }
     }
 
@@ -88,6 +86,7 @@ trait ObjectHelper {
             case 5:
                 return $className::$method($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
             default:
+                //no visibility restrict
                 $argstr = $this->argStr($argc);
                 eval("\$res = $className::$method($argstr);");
                 return $res;
@@ -120,9 +119,8 @@ trait ObjectHelper {
             case 5:
                 return new $className($args[0], $args[1], $args[2], $args[3], $args[4]);
             default:
-                $argstr = $this->argStr($argc);
-                eval("\$res = new $className($argstr);");
-                return $res;
+                $rf = new \ReflectionClass($className);
+                return $rf->newInstanceArgs($args);
         }
     }
 
@@ -154,6 +152,7 @@ trait ObjectHelper {
             case 5:
                 return $obj->$method($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
             default:
+                //no visibility restrict
                 $argstr = $this->argStr($argc);
                 eval("\$res = \$obj->$method($argstr);");
                 return $res;
