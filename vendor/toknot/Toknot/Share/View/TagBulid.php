@@ -49,6 +49,7 @@ abstract class TagBulid extends Object {
     private $srckey = null;
     private $resourceVer = null;
     private $host = null;
+    protected $property = [];
 
     /**
      *
@@ -72,12 +73,15 @@ abstract class TagBulid extends Object {
         }
         $this->iteratorArray = new SplObjectStorage();
         $this->singleTag = in_array($this->tagName, self::$singleTagList);
-
         $this->begin($attr);
     }
 
     public static function addSingleTag($tagName) {
         array_push(self::$singleTagList, strtolower($tagName));
+    }
+
+    public function getTagName() {
+        return $this->tagName;
     }
 
     public function end() {
@@ -100,6 +104,7 @@ abstract class TagBulid extends Object {
     protected function begin($attr = []) {
         $this->html .= "<{$this->tagName}";
         $this->html .= '';
+
         foreach ($attr as $k => $v) {
             switch ($k) {
                 case 'class':
@@ -277,9 +282,15 @@ abstract class TagBulid extends Object {
         } elseif ($attr == 'href') {
             $this->srckey = 'href';
         }
-
+        $this->setProperty($attr, $value);
         $this->attr[$attr] = $value;
         return $this;
+    }
+
+    public function setProperty($pro, $value) {
+        if (false !== array_search($pro, $this->property)) {
+            $this->$pro = $value;
+        }
     }
 
     public function attr($attr, $value = null) {

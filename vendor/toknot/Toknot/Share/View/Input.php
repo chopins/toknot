@@ -22,11 +22,15 @@ class Input extends TagBulid {
     protected static $inputTag = ['text', 'password', 'button', 'checkbox',
         'image', 'hidden', 'file', 'radio', 'reset',
         'submit'];
+    protected $type = '';
+    protected $value = '';
+    protected $property = ['type', 'value'];
 
     public function __construct($attr = []) {
         if (isset($attr['type']) && !self::hasType($attr['type'])) {
             throw new BaseException("input tag unsupport {$attr['type']} type ");
         }
+
         if (version_compare(self::$page->getVer(), 4) === 1 &&
                 $attr['type'] == 'button' || $attr['type'] == 'submit') {
             $this->tagName = 'button';
@@ -37,6 +41,16 @@ class Input extends TagBulid {
         if ($this->tagName == 'button' && isset($attr['value'])) {
             $this->pushText($attr['value']);
         }
+        $this->type = $attr['type'];
+        $this->value = isset($attr['value']) ? $attr['value'] : '';
+    }
+
+    public function getType() {
+        return $this->type;
+    }
+
+    public function getValue() {
+        return $this->value;
     }
 
     public static function hasType($type) {
@@ -58,6 +72,7 @@ class Input extends TagBulid {
 
     public function setValue($value = '') {
         $this->addAttr('value', $value);
+        $this->value = $value;
         return $this;
     }
 

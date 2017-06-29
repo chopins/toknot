@@ -87,7 +87,7 @@ class Form extends TagBulid {
         $hit = Tookit::coalesce($attr, 'text', $attr['value']);
         $tag->pushText($hit);
         $tag->setHit($hit);
-        $parent->push($tag);
+        $tag->getType() == 'radio' ? $parent->unshift($tag) : $parent->push($tag);
         return $this;
     }
 
@@ -108,7 +108,8 @@ class Form extends TagBulid {
     public function inputs($inputs) {
         foreach ($inputs as $key => $input) {
             Tookit::coalesce($input, 'label', null);
-            $input['name'] = is_numeric($key) ? '' : $key;
+
+            $input['name'] = is_numeric($key) ? ($input['name'] ? $input['name'] : '') : $key;
             $parent = isset($input['parent']) && $input['parent'] instanceof TagBulid ? $input['parent'] : null;
             if ($input['type'] == 'select') {
                 $this->select($input, $input['label'], $parent);
@@ -116,6 +117,7 @@ class Form extends TagBulid {
                 $this->textarea($input, $input['label'], $parent);
             } else {
                 Tookit::coalesce($input, 'label', null);
+
                 $this->input($input, $input['label'], $parent);
             }
         }
