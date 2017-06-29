@@ -23,11 +23,13 @@ class CRUD {
      * @var Toknot\Share\DB\Table
      */
     protected $table = null;
+
     /**
      *
      * @var int
      */
     protected $defaultLimt = 50;
+
     /**
      *
      * @var string
@@ -103,6 +105,10 @@ class CRUD {
     public function read($where = 1, $limit = null, $offset = 0) {
         $this->queryLimit($limit);
         return $this->table->getList($where, $limit, $offset);
+    }
+
+    public function readAll($where = null) {
+        return $this->table->getListAll($where);
     }
 
     public function update($row, $where = 1, $limit = null, $start = 0) {

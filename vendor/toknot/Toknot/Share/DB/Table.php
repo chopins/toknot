@@ -206,6 +206,11 @@ class Table extends TableIterator {
      */
     public function execute($limit = 50, $start = 0) {
         $this->limit($limit, $start);
+        $this->exec();
+        return $this;
+    }
+
+    public function exec() {
         $this->statement = $this->qr->execute();
         return $this;
     }
@@ -230,6 +235,10 @@ class Table extends TableIterator {
 
     public function get($limit = 100, $offset = 0, $fetchMode = \PDO::FETCH_ASSOC) {
         $this->execute($limit, $offset);
+        return $this->statement->fetchAll($fetchMode);
+    }
+
+    public function getAll($fetchMode = \PDO::FETCH_ASSOC) {
         return $this->statement->fetchAll($fetchMode);
     }
 
@@ -443,6 +452,10 @@ class Table extends TableIterator {
      */
     public function getList($where, $limit = 20, $start = 0) {
         return $this->select($where)->get($limit, $start);
+    }
+
+    public function getListAll($where) {
+        return $this->select($where)->getAll();
     }
 
     /**

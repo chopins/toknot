@@ -44,6 +44,16 @@ abstract class TableIterator extends Object {
         return $this;
     }
 
+    public function iteratorAll($where) {
+        if ($this->iteratorArray) {
+            $this->iteratorArray->closeCursor();
+            $this->currentResult = [];
+        }
+        $this->select($where)->exec();
+        $this->iteratorArray = $this->statement;
+        return $this;
+    }
+
     public function current() {
         if ($this->key && !$this->isCompositePrimaryKey()) {
             $this->keyValue = $this->currentResult[$this->key];
