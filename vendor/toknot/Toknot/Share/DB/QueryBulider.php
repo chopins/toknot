@@ -38,10 +38,14 @@ class QueryBulider extends Object {
         self::$paramIndex++;
     }
 
+    public function cols($cols) {
+        return $this->table->cols($cols);
+    }
+
     public function initQueryType($type, $tableName) {
         $type = strtolower($type);
         $fnc = $type == 'select' ? 'from' : $type;
-        $this->builder->$fnc($tableName);
+        $this->builder->$fnc($tableName, $this->table->alias());
         return $this;
     }
 
@@ -56,26 +60,26 @@ class QueryBulider extends Object {
         return new QueryWhere();
     }
 
-    public function checkParamType($value) {
+    public function checkParamType($cols, $value) {
         if (is_null($value)) {
             return \PDO::PARAM_NULL;
-        } elseif (is_numeric($value)) {
-            return \PDO::PARAM_INT;
         }
-        return \PDO::PARAM_STR;
+        return $cols->getDBBindingType();
     }
 
-    public function setParamter($cols, $value, $type = null) {
-        $c = explode('.', $cols);
-        $type = $type ? $type : $this->checkParamType($value);
+    public function setParamter($cols, $value) {
+        if (!$cols instanceof QueryColumn) {
+            $cols = $this->cols($cols);
+        }
+        $type = $this->checkParamType($cols, $value);
         $idx = self::$paramIndex++;
-        $placeholder = ":pws{$idx}" . end($c);
+        $placeholder = ":pws{$idx}" . $cols->getColumnName();
         $this->builder->setParameter($placeholder, $value, $type);
         return $placeholder;
     }
 
     public function batchSet($values) {
-        if($values instanceof QueryColumn) {
+        if ($values instanceof QueryColumn) {
             return $this;
         }
         foreach ($values as $cols => $value) {
@@ -118,7 +122,7 @@ class QueryBulider extends Object {
         }
 
         foreach ($values as $key => $v) {
-            $params[$key] = $this->setParamter($key, $v);
+            $params[$key] = $this->setParamter($this->cols($key), $v);
             $hv = $this->setParamter($key, $v);
             if ($iscopk && in_array($key, $pk)) {
                 $keyOn[] = "$key=$hv";

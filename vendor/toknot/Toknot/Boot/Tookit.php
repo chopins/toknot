@@ -73,13 +73,17 @@ class Tookit {
     }
 
     /**
-     * covert class of dot to namespace separator
+     * covert dot of class to namespace separator
      * 
      * @param string $class
      * @return string
      */
     public static function dotNS($class) {
         return str_replace('.', PHP_NS, $class);
+    }
+
+    public static function nsDot($str) {
+        return str_replace(PHP_NS, '.', $str);
     }
 
     public static function path2NS($path) {
@@ -97,6 +101,14 @@ class Tookit {
             return false;
         }
         return true;
+    }
+
+    public static function isArray($arr) {
+        return is_array($arr) || $arr instanceof \ArrayAccess;
+    }
+
+    public function isIter($arr) {
+        return $arr instanceof \Traversable;
     }
 
     /**
@@ -167,7 +179,7 @@ class Tookit {
         if (!is_array($arr) && !$arr instanceof \Iterator) {
             throw new BaseException('Argument 1 must be of array or can be array access');
         }
-        if($arr instanceof \Iterator) {
+        if ($arr instanceof \Iterator) {
             $arr = iterator_to_array($arr);
         }
         $arr[$key] = array_key_exists($key, $arr) ? $arr[$key] : $def;
@@ -669,7 +681,10 @@ class Tookit {
     }
 
     public static function camel2Underline($token) {
-        return strtolower(preg_replace('/([A-Z])/', "_$1", lcfirst($token)));
+        $parts = explode(PHP_NS, $token);
+        return join('.', array_map(function($part) {
+                    return strtolower(preg_replace('/([A-Z])/', "_$1", lcfirst($part)));
+                }, $parts));
     }
 
 }

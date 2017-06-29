@@ -187,6 +187,10 @@ class Table extends TableIterator {
         return $this->qr;
     }
 
+    final public function cleanQueryBulider() {
+        $this->qr = null;
+    }
+
     /**
      * 
      * @param string $type
@@ -212,7 +216,8 @@ class Table extends TableIterator {
 
     public function exec() {
         $this->statement = $this->qr->execute();
-        return $this;
+        $this->cleanQueryBulider();
+        return $this->statement;
     }
 
     /**
@@ -272,6 +277,7 @@ class Table extends TableIterator {
      */
     public function select($where = '') {
         $columnSql = $this->getColumnSql();
+
         if ($this->joinTable) {
             foreach ($this->joinTable as $table) {
                 $columnSql .= ',' . $table->getColumnSql();
@@ -279,10 +285,12 @@ class Table extends TableIterator {
         }
 
         $this->builder()->initQuery(__FUNCTION__);
+
         $this->qr->select($columnSql);
         if ($where) {
             $this->qr->where($where);
         }
+
         $this->lastSql = $this->qr->getSQL();
         $this->joinTable = [];
         return $this;
@@ -303,8 +311,7 @@ class Table extends TableIterator {
             $this->limit($limit, $start);
         }
         $this->lastSql = $this->qr->getSQL();
-
-        return $this->qr->execute();
+        return $this->exec();
     }
 
     /**
@@ -328,7 +335,7 @@ class Table extends TableIterator {
         }
         $this->lastSql = $this->qr->getSQL();
         $this->joinTable = [];
-        return $this->qr->execute();
+        return $this->exec();
     }
 
     /**
@@ -341,13 +348,14 @@ class Table extends TableIterator {
         $this->builder();
         $params = [];
         foreach ($value as $key => $v) {
-            $params[$key] = $this->qr->setParamter($key, $v);
+            $params[$key] = $this->qr->setParamter($this->cols($key), $v);
         }
-        $this->initQuery(__FUNCTION__);
+        $this->builder()->initQuery(__FUNCTION__);
+
         $this->qr->values($params);
 
         $this->lastSql = $this->qr->getSQL();
-        return $this->qr->execute();
+        return $this->exec();
     }
 
     public function buildKeyWhere($keyValue) {
@@ -414,7 +422,9 @@ class Table extends TableIterator {
         $subSql = '(' . $sql . ')';
         $this->builder()->initQuery('INSERT');
         $sql = $this->lastSql . '(' . $this->tmpColumnSql . ')' . $subSql;
-        return $this->qr->executeQuery($sql);
+        $re = $this->qr->executeQuery($sql);
+        $this->cleanQueryBulider();
+        return $re;
     }
 
     public function againSelect($where, $feild = []) {

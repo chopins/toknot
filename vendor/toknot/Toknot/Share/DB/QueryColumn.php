@@ -11,13 +11,14 @@
 namespace Toknot\Share\DB;
 
 use Toknot\Boot\ObjectHelper;
-
+use Doctrine\DBAL\Types\Type;
 /**
  * Column
  *
  * @author chopin
  */
 class QueryColumn {
+
     use ObjectHelper;
 
     protected $columnName = '';
@@ -75,6 +76,11 @@ class QueryColumn {
         $this->setCol();
     }
 
+    public function getDBBindingType() {
+        $type = Type::getType($this->type);
+        return $type->getBindingType();
+    }
+    
     protected function setCol() {
         $struct = $this->table->getTableStructure();
         $colsAttrs = $struct['column'][$this->columnName];
@@ -116,7 +122,7 @@ class QueryColumn {
         } elseif ($value instanceof QueryWhere) {
             return $value;
         } else {
-            return $this->qr->setParamter($this->getAllColumnName(), $value);
+            return $this->qr->setParamter($this, $value);
         }
     }
 
@@ -232,7 +238,7 @@ class QueryColumn {
         $this->sql = $this->getAllColumnName() . ' LIKE ' . $this->leftConvert($value);
         return $this;
     }
-    
+
     public function notLeftLike($value) {
         $this->sql = $this->getAllColumnName() . ' NOT LIKE ' . $this->leftConvert('%' . $value);
         return $this;
