@@ -239,6 +239,7 @@ class Table extends TableIterator {
     }
 
     public function getAll($fetchMode = \PDO::FETCH_ASSOC) {
+        $this->exec();
         return $this->statement->fetchAll($fetchMode);
     }
 
