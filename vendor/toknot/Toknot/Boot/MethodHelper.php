@@ -35,6 +35,11 @@ class MethodHelper {
         return array($this->prevObj, $name);
     }
 
+    /**
+     * 
+     * @param string $name
+     * @return string
+     */
     public function __get($name) {
         $this->checkMethod($name);
         return $name;

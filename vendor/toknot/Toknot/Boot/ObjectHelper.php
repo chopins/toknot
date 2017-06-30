@@ -171,6 +171,12 @@ trait ObjectHelper {
         return false;
     }
 
+    /**
+     * 
+     * @param string $name
+     * @return ReflectionMethod
+     * @throws Toknot\Exception\UndefinedPropertyException
+     */
     public function __get($name) {
         $ref = new \ReflectionObject($this);
         $has = $ref->hasProperty($name);
