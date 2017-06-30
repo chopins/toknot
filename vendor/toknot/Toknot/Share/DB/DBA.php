@@ -530,7 +530,11 @@ class DBA extends Object {
         $option = [];
         if (empty($v['type'])) {
             $tablename = $nt->getName();
-            throw new BaseException("table '$tablename' of index '$key' missed type");
+            throw new BaseException("index '$key'  of  table '$tablename' missed type");
+        }
+        if (empty($v['feilds'])) {
+            $tablename = $nt->getName();
+            throw new BaseException("index '$key' missed feilds");
         }
         if ($v['type'] == 'unique') {
             $func = 'addUniqueIndex';
@@ -538,13 +542,8 @@ class DBA extends Object {
         if (isset($v['comment'])) {
             $option['comment'] = $v['comment'];
         }
-        $ic = [];
-        foreach ($v as $n => $v) {
-            if ($n == 'type' || $n == 'comment') {
-                continue;
-            }
-            $ic[] = $n;
-        }
+        $ic = explode(',', $v['feild']);
+
         $nt->$func($ic, $key, $option);
     }
 

@@ -70,7 +70,7 @@ experience:
     indexes:
         uid: 
             type : index
-            uid : default
+            fields : uid
             
             
          

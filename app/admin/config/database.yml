@@ -74,11 +74,11 @@ user :
         primary :  uid
         login_name : 
             type :  unique
-            username :  default
+            fields : username
 
         login_email : 
             type :  unique
-            email :  default
+            fields : email
 
 user_info : 
     column : 
@@ -208,10 +208,10 @@ org :
         primary :  oid
         pid : 
             type :  index
-            parent_oid :  default
+            fields :  parent_oid
         tid : 
             type :  index
-            top_oid :  default
+            fields : top_oid
 
     option : 
         comment :  组织表
@@ -255,7 +255,7 @@ project :
         primary :  pid
         org : 
             type :  index
-            project_org : default
+            fields : project_org
     option : 
         comment :  项目表
 
@@ -345,13 +345,13 @@ node_type :
         primary :  ntid
         code : 
             type :  unique
-            nt_code :  default
+            fields : nt_code
         org : 
             type :  index
-            node_org :  default
+            fields : node_org
         pid : 
             type :  index
-            node_project :  tefault
+            fields : node_project
     option : 
         comment :  节点类型表
 
@@ -395,7 +395,7 @@ node :
         primary :  nid
         process : 
             type :  index
-            node_process :  default
+            fields : node_process
     option : 
         comment :  节点表
 
@@ -432,7 +432,7 @@ process :
         primary :  yid
         org : 
             type :  index
-            process_org :  default
+            fields : process_org
 
     option : 
         comment :  流程表
@@ -458,7 +458,7 @@ node_data :
         primary :  ydid
         nid : 
             type :  index
-            node :  default
+            fields : node
 
 user_org_map : 
     column : 
@@ -470,8 +470,7 @@ user_org_map :
     indexes : 
         map : 
             type :  index
-            user_id :  default
-            org_id :  default
+            fields : user_id,org_id
     option : 
         comment :  用户组织映射表
 
@@ -484,8 +483,7 @@ user_project_map :
     indexes : 
         map : 
             type :  endex
-            user_id :  default
-            project_id : default
+            fields : user_id,project_id
 
 file : 
     column : 
@@ -519,10 +517,10 @@ file :
         primary :  fid
         oid : 
             type :  index
-            file_org :  default
+            fields : file_org
         project : 
             type :  index
-            file_project :  default
+            fields : file_project
 
     option : 
         comment :  文件表
@@ -586,10 +584,10 @@ discussion :
         comment :  讨论表
         org : 
             type :  index
-            org :  default
+            fields : org
         project : 
             type :  index
-            project :  default
+            fields : project
 
 user_discussion_map : 
     column : 
@@ -600,11 +598,9 @@ user_discussion_map :
     indexes : 
         map : 
             type :  index
-            user_id :  default
-            aid :  default
+            fields : user_id,aid
 
     option : 
-
         comment :  用户讨论映射表
 
 comment : 
@@ -645,7 +641,7 @@ comment :
         primary :  cid
         aid : 
             type :  index
-            aid :  default
+            fields : aid
     option : 
         comment :  讨论文章评论表
 
@@ -673,8 +669,7 @@ manager_log :
         primary :  logid
         user : 
             type :  index
-            opreater :  default
-
+            fields : opreater
     option : 
 
         comment :  管理日志
@@ -696,7 +691,7 @@ session :
         primary :  sid
         expire : 
             type :  index
-            expire :  default
+            fields : expire
     option : 
         comment :  会话表
         engine :  memory
@@ -728,8 +723,7 @@ notify :
 
         user : 
             type :  index
-            creater :  default
-            accepter :  default
+            fields : creater,accepter
 
     option : 
 
@@ -786,10 +780,10 @@ title :
 
         org : 
             type :  index
-            org :  default
+            fields : org
         project : 
             type :  index
-            project :  default
+            fields : project
 
     option : 
         comment :  头衔表
@@ -819,7 +813,6 @@ user_title_map :
 
         map : 
             type :  index
-            uid :  default
-            tid :  default
+            fields : uid,tid
     option : 
         comment :  用户头衔映射表

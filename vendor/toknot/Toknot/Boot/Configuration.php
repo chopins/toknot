@@ -277,7 +277,7 @@ class Configuration extends Object {
                 return false;
         }
         if (is_numeric($var)) {
-            return (float) $var;
+            return (int) $var == $var ? (int) $var : (float) $var;
         }
         return $var;
     }
