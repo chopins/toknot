@@ -22,7 +22,7 @@ use Toknot\Boot\Configuration;
 use Toknot\Boot\GlobalFilter;
 use Toknot\Boot\Pipe;
 use Toknot\Boot\Logs;
-use Toknot\Boot\Promise;
+use Toknot\Boot\Control;
 use Toknot\Boot\Decorator;
 use Toknot\Boot\Tookit;
 
@@ -532,10 +532,10 @@ final class Kernel extends Object {
      * @param mix $passState
      * @param mix $elseState
      * @param object $cxt
-     * @return Promise
+     * @return Control
      */
     public function promise($passState = true, $elseState = false, $cxt = null) {
-        return new Promise($passState, $elseState, $cxt);
+        return new Control($passState, $elseState, $cxt);
     }
 
     /**

@@ -18,13 +18,15 @@ namespace Toknot\Boot;
  *
  * @author chopin
  */
-class Promise {
+class Control {
 
-    private $promisePass = true;
-    private $promiseReject = false;
-    private $promiseContext = null;
-    private $promiseExecCallable = '';
-    private $promiseExecStat = true;
+    use ObjectHelper;
+
+    private $controlPass = true;
+    private $controlReject = false;
+    private $controlContext = null;
+    private $controlExecCallable = '';
+    private $controlExecStat = true;
 
     /**
      * start new promise
@@ -36,29 +38,29 @@ class Promise {
      * @return $this
      */
     public function __construct($passState = true, $elseState = false, $cxt = null) {
-        $this->promiseExecCallable = null;
-        $this->promiseExecStat = true;
-        $this->promisePass = $passState;
-        $this->promiseReject = $elseState;
+        $this->controlExecCallable = null;
+        $this->controlExecStat = true;
+        $this->controlPass = $passState;
+        $this->controlReject = $elseState;
         if (!is_null($cxt) && !is_object($cxt)) {
-            throw new BaseException('promise context must give object');
+            throw new BaseException('control context must give object');
         }
-        $this->promiseContext = $cxt;
+        $this->controlContext = $cxt;
         return $this;
     }
 
     public function setPassState($state) {
-        $this->promisePass = $state;
+        $this->controlPass = $state;
         return $this;
     }
 
     public function setReject($state) {
-        $this->promiseReject = $state;
+        $this->controlReject = $state;
         return $this;
     }
 
     public function addContext($cxt) {
-        $this->promiseContext = $cxt;
+        $this->controlContext = $cxt;
         return $this;
     }
 
@@ -70,12 +72,12 @@ class Promise {
      * @throws BaseException
      */
     public function again($argv = []) {
-        if (!$this->promiseExecCallable) {
+        if (!$this->controlExecCallable) {
             throw new BaseException('call function not give before call again()');
         }
 
-        if ($this->promiseExecStat === self::PROMISE_PASS) {
-            $this->promiseExecStat = self::callFunc($this->promiseExecCallable, $argv);
+        if ($this->controlExecStat === $this->controlPass) {
+            $this->controlExecStat = self::callFunc($this->controlExecCallable, $argv);
         }
         return $this;
     }
@@ -88,12 +90,12 @@ class Promise {
      * @return $this
      */
     public function then($callable, $argv = []) {
-        if ($this->promiseExecStat === $this->promisePass) {
-            if ($this->promiseContext) {
-                $callable = array($this->promiseContext, $callable);
+        if ($this->controlExecStat === $this->controlPass) {
+            if ($this->controlContext) {
+                $callable = array($this->controlContext, $callable);
             }
-            $this->promiseExecCallable = $callable;
-            $this->promiseExecStat = self::callFunc($callable, $argv);
+            $this->controlExecCallable = $callable;
+            $this->controlExecStat = self::callFunc($callable, $argv);
         }
         return $this;
     }
@@ -106,18 +108,18 @@ class Promise {
      * @return $this
      */
     public function otherwise($callable, $argv = []) {
-        if ($this->promiseExecStat === $this->promiseReject) {
-            if ($this->promiseContext) {
-                $callable = array($this->promiseContext, $callable);
+        if ($this->controlExecStat === $this->controlReject) {
+            if ($this->controlContext) {
+                $callable = array($this->controlContext, $callable);
             }
-            $this->promiseExecCallable = $callable;
-            $this->promiseExecStat = self::callFunc($callable, $argv);
+            $this->controlExecCallable = $callable;
+            $this->controlExecStat = self::callFunc($callable, $argv);
         }
         return $this;
     }
 
     public function getLastState() {
-        return $this->promiseExecStat;
+        return $this->controlExecStat;
     }
 
 }
