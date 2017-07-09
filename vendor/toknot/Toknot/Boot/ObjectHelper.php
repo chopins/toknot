@@ -52,13 +52,24 @@ trait ObjectHelper {
         return get_called_class();
     }
 
+    private static function __methodHelper() {
+        return function($class) {
+            $obj = new static($class);
+            return $obj;
+        };
+    }
+
     public static function __method() {
         $class = get_called_class();
-        return new MethodHelper($class);
+        $helper = self::__methodHelper();
+        $bind = \Closure::bind($helper, null, 'Toknot\Boot\MethodHelper');
+        return $bind($class);
     }
 
     public function __callable() {
-        return new MethodHelper($this);
+        $helper = self::__methodHelper();
+        $bind = \Closure::bind($helper, null, 'Toknot\Boot\MethodHelper');
+        return $bind($this);
     }
 
     /**

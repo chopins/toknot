@@ -15,10 +15,10 @@ namespace Toknot\Boot;
  *
  */
 class MethodHelper {
-
+    
     private $prevObj = null;
 
-    public function __construct($obj) {
+    private function __construct($obj) {
         $this->prevObj = $obj;
     }
 

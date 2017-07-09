@@ -10,13 +10,14 @@
 
 namespace Tool\Controller\Console;
 
-
 /**
  * Test
  *
  */
 class Test {
+
     use \Toknot\Boot\ObjectHelper;
+
     /**
      *
      * @var \Toknot\Share\CommandLine
@@ -28,22 +29,30 @@ class Test {
      * @var \Toknot\Share\Process\Process 
      */
     public $process;
+    public $kernel;
 
     /**
      * @console test
      */
     public function __construct() {
-  $this->cmd = new \Toknot\Share\CommandLine;
-  //$this->process = new \Toknot\Share\Process\Process();
-  $this->run();
+        $this->kernel = \Toknot\Boot\Kernel::single();
+        $this->cmd = new \Toknot\Share\CommandLine;
+        //$this->process = new \Toknot\Share\Process\Process();
+        $this->run();
     }
 
     public function run() {
-  echo 'etst';
+        echo $this->kernel->getArg(1);
+        echo $this->kernel->getArg('-a');
+        echo $this->kernel->getArg('-b');
+        echo $this->kernel->getArg('--with-fo');
+        echo $this->kernel->getArg('-的');
+                echo $this->kernel->getArg(8);
+
     }
 
     public function loop() {
-  
+        
     }
 
 }

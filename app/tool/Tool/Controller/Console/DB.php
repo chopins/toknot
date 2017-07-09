@@ -71,7 +71,7 @@ class DB {
     }
 
     public function setOption() {
-        if ($this->kernel->hasOption('-f')) {
+        if ($this->kernel->hasArg('-f')) {
             $this->force = true;
         } else {
             $this->force = false;

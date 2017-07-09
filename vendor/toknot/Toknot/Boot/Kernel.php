@@ -385,16 +385,16 @@ final class Kernel extends Object {
         $shortParam = $longParam = false;
         $option = [];
         foreach ($this->argv as $idx => $arg) {
-            if (strpos($arg, '--') === 0) {
+            if (Tookit::strpos($arg, '--') === 0) {
                 $par = explode('=', $arg);
                 $option[$par[0]] = count($par) == 2 ? $par[1] : '';
                 $shortParam = false;
                 $longParam = true;
-            } elseif (strpos($arg, '-') === 0) {
+            } elseif (Tookit::strpos($arg, '-') === 0) {
                 $shortParam = $arg;
-                if (strlen($arg) > 2) {
-                    $arg = substr($arg, 1, 1);
-                    $option[$arg] = substr($arg, 2);
+                if (Tookit::strlen($arg) > 2) {
+                    $arg = Tookit::substr($arg, 1, 1);
+                    $option[$arg] = Tookit::substr($arg, 2);
                 } else {
                     $option[$arg] = '';
                 }
@@ -425,7 +425,7 @@ final class Kernel extends Object {
             $this->cmdOption = $this->walkOption();
         }
         if ($key !== null) {
-            return Tookit::coalesce($this->cmdOption, $key, '');
+            return Tookit::coalesce($this->cmdOption, $key, null);
         } else {
             return $this->cmdOption;
         }
@@ -437,14 +437,14 @@ final class Kernel extends Object {
      * @param string $key
      * @return boolean
      */
-    public function hasOption($key) {
+    public function hasArg($key) {
         if ($this->callInstance && ($arg = $this->callInstance->getArg($key))) {
             return $arg;
         }
         if (empty($this->cmdOption)) {
             $this->cmdOption = $this->walkOption();
         }
-        return isset($this->cmdOption[$key]);
+        return array_key_exists($key, $this->cmdOption);
     }
 
     public function setImport($import) {
