@@ -59,11 +59,17 @@ class Table extends TableIterator {
     protected $statement = null;
     protected $lastSql = '';
     protected $joinTable = [];
+    private $dba = null;
 
-    final public function __construct($conn, $alias = '') {
-        $this->dbconnect = $conn;
+    final public function __construct($db, $alias = '') {
+        $this->dbconnect = $db->connect();
+        $this->dba = $db;
         $this->tableAlias = $alias;
         $this->checkCompositePrimaryKey();
+    }
+
+    public function getDBA() {
+        return $this->dba;
     }
 
     final public function __get($name) {
@@ -345,17 +351,34 @@ class Table extends TableIterator {
      * @return int
      */
     public function insert($value) {
-        $this->builder();
+        $this->builder()->initQuery(__FUNCTION__);
+
         $params = [];
         foreach ($value as $key => $v) {
             $params[$key] = $this->qr->setParamter($this->cols($key), $v);
         }
-        $this->builder()->initQuery(__FUNCTION__);
 
         $this->qr->values($params);
 
         $this->lastSql = $this->qr->getSQL();
         return $this->exec();
+    }
+
+    /**
+     * 
+     * @param array $value
+     * @return int
+     */
+    public function replace($value) {
+        $sql = $this->builder()->replace($this->getTableName());
+        $params = [];
+        foreach ($value as $key => $v) {
+            $params[$key] = $this->qr->setParamter($this->cols($key), $v);
+        }
+        $this->lastSql = $sql . '(' . implode(',', array_keys($params)) . ') VALUES (' . implode(',', $params) . ')';
+        $re = $this->qr->executeUpdate($this->lastSql);
+        $this->cleanQueryBulider();
+        return $re;
     }
 
     public function buildKeyWhere($keyValue) {
@@ -412,7 +435,13 @@ class Table extends TableIterator {
         return $this->lastSql;
     }
 
+    /**
+     * 
+     * @param TABLE|string $subSelect
+     * @return array
+     */
     public function insertSelect($subSelect) {
+        $this->builder()->initQuery('INSERT');
         if (is_subclass_of($subSelect, __CLASS__)) {
             $sql = $subSelect->getLastSQL();
             $this->qr->setParameters($subSelect->getBuilder()->getParameters(), $subSelect->getBuilder()->getParameterTypes());
@@ -420,20 +449,22 @@ class Table extends TableIterator {
             $sql = $subSelect;
         }
         $subSql = '(' . $sql . ')';
-        $this->builder()->initQuery('INSERT');
-        $sql = $this->lastSql . '(' . $this->tmpColumnSql . ')' . $subSql;
-        $re = $this->qr->executeQuery($sql);
+
+        $sql = $this->qr->getSQL() . '(' . $this->tmpColumnSql . ')' . $subSql;
+        $re = $this->qr->executeUpdate($sql);
         $this->cleanQueryBulider();
         return $re;
     }
 
-    public function againSelect($where, $feild = []) {
-        if ($this->qr->getType() != DBA::SELECT) {
-            throw new BaseException('can not found first selct query');
+    public function againSelect($subSelect, $where, $feild = []) {
+        $this->builder();
+        if (is_subclass_of($subSelect, __CLASS__)) {
+            $subSQL = $subSelect->getLastSQL();
+        } else {
+            $subSQL = $subSelect;
         }
 
-        $subSql = '(' . $this->qr->getSQL() . ')';
-        $this->builder();
+        $subSql = '(' . $subSQL . ')';
         $this->qr->from($subSql);
         $column = empty($feild) ? '*' : implode(',', $feild);
         $this->qr->select($column)->where($where);
@@ -449,7 +480,7 @@ class Table extends TableIterator {
     public function save($data) {
         $this->builder();
         $this->lastSql = $this->qr->insertOrUpdate($data);
-        $this->qr->executeQuery($this->lastSql);
+        $this->qr->executeUpdate($this->lastSql);
         return $this->lastId();
     }
 

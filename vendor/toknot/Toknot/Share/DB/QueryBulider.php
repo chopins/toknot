@@ -152,18 +152,43 @@ class QueryBulider extends Object {
         $updateHit = implode(',', $this->batchEq($update));
 
         $sqls = ['mysql' => "INSERT INTO $table ($insertKeyHit) VALUES ($insertHit) ON DUPLICATE KEY UPDATE $updateHit",
-            'sqlserver' => "MERGE INTO $table WITH (HOLDLOCK) USING (SELECT 1) ON ($keyOn) WHEN MATCHED THEN UPDATE SET $updateHit WHEN NOT MATCHED THEN INSERT ($insertKeyHit) VALUES ($insertHit)",
+            'mssql' => "MERGE INTO $table WITH (HOLDLOCK) USING (SELECT 1) ON ($keyOn) WHEN MATCHED THEN UPDATE SET $updateHit WHEN NOT MATCHED THEN INSERT ($insertKeyHit) VALUES ($insertHit)",
             'oracle' => "MERGE INTO $table USING  DUAL ON ($keyOn) WHEN MATCHED THEN UPDATE SET $updateHit WHEN NOT MATCHED THEN INSERT ($insertKeyHit) VALUES ($insertHit)",
             'postgresql' => "INSERT INTO $table ($insertKeyHit) VALUES ($insertHit) ON CONFLICT($pkStr) DO UPDATE $updateHit",
             'drizzle' => "INSERT INTO $table ($insertKeyHit) VALUES ($insertHit) ON DUPLICATE KEY UPDATE $updateHit",
-            'sqlazure' => "MERGE INTO $table AS TAR WITH (HOLDLOCK) USING (SELECT 1) ON ($keyOn) ON ($keyOn) WHEN MATCHED THEN UPDATE SET $updateHit WHEN NOT MATCHED THEN INSERT ($insertKeyHit) VALUES ($insertHit)",
             'sqlanywhere' => "INSERT INTO $table ($insertKeyHit) ON EXISTING UPDATE ON VALUES ($insertHit) "];
+        $platform = $this->builder->getConnection()->getDatabasePlatform();
 
-        $plat = strtolower($this->builder->getConnection()->getDatabasePlatform()->getName());
+        $plat = strtolower($platform->getName());
         if (!isset($sqls[$plat])) {
             throw new BaseException("$plat not support insert on duplicate key update");
         }
+        
+        if ($plat == 'mssql') {
+            $version = $this->builder->getConnection()->getDriver()->version;
+            if (version_compare($version, '9.00.1399','<=')) {
+                throw new BaseException("sql server 2008 previous not support insert on duplicate key update");
+            }
+        } elseif($plat == 'postgresql') {
+            $version = $this->builder->getConnection()->getDriver()->version;
+            if(version_compare($version, '9.5','<=')) {
+                throw new BaseException("only postgresql version >= 9.5 support insert on duplicate key update");
+            }
+        }
 
+        return $sqls[$plat];
+    }
+    
+
+    public function replace($table) {
+        $sqls = ['mysql' => "REPLACE INTO $table ",
+            'drizzle' => "REPLACE INTO $table ",
+        ];
+        $plat = strtolower($this->builder->getConnection()->getDatabasePlatform()->getName());
+
+        if (!isset($sqls[$plat])) {
+            throw new BaseException("$plat not support replace into");
+        }
         return $sqls[$plat];
     }
 

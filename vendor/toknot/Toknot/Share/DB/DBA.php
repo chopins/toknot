@@ -305,7 +305,7 @@ class DBA extends Object {
         if (!class_exists($tableClass, false)) {
             throw new BaseException("class '$tableClass of table '$table' of database does not exists, check the table '$table' whether it is exists");
         }
-        $m = new $tableClass($conn);
+        $m = new $tableClass($db);
         return $m;
     }
 

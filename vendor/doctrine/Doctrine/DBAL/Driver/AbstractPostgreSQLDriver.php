@@ -37,6 +37,8 @@ use Doctrine\DBAL\VersionAwarePlatformDriver;
  */
 abstract class AbstractPostgreSQLDriver implements Driver, ExceptionConverterDriver, VersionAwarePlatformDriver
 {
+    public $version;
+
     /**
      * {@inheritdoc}
      *
@@ -106,12 +108,12 @@ abstract class AbstractPostgreSQLDriver implements Driver, ExceptionConverterDri
         $majorVersion = $versionParts['major'];
         $minorVersion = isset($versionParts['minor']) ? $versionParts['minor'] : 0;
         $patchVersion = isset($versionParts['patch']) ? $versionParts['patch'] : 0;
-        $version      = $majorVersion . '.' . $minorVersion . '.' . $patchVersion;
+        $this->version      = $majorVersion . '.' . $minorVersion . '.' . $patchVersion;
 
         switch(true) {
-            case version_compare($version, '9.2', '>='):
+            case version_compare($this->version, '9.2', '>='):
                 return new PostgreSQL92Platform();
-            case version_compare($version, '9.1', '>='):
+            case version_compare($this->version, '9.1', '>='):
                 return new PostgreSQL91Platform();
             default:
                 return new PostgreSqlPlatform();
