@@ -14,7 +14,7 @@ namespace Toknot\Boot;
  * MethodHelper
  *
  */
-class MethodHelper {
+final class MethodHelper extends Object {
     
     private $prevObj = null;
 

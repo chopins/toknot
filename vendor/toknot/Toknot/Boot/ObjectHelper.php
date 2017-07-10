@@ -62,23 +62,22 @@ trait ObjectHelper {
     public static function __method() {
         $class = get_called_class();
         $helper = self::__methodHelper();
-        $bind = \Closure::bind($helper, null, 'Toknot\Boot\MethodHelper');
+        $bind = \Closure::bind($helper, null, Toknot\Boot\MethodHelper::__class());
         return $bind($class);
     }
 
     public function __callable() {
         $helper = self::__methodHelper();
-        $bind = \Closure::bind($helper, null, 'Toknot\Boot\MethodHelper');
+        $bind = \Closure::bind($helper, null, Toknot\Boot\MethodHelper::__class());
         return $bind($this);
     }
 
     /**
      * dynamic call a static method of a class and pass any params
      * 
-     * @param int $argc
+     * @param string $className
      * @param string $method
      * @param array $argv
-     * @param string $className
      * @return mix
      */
     public static function invokeStatic($className, $method, $argv = []) {
