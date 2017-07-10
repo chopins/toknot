@@ -534,7 +534,7 @@ final class Kernel extends Object {
      * @param object $cxt
      * @return Control
      */
-    public function promise($passState = true, $elseState = false, $cxt = null) {
+    public function control($passState = true, $elseState = false, $cxt = null) {
         return new Control($passState, $elseState, $cxt);
     }
 

@@ -197,7 +197,7 @@ class CheckOption extends Object {
         if ($values) {
             $this->iteratorArray = $values;
         }
-        return $this->kernel->promise()->addContext($this)
+        return $this->kernel->control()->addContext($this)
                 ->then($this->__callable()->checkRequire)
                 ->then($this->__callable()->checkDepend)
                 ->then($this->__callable()->checkGroup)

@@ -42,8 +42,8 @@ class Decorator extends Object {
      *    echo 'is deco2';
      * }
      * /*
-     *  * @decorator dec2
-     *  * @decorator dec1
+     *  * @decorator deco2
+     *  * @decorator deco1
      *  *\/
      * function call() {
      *     echo 'is call';
@@ -83,9 +83,7 @@ class Decorator extends Object {
 
     protected function call() {
         foreach ($this->decorators as $call) {
-            if (strpos($call, '->') !== false) {
-                $calls = explode('->', Tookit::dotNS($call));
-            } elseif (strpos($call, '::') !== false) {
+            if (strpos($call, '::') !== false) {
                 $calls = explode('::', Tookit::dotNS($call));
                 $this->ret = self::invokeStatic($calls[0], $calls[1], [$this->ret]);
                 continue;
