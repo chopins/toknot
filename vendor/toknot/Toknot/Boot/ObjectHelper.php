@@ -62,13 +62,13 @@ trait ObjectHelper {
     public static function __method() {
         $class = get_called_class();
         $helper = self::__methodHelper();
-        $bind = \Closure::bind($helper, null, Toknot\Boot\MethodHelper::__class());
+        $bind = \Closure::bind($helper, null, MethodHelper::__class());
         return $bind($class);
     }
 
     public function __callable() {
         $helper = self::__methodHelper();
-        $bind = \Closure::bind($helper, null, Toknot\Boot\MethodHelper::__class());
+        $bind = \Closure::bind($helper, null, MethodHelper::__class());
         return $bind($this);
     }
 
