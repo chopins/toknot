@@ -1,0 +1,76 @@
+## YAML Template.
+
+officer:
+    column:
+        uid :
+            type : integer
+            length :  11
+            autoincrement :  true
+        name: &str
+            type : string
+            length : 250
+
+        birthday: &date
+            type : integer
+            length : 40
+        education:
+            comment : 学历
+            << : *str
+        school :
+            comment : 毕业学校
+            << : *str
+        worktime :
+            comment : 工作时间
+            << : *date
+        degree :
+            comment : 学位
+            << : *str
+        gender : 
+            <<: *str
+        nation :
+            comment : 民族
+            << : *str
+        native :
+            comment : 籍贯
+            << : *str
+        jointime :
+            comment : 入党时间
+            << : *date
+        title : 
+            << : *str
+    option:
+        comment : 基本信息
+    indexes:
+        primary : uid
+        
+
+experience:
+    column:
+        uid : 
+            type : integer
+            length : 11
+        starttime:
+            << : *date
+        endtime : 
+            << : *date
+        department :
+            << : *str
+        title:
+            << : *str
+        province:
+            << : *str
+        city :
+            << : *str
+        county:
+            << : *str
+        town:
+            << : *str
+        address :
+            << : *str
+    indexes:
+        uid: 
+            type : index
+            fields : uid
+            
+            
+         

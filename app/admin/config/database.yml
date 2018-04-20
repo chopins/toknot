@@ -1,0 +1,818 @@
+## Toknot (http : //toknot.com)
+
+user : 
+    column : 
+        uid : 
+            type :  integer
+            length :  11
+            unsigned :  true
+            autoincrement :  true
+
+        username : 
+            type :  string
+            length :  255
+
+        password : 
+            type :  string
+            lenght :  255
+
+        email : 
+            type :  string
+            length :  255
+            comment :  邮件
+            
+        realname : 
+            type :  string
+            length :  255
+            comment :  真实姓名
+
+        nickname : 
+            type :  string
+            length :  255
+            comment :  昵称
+
+        reg_time : 
+            type :  integer
+            length :  10
+            comment :  注册时间
+
+        reg_ip : 
+            type :  string
+            length :  20
+
+        email_verify : 
+            type :  boolean
+            comment :  邮件验证状态
+
+        mobile : 
+            type :  string
+            length :  20
+
+        mobile_verify : 
+            type :  boolean
+            comment :  手机验证状态
+
+        locked : 
+            type :  boolean
+            default :  0
+            comment :  帐号是否锁定
+
+        locked_expire : 
+            type :  integer
+            comment :  锁定截止时间
+
+        email_bak : 
+            type :  string
+            comment :  备用邮箱
+
+        email_bak_verify : 
+            type :  boolean
+            comment :  备用邮箱是否验证
+    option : 
+        comment :  用户表
+    indexes : 
+        primary :  uid
+        login_name : 
+            type :  unique
+            fields : username
+
+        login_email : 
+            type :  unique
+            fields : email
+
+user_info : 
+    column : 
+        uid : 
+            type :  integer
+            length :  10
+            unsigned :  true
+
+        tel : 
+            type :  string
+            length :  20
+            comment :  用户电话
+
+        location : 
+            type :  text
+            comment :  地区
+
+        birthday : 
+            type :  string
+            length :  20
+            comment :  生日
+
+        avatar : 
+            type :  integer
+            length :  10
+            comment :  头像文件ID
+
+        bio : 
+            type :  text
+            comment :  用户简介
+
+        url : 
+            type :  string
+            length :  255
+
+        gender : 
+            type :  boolean
+            length :  1
+
+        recent_login_info : 
+            type :  text
+            comment :  三组：时间,IP,平台,平台信息,平台ID,地区
+
+        socail : 
+            type :  text
+            comment :  社交帐号
+
+        job : 
+            type :  string
+            length :  255
+
+        hobby : 
+            type :  text
+            comment :  爱好
+
+    option : 
+        comment :  用户信息扩展表
+
+    indexes : 
+        primary :  uid
+
+org : 
+    column : 
+        oid : 
+            type :  integer
+            autoincrement :  true
+
+        org_name : 
+            type :  string
+            length :  255
+            comment :  组织名
+
+        org_manager : 
+            type :  integer
+            comment :  组织创始人
+
+        org_manager_assistant : 
+            type :  string
+            length :  255
+            comment :  组织管理ID列表
+
+        parent_oid : 
+            type :  integer
+            comment :  父级组织
+            length :  10
+
+        top_oid : 
+            type :  integer
+            comment :  顶级组织ID
+
+        org_level : 
+            type :  tinyint
+
+        org_logo : 
+            type :  integer
+            comment :  组织LOGO
+
+        org_del : 
+            type :  boolean
+            comment :  组织是否删除
+
+        org_del_time : 
+            type :  integer
+            comment :  组织删除时间
+
+        org_del_user : 
+            type :  integer
+            comment :  删除用户
+
+        org_location : 
+            type :  text
+            comment :  组织所在地区
+
+        org_url : 
+            type :  string
+
+        org_slogan : 
+            type :  string
+
+        org_description : 
+            type :  text
+
+        org_create_time : 
+            type :  integer
+
+    indexes : 
+        primary :  oid
+        pid : 
+            type :  index
+            fields :  parent_oid
+        tid : 
+            type :  index
+            fields : top_oid
+
+    option : 
+        comment :  组织表
+
+project : 
+    column : 
+        pid : 
+            type :  integer
+            autoincrement :  true
+
+        pname : 
+            type :  string
+            comment :  项目名
+
+        pmanager : 
+            type :  integer
+            comment :  项目管理者
+
+        pmanager_assistant : 
+            type :  string
+            comment :  管理助手
+
+        project_org : 
+            type :  integer
+            comment :  项目所属组织
+
+        pcreate_time : 
+            type :  integer
+
+        pclose_time : 
+            type :  integer
+        pclose_user : 
+            type :  integer
+
+        pstart_time : 
+            type :  integer
+        pend_time : 
+            type :  integer
+
+    indexes : 
+        primary :  pid
+        org : 
+            type :  index
+            fields : project_org
+    option : 
+        comment :  项目表
+
+node_type : 
+    column : 
+        ntid : 
+            type :  integer
+            autoincrement :  true
+
+        nt_code : 
+            type :  string
+            comment :  节点代号
+        nt_title : 
+            type :  string
+            comment :  节点显示名称
+
+        disable_notify : 
+            type :   boolean
+            comment :  不通知相关人员
+
+        node_result_status_label : 
+            type :  string
+            comment :  节点结果状态显示名
+
+        submit_form : 
+            type :  text
+            comment :  表单结构配置
+
+        pass_node_type : 
+            type :  integer
+            comment :  通过后进入的节点类型
+
+        reject_node_type : 
+            type :  integer
+            comment :  拒绝后进入的节点类型
+
+
+        front_node_type : 
+            type :  integer
+            comment :  前置节点类型
+
+        is_end_node : 
+            type :  boolean
+            comment :  是否最终节点
+
+        allow_end : 
+            type :  boolean
+            comment :  是否允许直接结束流程
+
+        exec_expire : 
+            type :  integer
+            comment :  执行有效期
+
+        is_start_node : 
+            type :  boolean
+            comment :  是否开始节点
+
+        node_project_access : 
+            type :  string
+            comment :  可被项目访问
+
+        node_org_access : 
+            type :  string
+            comment :  可被组织访问
+
+        node_user_access : 
+            type :  string
+            comment : 可访问用户
+
+        is_inherit_front_access : 
+            type :  boolean
+            comment :  是否继承前置节点权限
+
+        is_multiple_executor : 
+            type :  boolean
+            comment :  是否多个平行执行人
+
+        node_org : 
+            type :  integer
+
+        node_project : 
+            type :  integer
+
+        notify_template : 
+            type :  string
+    indexes : 
+        primary :  ntid
+        code : 
+            type :  unique
+            fields : nt_code
+        org : 
+            type :  index
+            fields : node_org
+        pid : 
+            type :  index
+            fields : node_project
+    option : 
+        comment :  节点类型表
+
+node : 
+    column : 
+
+        nid : 
+            type :  bigint
+            autoincrement :  true
+
+        node_type : 
+            type :  integer
+
+        node_submiter : 
+            type :  integer
+
+        node_process : 
+            type :  bigint
+
+        node_accepter : 
+            type :  string
+
+        node_exec_result_status : 
+            type :  integer
+            comment :  执行状态，0未执行，1通过，2拒绝，3终止
+        node_submit_data : 
+            type :  text
+
+        node_submit_time : 
+            type :  integer
+
+        exec_time : 
+            type :  integer
+
+        front_node : 
+            type :  integer
+
+        next_node : 
+            type :  integer
+    indexes : 
+        primary :  nid
+        process : 
+            type :  index
+            fields : node_process
+    option : 
+        comment :  节点表
+
+process : 
+    column : 
+
+        pid : 
+            type :  integer
+            autoincrement :  true
+
+        creater : 
+            type :  integer
+
+        creater_time : 
+            type :  integer
+
+        first_node : 
+            type :  integer
+
+        end_node : 
+            type :  integer
+
+        end_time : 
+            type :  integer
+
+        process_org : 
+            type :  integer
+
+        process_project : 
+            type : integer
+
+
+    indexes : 
+        primary :  yid
+        org : 
+            type :  index
+            fields : process_org
+
+    option : 
+        comment :  流程表
+
+node_data : 
+    column : 
+
+        ndid : 
+            type :  bigint
+            autoincrement :  true
+        form_feild : 
+            type :  text
+        form_feild_lable : 
+            type :  text
+        form_data : 
+            type :  text
+        node : 
+            type :  bigint
+        creater_time : 
+            type :  integer
+
+    indexes : 
+        primary :  ydid
+        nid : 
+            type :  index
+            fields : node
+
+user_org_map : 
+    column : 
+        user_id : 
+            type :  integer
+        org_id : 
+            type :  integer
+
+    indexes : 
+        map : 
+            type :  index
+            fields : user_id,org_id
+    option : 
+        comment :  用户组织映射表
+
+user_project_map : 
+    column : 
+        user_id : 
+            type :  integer
+        project_id : 
+            type :  integer
+    indexes : 
+        map : 
+            type :  endex
+            fields : user_id,project_id
+
+file : 
+    column : 
+        fid : 
+            type :  integer
+            autoincrement :  true
+
+        path : 
+            type :  string
+
+        filename : 
+            type :  string
+        filesize : 
+            type :  string
+        file_type : 
+            type :  string
+        creater : 
+            type :  integer
+        creater_time : 
+            type :  integer
+        del_time : 
+            type :  integer
+        del_user : 
+            type :  integer
+        file_org : 
+            type :  integer
+        file_project : 
+            type :  integer
+
+    indexes : 
+        primary :  fid
+        oid : 
+            type :  index
+            fields : file_org
+        project : 
+            type :  index
+            fields : file_project
+
+    option : 
+        comment :  文件表
+
+discussion : 
+    column : 
+
+        aid : 
+            type :  integer
+            autoincrement :  true
+
+        content : 
+            type :  text
+            length :  m
+
+        author : 
+            type :  integer
+
+        attachment : 
+            type :  string
+
+        creater_time : 
+            type :  integer
+
+        change_log : 
+            type :  text
+
+        is_vote : 
+            type :  boolean
+            comment :  赞成反对
+
+        locked_time : 
+            type :  integer
+
+        lock_user : 
+            type :  integer
+
+        ban_time : 
+            type :  integer
+        ban_user : 
+            type :  integer
+
+        title : 
+            type :  string
+
+        org : 
+            type :  integer
+        project : 
+            type :  integer
+
+        org_access : 
+            type :  string
+        project_access : 
+            type :  string
+        user_access : 
+            type :  string
+
+    indexes : 
+        primary :  aid
+    option : 
+        comment :  讨论表
+        org : 
+            type :  index
+            fields : org
+        project : 
+            type :  index
+            fields : project
+
+user_discussion_map : 
+    column : 
+        user_id : 
+            type :  integer
+        aid : 
+            type :  enteger
+    indexes : 
+        map : 
+            type :  index
+            fields : user_id,aid
+
+    option : 
+        comment :  用户讨论映射表
+
+comment : 
+    column : 
+
+        cid : 
+            type :  integer
+            autoincrement :  true
+
+        comment_author : 
+            type :  integer
+
+        content : 
+            type :  text
+
+        create_time : 
+            type :  integer
+
+        attchment : 
+            type :  string
+
+        aid : 
+            type :  integer
+
+        self_del : 
+            type :  boolean
+
+        self_del_time : 
+            type :  integer
+
+        ban_time : 
+            type :  integer
+        ban_user : 
+            type :  integer
+
+    indexes : 
+
+        primary :  cid
+        aid : 
+            type :  index
+            fields : aid
+    option : 
+        comment :  讨论文章评论表
+
+manager_log : 
+    column : 
+
+        logid : 
+            type :  bigint
+            autoincrement :  true
+
+        log_data : 
+            type :  text
+
+        opreater : 
+            type :  integer
+        time : 
+            type :  integer
+        opreate_object : 
+            type :  string
+        action : 
+            type :  string
+
+    indexes : 
+
+        primary :  logid
+        user : 
+            type :  index
+            fields : opreater
+    option : 
+
+        comment :  管理日志
+
+session : 
+    column : 
+
+        sid : 
+            type :  string
+        sess_data : 
+            type :  string
+
+        expire : 
+            type :  integer
+        create_time : 
+            type :  integer
+    indexes : 
+
+        primary :  sid
+        expire : 
+            type :  index
+            fields : expire
+    option : 
+        comment :  会话表
+        engine :  memory
+
+notify : 
+    column : 
+        notify_id : 
+            type :  bigint
+            autoincrement :  true
+
+        create_time : 
+            type :  integer
+
+        notify_content : 
+            type :  text
+
+        creater : 
+            type :  integer
+
+        accepter : 
+            type :  integer
+
+        is_read : 
+            type :  boolean
+
+    indexes : 
+
+        primary :  notify_id
+
+        user : 
+            type :  index
+            fields : creater,accepter
+
+    option : 
+
+        comment :  通知表
+
+code_verify : 
+    column : 
+
+        msg_id : 
+            type :  bigint
+            autoincrement :  true
+        create_time : 
+            type :  integer
+        verify_code : 
+            type :  string
+        accepter_user : 
+            type :  integer
+        device : 
+            type :  string
+        send_time : 
+            type :  integer
+        send_status : 
+            type :  boolean
+    indexes : 
+        primary :  msg_id
+
+    option : 
+        comment :  校验码表
+
+title : 
+    column : 
+
+        tid : 
+            type :  integer
+            autoincrement :  true
+
+        title_name : 
+            type :  string
+
+        project : 
+            type :  integer
+
+        org : 
+            type :  integer
+
+        creater_time : 
+            type :  integer
+
+        disable_time : 
+            type :  integer
+
+    indexes : 
+        primary :  tid
+
+        org : 
+            type :  index
+            fields : org
+        project : 
+            type :  index
+            fields : project
+
+    option : 
+        comment :  头衔表
+
+administration : 
+    column : 
+
+        uid : 
+            type :  integer
+        title : 
+            type :  string
+        permissions : 
+            type :  text
+    indexes : 
+        primary :  uid
+    option : 
+        comment :  平台管理人员表
+
+user_title_map : 
+    column : 
+
+        uid : 
+            type :  integer
+        tid : 
+            type :  integer
+    indexes : 
+
+        map : 
+            type :  index
+            fields : uid,tid
+    option : 
+        comment :  用户头衔映射表
