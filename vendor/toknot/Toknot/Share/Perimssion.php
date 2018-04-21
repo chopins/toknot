@@ -20,14 +20,18 @@ class Perimssion {
     protected $noExt = false;
     protected static $instance = null;
 
-    public function __construct($perlist) {
+    public function __construct($perlist, $mask = false) {
         if (extension_loaded('gmp') === false) {
             $this->gmp = false;
         } else if (extension_loaded('bcmath') == false) {
             $this->bc = false;
         }
-        $this->nameList = $perlist;
-        $this->extensionInfo();
+        if ($mask) {
+            self::$perimssionList = $perlist;
+        } else {
+            $this->extensionInfo();
+            $this->nameList = $perlist;
+        }
         self::$instance = $this;
     }
 
